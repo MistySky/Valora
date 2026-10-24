@@ -1,0 +1,139 @@
+--- a/Sources/Valora/Verification.swift
++++ b/Sources/Valora/Verification.swift
+@@ -1,6 +1,7 @@
+ import AppKit
+ import SwiftUI
+ import QuartzCore
++import CryptoKit
+ import ReferenceCore
+ 
+ /// Opt-in developer integration test. Uses synthetic data, a separate
+@@ -696,7 +697,128 @@
+                     .write(to: directory.appendingPathComponent("system-media.json"))
+             } catch {
+                 fputs("System media verification failed: \(error)\n", stderr)
++            }
++            NSApp.terminate(nil)
++        }
++    }
++}
++
++/// Read-only verification of the actual NSStatusItem button image and its live
++/// status-bar window. It writes a small region hint for an optional shell
++/// screenshot, then waits briefly so the caller can capture that region.
++enum MenuBarIconVerification {
++    @MainActor static func run(statusItem: NSStatusItem, output: String) {
++        Task { @MainActor in
++            let directory = URL(fileURLWithPath: output, isDirectory: true)
++            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
++            try? await Task.sleep(nanoseconds: 800_000_000)
++
++            let button = statusItem.button
++            let image = button?.image
++            let iconURL = Bundle.main.resourceURL?.appendingPathComponent("AppIcon.icns")
++            let iconData = iconURL.flatMap { try? Data(contentsOf: $0) }
++            let iconSHA = iconData.map { SHA256.hash(data: $0).map { String(format: "%02x", $0) }.joined() }
++
++            func render(_ image: NSImage?, pixels: Int, name: String) -> [String: Any]? {
++                guard let image,
++                      let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: pixels, pixelsHigh: pixels,
++                                                 bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
++                                                 colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0),
++                      let context = NSGraphicsContext(bitmapImageRep: rep) else { return nil }
++                NSGraphicsContext.saveGraphicsState()
++                NSGraphicsContext.current = context
++                image.draw(in: NSRect(x: 0, y: 0, width: pixels, height: pixels),
++                           from: .zero, operation: .sourceOver, fraction: 1)
++                context.flushGraphics()
++                NSGraphicsContext.restoreGraphicsState()
++                guard let png = rep.representation(using: .png, properties: [:]) else { return nil }
++                let url = directory.appendingPathComponent(name + ".png")
++                try? png.write(to: url)
++                var colorful = 0
++                var sampled = 0
++                let step = max(1, pixels / 64)
++                for y in stride(from: 0, to: pixels, by: step) {
++                    for x in stride(from: 0, to: pixels, by: step) {
++                        guard let color = rep.colorAt(x: x, y: y), color.alphaComponent > 0.5 else { continue }
++                        sampled += 1
++                        if color.saturationComponent > 0.15 { colorful += 1 }
++                    }
++                }
++                return [
++                    "path": url.path,
++                    "pixels": pixels,
++                    "bytes": png.count,
++                    "sha256": SHA256.hash(data: png).map { String(format: "%02x", $0) }.joined(),
++                    "cornerAlphas": [rep.colorAt(x: 2, y: 2)?.alphaComponent ?? -1,
++                                     rep.colorAt(x: pixels - 3, y: 2)?.alphaComponent ?? -1,
++                                     rep.colorAt(x: 2, y: pixels - 3)?.alphaComponent ?? -1,
++                                     rep.colorAt(x: pixels - 3, y: pixels - 3)?.alphaComponent ?? -1],
++                    "sampledOpaquePixels": sampled,
++                    "colorfulFraction": sampled > 0 ? Double(colorful) / Double(sampled) : 0
++                ]
++            }
++
++            var windowCapture: [String: Any]?
++            var windowInfo: [String: Any] = [:]
++            if let window = button?.window {
++                windowInfo = [
++                    "window_number": window.windowNumber,
++                    "window_frame_points": NSStringFromRect(window.frame),
++                    "screen_frame_points": NSScreen.main.map { NSStringFromRect($0.frame) } ?? NSNull(),
++                    "button_accessibility_frame_points": button.map { NSStringFromRect($0.accessibilityFrame()) } ?? NSNull()
++                ]
++                if let view = window.contentView {
++                    view.layoutSubtreeIfNeeded()
++                    if let bitmap = view.bitmapImageRepForCachingDisplay(in: view.bounds) {
++                        view.cacheDisplay(in: view.bounds, to: bitmap)
++                        if let png = bitmap.representation(using: .png, properties: [:]) {
++                            let url = directory.appendingPathComponent("status-item-window.png")
++                            try? png.write(to: url)
++                            windowCapture = [
++                                "path": url.path,
++                                "pixels": [bitmap.pixelsWide, bitmap.pixelsHigh],
++                                "bytes": png.count,
++                                "sha256": SHA256.hash(data: png).map { String(format: "%02x", $0) }.joined()
++                            ]
++                        }
++                    }
++                }
++                // On a multi-display setup the status item's NSWindow and AX
++                // frames can refer to the off-screen host rather than the
++                // visible menu-bar replica. Do not publish them as a trusted
++                // screen-capture rectangle; the narrow real-screen crops are
++                // recorded separately by the verification shell step.
++                windowInfo["frame_trusted_for_screen_capture"] = false
+             }
++
++            let result: [String: Any] = [
++                "generated_at": ISO8601DateFormatter().string(from: Date()),
++                "app": Bundle.main.bundlePath,
++                "bundle_icon_path": iconURL?.path ?? NSNull(),
++                "bundle_icon_sha256": iconSHA ?? NSNull(),
++                "status_item_length": statusItem.length,
++                "button_image_present": image != nil,
++                "button_image_size": image.map { [Double($0.size.width), Double($0.size.height)] } ?? NSNull(),
++                "button_image_is_template": image?.isTemplate ?? NSNull(),
++                "button_image_representations": image?.representations.map {
++                    ["width": $0.pixelsWide, "height": $0.pixelsHigh, "alpha": $0.hasAlpha]
++                } ?? [],
++                "button_image_scaling": button.map { $0.imageScaling.rawValue } ?? NSNull(),
++                "button_image_position": button.map { $0.imagePosition.rawValue } ?? NSNull(),
++                "button_accessibility_label": button?.accessibilityLabel() ?? NSNull(),
++                "rendered_18": render(image, pixels: 18, name: "status-button-18") ?? NSNull(),
++                "rendered_36": render(image, pixels: 36, name: "status-button-36") ?? NSNull(),
++                "rendered_72": render(image, pixels: 72, name: "status-button-72") ?? NSNull(),
++                "window": windowInfo,
++                "status_item_window_capture": windowCapture ?? NSNull(),
++                "screen_capture_note": "Automatic status-item window/AX frames were not trusted on this multi-display setup. Use menubar-screen-running.png / menubar-screen-stopped.png, captured as a narrow real-screen menu-bar crop.",
++                "player_command_sent": false,
++                "music_media_started": false,
++                "private_content_collected": false
++            ]
++            if let data = try? JSONSerialization.data(withJSONObject: result, options: [.prettyPrinted, .sortedKeys]) {
++                try? data.write(to: directory.appendingPathComponent("menubar-verification.json"))
++            }
+             NSApp.terminate(nil)
+         }
+     }

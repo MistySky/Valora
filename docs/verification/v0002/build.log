@@ -1,0 +1,35 @@
+/Users/wangqing/code/Valora/.build/media-adapter/MediaRemoteAdapter.framework: replacing existing signature
+/Users/wangqing/code/Valora/.build/media-adapter/MediaRemoteAdapter.framework
+Building for production...
+[Planning deferred tasks]
+[26 / 41]
+[28 / 42] ReferenceCore
+[47 / 111]
+[55 / 111]
+[61 / 111]
+[66 / 111]
+[72 / 111]
+[76 / 111]
+[83 / 111]
+[86 / 111]
+[90 / 111]
+[95 / 111]
+[98 / 111]
+[99 / 111]
+[100 / 111] ReferenceCore
+[107 / 112] Valora-product
+[126 / 155]
+[134 / 155]
+[135 / 155]
+[141 / 155]
+[145 / 155]
+[147 / 155]
+[148 / 155]
+[149 / 155]
+[150 / 155]
+[151 / 155] Valora-product
+[153 / 155] Valora-product
+[154 / 155] Valora-product
+Build complete! (24.69秒)
+/Users/wangqing/code/Valora/dist/Valora.app: replacing existing signature
+/Users/wangqing/code/Valora/dist/Valora.app

@@ -1,0 +1,3 @@
+exit_code=0
+request_ok=true
+validation_ok=true

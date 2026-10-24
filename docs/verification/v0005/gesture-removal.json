@@ -1,0 +1,38 @@
+{
+  "drag_gesture_consumers_remaining": [
+    "Sources/Valora/MediaProgressView.swift",
+    "Sources/Valora/OutputVolumeView.swift",
+    "Sources/Valora/SettingsControls.swift"
+  ],
+  "generated_at": "2026-10-23T08:39:53.127440+00:00",
+  "legacy_symbol_hits": {
+    "NSHapticFeedback": [],
+    "NotchGesture": [],
+    "enableHaptics": [],
+    "handleSwipe": [],
+    "performGesture": [],
+    "scrollGesture": [],
+    "scrollWheel": [],
+    "swipeTo": []
+  },
+  "legacy_symbols_absent": true,
+  "notch_view_has_drag_gesture": false,
+  "removed_files": {
+    "Sources/ReferenceCore/ActivityPreferences.swift": true,
+    "Sources/ReferenceCore/GeneralPreferences.swift": true,
+    "Sources/ReferenceCore/NotchGesture.swift": true,
+    "Tests/ReferenceCoreTests/ActivityPreferencesTests.swift": true,
+    "Tests/ReferenceCoreTests/NotchGestureTests.swift": true,
+    "Tests/ValoraTests/NotchTuningIntegrationTests.swift": true,
+    "Tests/ValoraTests/ScrollGestureEntryTests.swift": true
+  },
+  "tap_and_normal_controls_still_present": {
+    "compact_play": true,
+    "notch_tap": true,
+    "progress_drag": true,
+    "settings_slider": true,
+    "volume_drag": true
+  },
+  "window_coordinator_has_scroll_monitor": false,
+  "window_coordinator_pointer_monitor": true
+}

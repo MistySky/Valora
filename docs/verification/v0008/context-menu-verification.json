@@ -1,0 +1,25 @@
+{
+  "compact_actual": {
+    "menu_item": "\u8bbe\u7f6e\u2026",
+    "method": "CGEvent right click at physical notch compact panel, menu visible",
+    "opened_settings_window_title": "\u901a\u7528",
+    "repeat_open_window_count": 1,
+    "repeat_reused_same_window": true,
+    "screenshot": "/Users/wangqing/code/Valora/docs/verification/v0008/context-menu-compact.png",
+    "settings_window_number_first": 13378,
+    "settings_window_points": [
+      620,
+      687
+    ],
+    "tested": true
+  },
+  "expanded_actual": {
+    "note": "The same outer SwiftUI contextMenu covers expanded content; automated synthetic expanded-right-click did not reliably reach the non-activating panel and was not claimed as a real-screen success.",
+    "tested": false
+  },
+  "generated_at": "2026-10-23T15:11:14.137318+00:00",
+  "no_global_mouse_interceptor_added": true,
+  "outside_shape_passthrough_unchanged": true,
+  "settings_window_reuse_test": "SettingsReductionTests.testExistingSettingsWindowIsReused",
+  "source_scope": "NotchView outer ZStack shared by compact and expanded; secondary panels use same view"
+}

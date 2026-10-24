@@ -1,0 +1,21 @@
+{
+  "albumNonEmpty" : true,
+  "artistNonEmpty" : true,
+  "contentItemIdentifierPresent" : true,
+  "durationValid" : true,
+  "elapsedWithinDuration" : true,
+  "errors" : [
+
+  ],
+  "hasArtworkData" : true,
+  "playerCommandSent" : false,
+  "playing" : false,
+  "privateMetadataRecorded" : false,
+  "prohibitsSkip" : false,
+  "restartDeliveredFreshSnapshot" : true,
+  "snapshotCountAtLeastOne" : true,
+  "snapshotDelivered" : true,
+  "streamStoppedBeforeRestart" : true,
+  "titleNonEmpty" : true,
+  "volumeOrPermissionWrite" : false
+}

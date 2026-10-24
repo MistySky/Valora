@@ -1,0 +1,482 @@
+{
+  "all_business_files_unchanged": true,
+  "binary": {
+    "byte_identical": false,
+    "note": "Swift source files are the authoritative unchanged-code evidence; the linker output was regenerated during the V0002 package builds and is not claimed byte-identical.",
+    "v0001_sha256": "9fd75c79c70b0147d5b22895194ecced923d9d74960c0c0eea2bea850b62928c",
+    "v0002_sha256": "a323955c4d1bb467bbc8651858f578786b8988c171ce54350f28aef1eece7f61"
+  },
+  "changed_files": 0,
+  "checked_files": 77,
+  "files": [
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/AppDelegate.swift",
+      "unchanged": true,
+      "v0001_sha256": "3d2f393e66525956bc14c01a8ca733d8c1ae6e78faa2c70d5755f3d61ebce778",
+      "v0002_sha256": "3d2f393e66525956bc14c01a8ca733d8c1ae6e78faa2c70d5755f3d61ebce778"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/AppRuntimeDefaults.swift",
+      "unchanged": true,
+      "v0001_sha256": "2d54071fb3639983f17da1dbc6caa1f6c31756917d6e8fa7d1469dfe5e02e1a1",
+      "v0002_sha256": "2d54071fb3639983f17da1dbc6caa1f6c31756917d6e8fa7d1469dfe5e02e1a1"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/ArtworkPalette.swift",
+      "unchanged": true,
+      "v0001_sha256": "011c5a2913e03cc56502b66b995f14065cafbd99981ccc8eb40bcd71bd2c2620",
+      "v0002_sha256": "011c5a2913e03cc56502b66b995f14065cafbd99981ccc8eb40bcd71bd2c2620"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/AudioOutputController.swift",
+      "unchanged": true,
+      "v0001_sha256": "62db77e61fccee7d1458fc10df6317e4c9fc16ab2f089f01edf0cb1133ce99e8",
+      "v0002_sha256": "62db77e61fccee7d1458fc10df6317e4c9fc16ab2f089f01edf0cb1133ce99e8"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/AudioTap.swift",
+      "unchanged": true,
+      "v0001_sha256": "beb69f04184985bbb6132e2575a301c265b486d2530cfab10bdd6566bc2976ba",
+      "v0002_sha256": "beb69f04184985bbb6132e2575a301c265b486d2530cfab10bdd6566bc2976ba"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/CompactPlaybackControl.swift",
+      "unchanged": true,
+      "v0001_sha256": "a007881b31891687911ada60fa16cdec4866599c64e1ee4afb14fe1bceda0acc",
+      "v0002_sha256": "a007881b31891687911ada60fa16cdec4866599c64e1ee4afb14fe1bceda0acc"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/Controllers.swift",
+      "unchanged": true,
+      "v0001_sha256": "e37c79ab276e8b8cf828d803c8858b28e47c078ebbf2762288249dbe46af9d85",
+      "v0002_sha256": "e37c79ab276e8b8cf828d803c8858b28e47c078ebbf2762288249dbe46af9d85"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/LoginItem.swift",
+      "unchanged": true,
+      "v0001_sha256": "3285dc475d8cdb28c427d1e1f5eeba50d685004bbc9783d3393813f47091f3d3",
+      "v0002_sha256": "3285dc475d8cdb28c427d1e1f5eeba50d685004bbc9783d3393813f47091f3d3"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/MarqueeLabel.swift",
+      "unchanged": true,
+      "v0001_sha256": "47a8f86dd6567e9844018dd76eafcfad681588bd34d8c23511f44d6e0ff6bc37",
+      "v0002_sha256": "47a8f86dd6567e9844018dd76eafcfad681588bd34d8c23511f44d6e0ff6bc37"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/MediaProgressView.swift",
+      "unchanged": true,
+      "v0001_sha256": "adbd23a55c056c988c3f520eb9afc2be65a146d966e9395ea89a3e1046ccfbb2",
+      "v0002_sha256": "adbd23a55c056c988c3f520eb9afc2be65a146d966e9395ea89a3e1046ccfbb2"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/Models.swift",
+      "unchanged": true,
+      "v0001_sha256": "34db7b29c77b02495e191be67566a1c5c8e619bb77ae41a191eae85f2772f690",
+      "v0002_sha256": "34db7b29c77b02495e191be67566a1c5c8e619bb77ae41a191eae85f2772f690"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/MusicPlayerContent.swift",
+      "unchanged": true,
+      "v0001_sha256": "9308f2a54b7ae54729837ee55a0dd145854e36490d5403a60c34dbf811a347ad",
+      "v0002_sha256": "9308f2a54b7ae54729837ee55a0dd145854e36490d5403a60c34dbf811a347ad"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/NotchView.swift",
+      "unchanged": true,
+      "v0001_sha256": "1e90b3c95f038c79d4523bfd7b6972b8cb2d5a944edcaf08e8b54c591085a329",
+      "v0002_sha256": "1e90b3c95f038c79d4523bfd7b6972b8cb2d5a944edcaf08e8b54c591085a329"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/OutputVolumeView.swift",
+      "unchanged": true,
+      "v0001_sha256": "a24cd66302c2cbe0ce5479c093154429c29d85b257ac49841a5e699a18984f2a",
+      "v0002_sha256": "a24cd66302c2cbe0ce5479c093154429c29d85b257ac49841a5e699a18984f2a"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/PresentationController.swift",
+      "unchanged": true,
+      "v0001_sha256": "db381a4a683e34297c7aa04c5e69dd49f9619c4676d06859f87b37b1f6e4ad58",
+      "v0002_sha256": "db381a4a683e34297c7aa04c5e69dd49f9619c4676d06859f87b37b1f6e4ad58"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/ScreenStateMonitor.swift",
+      "unchanged": true,
+      "v0001_sha256": "e06bdae3a2d996908b97065f975aa999e641814b9d40a531931f32a35eab4c39",
+      "v0002_sha256": "e06bdae3a2d996908b97065f975aa999e641814b9d40a531931f32a35eab4c39"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/SettingsCatalog.swift",
+      "unchanged": true,
+      "v0001_sha256": "da6db0fcb1a04477c9925efd0e408af855d6b6d7f81b24feac40e7ff5a9a1b65",
+      "v0002_sha256": "da6db0fcb1a04477c9925efd0e408af855d6b6d7f81b24feac40e7ff5a9a1b65"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/SettingsControls.swift",
+      "unchanged": true,
+      "v0001_sha256": "7088c99ba7b906b369b61cb7b1518ca4fc48e27ce4dc1e4e292de5dca3f65e7f",
+      "v0002_sha256": "7088c99ba7b906b369b61cb7b1518ca4fc48e27ce4dc1e4e292de5dca3f65e7f"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/SettingsDisplayCatalog.swift",
+      "unchanged": true,
+      "v0001_sha256": "aa9f0df7d8186cb4322419afa1bb7ba045f40a18c122c32c1add26ac6c34ce6a",
+      "v0002_sha256": "aa9f0df7d8186cb4322419afa1bb7ba045f40a18c122c32c1add26ac6c34ce6a"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/SettingsLocalization.swift",
+      "unchanged": true,
+      "v0001_sha256": "0f3ba5533fca11af6cbb9dc45c44c80023d98aaf681b8dd264aabce60f6726ab",
+      "v0002_sha256": "0f3ba5533fca11af6cbb9dc45c44c80023d98aaf681b8dd264aabce60f6726ab"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/SettingsNumberEditor.swift",
+      "unchanged": true,
+      "v0001_sha256": "d915a9b36f1f65ca303cfdabe768ab7e3537d74d9f56587fe241e30624387c54",
+      "v0002_sha256": "d915a9b36f1f65ca303cfdabe768ab7e3537d74d9f56587fe241e30624387c54"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/SettingsView.swift",
+      "unchanged": true,
+      "v0001_sha256": "e3140832d13f7e49b75125e43fe30ea10de90048e88fdb427225d39adbfa4258",
+      "v0002_sha256": "e3140832d13f7e49b75125e43fe30ea10de90048e88fdb427225d39adbfa4258"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/SettingsWindow.swift",
+      "unchanged": true,
+      "v0001_sha256": "5eee5d789ed6c78cea247fd31657b1e3e9981492d6870b3cb28bd0d91114124c",
+      "v0002_sha256": "5eee5d789ed6c78cea247fd31657b1e3e9981492d6870b3cb28bd0d91114124c"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/SystemMediaSource.swift",
+      "unchanged": true,
+      "v0001_sha256": "5fba87232324961ffb2e1a700e9309e09194181147e517c9d0d56be850967a62",
+      "v0002_sha256": "5fba87232324961ffb2e1a700e9309e09194181147e517c9d0d56be850967a62"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/TrafficLightsView.swift",
+      "unchanged": true,
+      "v0001_sha256": "002cf5f9d6700730b4970fb864908fb0aafa64b5ac94130b9537c93ba521ee8b",
+      "v0002_sha256": "002cf5f9d6700730b4970fb864908fb0aafa64b5ac94130b9537c93ba521ee8b"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/TransitioningArtwork.swift",
+      "unchanged": true,
+      "v0001_sha256": "fe8ca45a9ed7209d0ea82cedfcd1ffd46b16fc9151e019874d95727eecaa6cba",
+      "v0002_sha256": "fe8ca45a9ed7209d0ea82cedfcd1ffd46b16fc9151e019874d95727eecaa6cba"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/Verification.swift",
+      "unchanged": true,
+      "v0001_sha256": "ea074322d57d46c102a9245ee2bb70ab1a59506c6d0b26b9b5e0a1aeef530100",
+      "v0002_sha256": "ea074322d57d46c102a9245ee2bb70ab1a59506c6d0b26b9b5e0a1aeef530100"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/WindowCoordinator.swift",
+      "unchanged": true,
+      "v0001_sha256": "4c5402325bfb229ab7d54ff554004e87204bc43a590531f60abeda3c71b93d4b",
+      "v0002_sha256": "4c5402325bfb229ab7d54ff554004e87204bc43a590531f60abeda3c71b93d4b"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/main.swift",
+      "unchanged": true,
+      "v0001_sha256": "2c147d14413c85d3c03b60cde6f67ce9f20af627aee00f6ce593cbaec05f5d83",
+      "v0002_sha256": "2c147d14413c85d3c03b60cde6f67ce9f20af627aee00f6ce593cbaec05f5d83"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/ActivityPreferences.swift",
+      "unchanged": true,
+      "v0001_sha256": "e193495d5e00ef02ca0bc60a72dfcf9df4c6b139a850207292be228531e06928",
+      "v0002_sha256": "e193495d5e00ef02ca0bc60a72dfcf9df4c6b139a850207292be228531e06928"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/ActivitySelection.swift",
+      "unchanged": true,
+      "v0001_sha256": "77d4f50b9b0946adbfde15d5f2ae437370b115070fc4095f8485053ab754bc80",
+      "v0002_sha256": "77d4f50b9b0946adbfde15d5f2ae437370b115070fc4095f8485053ab754bc80"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/AirPodsModel.swift",
+      "unchanged": true,
+      "v0001_sha256": "45f008c26dde3796edd34348d74b790e5b63a5524bf60276003c557b5fd58d3d",
+      "v0002_sha256": "45f008c26dde3796edd34348d74b790e5b63a5524bf60276003c557b5fd58d3d"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/ArtworkTransitionState.swift",
+      "unchanged": true,
+      "v0001_sha256": "12652c89d6c8e4528356ea9647563e67038c8b6f23fbad179ad7ef616ab61c03",
+      "v0002_sha256": "12652c89d6c8e4528356ea9647563e67038c8b6f23fbad179ad7ef616ab61c03"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/CompactWaveformMetrics.swift",
+      "unchanged": true,
+      "v0001_sha256": "72ce6bd17c8ececc3aa4948fffcd3464096b444c456463eed89cba503cc90215",
+      "v0002_sha256": "72ce6bd17c8ececc3aa4948fffcd3464096b444c456463eed89cba503cc90215"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/GameMatcher.swift",
+      "unchanged": true,
+      "v0001_sha256": "8f153fe86eedfbd26d96cc86cf305adc1d3ba6100b6565e0294058d75cec9b97",
+      "v0002_sha256": "8f153fe86eedfbd26d96cc86cf305adc1d3ba6100b6565e0294058d75cec9b97"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/GeneralPreferences.swift",
+      "unchanged": true,
+      "v0001_sha256": "163e64604bc8c89344937c6654e050daae0a27508cc8facd2f04e5dc3531a700",
+      "v0002_sha256": "163e64604bc8c89344937c6654e050daae0a27508cc8facd2f04e5dc3531a700"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/MarqueeMetrics.swift",
+      "unchanged": true,
+      "v0001_sha256": "f8a07efc673a8dd4133febddc090c426cfb59e00e5d194b9a3011839babc167a",
+      "v0002_sha256": "f8a07efc673a8dd4133febddc090c426cfb59e00e5d194b9a3011839babc167a"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/MediaIdleState.swift",
+      "unchanged": true,
+      "v0001_sha256": "b1ed0883953020f671d7a62e57e7e75427b407c2476df484e126292f37def3a8",
+      "v0002_sha256": "b1ed0883953020f671d7a62e57e7e75427b407c2476df484e126292f37def3a8"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/MediaProgressState.swift",
+      "unchanged": true,
+      "v0001_sha256": "f7a5ccca8a9aa9cc7083286d47cc4932b77b4e062b71768ee7fd5fe187f74b30",
+      "v0002_sha256": "f7a5ccca8a9aa9cc7083286d47cc4932b77b4e062b71768ee7fd5fe187f74b30"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/MusicPreferences.swift",
+      "unchanged": true,
+      "v0001_sha256": "a7cf64138c24effd9473e4e91595adc4debaaa907309a0b7d524ef71570e7e72",
+      "v0002_sha256": "a7cf64138c24effd9473e4e91595adc4debaaa907309a0b7d524ef71570e7e72"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/MusicTitleFormatting.swift",
+      "unchanged": true,
+      "v0001_sha256": "0e92fded5d05e6ef1824a20032c8972f57ab4997df2f19ba7bcc6e5ddac37bee",
+      "v0002_sha256": "0e92fded5d05e6ef1824a20032c8972f57ab4997df2f19ba7bcc6e5ddac37bee"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/NotchContour.swift",
+      "unchanged": true,
+      "v0001_sha256": "937d89061a1104b1cf7eed1908fbddbb839d7464461e68024a17ed0be15a25f6",
+      "v0002_sha256": "937d89061a1104b1cf7eed1908fbddbb839d7464461e68024a17ed0be15a25f6"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/NotchGeometry.swift",
+      "unchanged": true,
+      "v0001_sha256": "edd3a078377b7f00de39ced579843ec29b67fcc39c6098e703aa21de403ee349",
+      "v0002_sha256": "edd3a078377b7f00de39ced579843ec29b67fcc39c6098e703aa21de403ee349"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/NotchGesture.swift",
+      "unchanged": true,
+      "v0001_sha256": "4b7dfbba37c3ee6defae474eed133fa0190e85ce255882ff80c1e6b8422750b2",
+      "v0002_sha256": "4b7dfbba37c3ee6defae474eed133fa0190e85ce255882ff80c1e6b8422750b2"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/NotchHoverMetrics.swift",
+      "unchanged": true,
+      "v0001_sha256": "514dc3cbc429eb7422c40bc3fa1bce007db57f2db6ec91c370202cd66bc68d39",
+      "v0002_sha256": "514dc3cbc429eb7422c40bc3fa1bce007db57f2db6ec91c370202cd66bc68d39"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/NotchTransitionState.swift",
+      "unchanged": true,
+      "v0001_sha256": "91ec58e9555c45fd6d975eb0c3f50a8030a77c2998f9fdee7a4d0842ab1a1422",
+      "v0002_sha256": "91ec58e9555c45fd6d975eb0c3f50a8030a77c2998f9fdee7a4d0842ab1a1422"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/NotchTuning.swift",
+      "unchanged": true,
+      "v0001_sha256": "d480fd00e51cd26050a33fe0602dfa580687509d5dff27796a637a13bfbcc26f",
+      "v0002_sha256": "d480fd00e51cd26050a33fe0602dfa580687509d5dff27796a637a13bfbcc26f"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/PresentationMetrics.swift",
+      "unchanged": true,
+      "v0001_sha256": "6db8e76e786b19bd1cc90e0affee2c43fbd13647b5b109d5cae0fde4b5e9af34",
+      "v0002_sha256": "6db8e76e786b19bd1cc90e0affee2c43fbd13647b5b109d5cae0fde4b5e9af34"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/SongPeekState.swift",
+      "unchanged": true,
+      "v0001_sha256": "865d8ff958bae9037a478aeabc1ad405a2966a10644ade3d33d460720ee1e760",
+      "v0002_sha256": "865d8ff958bae9037a478aeabc1ad405a2966a10644ade3d33d460720ee1e760"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/SystemMediaSnapshot.swift",
+      "unchanged": true,
+      "v0001_sha256": "28c36f40a77fa3c3bfb7c4a0f1ecfb5cf94076d458f64b9b634780dfedb11f4c",
+      "v0002_sha256": "28c36f40a77fa3c3bfb7c4a0f1ecfb5cf94076d458f64b9b634780dfedb11f4c"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/VolumeKey.swift",
+      "unchanged": true,
+      "v0001_sha256": "3c5790e70be499a1eff1372557d5cbed65878db344204cf04d61c47e053b868d",
+      "v0002_sha256": "3c5790e70be499a1eff1372557d5cbed65878db344204cf04d61c47e053b868d"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/VolumeNotice.swift",
+      "unchanged": true,
+      "v0001_sha256": "bd912c90b66db778fe0b7ba84341a7ce077294a9070cb444293df020e65ff544",
+      "v0002_sha256": "bd912c90b66db778fe0b7ba84341a7ce077294a9070cb444293df020e65ff544"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/ActivityPreferencesTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "6bf063a10cd79566ffa8f2a216a96484db3158c8c86bd51152227207c9fca62c",
+      "v0002_sha256": "6bf063a10cd79566ffa8f2a216a96484db3158c8c86bd51152227207c9fca62c"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/ArtworkTransitionTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "4dcc79d8569a3b8e984ba207565c649b302f28517c7c2f848ac11df324859094",
+      "v0002_sha256": "4dcc79d8569a3b8e984ba207565c649b302f28517c7c2f848ac11df324859094"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/CompactWaveformTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "62b74e8b5287292a4ae97d539d4e7eaf0eab075199fd9d010b1b979f62461131",
+      "v0002_sha256": "62b74e8b5287292a4ae97d539d4e7eaf0eab075199fd9d010b1b979f62461131"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/GameMatcherTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "9ff958bc1669545b067fa1d1971910a3422f524611ce3f67a5a99bec01341e91",
+      "v0002_sha256": "9ff958bc1669545b067fa1d1971910a3422f524611ce3f67a5a99bec01341e91"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/MarqueeTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "b7042f4c253ef378bac9a4b13efad6f99d29a322b3e7bd0a405ebe63523d6b23",
+      "v0002_sha256": "b7042f4c253ef378bac9a4b13efad6f99d29a322b3e7bd0a405ebe63523d6b23"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/MediaIdleTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "cb2761970f8dc11a9143b9d66c59099249f1893766ccd5ffb1eeed7880e90fc6",
+      "v0002_sha256": "cb2761970f8dc11a9143b9d66c59099249f1893766ccd5ffb1eeed7880e90fc6"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/MediaProgressTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "0f751a60610a821939a94c7befcf4cc84d945f2317a413ed046687858e0d33bf",
+      "v0002_sha256": "0f751a60610a821939a94c7befcf4cc84d945f2317a413ed046687858e0d33bf"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/MusicPreferencesTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "e8a62fa0dc097353d31483cb2f2fdfcdae54d669fbb67d2ee23ede9aa9ca5c2c",
+      "v0002_sha256": "e8a62fa0dc097353d31483cb2f2fdfcdae54d669fbb67d2ee23ede9aa9ca5c2c"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/MusicTitleFormattingTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "dd0a2697671d84b906e0526a2826d440cfebd98d9afb82b561c6b4d7715d7a11",
+      "v0002_sha256": "dd0a2697671d84b906e0526a2826d440cfebd98d9afb82b561c6b4d7715d7a11"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/NotchContourTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "813f10e22175aed338e6ca26ff1491dc82354e4962dda605a85547a427415171",
+      "v0002_sha256": "813f10e22175aed338e6ca26ff1491dc82354e4962dda605a85547a427415171"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/NotchGestureTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "142b4891055afa0b56be686c57ae0f8bf791bbe2191f376d5c6e1b59f628b22f",
+      "v0002_sha256": "142b4891055afa0b56be686c57ae0f8bf791bbe2191f376d5c6e1b59f628b22f"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/NotchHoverTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "ab0ca05ee2165369eb5f007dd23139adce564986eb8a4cbe756fd593243a4884",
+      "v0002_sha256": "ab0ca05ee2165369eb5f007dd23139adce564986eb8a4cbe756fd593243a4884"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/NotchTransitionTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "90b187d71101691cbb25a35a424d6d75d3e69cbbd9a2f225f256bdf30aca1f48",
+      "v0002_sha256": "90b187d71101691cbb25a35a424d6d75d3e69cbbd9a2f225f256bdf30aca1f48"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/NotchTuningTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "0a7f7f9464c25b6298e8890a57f75bb630fa91262811f8035e623851c0987548",
+      "v0002_sha256": "0a7f7f9464c25b6298e8890a57f75bb630fa91262811f8035e623851c0987548"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/ReferenceCoreTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "4b635611caf3b223f0ba252cf280b88527f9c13d34bbd1ded1e4316e64775111",
+      "v0002_sha256": "4b635611caf3b223f0ba252cf280b88527f9c13d34bbd1ded1e4316e64775111"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/SongPeekTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "2d98238c925b9758f7e8fd1662a437a1a697c80ad8c2497eb5efbe238681ffd6",
+      "v0002_sha256": "2d98238c925b9758f7e8fd1662a437a1a697c80ad8c2497eb5efbe238681ffd6"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/SystemMediaSnapshotTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "c3260a1a5f36a7f22af2261e03ad61807a6d9de702b93350d41cb44e1e2904df",
+      "v0002_sha256": "c3260a1a5f36a7f22af2261e03ad61807a6d9de702b93350d41cb44e1e2904df"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/SystemMediaTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "f8c6461b446262c616e8fcd4b453bcb1a8069b93daf8c6afd3ccb1dd225e6d0c",
+      "v0002_sha256": "f8c6461b446262c616e8fcd4b453bcb1a8069b93daf8c6afd3ccb1dd225e6d0c"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/VolumeKeyTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "0e1befc4d28ca1febb883f9eb60307abaf10cdf47bee9810508a29293bac4896",
+      "v0002_sha256": "0e1befc4d28ca1febb883f9eb60307abaf10cdf47bee9810508a29293bac4896"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ValoraTests/MusicTitleExtrasIntegrationTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "5213850d92e13f251f96219acab1c216a27bcdea6e6f909bb8a6733479b21edb",
+      "v0002_sha256": "5213850d92e13f251f96219acab1c216a27bcdea6e6f909bb8a6733479b21edb"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ValoraTests/NotchTuningIntegrationTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "755bac17cb8c0a7daeb91f4bd103d95eadbdbb7b26c837e4535695127d7cae69",
+      "v0002_sha256": "755bac17cb8c0a7daeb91f4bd103d95eadbdbb7b26c837e4535695127d7cae69"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ValoraTests/RevivalSettingsReloadTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "59f26a0665d0e082c578bd4c65da4f3ca2e3dfbcfb5a7b3ee7a31b7979e60994",
+      "v0002_sha256": "59f26a0665d0e082c578bd4c65da4f3ca2e3dfbcfb5a7b3ee7a31b7979e60994"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ValoraTests/ScrollGestureEntryTests.swift",
+      "unchanged": true,
+      "v0001_sha256": "c071039f639b7c96cb5e7777adb86b19f4e0f11a981a413eb452927e52877d6b",
+      "v0002_sha256": "c071039f639b7c96cb5e7777adb86b19f4e0f11a981a413eb452927e52877d6b"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/NativeBridge/include/NativeBridge.h",
+      "unchanged": true,
+      "v0001_sha256": "5ead4d7c170bd8e052b9f35e9ebe79db3e19207608a49e886ae7c0b8a8b0a532",
+      "v0002_sha256": "5ead4d7c170bd8e052b9f35e9ebe79db3e19207608a49e886ae7c0b8a8b0a532"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/NativeBridge/NativeBridge.m",
+      "unchanged": true,
+      "v0001_sha256": "3bec213b37ff62ac1c7f4c8525b22f6680d6380b6aed9cf9d9e94d08fed7790d",
+      "v0002_sha256": "3bec213b37ff62ac1c7f4c8525b22f6680d6380b6aed9cf9d9e94d08fed7790d"
+    }
+  ],
+  "generated_at": "2026-10-23T02:59:05.737799+00:00",
+  "missing_files": 0,
+  "v0001_environment_sha256": "d5d1ae4758e103dce95417f8b95079b2c2c45c316826fb66eed5771ec657ef27",
+  "v0001_report": "/Users/wangqing/code/Valora/docs/reports/v0001.md",
+  "v0001_report_sha256": "5727e812e9177fd6eb5e5775067f6869abd6f0e026999bcc0487e7030b7ed313",
+  "v0001_source_manifest": "/Users/wangqing/code/Valora/docs/verification/v0001/source-manifest.json",
+  "v0001_source_manifest_sha256": "9482ea3f9cacbd1ee44ea540b36f190c1587ec1d30f104080173ad0297315648"
+}

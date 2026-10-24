@@ -1,0 +1,83 @@
+{
+  "checks" : [
+    {
+      "name" : "static provider produces timed lyrics",
+      "passed" : true
+    },
+    {
+      "name" : "compact lyric row stays visible",
+      "passed" : true
+    },
+    {
+      "name" : "compact lyric row uses the 32pt auxiliary area",
+      "passed" : true
+    },
+    {
+      "name" : "short lyric resolves from playback time",
+      "passed" : true
+    },
+    {
+      "name" : "short lyric does not create a marquee",
+      "passed" : true
+    },
+    {
+      "name" : "long lyric resolves from playback time",
+      "passed" : true
+    },
+    {
+      "name" : "long lyric uses the existing marquee view",
+      "passed" : true
+    },
+    {
+      "name" : "long lyric moves while playing",
+      "passed" : true
+    },
+    {
+      "name" : "pause stops the long lyric marquee in place",
+      "passed" : true
+    },
+    {
+      "name" : "resume continues the marquee",
+      "passed" : true
+    },
+    {
+      "name" : "seek moves to the new lyric line",
+      "passed" : true
+    },
+    {
+      "name" : "blank interstitial clears the previous line",
+      "passed" : true
+    },
+    {
+      "name" : "expanded player hides the compact lyric row",
+      "passed" : true
+    },
+    {
+      "name" : "collapse restores the lyric row at current progress",
+      "passed" : true
+    },
+    {
+      "name" : "no-lyrics falls back to title and artist",
+      "passed" : true
+    },
+    {
+      "name" : "song-change prompt wins over a ready lyric",
+      "passed" : true
+    },
+    {
+      "name" : "song-change prompt removes the lyric marquee",
+      "passed" : true
+    },
+    {
+      "name" : "lyric returns after the song-change prompt",
+      "passed" : true
+    },
+    {
+      "name" : "lyrics follow the active screen",
+      "passed" : true
+    }
+  ],
+  "passed" : true,
+  "provider" : "static QA, no network\/media\/audio",
+  "screenCount" : 2
+}

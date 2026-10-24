@@ -1,0 +1,72 @@
+Another instance of SwiftPM (PID: 52805) is already running using '/Users/wangqing/code/Valora/.build', waiting until that process has finished execution...Building for debugging...
+[Using on-disk description]
+[2 / 19] ReferenceCore
+[4 / 21] ReferenceCore
+[12 / 25] ReferenceCoreTests-product
+[14 / 27] Valora-product
+[20 / 31] ReferenceCoreTests-product
+[26 / 36] Valora-product
+[28 / 38] Valora-product
+[37 / 42] ValoraTests-product
+[40 / 43] ValoraTests-product
+[43 / 47] ValoraTests-product
+Build complete! (2.85秒)
+Test Suite 'Selected tests' started at 2026-10-24 01:56:25.867.
+Test Suite 'ValoraTests.xctest' started at 2026-10-24 01:56:25.869.
+Test Suite 'ValoraTests.xctest' passed at 2026-10-24 01:56:25.869.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-24 01:56:25.869.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'Selected tests' started at 2026-10-24 01:56:25.950.
+Test Suite 'ReferenceCoreTests.xctest' started at 2026-10-24 01:56:25.952.
+Test Suite 'QQMusicLyricsTests' started at 2026-10-24 01:56:25.952.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testAlbumMismatchIsRejected]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testAlbumMismatchIsRejected]' passed (0.001 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testAmbiguousCandidatesAreNotPickedByPosition]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testAmbiguousCandidatesAreNotPickedByPosition]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testArtistMismatchAndEmptyCandidates]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testArtistMismatchAndEmptyCandidates]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testDurationMismatchIsRejected]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testDurationMismatchIsRejected]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExactAlbumIsPreferredOverUnknownAlbum]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExactAlbumIsPreferredOverUnknownAlbum]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExactStudioMatchRequiresMetadataAgreement]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExactStudioMatchRequiresMetadataAgreement]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExplicitLiveRequestMatchesOnlyLiveVersion]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExplicitLiveRequestMatchesOnlyLiveVersion]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLiveVersionIsNotChosenForStudioRequest]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLiveVersionIsNotChosenForStudioRequest]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCClassifiesPlainInstrumentalAndEmpty]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCClassifiesPlainInstrumentalAndEmpty]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCRejectsInvalidTimeBoundariesAndEmptyTimedText]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCRejectsInvalidTimeBoundariesAndEmptyTimedText]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCTimedLinesMetadataMultipleTimestampsAndOffset]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCTimedLinesMetadataMultipleTimestampsAndOffset]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricAPIErrorWinsOverLyricBody]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricAPIErrorWinsOverLyricBody]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricHTTPFailureWinsOverParseableBody]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricHTTPFailureWinsOverParseableBody]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricMalformedAndNoLyricsAreDistinct]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricMalformedAndNoLyricsAreDistinct]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricResponseSupportsPlainAndBase64Payloads]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricResponseSupportsPlainAndBase64Payloads]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricSuccessfulEvaluationKeepsTimedContent]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricSuccessfulEvaluationKeepsTimedContent]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testQRCHTTPAndBusinessStatusAreGated]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testQRCHTTPAndBusinessStatusAreGated]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testQRCWordTimingParserDoesNotInventTimestamps]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testQRCWordTimingParserDoesNotInventTimestamps]' passed (0.001 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testRemixAndInstrumentalTagsAreTreatedAsVersions]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testRemixAndInstrumentalTagsAreTreatedAsVersions]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testSearchHTTPAndAPIStatusAreGatedBeforeCandidates]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testSearchHTTPAndAPIStatusAreGatedBeforeCandidates]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testSearchParserAcceptsCurrentShapeAndLegacyJSONP]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testSearchParserAcceptsCurrentShapeAndLegacyJSONP]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testSearchParserReportsAPIError]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testSearchParserReportsAPIError]' passed (0.000 seconds).
+Test Suite 'QQMusicLyricsTests' passed at 2026-10-24 01:56:25.959.
+	 Executed 22 tests, with 0 failures (0 unexpected) in 0.006 (0.007) seconds
+Test Suite 'ReferenceCoreTests.xctest' passed at 2026-10-24 01:56:25.959.
+	 Executed 22 tests, with 0 failures (0 unexpected) in 0.006 (0.007) seconds
+Test Suite 'Selected tests' passed at 2026-10-24 01:56:25.959.
+	 Executed 22 tests, with 0 failures (0 unexpected) in 0.006 (0.009) seconds

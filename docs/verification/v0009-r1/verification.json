@@ -1,0 +1,57 @@
+{
+  "covered_paths": [
+    "All displays -> Main display selection change through real WindowCoordinator.place/resetForScreenChange",
+    "direct screen-change reset with pending paused activity",
+    "pause -> disable -> re-enable refreshes a bounded idle deadline",
+    "identical metadata polls do not postpone an already-armed deadline"
+  ],
+  "failed_regression": {
+    "after": "passed",
+    "before": "failed: paused activity remained visible/pending after 3.6s following All displays -> Main display",
+    "log": "/Users/wangqing/code/Valora/docs/verification/v0009-r1/idle-regression.log",
+    "name": "testPausedIdleDeadlineSurvivesDisplaySelectionChange"
+  },
+  "generated_at": "2026-10-23T16:28:15.809207+00:00",
+  "limitations": [
+    "No real player/seek/volume/permission/login-item writes were performed.",
+    "Injected/fake screens and fake media exercise coordinator timing only; no physical dual-screen claim.",
+    "Context-menu/settings visuals are unchanged from V0009 and were not redesigned."
+  ],
+  "multidisplay_regression": {
+    "checks": 12,
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0009-r1/multidisplay/verification.json",
+    "note": "Injected two-screen coordinator/render verification; not physical dual-screen experience.",
+    "passed": true
+  },
+  "read_only_live": {
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0009-r1/live/live-diagnostic.json",
+    "playerCommandSent": false,
+    "privateMetadataRecorded": false
+  },
+  "settings_regression": {
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0009-r1/settings/verification.json",
+    "pages": [
+      "General",
+      "Now Playing"
+    ]
+  },
+  "shared_reset_audit": "Screen unplug/selection/geometry and hide/fullscreen transitions all route through resetForScreenChange; re-arm preserves the remaining deadline. Disable first updates mediaIdle to non-pending, so no stale timer is re-armed; re-enable creates a fresh bounded task.",
+  "task_sha256": "262af877338e83496922e05762ab6a87724b1036341690f971a0bc284156266f",
+  "tests": {
+    "log": "/Users/wangqing/code/Valora/docs/verification/v0009-r1/test.log",
+    "new_regressions": [
+      "testSameValueMetadataPollsDoNotPostponePausedIdleDeadline",
+      "testPausedIdleDeadlineSurvivesDisableThenEnable",
+      "testPausedIdleDeadlineSurvivesScreenReset"
+    ],
+    "original_v0009_regression": "All original V0009 checks plus the independent regression pass.",
+    "reference_core": 62,
+    "total": 95,
+    "valora": 33
+  },
+  "ui_regression": {
+    "checks": 74,
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0009-r1/ui/verification.json",
+    "passed": true
+  }
+}

@@ -1,0 +1,76 @@
+--- a/Sources/Valora/AppDelegate.swift
++++ b/Sources/Valora/AppDelegate.swift
+@@ -1,6 +1,7 @@
+ import AppKit
+ import SwiftUI
+ import Combine
++import CoreImage
+ import NativeBridge
+ import ReferenceCore
+ 
+@@ -154,45 +155,29 @@
+         }
+     }
+ 
+-    /// Menu-bar-only monochrome V. It is drawn as a native AppKit vector with
+-    /// transparent background, no squircle/glow/gradient, and template=true so
+-    /// macOS can tint it for light/dark and the selected state. The app icon is
+-    /// intentionally not reused as the menu-bar image.
++    /// The complete confirmed app icon, desaturated at load time. The squircle
++    /// base, V shape, shading and transparent edges are kept; only color is
++    /// removed. It stays a non-template image so the gray levels are preserved.
+     private func statusBarImage() -> NSImage {
+         let points: CGFloat = 18
+-        let image = NSImage(size: NSSize(width: points, height: points))
+-        for scale in 1...3 {
+-            let pixels = Int(points) * scale
+-            guard let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: pixels, pixelsHigh: pixels,
+-                                             bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
+-                                             colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0),
+-                  let context = NSGraphicsContext(bitmapImageRep: rep) else { continue }
+-            NSGraphicsContext.saveGraphicsState()
+-            NSGraphicsContext.current = context
+-            context.cgContext.scaleBy(x: CGFloat(scale), y: CGFloat(scale))
+-            NSColor.black.setStroke()
+-            let path = NSBezierPath()
+-            path.lineCapStyle = .round
+-            path.lineJoinStyle = .round
+-            path.lineWidth = 4.5
+-            path.move(to: NSPoint(x: 4.3, y: 14.6))
+-            path.curve(to: NSPoint(x: 7.7, y: 5.4),
+-                       controlPoint1: NSPoint(x: 5.3, y: 11.5),
+-                       controlPoint2: NSPoint(x: 6.6, y: 7.3))
+-            path.curve(to: NSPoint(x: 10.3, y: 5.4),
+-                       controlPoint1: NSPoint(x: 8.4, y: 3.6),
+-                       controlPoint2: NSPoint(x: 9.6, y: 3.6))
+-            path.curve(to: NSPoint(x: 13.7, y: 14.6),
+-                       controlPoint1: NSPoint(x: 11.4, y: 7.3),
+-                       controlPoint2: NSPoint(x: 12.7, y: 11.5))
+-            path.stroke()
+-            context.flushGraphics()
+-            NSGraphicsContext.restoreGraphicsState()
+-            rep.size = NSSize(width: points, height: points)
+-            image.addRepresentation(rep)
++        let iconURL = Bundle.main.resourceURL?.appendingPathComponent("AppIcon.icns")
++        let source = iconURL.flatMap { NSImage(contentsOf: $0) }
++            ?? NSWorkspace.shared.icon(forFile: Bundle.main.bundlePath)
++        var sourceRect = CGRect(origin: .zero, size: source.size)
++        guard let cg = source.cgImage(forProposedRect: &sourceRect, context: nil, hints: nil) else {
++            source.size = NSSize(width: points, height: points)
++            source.isTemplate = false
++            return source
+         }
+-        image.size = NSSize(width: points, height: points)
+-        image.isTemplate = true
++        let input = CIImage(cgImage: cg)
++        guard let filter = CIFilter(name: "CIColorControls") else { return source }
++        filter.setValue(input, forKey: kCIInputImageKey)
++        filter.setValue(0.0, forKey: kCIInputSaturationKey)
++        guard let output = filter.outputImage,
++              let gray = CIContext(options: [.cacheIntermediates: false])
++                .createCGImage(output, from: output.extent) else { return source }
++        let image = NSImage(cgImage: gray, size: NSSize(width: points, height: points))
++        image.isTemplate = false
+         return image
+     }
+ 

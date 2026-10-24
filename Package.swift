@@ -1,0 +1,40 @@
+// swift-tools-version: 6.4
+import PackageDescription
+
+// Valora: Swift 6 language mode migration of the Alcove music revival sources.
+// Deployment baseline is macOS 27.0; no compatibility layer for older systems.
+let package = Package(
+    name: "Valora",
+    platforms: [.macOS("27.0")],
+    products: [
+        .executable(name: "Valora", targets: ["Valora"])
+    ],
+    targets: [
+        .target(name: "ReferenceCore"),
+        .target(
+            name: "NativeBridge",
+            publicHeadersPath: "include",
+            cSettings: [.unsafeFlags(["-fobjc-arc"])],
+            linkerSettings: [
+                .linkedFramework("Foundation"),
+                .linkedFramework("CoreAudio"),
+                .linkedFramework("IOKit"),
+                .linkedFramework("AppKit")
+            ]
+        ),
+        .executableTarget(
+            name: "Valora",
+            dependencies: ["NativeBridge", "ReferenceCore"],
+            linkerSettings: [
+                .linkedFramework("AppKit"),
+                .linkedFramework("SwiftUI"),
+                .linkedFramework("ServiceManagement"),
+                .linkedFramework("CoreAudio"),
+                .linkedFramework("Accelerate")
+            ]
+        ),
+        .testTarget(name: "ReferenceCoreTests", dependencies: ["ReferenceCore"]),
+        .testTarget(name: "ValoraTests", dependencies: ["Valora", "ReferenceCore"])
+    ],
+    swiftLanguageModes: [.v6]
+)

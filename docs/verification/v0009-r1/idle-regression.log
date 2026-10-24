@@ -1,0 +1,20 @@
+Building for debugging...
+[Using on-disk description]
+Build complete! (0.35秒)
+Test Suite 'Selected tests' started at 2026-10-24 00:25:49.974.
+Test Suite 'ValoraTests.xctest' started at 2026-10-24 00:25:49.975.
+Test Suite 'MultiDisplayCoordinatorTests' started at 2026-10-24 00:25:49.975.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesDisplaySelectionChange]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesDisplaySelectionChange]' passed (4.313 seconds).
+Test Suite 'MultiDisplayCoordinatorTests' passed at 2026-10-24 00:25:54.288.
+	 Executed 1 test, with 0 failures (0 unexpected) in 4.313 (4.313) seconds
+Test Suite 'ValoraTests.xctest' passed at 2026-10-24 00:25:54.288.
+	 Executed 1 test, with 0 failures (0 unexpected) in 4.313 (4.313) seconds
+Test Suite 'Selected tests' passed at 2026-10-24 00:25:54.288.
+	 Executed 1 test, with 0 failures (0 unexpected) in 4.313 (4.314) seconds
+Test Suite 'Selected tests' started at 2026-10-24 00:25:54.393.
+Test Suite 'ReferenceCoreTests.xctest' started at 2026-10-24 00:25:54.394.
+Test Suite 'ReferenceCoreTests.xctest' passed at 2026-10-24 00:25:54.394.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-24 00:25:54.394.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds

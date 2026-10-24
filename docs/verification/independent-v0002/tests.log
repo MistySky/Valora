@@ -1,0 +1,415 @@
+Building for debugging...
+[Pre-planning 1 / 183]
+[Planning deferred tasks]
+[51 / 107]
+[53 / 108] ReferenceCore
+[71 / 187]
+[81 / 187]
+[85 / 187]
+[87 / 187]
+[93 / 187]
+[99 / 187]
+[105 / 187]
+[110 / 187]
+[113 / 187]
+[116 / 187]
+[122 / 187] NativeBridge
+[122 / 187]
+[123 / 187]
+[134 / 187] ReferenceCore
+[151 / 190] Valora
+[166 / 254]
+[177 / 270]
+[179 / 270]
+[181 / 270]
+[187 / 270]
+[189 / 270]
+[191 / 270]
+[194 / 270]
+[195 / 270]
+[197 / 270]
+[198 / 270]
+[208 / 270] ReferenceCoreTests-product
+[209 / 270] ReferenceCoreTests-product
+[214 / 270] ReferenceCoreTests-product
+[216 / 270] ReferenceCoreTests-product
+[220 / 270]
+[231 / 270] Valora-product
+[240 / 270] Valora
+[243 / 270] Valora
+[245 / 270] Valora
+[246 / 270] ValoraTests-product
+[247 / 270] ValoraTests-product
+[249 / 270]
+[251 / 270] Valora
+[251 / 270] Valora-product
+[251 / 270] Valora
+[251 / 270] Valora-product
+[253 / 270] Valora
+[255 / 270] Valora
+[260 / 271] ValoraTests-product
+[266 / 277] ValoraTests-product
+/Users/wangqing/code/Valora/Tests/ValoraTests/RevivalSettingsReloadTests.swift:13:9: warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+ 7 | final class RevivalSettingsReloadTests: XCTestCase {
+ 8 |     private let suite = "com.wangqing.valora.review-batch-tests"
+ 9 |     private var defaults: UserDefaults { UserDefaults(suiteName: suite)! }
+   |                 `- note: property declared here
+10 | 
+11 |     override func setUp() {
+12 |         super.setUp()
+13 |         defaults.removePersistentDomain(forName: suite)
+   |         `- warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+14 |     }
+15 |     override func tearDown() {
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/RevivalSettingsReloadTests.swift:16:9: warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+ 7 | final class RevivalSettingsReloadTests: XCTestCase {
+ 8 |     private let suite = "com.wangqing.valora.review-batch-tests"
+ 9 |     private var defaults: UserDefaults { UserDefaults(suiteName: suite)! }
+   |                 `- note: property declared here
+10 | 
+11 |     override func setUp() {
+   :
+14 |     }
+15 |     override func tearDown() {
+16 |         defaults.removePersistentDomain(forName: suite)
+   |         `- warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+17 |         super.tearDown()
+18 |     }
+/Users/wangqing/code/Valora/Tests/ValoraTests/NotchTuningIntegrationTests.swift:11:44: warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+  7 | final class NotchTuningIntegrationTests: XCTestCase {
+  8 |     private let suite = "com.wangqing.valora.notch-tuning-tests"
+  9 |     private var defaults: UserDefaults { UserDefaults(suiteName: suite)! }
+    |                 `- note: property declared here
+ 10 | 
+ 11 |     override func setUp() { super.setUp(); defaults.removePersistentDomain(forName: suite) }
+    |                                            `- warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+ 12 |     override func tearDown() { defaults.removePersistentDomain(forName: suite); super.tearDown() }
+ 13 | 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/NotchTuningIntegrationTests.swift:12:32: warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+  7 | final class NotchTuningIntegrationTests: XCTestCase {
+  8 |     private let suite = "com.wangqing.valora.notch-tuning-tests"
+  9 |     private var defaults: UserDefaults { UserDefaults(suiteName: suite)! }
+    |                 `- note: property declared here
+ 10 | 
+ 11 |     override func setUp() { super.setUp(); defaults.removePersistentDomain(forName: suite) }
+ 12 |     override func tearDown() { defaults.removePersistentDomain(forName: suite); super.tearDown() }
+    |                                `- warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+ 13 | 
+ 14 |     func testExistingCandidateKeysSaveRecreateReloadAndDeleteFallback() {
+/Users/wangqing/code/Valora/Tests/ValoraTests/ScrollGestureEntryTests.swift:18:9: warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+ 12 | final class ScrollGestureEntryTests: XCTestCase {
+ 13 |     private let suite = "com.wangqing.valora.scroll-entry-tests"
+ 14 |     private var defaults: UserDefaults { UserDefaults(suiteName: suite)! }
+    |                 `- note: property declared here
+ 15 | 
+ 16 |     override func setUp() {
+ 17 |         super.setUp()
+ 18 |         defaults.removePersistentDomain(forName: suite)
+    |         `- warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+ 19 |     }
+ 20 | 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/ScrollGestureEntryTests.swift:22:9: warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+ 12 | final class ScrollGestureEntryTests: XCTestCase {
+ 13 |     private let suite = "com.wangqing.valora.scroll-entry-tests"
+ 14 |     private var defaults: UserDefaults { UserDefaults(suiteName: suite)! }
+    |                 `- note: property declared here
+ 15 | 
+ 16 |     override func setUp() {
+    :
+ 20 | 
+ 21 |     override func tearDown() {
+ 22 |         defaults.removePersistentDomain(forName: suite)
+    |         `- warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+ 23 |         super.tearDown()
+ 24 |     }
+[271 / 277] ValoraTests-product
+[273 / 277] ValoraTests-product
+Build complete! (18.35秒)
+Test Suite 'All tests' started at 2026-10-23 11:06:03.935.
+Test Suite 'ValoraTests.xctest' started at 2026-10-23 11:06:03.936.
+Test Suite 'MusicTitleExtrasIntegrationTests' started at 2026-10-23 11:06:03.936.
+Test Case '-[ValoraTests.MusicTitleExtrasIntegrationTests testActualSettingsReloadReformatsWithoutMutatingMediaIdentity]' started.
+Test Case '-[ValoraTests.MusicTitleExtrasIntegrationTests testActualSettingsReloadReformatsWithoutMutatingMediaIdentity]' passed (0.004 seconds).
+Test Suite 'MusicTitleExtrasIntegrationTests' passed at 2026-10-23 11:06:03.940.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.004 (0.004) seconds
+Test Suite 'NotchTuningIntegrationTests' started at 2026-10-23 11:06:03.940.
+Test Case '-[ValoraTests.NotchTuningIntegrationTests testExistingCandidateKeysSaveRecreateReloadAndDeleteFallback]' started.
+Test Case '-[ValoraTests.NotchTuningIntegrationTests testExistingCandidateKeysSaveRecreateReloadAndDeleteFallback]' passed (0.001 seconds).
+Test Case '-[ValoraTests.NotchTuningIntegrationTests testForcedSimulatedNoNotchIgnoresOffsets]' started.
+Test Case '-[ValoraTests.NotchTuningIntegrationTests testForcedSimulatedNoNotchIgnoresOffsets]' passed (0.002 seconds).
+Test Case '-[ValoraTests.NotchTuningIntegrationTests testNegativeShrinkRemovesOldRightAndBottomEdges]' started.
+Test Case '-[ValoraTests.NotchTuningIntegrationTests testNegativeShrinkRemovesOldRightAndBottomEdges]' passed (0.001 seconds).
+Test Case '-[ValoraTests.NotchTuningIntegrationTests testNoNotchPillUsesTopInsetAndIgnoresSavedOffsets]' started.
+Test Case '-[ValoraTests.NotchTuningIntegrationTests testNoNotchPillUsesTopInsetAndIgnoresSavedOffsets]' passed (0.001 seconds).
+Test Case '-[ValoraTests.NotchTuningIntegrationTests testPositiveExpansionAddsClickableRightAndBottomEdges]' started.
+Test Case '-[ValoraTests.NotchTuningIntegrationTests testPositiveExpansionAddsClickableRightAndBottomEdges]' passed (0.001 seconds).
+Test Case '-[ValoraTests.NotchTuningIntegrationTests testSwitchingGeometryReevaluatesHitEnvelope]' started.
+Test Case '-[ValoraTests.NotchTuningIntegrationTests testSwitchingGeometryReevaluatesHitEnvelope]' passed (0.001 seconds).
+Test Suite 'NotchTuningIntegrationTests' passed at 2026-10-23 11:06:03.948.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.007 (0.008) seconds
+Test Suite 'RevivalSettingsReloadTests' started at 2026-10-23 11:06:03.948.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testInitDefaultsAndDraftReloadAndRemovedKeyFallback]' started.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testInitDefaultsAndDraftReloadAndRemovedKeyFallback]' passed (0.001 seconds).
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testNowPlayingAndMusicPreferenceRoundTrip]' started.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testNowPlayingAndMusicPreferenceRoundTrip]' passed (0.001 seconds).
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testSimulatedAndCapturePreferencesAreConsumedBySettings]' started.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testSimulatedAndCapturePreferencesAreConsumedBySettings]' passed (0.001 seconds).
+Test Suite 'RevivalSettingsReloadTests' passed at 2026-10-23 11:06:03.950.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+Test Suite 'ScrollGestureEntryTests' started at 2026-10-23 11:06:03.950.
+Test Case '-[ValoraTests.ScrollGestureEntryTests testCancelledEventCannotTriggerActionWithItsOwnDelta]' started.
+Test Case '-[ValoraTests.ScrollGestureEntryTests testCancelledEventCannotTriggerActionWithItsOwnDelta]' passed (0.042 seconds).
+Test Case '-[ValoraTests.ScrollGestureEntryTests testCancelledPhaseClearsPendingAccumulation]' started.
+Test Case '-[ValoraTests.ScrollGestureEntryTests testCancelledPhaseClearsPendingAccumulation]' passed (0.000 seconds).
+Test Case '-[ValoraTests.ScrollGestureEntryTests testCancelledVerticalCloseCannotTriggerWithItsOwnDelta]' started.
+Test Case '-[ValoraTests.ScrollGestureEntryTests testCancelledVerticalCloseCannotTriggerWithItsOwnDelta]' passed (0.000 seconds).
+Test Case '-[ValoraTests.ScrollGestureEntryTests testFullPhaseThenMomentumSequenceDoesNotCarryAccumulation]' started.
+Test Case '-[ValoraTests.ScrollGestureEntryTests testFullPhaseThenMomentumSequenceDoesNotCarryAccumulation]' passed (0.000 seconds).
+Test Case '-[ValoraTests.ScrollGestureEntryTests testInvertedDeviceDirectionNormalizationIsAppliedAtEntry]' started.
+Test Case '-[ValoraTests.ScrollGestureEntryTests testInvertedDeviceDirectionNormalizationIsAppliedAtEntry]' passed (0.000 seconds).
+Test Case '-[ValoraTests.ScrollGestureEntryTests testMomentumContinuesGestureAndEndedClearsIt]' started.
+Test Case '-[ValoraTests.ScrollGestureEntryTests testMomentumContinuesGestureAndEndedClearsIt]' passed (0.000 seconds).
+Test Case '-[ValoraTests.ScrollGestureEntryTests testNaturalMovementChangesEntryDirectionOnNonInvertedDevice]' started.
+Test Case '-[ValoraTests.ScrollGestureEntryTests testNaturalMovementChangesEntryDirectionOnNonInvertedDevice]' passed (0.000 seconds).
+Test Case '-[ValoraTests.ScrollGestureEntryTests testNonScrollEventIsIgnoredWithoutChangingAccumulation]' started.
+Test Case '-[ValoraTests.ScrollGestureEntryTests testNonScrollEventIsIgnoredWithoutChangingAccumulation]' passed (0.000 seconds).
+Test Case '-[ValoraTests.ScrollGestureEntryTests testNormalizedVerticalUpClosesExpandedPanel]' started.
+Test Case '-[ValoraTests.ScrollGestureEntryTests testNormalizedVerticalUpClosesExpandedPanel]' passed (0.000 seconds).
+Test Case '-[ValoraTests.ScrollGestureEntryTests testPhaseLessLegacyWheelDeltasDoNotAccumulateAcrossEvents]' started.
+Test Case '-[ValoraTests.ScrollGestureEntryTests testPhaseLessLegacyWheelDeltasDoNotAccumulateAcrossEvents]' passed (0.000 seconds).
+Test Case '-[ValoraTests.ScrollGestureEntryTests testPhaseLessPreciseEventsDoNotAccumulateAcrossEvents]' started.
+Test Case '-[ValoraTests.ScrollGestureEntryTests testPhaseLessPreciseEventsDoNotAccumulateAcrossEvents]' passed (0.000 seconds).
+Test Case '-[ValoraTests.ScrollGestureEntryTests testTrackpadBeganChangedEndedAccumulatesOnceAndThenResets]' started.
+Test Case '-[ValoraTests.ScrollGestureEntryTests testTrackpadBeganChangedEndedAccumulatesOnceAndThenResets]' passed (0.000 seconds).
+Test Suite 'ScrollGestureEntryTests' passed at 2026-10-23 11:06:03.995.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.044 (0.045) seconds
+Test Suite 'ValoraTests.xctest' passed at 2026-10-23 11:06:03.995.
+	 Executed 22 tests, with 0 failures (0 unexpected) in 0.057 (0.059) seconds
+Test Suite 'All tests' passed at 2026-10-23 11:06:03.995.
+	 Executed 22 tests, with 0 failures (0 unexpected) in 0.057 (0.060) seconds
+Test Suite 'All tests' started at 2026-10-23 11:06:04.479.
+Test Suite 'ReferenceCoreTests.xctest' started at 2026-10-23 11:06:04.479.
+Test Suite 'ActivityPreferencesTests' started at 2026-10-23 11:06:04.479.
+Test Case '-[ReferenceCoreTests.ActivityPreferencesTests testIdleActivityRawAndLegacyExpandedActivityValues]' started.
+Test Case '-[ReferenceCoreTests.ActivityPreferencesTests testIdleActivityRawAndLegacyExpandedActivityValues]' passed (0.001 seconds).
+Test Case '-[ReferenceCoreTests.ActivityPreferencesTests testLegacyForceKeyIsOnlyAMostRecentAliasWhenCanonicalKeyIsAbsent]' started.
+Test Case '-[ReferenceCoreTests.ActivityPreferencesTests testLegacyForceKeyIsOnlyAMostRecentAliasWhenCanonicalKeyIsAbsent]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ActivityPreferencesTests testMostRecentDoesNotFabricateAnActivityWithoutMedia]' started.
+Test Case '-[ReferenceCoreTests.ActivityPreferencesTests testMostRecentDoesNotFabricateAnActivityWithoutMedia]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ActivityPreferencesTests testRegistrationDefaultsAndSeparateKeys]' started.
+Test Case '-[ReferenceCoreTests.ActivityPreferencesTests testRegistrationDefaultsAndSeparateKeys]' passed (0.000 seconds).
+Test Suite 'ActivityPreferencesTests' passed at 2026-10-23 11:06:04.481.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.001 (0.002) seconds
+Test Suite 'ArtworkTransitionTests' started at 2026-10-23 11:06:04.481.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testDisableOrMissingArtworkInvalidatesPendingCompletion]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testDisableOrMissingArtworkInvalidatesPendingCompletion]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testInitialAndDuplicateArtworkDoNotFlip]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testInitialAndDuplicateArtworkDoNotFlip]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testRapidChangesKeepOnlyNewestQueuedArtwork]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testRapidChangesKeepOnlyNewestQueuedArtwork]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testRecoveredScaleEndpointsAndPreferenceFallbacks]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testRecoveredScaleEndpointsAndPreferenceFallbacks]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testReturningToTargetDropsObsoleteQueue]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testReturningToTargetDropsObsoleteQueue]' passed (0.000 seconds).
+Test Suite 'ArtworkTransitionTests' passed at 2026-10-23 11:06:04.482.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'CompactWaveformTests' started at 2026-10-23 11:06:04.482.
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testExpandedConstructorHasItsOwnEnvelope]' started.
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testExpandedConstructorHasItsOwnEnvelope]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testRecoveredUnsignedHashVector]' started.
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testRecoveredUnsignedHashVector]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testSourceRevisionAndOverflowStayWithinRecoveredHeightRange]' started.
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testSourceRevisionAndOverflowStayWithinRecoveredHeightRange]' passed (0.000 seconds).
+Test Suite 'CompactWaveformTests' passed at 2026-10-23 11:06:04.483.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'GameMatcherTests' started at 2026-10-23 11:06:04.483.
+Test Case '-[ReferenceCoreTests.GameMatcherTests testNonGamesDoNotMatch]' started.
+Test Case '-[ReferenceCoreTests.GameMatcherTests testNonGamesDoNotMatch]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.GameMatcherTests testPathFragmentsAndCategoryFallback]' started.
+Test Case '-[ReferenceCoreTests.GameMatcherTests testPathFragmentsAndCategoryFallback]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.GameMatcherTests testRecoveredLeagueBundleIdentifiers]' started.
+Test Case '-[ReferenceCoreTests.GameMatcherTests testRecoveredLeagueBundleIdentifiers]' passed (0.000 seconds).
+Test Suite 'GameMatcherTests' passed at 2026-10-23 11:06:04.484.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'MarqueeTests' started at 2026-10-23 11:06:04.484.
+Test Case '-[ReferenceCoreTests.MarqueeTests testOverflowIncludesLeadingInset]' started.
+Test Case '-[ReferenceCoreTests.MarqueeTests testOverflowIncludesLeadingInset]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MarqueeTests testTwoRowsShareCycleButUseTheirOwnMovementDuration]' started.
+Test Case '-[ReferenceCoreTests.MarqueeTests testTwoRowsShareCycleButUseTheirOwnMovementDuration]' passed (0.000 seconds).
+Test Suite 'MarqueeTests' passed at 2026-10-23 11:06:04.484.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'MediaIdleTests' started at 2026-10-23 11:06:04.484.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testDurationChangeReplacesTaskAndZeroMeansNoGrace]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testDurationChangeReplacesTaskAndZeroMeansNoGrace]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testHoverCancelsThenExitStartsFullNewWait]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testHoverCancelsThenExitStartsFullNewWait]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testNotificationIsNotDismissedByAnOldMusicTimeout]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testNotificationIsNotDismissedByAnOldMusicTimeout]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testPausedTrackExpiresWithoutRepeatedPollsExtendingDeadline]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testPausedTrackExpiresWithoutRepeatedPollsExtendingDeadline]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testResumeAndSecondPauseRejectFirstPauseTimeout]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testResumeAndSecondPauseRejectFirstPauseTimeout]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testTrackSourceAndDisableInvalidateOldTasks]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testTrackSourceAndDisableInvalidateOldTasks]' passed (0.000 seconds).
+Test Suite 'MediaIdleTests' passed at 2026-10-23 11:06:04.485.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'MediaProgressTests' started at 2026-10-23 11:06:04.485.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testCancelledDragDoesNotLeakIntoNewTrack]' started.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testCancelledDragDoesNotLeakIntoNewTrack]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaProgressTests testDragIsRelativeAndDoesNotJumpWhenPlayerUpdates]' started.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testDragIsRelativeAndDoesNotJumpWhenPlayerUpdates]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaProgressTests testTapAfterDragIsSuppressedAndCoordinatesAreClamped]' started.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testTapAfterDragIsSuppressedAndCoordinatesAreClamped]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaProgressTests testUnknownDurationAndNonFiniteInputsCannotSeek]' started.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testUnknownDurationAndNonFiniteInputsCannotSeek]' passed (0.000 seconds).
+Test Suite 'MediaProgressTests' passed at 2026-10-23 11:06:04.486.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'MusicPreferencesTests' started at 2026-10-23 11:06:04.486.
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testDefaultsAndDictionaryRoundTrip]' started.
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testDefaultsAndDictionaryRoundTrip]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testDurationCannotCrashTaskSleepOrEscapeSliderBounds]' started.
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testDurationCannotCrashTaskSleepOrEscapeSliderBounds]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testOnlyTheKnownCurrentSourceHidesActivity]' started.
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testOnlyTheKnownCurrentSourceHidesActivity]' passed (0.000 seconds).
+Test Suite 'MusicPreferencesTests' passed at 2026-10-23 11:06:04.487.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'MusicTitleFormattingTests' started at 2026-10-23 11:06:04.487.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testDisabledPreservesRawTitleExactly]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testDisabledPreservesRawTitleExactly]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testEmptyProcessedTitleFallsBackToTrimmedOriginal]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testEmptyProcessedTitleFallsBackToTrimmedOriginal]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testNestedAndCrossedBracketsUseIndependentDepths]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testNestedAndCrossedBracketsUseIndependentDepths]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testUnicodeCharactersAndFullWidthBracketsArePreserved]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testUnicodeCharactersAndFullWidthBracketsArePreserved]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testUnmatchedClosersRemainAndOpenersHideRemainder]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testUnmatchedClosersRemainAndOpenersHideRemainder]' passed (0.000 seconds).
+Test Suite 'MusicTitleFormattingTests' passed at 2026-10-23 11:06:04.488.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'NotchContourTests' started at 2026-10-23 11:06:04.488.
+Test Case '-[ReferenceCoreTests.NotchContourTests testFloatingScreenUsesPillAndIgnoresDelayedNotchCornerFlag]' started.
+Test Case '-[ReferenceCoreTests.NotchContourTests testFloatingScreenUsesPillAndIgnoresDelayedNotchCornerFlag]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchContourTests testPhysicalCornersRequireBothExpandedFlags]' started.
+Test Case '-[ReferenceCoreTests.NotchContourTests testPhysicalCornersRequireBothExpandedFlags]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchContourTests testSimulatedNotchKeepsShouldersOnExternalScreen]' started.
+Test Case '-[ReferenceCoreTests.NotchContourTests testSimulatedNotchKeepsShouldersOnExternalScreen]' passed (0.000 seconds).
+Test Suite 'NotchContourTests' passed at 2026-10-23 11:06:04.488.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'NotchGestureTests' started at 2026-10-23 11:06:04.488.
+Test Case '-[ReferenceCoreTests.NotchGestureTests testDirectionOnlyResolutionMatchesTranslationResolution]' started.
+Test Case '-[ReferenceCoreTests.NotchGestureTests testDirectionOnlyResolutionMatchesTranslationResolution]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchGestureTests testEndedPhaseEvaluatesItsOwnDeltaThenResets]' started.
+Test Case '-[ReferenceCoreTests.NotchGestureTests testEndedPhaseEvaluatesItsOwnDeltaThenResets]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchGestureTests testExpandedDownCyclesOrDismisses]' started.
+Test Case '-[ReferenceCoreTests.NotchGestureTests testExpandedDownCyclesOrDismisses]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchGestureTests testHorizontalSkipDirectionAndNaturalMovement]' started.
+Test Case '-[ReferenceCoreTests.NotchGestureTests testHorizontalSkipDirectionAndNaturalMovement]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchGestureTests testScrollAccumulatorResetsOnEndedAndIgnoresWrongSettings]' started.
+Test Case '-[ReferenceCoreTests.NotchGestureTests testScrollAccumulatorResetsOnEndedAndIgnoresWrongSettings]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchGestureTests testScrollAccumulatorThresholdsForExpandedCycleAndClose]' started.
+Test Case '-[ReferenceCoreTests.NotchGestureTests testScrollAccumulatorThresholdsForExpandedCycleAndClose]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchGestureTests testScrollAccumulatorUsesOriginalFractionsAndFiresOnce]' started.
+Test Case '-[ReferenceCoreTests.NotchGestureTests testScrollAccumulatorUsesOriginalFractionsAndFiresOnce]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchGestureTests testScrollDirectionNormalizationMatchesOriginalInversionFormula]' started.
+Test Case '-[ReferenceCoreTests.NotchGestureTests testScrollDirectionNormalizationMatchesOriginalInversionFormula]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchGestureTests testSkipCanBeDisabled]' started.
+Test Case '-[ReferenceCoreTests.NotchGestureTests testSkipCanBeDisabled]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchGestureTests testVerticalOpenCloseAndThreshold]' started.
+Test Case '-[ReferenceCoreTests.NotchGestureTests testVerticalOpenCloseAndThreshold]' passed (0.000 seconds).
+Test Suite 'NotchGestureTests' passed at 2026-10-23 11:06:04.490.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.001 (0.002) seconds
+Test Suite 'NotchHoverTests' started at 2026-10-23 11:06:04.490.
+Test Case '-[ReferenceCoreTests.NotchHoverTests testElevationOnlyAppliesToCollapsedCutout]' started.
+Test Case '-[ReferenceCoreTests.NotchHoverTests testElevationOnlyAppliesToCollapsedCutout]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchHoverTests testEnlargedEdgeRemainsInInputEnvelope]' started.
+Test Case '-[ReferenceCoreTests.NotchHoverTests testEnlargedEdgeRemainsInInputEnvelope]' passed (0.000 seconds).
+Test Suite 'NotchHoverTests' passed at 2026-10-23 11:06:04.491.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'NotchTransitionTests' started at 2026-10-23 11:06:04.491.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testContentSurvivesCollapseAndInteractionWaitsForExpansion]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testContentSurvivesCollapseAndInteractionWaitsForExpansion]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testDuplicateRequestsKeepOriginalClockAndGeneration]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testDuplicateRequestsKeepOriginalClockAndGeneration]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testInterruptedExpansionCannotRestoreCollapsedVisuals]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testInterruptedExpansionCannotRestoreCollapsedVisuals]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testRapidAlternationRejectsEveryOlderGeneration]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testRapidAlternationRejectsEveryOlderGeneration]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testStaleCollapseCompletionCannotClearReopenedPanel]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testStaleCollapseCompletionCannotClearReopenedPanel]' passed (0.000 seconds).
+Test Suite 'NotchTransitionTests' passed at 2026-10-23 11:06:04.492.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'NotchTuningTests' started at 2026-10-23 11:06:04.492.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testExtremeFiniteValuesAreClampedToCandidateUIRangeAndNonFiniteIsZero]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testExtremeFiniteValuesAreClampedToCandidateUIRangeAndNonFiniteIsZero]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testNotificationAndQuickPeekReceiveTheSamePhysicalCompactOffset]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testNotificationAndQuickPeekReceiveTheSamePhysicalCompactOffset]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPhysicalFloatingAndSimulatedBranchesKeepTheirOwnBaseGeometry]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPhysicalFloatingAndSimulatedBranchesKeepTheirOwnBaseGeometry]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPhysicalGateRejectsFloatingAndForcedSimulatedScreens]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPhysicalGateRejectsFloatingAndForcedSimulatedScreens]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPositiveAndNegativeOffsetsApplyToPhysicalCompactOnly]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPositiveAndNegativeOffsetsApplyToPhysicalCompactOnly]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testZeroIsBaselineInEveryCompactBranch]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testZeroIsBaselineInEveryCompactBranch]' passed (0.000 seconds).
+Test Suite 'NotchTuningTests' passed at 2026-10-23 11:06:04.493.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'ReferenceCoreTests' started at 2026-10-23 11:06:04.493.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testMinimumAndLargerPhysicalGeometry]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testMinimumAndLargerPhysicalGeometry]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testMissingAuxiliaryAreaUsesNonNotchBranch]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testMissingAuxiliaryAreaUsesNonNotchBranch]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testNonNotchAndSimulatedBranchesFromArm64Registers]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testNonNotchAndSimulatedBranchesFromArm64Registers]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testObservedModelUIDAndAllReferenceProductAliases]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testObservedModelUIDAndAllReferenceProductAliases]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testPhysicalNotchOnUsersBuiltInDisplay]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testPhysicalNotchOnUsersBuiltInDisplay]' passed (0.000 seconds).
+Test Suite 'ReferenceCoreTests' passed at 2026-10-23 11:06:04.494.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'SongPeekTests' started at 2026-10-23 11:06:04.494.
+Test Case '-[ReferenceCoreTests.SongPeekTests testDisabledAndSourceResetNeverReplayOldChange]' started.
+Test Case '-[ReferenceCoreTests.SongPeekTests testDisabledAndSourceResetNeverReplayOldChange]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SongPeekTests testOnlySubsequentTrackChangeShowsPeek]' started.
+Test Case '-[ReferenceCoreTests.SongPeekTests testOnlySubsequentTrackChangeShowsPeek]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SongPeekTests testRapidChangesIgnoreOldExpiryAndExpansionCancels]' started.
+Test Case '-[ReferenceCoreTests.SongPeekTests testRapidChangesIgnoreOldExpiryAndExpansionCancels]' passed (0.000 seconds).
+Test Suite 'SongPeekTests' passed at 2026-10-23 11:06:04.495.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'SystemMediaSnapshotTests' started at 2026-10-23 11:06:04.495.
+Test Case '-[ReferenceCoreTests.SystemMediaSnapshotTests testRevisionPrefersContentItemIdentifier]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaSnapshotTests testRevisionPrefersContentItemIdentifier]' passed (0.000 seconds).
+Test Suite 'SystemMediaSnapshotTests' passed at 2026-10-23 11:06:04.495.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'SystemMediaTests' started at 2026-10-23 11:06:04.495.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testMissingOrInvalidTimingDoesNotInventProgress]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testMissingOrInvalidTimingDoesNotInventProgress]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SystemMediaTests testProgressUsesTimestampAndFreezesWhenPaused]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testProgressUsesTimestampAndFreezesWhenPaused]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SystemMediaTests testSameTitleDifferentSourceAlbumOrTrackInvalidatesIdentity]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testSameTitleDifferentSourceAlbumOrTrackInvalidatesIdentity]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SystemMediaTests testStateOnlyPauseDoesNotJumpBackAndResumeDoesNotCountPausedTime]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testStateOnlyPauseDoesNotJumpBackAndResumeDoesNotCountPausedTime]' passed (0.000 seconds).
+Test Suite 'SystemMediaTests' passed at 2026-10-23 11:06:04.496.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'VolumeKeyTests' started at 2026-10-23 11:06:04.496.
+Test Case '-[ReferenceCoreTests.VolumeKeyTests testKeyCodes]' started.
+Test Case '-[ReferenceCoreTests.VolumeKeyTests testKeyCodes]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.VolumeKeyTests testStepsAndClamp]' started.
+Test Case '-[ReferenceCoreTests.VolumeKeyTests testStepsAndClamp]' passed (0.000 seconds).
+Test Suite 'VolumeKeyTests' passed at 2026-10-23 11:06:04.496.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'ReferenceCoreTests.xctest' passed at 2026-10-23 11:06:04.496.
+	 Executed 76 tests, with 0 failures (0 unexpected) in 0.011 (0.017) seconds
+Test Suite 'All tests' passed at 2026-10-23 11:06:04.496.
+	 Executed 76 tests, with 0 failures (0 unexpected) in 0.011 (0.018) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

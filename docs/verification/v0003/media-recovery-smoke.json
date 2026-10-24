@@ -1,0 +1,13 @@
+{
+  "app": "dist/Valora.app",
+  "app_alive_after_helper_exit": true,
+  "generated_at": "2026-10-23T03:24:27.455404+00:00",
+  "helper_replaced": true,
+  "method": "kill only the bundled mediaremote-adapter.pl stream process; wait for the existing 1 s refresh; then normal app quit",
+  "new_helper_pid": 71153,
+  "old_helper_pid": 71016,
+  "player_command_sent": false,
+  "real_playback_touched": false,
+  "single_adapter_after_recovery": true,
+  "stream_helper_count_after_recovery": 1
+}

@@ -1,0 +1,308 @@
+{
+  "full_regression": {
+    "log": "/Users/wangqing/code/Valora/docs/verification/v0010-r1/test.log",
+    "prior_v0010_baseline": 113,
+    "reference_core": 84,
+    "total": 119,
+    "valora": 35
+  },
+  "generated_at": "2026-10-23T17:58:48.008062+00:00",
+  "independent_repro_after": "/Users/wangqing/code/Valora/docs/verification/v0010-r1/independent-repro-after.txt",
+  "independent_repro_result": {
+    "api_failure_with_parseable_body": "request_failed/api_code_1001_retcode_1001_subcode_0",
+    "http_failure_with_parseable_body": "request_failed/http_status_503"
+  },
+  "limitations": [
+    "QRC remains encrypted and undecoded; no word timing or UI is claimed.",
+    "Only the explicit public samples were run; external APIs may change.",
+    "No real media/device/system writes; no physical dual-screen claim."
+  ],
+  "multidisplay_regression": {
+    "checks": 12,
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0010-r1/multidisplay/verification.json",
+    "note": "injected/fake, not physical dual-screen",
+    "passed": true
+  },
+  "network": {
+    "exit_code": 0,
+    "generated_at": "2026-10-23T17:52:35Z",
+    "note": "Two explicit public samples still succeed; HTTP/API/parse failures now produce request_ok=false and a nonzero exit.",
+    "qrc_failures": [],
+    "request_failures": [],
+    "request_ok": true,
+    "samples": [
+      {
+        "label": "studio",
+        "lyrics": {
+          "classification": "timed_lrc",
+          "code": 0,
+          "content_type": "text/html;charset=utf-8",
+          "first_timestamp": 0,
+          "has_translation": false,
+          "http_status": 200,
+          "last_timestamp": 262.86,
+          "line_count": 63,
+          "metadata_artist": "\u5468\u6770\u4f26",
+          "metadata_title": "\u6674\u5929",
+          "request_ok": true,
+          "response_bytes": 2671,
+          "retcode": 0,
+          "subcode": 0
+        },
+        "match": {
+          "album": "\u53f6\u60e0\u7f8e",
+          "artist": "\u5468\u6770\u4f26",
+          "duration": 269,
+          "matched": true,
+          "songID": "97773",
+          "songmid": "0039MnYb0qxYhV",
+          "title": "\u6674\u5929"
+        },
+        "qrc": {
+          "content_characters": 9808,
+          "content_present": true,
+          "content_type": "text/html",
+          "decoded": false,
+          "decryption": "not_implemented",
+          "http_status": 200,
+          "looks_like_hex_cipher": true,
+          "reason": "QRC payload is encrypted; no byte timing was claimed.",
+          "request_ok": true,
+          "response_bytes": 10454,
+          "result": "0",
+          "status": "content_present"
+        },
+        "request_ok": true,
+        "sample": {
+          "album": "\u53f6\u60e0\u7f8e",
+          "artist": "\u5468\u6770\u4f26",
+          "duration": 269,
+          "title": "\u6674\u5929"
+        },
+        "search": {
+          "candidate_count": 10,
+          "candidates": [
+            {
+              "album": "\u53f6\u60e0\u7f8e",
+              "artist": "\u5468\u6770\u4f26",
+              "duration": 269,
+              "songID": "97773",
+              "songmid": "0039MnYb0qxYhV",
+              "title": "\u6674\u5929"
+            },
+            {
+              "album": "\u5468\u6770\u4f26\u5730\u8868\u6700\u5f3a\u4e16\u754c\u5de1\u56de\u6f14\u5531\u4f1a",
+              "artist": "\u5468\u6770\u4f26",
+              "duration": 249,
+              "songID": "244115385",
+              "songmid": "004Fs2FP1EvZYc",
+              "title": "\u6674\u5929 (Live)"
+            },
+            {
+              "album": "\u5468\u6770\u4f26 2004 \u65e0\u4e0e\u4f26\u6bd4 \u6f14\u5531\u4f1a Live CD",
+              "artist": "\u5468\u6770\u4f26",
+              "duration": 299,
+              "songID": "4962974",
+              "songmid": "001398Rf3gykz8",
+              "title": "\u6674\u5929 (Live)"
+            },
+            {
+              "album": "",
+              "artist": "\u5468\u6770\u4f26",
+              "duration": 218,
+              "songID": "570701044",
+              "songmid": "004SB5DZ1JTN7Y",
+              "title": "\u6674\u5929 (DJ\u963flo\u7248)"
+            },
+            {
+              "album": "",
+              "artist": "\u6797\u4fca\u6770 / \u5468\u6770\u4f26",
+              "duration": 239,
+              "songID": "206063225",
+              "songmid": "001naPHz2ER9qv",
+              "title": "\u6674\u5929 (Live)"
+            },
+            {
+              "album": "",
+              "artist": "\u5468\u6770\u4f26",
+              "duration": 269,
+              "songID": "125251595",
+              "songmid": "001Wiw9y1SeFO4",
+              "title": "\u6674\u5929 (KTV\u7248\u4f34\u594f)"
+            },
+            {
+              "album": "",
+              "artist": "\u5468\u6770\u4f26 / \u4e94\u6708\u5929",
+              "duration": 787,
+              "songID": "125386745",
+              "songmid": "0021Voc64ADmde",
+              "title": "\u5fd7\u660e\u4e0e\u6625\u5a07+\u542c\u5988\u5988\u7684\u8bdd+\u5e72\u676f+\u6674\u5929+\u79bb\u5f00\u5730\u7403\u8868\u9762+\u53cc\u622a\u68cd (2013\u5c0f\u5de8\u86cb\u6f14\u5531\u4f1a\u7b2c\u4e09\u573a)"
+            },
+            {
+              "album": "",
+              "artist": "\u5468\u6770\u4f26",
+              "duration": 116,
+              "songID": "582517548",
+              "songmid": "002f6kjO3yqwfd",
+              "title": "\u6674\u5929 (DJ \u963f\u82e5\u7248)"
+            }
+          ],
+          "content_type": "application/x-javascript;charset=utf-8",
+          "http_status": 200,
+          "response_bytes": 17768
+        },
+        "status": "success"
+      },
+      {
+        "label": "live",
+        "lyrics": {
+          "classification": "timed_lrc",
+          "code": 0,
+          "content_type": "text/html;charset=utf-8",
+          "first_timestamp": 0,
+          "has_translation": false,
+          "http_status": 200,
+          "last_timestamp": 239.43,
+          "line_count": 36,
+          "metadata_artist": "\u5468\u6770\u4f26",
+          "metadata_title": "\u6674\u5929 (Live)",
+          "request_ok": true,
+          "response_bytes": 1769,
+          "retcode": 0,
+          "subcode": 0
+        },
+        "match": {
+          "album": "\u5468\u6770\u4f26\u5730\u8868\u6700\u5f3a\u4e16\u754c\u5de1\u56de\u6f14\u5531\u4f1a",
+          "artist": "\u5468\u6770\u4f26",
+          "duration": 249,
+          "matched": true,
+          "songID": "244115385",
+          "songmid": "004Fs2FP1EvZYc",
+          "title": "\u6674\u5929 (Live)"
+        },
+        "qrc": {
+          "content_characters": 6784,
+          "content_present": true,
+          "content_type": "text/html",
+          "decoded": false,
+          "decryption": "not_implemented",
+          "http_status": 200,
+          "looks_like_hex_cipher": true,
+          "reason": "QRC payload is encrypted; no byte timing was claimed.",
+          "request_ok": true,
+          "response_bytes": 7438,
+          "result": "0",
+          "status": "content_present"
+        },
+        "request_ok": true,
+        "sample": {
+          "album": "\u5468\u6770\u4f26\u5730\u8868\u6700\u5f3a\u4e16\u754c\u5de1\u56de\u6f14\u5531\u4f1a",
+          "artist": "\u5468\u6770\u4f26",
+          "duration": 249,
+          "title": "\u6674\u5929 (Live)"
+        },
+        "search": {
+          "candidate_count": 10,
+          "candidates": [
+            {
+              "album": "\u5468\u6770\u4f26\u5730\u8868\u6700\u5f3a\u4e16\u754c\u5de1\u56de\u6f14\u5531\u4f1a",
+              "artist": "\u5468\u6770\u4f26",
+              "duration": 249,
+              "songID": "244115385",
+              "songmid": "004Fs2FP1EvZYc",
+              "title": "\u6674\u5929 (Live)"
+            },
+            {
+              "album": "",
+              "artist": "\u6797\u4fca\u6770 / \u5468\u6770\u4f26",
+              "duration": 239,
+              "songID": "206063225",
+              "songmid": "001naPHz2ER9qv",
+              "title": "\u6674\u5929 (Live)"
+            },
+            {
+              "album": "",
+              "artist": "\u5468\u6770\u4f26",
+              "duration": 580,
+              "songID": "435569057",
+              "songmid": "001GISFc0ay0vD",
+              "title": "\u7231\u5728\u897f\u5143\u524d + \u56ed\u6e38\u4f1a + \u5012\u5f71 + \u6674\u5929 + \u725b\u4ed4\u5f88\u5fd9 + \u8f68\u8ff9 + (Live)"
+            },
+            {
+              "album": "",
+              "artist": "\u5468\u6770\u4f26 / \u6797\u4fca\u6770",
+              "duration": 13,
+              "songID": "462410853",
+              "songmid": "001zdZlm3kUtfV",
+              "title": "\u6674\u5929 (13\u79d22017\u5730\u8868\u6700\u5f3a\u4e16\u754c\u5de1\u56de\u6f14\u5531\u4f1a\u53f0\u5317\u7ad9\u7247\u6bb5|\u7247\u6bb5)"
+            },
+            {
+              "album": "",
+              "artist": "\u6613\u5e7f\u6210",
+              "duration": 64,
+              "songID": "350057657",
+              "songmid": "002xKV361hMjYd",
+              "title": "\u6674\u5929 (\u5408\u5531\u7248Live)"
+            },
+            {
+              "album": "\u53f6\u60e0\u7f8e",
+              "artist": "\u5468\u6770\u4f26",
+              "duration": 269,
+              "songID": "97773",
+              "songmid": "0039MnYb0qxYhV",
+              "title": "\u6674\u5929"
+            },
+            {
+              "album": "",
+              "artist": "\u6bd5\u4e1a\u751f\u4e3b\u89d2\u5408\u5531\u56e2",
+              "duration": 319,
+              "songID": "583324081",
+              "songmid": "000RwOJP3FNBkW",
+              "title": "\u6674\u5929 (2025\u4ef2\u590f\u6bd5\u4e1a\u6b4c\u4f1a\u73b0\u573a)"
+            },
+            {
+              "album": "",
+              "artist": "TOP\u767b\u9646\u5c11\u5e74\u7ec4\u5408",
+              "duration": 275,
+              "songID": "604747994",
+              "songmid": "00250ch92bSsoa",
+              "title": "\u6674\u5929 (2025 5/5\u00b7ONE\u6709\u5f15\u529b\u6f14\u5531\u4f1a)"
+            }
+          ],
+          "content_type": "application/x-javascript;charset=utf-8",
+          "http_status": 200,
+          "response_bytes": 17422
+        },
+        "status": "success"
+      }
+    ],
+    "statuses": [
+      "success",
+      "success"
+    ],
+    "summary": "/Users/wangqing/code/Valora/docs/verification/v0010-r1/network/network-summary.json",
+    "validation_ok": true
+  },
+  "offline_tests": {
+    "covers": [
+      "HTTP 503 + valid-looking lyric body",
+      "HTTP 200 + retcode/code 1001",
+      "invalid JSON",
+      "no lyrics distinct from failure",
+      "normal timed success",
+      "search HTTP/API/missing-structure gates",
+      "QRC HTTP/business/no-content gates"
+    ],
+    "filtered_test_count": 22,
+    "log": "/Users/wangqing/code/Valora/docs/verification/v0010-r1/offline-tests.log"
+  },
+  "settings_regression": {
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0010-r1/settings/verification.json"
+  },
+  "task_sha256": "c14f18d0e9ff2cd87771886750f0f689f29cc106141b822555067c4455d27644",
+  "ui_regression": {
+    "checks": 74,
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0010-r1/ui/verification.json",
+    "passed": true
+  }
+}

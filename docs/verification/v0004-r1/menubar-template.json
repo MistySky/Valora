@@ -1,0 +1,50 @@
+{
+  "accessibility_label": "Valora",
+  "app_icon_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "app_icon_unchanged": true,
+  "button_image_is_template": true,
+  "button_image_position": 1,
+  "button_image_representations": [
+    {
+      "alpha": true,
+      "height": 18,
+      "width": 18
+    },
+    {
+      "alpha": true,
+      "height": 36,
+      "width": 36
+    },
+    {
+      "alpha": true,
+      "height": 54,
+      "width": 54
+    }
+  ],
+  "button_image_scaling": 0,
+  "button_image_size": [
+    18,
+    18
+  ],
+  "dark_mode_actual_capture": false,
+  "dark_selected_note": "Template=true is the actual system adaptation mechanism; no system appearance or selected UI was forced.",
+  "generated_at": "2026-10-23T04:12:43.105786+00:00",
+  "no_glow_shadow_gradient": true,
+  "no_square_background": true,
+  "old_rectangle_symbol_present": false,
+  "openscreen_previews": {
+    "dark": "/Users/wangqing/code/Valora/docs/verification/v0004-r1/menubar/template-preview-dark.png",
+    "light": "/Users/wangqing/code/Valora/docs/verification/v0004-r1/menubar/template-preview-light.png",
+    "note": "Synthetic template tint previews; not real menu-bar screenshots.",
+    "selected": "/Users/wangqing/code/Valora/docs/verification/v0004-r1/menubar/template-preview-selected.png"
+  },
+  "rendered_files": {
+    "16": "/Users/wangqing/code/Valora/docs/verification/v0004-r1/menubar/status-button-16.png",
+    "18": "/Users/wangqing/code/Valora/docs/verification/v0004-r1/menubar/status-button-18.png",
+    "36": "/Users/wangqing/code/Valora/docs/verification/v0004-r1/menubar/status-button-36.png",
+    "54": "/Users/wangqing/code/Valora/docs/verification/v0004-r1/menubar/status-button-54.png"
+  },
+  "screen_capture": "/Users/wangqing/code/Valora/docs/verification/v0004-r1/screen-capture-status.json",
+  "selected_state_actual_capture": false,
+  "source": "code-native AppKit vector (18 pt, 18/36/54 px reps)"
+}

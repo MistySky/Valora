@@ -1,0 +1,39 @@
+{
+  "compact_actual": {
+    "items_match": true,
+    "method": "CGEvent right click on the real compact external-pill panel; menu captured on screen",
+    "screenshot": "/Users/wangqing/code/Valora/docs/verification/v0009/context-menu/compact-menu.png",
+    "tested": true,
+    "version_text": "\u7248\u672c 0.1.0"
+  },
+  "expanded_actual": {
+    "items_match": true,
+    "method": "CGEvent right click inside the real --expand-media expanded panel; menu captured on screen",
+    "screenshot": "/Users/wangqing/code/Valora/docs/verification/v0009/context-menu/expanded-menu.png",
+    "tested": true
+  },
+  "expected_items": [
+    "disabled \u7248\u672c <current Valora version>",
+    "\u8bbe\u7f6e\u2026 \u2318,",
+    "separator",
+    "\u9000\u51fa Valora \u2318Q"
+  ],
+  "generated_at": "2026-10-23T16:07:49.440349+00:00",
+  "no_new_popup_or_icon": true,
+  "outside_shape_passthrough_unchanged": true,
+  "quit_actual": {
+    "note": "Deliberately not clicked; quit action reused, and verification must not close the user candidate.",
+    "tested": false
+  },
+  "reference": "/Users/wangqing/code/Valora/docs/verification/v0009/reference/original-notch-context-menu.png",
+  "settings_actual": {
+    "opened_window_title": "\u901a\u7528",
+    "reuse_test": "SettingsReductionTests.testExistingSettingsWindowIsReused",
+    "screenshot": "/Users/wangqing/code/Valora/docs/verification/v0009/context-menu/settings-reused.png",
+    "tested": true,
+    "window_points": [
+      620,
+      687
+    ]
+  }
+}

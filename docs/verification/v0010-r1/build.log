@@ -1,0 +1,32 @@
+/Users/wangqing/code/Valora/.build/media-adapter/MediaRemoteAdapter.framework: replacing existing signature
+/Users/wangqing/code/Valora/.build/media-adapter/MediaRemoteAdapter.framework
+Building for production...
+[Planning deferred tasks]
+[3 / 12]
+[5 / 17]
+[8 / 14] NativeBridge
+[9 / 15] ReferenceCore
+[12 / 14] Valora-product
+/Users/wangqing/code/Valora/Sources/Valora/WindowCoordinator.swift:377:26: [1;33mwarning: [1;39mimmutable value 'active' was never used; consider replacing with '_' or removing it[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/no-usage\NoUsage]8;;\]
+[0;36m375 |[0;0m             }
+[0;36m376 |[0;0m         }
+[0;36m377 |[0;0m         if !visible, let active {
+    [0;36m|[0;0m                          `- [1;33mwarning: [1;39mimmutable value 'active' was never used; consider replacing with '_' or removing it[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/no-usage\NoUsage]8;;\]
+[0;36m378 |[0;0m             model.presenter.pointerEntered(false)
+[0;36m379 |[0;0m         }
+
+/Users/wangqing/code/Valora/Sources/Valora/WindowCoordinator.swift:453:13: [1;33mwarning: [1;39minitialization of immutable value 'generation' was never used; consider replacing with assignment to '_' or removing it[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/no-usage\NoUsage]8;;\]
+[0;36m451 |[0;0m         cancelPendingHover(record)
+[0;36m452 |[0;0m         record.hoverGeneration += 1
+[0;36m453 |[0;0m         let generation = record.hoverGeneration
+    [0;36m|[15 / 16] Valora-product
+[0;0m             `- [1;33mwarning: [1;39minitialization of immutable value 'generation' was never used; consider replacing with assignment to '_' or removing it[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/no-usage\NoUsage]8;;\]
+[0;36m454 |[0;0m         let work = DispatchWorkItem { [weak self, weak record] in
+[0;36m455 |[0;0m             MainActor.assumeIsolated {
+
+[#NoUsage]: <https://docs.swift.org/compiler/documentation/diagnostics/no-usage>
+[17 / 19] Valora-product
+[18 / 19] Valora-product
+Build complete! (16.45秒)
+/Users/wangqing/code/Valora/dist/Valora.app: replacing existing signature
+/Users/wangqing/code/Valora/dist/Valora.app

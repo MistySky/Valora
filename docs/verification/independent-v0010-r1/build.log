@@ -1,0 +1,31 @@
+/Users/wangqing/code/Valora/.build/media-adapter/MediaRemoteAdapter.framework: replacing existing signature
+/Users/wangqing/code/Valora/.build/media-adapter/MediaRemoteAdapter.framework
+Building for production...
+[Planning deferred tasks]
+[3 / 12]
+[6 / 13] ReferenceCore
+[9 / 15] ReferenceCore
+[14 / 16] Valora-product
+/Users/wangqing/code/Valora/Sources/Valora/WindowCoordinator.swift:377:26: warning: immutable value 'active' was never used; consider replacing with '_' or removing it [#NoUsage]
+375 |             }
+376 |         }
+377 |         if !visible, let active {
+    |                          `- warning: immutable value 'active' was never used; consider replacing with '_' or removing it [#NoUsage]
+378 |             model.presenter.pointerEntered(false)
+379 |         }
+
+/Users/wangqing/code/Valora/Sources/Valora/WindowCoordinator.swift:453:13: warning: initialization of immutable value 'generation' was never used; consider replacing with assignment to '_' or removing it [#NoUsage]
+451 |         cancelPendingHover(record)
+452 |         record.hoverGeneration += 1
+453 |         let generation = record.hoverGeneration
+    |             `- warning: initialization of immutable value 'generation' was never used; consider replacing with assignment to '_' or removing it [#NoUsage]
+454 |         let work = DispatchWorkItem { [weak self, weak record] in
+455 |             MainActor.assumeIsolated {
+
+[#NoUsage]: <https://docs.swift.org/compiler/documentation/diagnostics/no-usage>
+[17 / 18] Valora-product
+[19 / 21] Valora-product
+[20 / 21] Valora-product
+Build complete! (19.57秒)
+/private/tmp/valora-independent-v0010-r1/Valora.app: replacing existing signature
+/private/tmp/valora-independent-v0010-r1/Valora.app

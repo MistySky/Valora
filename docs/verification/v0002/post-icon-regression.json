@@ -1,0 +1,17 @@
+{
+  "binary_sha256": "a323955c4d1bb467bbc8651858f578786b8988c171ce54350f28aef1eece7f61",
+  "generated_at": "2026-10-23T02:59:05.104623+00:00",
+  "note": "Clean-build packaging launch checks with the unchanged V0001 music sources. Full check list and sanitized media flags are included alongside.",
+  "system_media": {
+    "player_command_sent": false,
+    "private_metadata_recorded": false,
+    "restart_fresh": true,
+    "snapshot_delivered": true
+  },
+  "ui": {
+    "checks": 91,
+    "passed": true,
+    "player_command_sent": false,
+    "production_media_started": false
+  }
+}

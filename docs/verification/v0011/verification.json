@@ -1,0 +1,57 @@
+{
+  "generated_at": "2026-10-24T03:15:42.310530+00:00",
+  "limitations": [
+    "Lyrics QA uses a static provider and synthetic elapsed positions; no real QQ network fetch or real player alignment is claimed.",
+    "QRC remains encrypted/undecoded; no word-level highlighting.",
+    "Physical dual-screen and real playback/skip/seek behavior remain locally unverified in this batch.",
+    "No real media/system/device writes were performed."
+  ],
+  "lyrics_qa": {
+    "checks": 19,
+    "command": "./dist/Valora.app/Contents/MacOS/Valora --verify-lyrics docs/verification/v0011/qa",
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0011/qa/verification.json",
+    "log": "/Users/wangqing/code/Valora/docs/verification/v0011/qa.log",
+    "passed": true,
+    "provider": "static QA, no network/media/audio",
+    "screens": [
+      "lyrics-short.png",
+      "lyrics-long.png",
+      "lyrics-paused.png",
+      "lyrics-resumed.png",
+      "lyrics-seek.png",
+      "lyrics-interstitial.png",
+      "lyrics-fallback.png",
+      "lyrics-song-peek-priority.png",
+      "lyrics-after-peek.png",
+      "lyrics-active-external.png",
+      "lyrics-passive-builtin.png"
+    ]
+  },
+  "multidisplay": {
+    "checks": 12,
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0011/multidisplay/verification.json",
+    "note": "injected/fake screens; not physical dual-screen",
+    "passed": true
+  },
+  "music_ui": {
+    "checks": 74,
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0011/ui/verification.json",
+    "passed": true
+  },
+  "settings": {
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0011/settings/verification.json",
+    "pages": [
+      "General",
+      "Now Playing"
+    ],
+    "preferencePersistenceVerified": true
+  },
+  "task_sha256": "7dbaf1137f6e6f802228eb11ee482579fa088b5ae8d9481340a998482f5a5781",
+  "xctest": {
+    "log": "/Users/wangqing/code/Valora/docs/verification/v0011/test.log",
+    "prior_v0010r1_baseline": 119,
+    "reference_core": 89,
+    "total": 136,
+    "valora": 47
+  }
+}

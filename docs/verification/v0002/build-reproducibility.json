@@ -1,0 +1,13 @@
+{
+  "after_icon_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "before_icon_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "build_command": "./scripts/build.sh (clean build, then one repeat package build)",
+  "clean_build_binary_sha256": "a323955c4d1bb467bbc8651858f578786b8988c171ce54350f28aef1eece7f61",
+  "clean_build_icon_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "codesign_verified": true,
+  "generated_at": "2026-10-23T02:59:05.104238+00:00",
+  "icon_resource_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "icon_source_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "icon_stable_across_rebuild": true,
+  "note": "After removing .build and dist, a clean build and a subsequent package build both produced the same effective .icns bytes."
+}

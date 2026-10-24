@@ -1,0 +1,2 @@
+http-failure: {"classification":"request_failed","content_type":"unknown","failure":"http_status_503","http_status":503,"request_ok":false,"response_bytes":50}
+api-failure: {"classification":"request_failed","content_type":"unknown","failure":"api_code_1001_retcode_1001_subcode_0","http_status":200,"request_ok":false,"response_bytes":56}

@@ -1,0 +1,134 @@
+{
+  "app" : "\/Users\/wangqing\/code\/Valora\/dist\/Valora.app",
+  "app_bundle_icon_path" : "\/Users\/wangqing\/code\/Valora\/dist\/Valora.app\/Contents\/Resources\/AppIcon.icns",
+  "app_bundle_icon_sha256" : "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "button_accessibility_label" : "Valora",
+  "button_image_is_template" : true,
+  "button_image_position" : 1,
+  "button_image_present" : true,
+  "button_image_representations" : [
+    {
+      "alpha" : true,
+      "height" : 18,
+      "width" : 18
+    },
+    {
+      "alpha" : true,
+      "height" : 36,
+      "width" : 36
+    },
+    {
+      "alpha" : true,
+      "height" : 54,
+      "width" : 54
+    }
+  ],
+  "button_image_scaling" : 0,
+  "button_image_size" : [
+    18,
+    18
+  ],
+  "generated_at" : "2026-10-23T04:09:11Z",
+  "menubar_source" : "code-native AppKit vector (18 pt, 18\/36\/54 px reps)",
+  "music_media_started" : false,
+  "player_command_sent" : false,
+  "private_content_collected" : false,
+  "rendered_16" : {
+    "bytes" : 432,
+    "colorfulFraction" : 0,
+    "cornerAlphas" : [
+      0.88627450980392153,
+      0.88627450980392153,
+      0,
+      0
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004-r1\/menubar\/status-button-16.png",
+    "pixels" : 16,
+    "sampledOpaquePixels" : 92,
+    "sha256" : "af2bfbb4a5bb3e483154fb19b0be831d68c5f7f94b78bfb81af1e1ca1c8630de"
+  },
+  "rendered_18" : {
+    "bytes" : 393,
+    "colorfulFraction" : 0,
+    "cornerAlphas" : [
+      0.70588235294117652,
+      0.70588235294117652,
+      0,
+      0
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004-r1\/menubar\/status-button-18.png",
+    "pixels" : 18,
+    "sampledOpaquePixels" : 120,
+    "sha256" : "459eaa8396fef1393918aa76330a69347dc39e7891d1148a0b1a42bda52da600"
+  },
+  "rendered_36" : {
+    "bytes" : 694,
+    "colorfulFraction" : 0,
+    "cornerAlphas" : [
+      0,
+      0,
+      0,
+      0
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004-r1\/menubar\/status-button-36.png",
+    "pixels" : 36,
+    "sampledOpaquePixels" : 484,
+    "sha256" : "b17ab8c005d20567510fe5d3a36b459a6b2e6b878864390e91ac9339e12ba3c4"
+  },
+  "rendered_54" : {
+    "bytes" : 1043,
+    "colorfulFraction" : 0,
+    "cornerAlphas" : [
+      0,
+      0,
+      0,
+      0
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004-r1\/menubar\/status-button-54.png",
+    "pixels" : 54,
+    "sampledOpaquePixels" : 1088,
+    "sha256" : "23758c093eb0797dc16ee5e4004d1ed40145f2bfafda550e051acf4ea0d811f7"
+  },
+  "screen_capture_note" : "This is an offscreen status-item control render, not a real-screen capture. Automatic status-item window\/AX frames are not trusted on multi-display setups; any real menu-bar crop is recorded separately and must not be inferred from this render.",
+  "status_item_length" : -2,
+  "status_item_window_capture" : {
+    "bytes" : 1388,
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004-r1\/menubar\/status-item-window.png",
+    "pixels" : [
+      76,
+      66
+    ],
+    "sha256" : "3ba0ae5e8ce0d1d76fd3d87985aac88e555756ec1f509b532a159e286ce9c224"
+  },
+  "template_preview_dark" : {
+    "background" : "sRGB IEC61966-2.1 colorspace hdrm(1) 0.11 0.11 0.118 1",
+    "bytes" : 1017,
+    "note" : "offscreen template-tint preview, not a real menu-bar capture",
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004-r1\/menubar\/template-preview-dark.png",
+    "pixels" : 36,
+    "tint" : "sRGB IEC61966-2.1 colorspace hdrm(1) 0.949 0.949 0.969 1"
+  },
+  "template_preview_light" : {
+    "background" : "sRGB IEC61966-2.1 colorspace hdrm(1) 0.867 0.898 0.925 1",
+    "bytes" : 982,
+    "note" : "offscreen template-tint preview, not a real menu-bar capture",
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004-r1\/menubar\/template-preview-light.png",
+    "pixels" : 36,
+    "tint" : "sRGB IEC61966-2.1 colorspace hdrm(1) 0.231 0.231 0.239 1"
+  },
+  "template_preview_selected" : {
+    "background" : "sRGB IEC61966-2.1 colorspace hdrm(1) 0.29 0.29 0.31 1",
+    "bytes" : 990,
+    "note" : "offscreen template-tint preview, not a real menu-bar capture",
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004-r1\/menubar\/template-preview-selected.png",
+    "pixels" : 36,
+    "tint" : "Generic Gray Gamma 2.2 Profile colorspace 1 1"
+  },
+  "window" : {
+    "button_accessibility_frame_points" : "{{2968, 1089.5}, {24, 24}}",
+    "frame_trusted_for_screen_capture" : false,
+    "screen_frame_points" : "{{1728, 37}, {1920, 1080}}",
+    "window_frame_points" : "{{2961, 1085}, {38, 33}}",
+    "window_number" : 4294967296
+  }
+}

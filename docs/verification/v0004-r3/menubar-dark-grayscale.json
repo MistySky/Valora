@@ -1,0 +1,71 @@
+{
+  "accessibility_label": "Valora",
+  "app_icon_info_key": "AppIcon",
+  "app_icon_unchanged_v0002_light": true,
+  "bundle_app_icon_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "bundle_menubar_resource": "/Users/wangqing/code/Valora/dist/Valora.app/Contents/Resources/MenuBarIcon.icns",
+  "bundle_menubar_sha256": "63243bd19988395980f4cf418f4924800813c785885676bed51115b604dfb276",
+  "button_image_is_template": false,
+  "button_image_position": 1,
+  "button_image_representations": [
+    {
+      "alpha": true,
+      "height": 36,
+      "width": 36
+    }
+  ],
+  "button_image_scaling": 0,
+  "button_image_size": [
+    18,
+    18
+  ],
+  "dark_actual_capture": false,
+  "desaturation_method": "Core Image CIColorControls inputSaturation=0",
+  "generated_at": "2026-10-23T06:16:13.610578+00:00",
+  "menubar_source_and_bundle_byte_identical": true,
+  "menubar_source_resources_path": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/Velora-dark.icns",
+  "menubar_source_sha256": "63243bd19988395980f4cf418f4924800813c785885676bed51115b604dfb276",
+  "preview_files": {
+    "dark": "/Users/wangqing/code/Valora/docs/verification/v0004-r3/menubar/grayscale-preview-dark.png",
+    "light": "/Users/wangqing/code/Valora/docs/verification/v0004-r3/menubar/grayscale-preview-light.png",
+    "note": "Offscreen grayscale previews; not real menu-bar captures."
+  },
+  "rendered_colorful_fraction": 0,
+  "rendered_files": {
+    "16": "/Users/wangqing/code/Valora/docs/verification/v0004-r3/menubar/status-button-16.png",
+    "18": "/Users/wangqing/code/Valora/docs/verification/v0004-r3/menubar/status-button-18.png",
+    "36": "/Users/wangqing/code/Valora/docs/verification/v0004-r3/menubar/status-button-36.png",
+    "54": "/Users/wangqing/code/Valora/docs/verification/v0004-r3/menubar/status-button-54.png"
+  },
+  "rendered_transparent_corners": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "screen_capture": {
+    "capture_command": "screencapture -x -D 2 -R 1024,0,64,30",
+    "capture_rect_points": [
+      1024,
+      0,
+      64,
+      30
+    ],
+    "changed_pixels_gt8": 1074,
+    "console_screen_locked": false,
+    "dark_actual_capture": false,
+    "display": "U2701B (display 2)",
+    "final_real_screen_capture_available": true,
+    "generated_at": "2026-10-23T06:15:15.723424+00:00",
+    "icon_absent_when_stopped_visually": true,
+    "icon_present_when_running": true,
+    "note": "Narrow real-screen menu-bar crop only; no desktop/window content. The menu bar background was light; dark/selected were not forced. isTemplate=false keeps gray levels.",
+    "running_png": "docs/verification/v0004-r3/menubar/menubar-screen-running.png",
+    "selected_actual_capture": false,
+    "stopped_png": "docs/verification/v0004-r3/menubar/menubar-screen-stopped.png",
+    "total_pixels": 7680
+  },
+  "selected_actual_capture": false,
+  "selected_note": "isTemplate=false keeps gray levels; system appearance and selected UI were not forced.",
+  "source_set": "dark"
+}

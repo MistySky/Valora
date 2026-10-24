@@ -1,0 +1,58 @@
+{
+  "covered_paths": [
+    "hovered pause -> display selection change -> reset clears pointer -> normal 3s deadline",
+    "hovered pause -> direct resetForScreenChange -> normal 3s deadline",
+    "existing pending deadline -> reset preserves remaining duration (R1 regression)",
+    "disable -> enable recreates a bounded deadline",
+    "identical metadata polls do not postpone an armed deadline"
+  ],
+  "direct_reset_regression": {
+    "after": "passed",
+    "log": "/Users/wangqing/code/Valora/docs/verification/v0009-r2/direct-reset-regression.log",
+    "name": "testPausedHoveredActivityExpiresAfterDirectScreenReset"
+  },
+  "generated_at": "2026-10-23T16:46:10.306630+00:00",
+  "independent_regression": {
+    "after": "passed",
+    "before": "failed: paused hovered activity stayed visible after All displays -> Main display",
+    "log": "/Users/wangqing/code/Valora/docs/verification/v0009-r2/pointer-regression.log",
+    "name": "testPausedHoveredActivityExpiresAfterDisplaySelectionClearsPointer"
+  },
+  "limitations": [
+    "No real playback/skip/seek/volume/bluetooth/system permission/login-item writes.",
+    "Injected/fake screens and fake media exercise timing only; no physical dual-screen claim.",
+    "UI/icons/layout/animation were not changed; color app icon and Outline-v7 menu-bar icon remain the confirmed exceptions."
+  ],
+  "multidisplay_regression": {
+    "checks": 12,
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0009-r2/multidisplay/verification.json",
+    "note": "Injected two-screen coordinator/render verification; not physical dual-screen experience.",
+    "passed": true
+  },
+  "read_only_live": {
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0009-r2/live/live-diagnostic.json",
+    "playerCommandSent": false,
+    "privateMetadataRecorded": false
+  },
+  "settings_regression": {
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0009-r2/settings/verification.json",
+    "pages": [
+      "General",
+      "Now Playing"
+    ]
+  },
+  "task_sha256": "aab050d6b21778f8c68682ad3d777371cb6603fbc80e9e6573e8ba7327725503",
+  "tests": {
+    "log": "/Users/wangqing/code/Valora/docs/verification/v0009-r2/test.log",
+    "original_r1_suite": 95,
+    "preserved_failed_regression": true,
+    "reference_core": 62,
+    "total": 97,
+    "valora": 35
+  },
+  "ui_regression": {
+    "checks": 74,
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0009-r2/ui/verification.json",
+    "passed": true
+  }
+}

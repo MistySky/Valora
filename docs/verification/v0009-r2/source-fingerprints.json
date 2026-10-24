@@ -1,0 +1,40 @@
+{
+  "decision": "docs/verification/independent-v0009-r1/decision.md",
+  "decision_sha256": "6f7d20c7c2d2edc708ce69c4cbc1ff2b244b706561d5124c6e558542011082fb",
+  "generated_at": "2026-10-23T16:46:10.305550+00:00",
+  "preserved": [
+    "V0008 reduced settings/context menu",
+    "V0009 all-display interaction, one active screen, per-screen hit/hover cancellation",
+    "V0003 media recovery/seek guards",
+    "V0005 fixed policies and gesture/haptic removal",
+    "V0007 palette/display icon mapping",
+    "Valora color app icon and Codex Outline-v7 menu-bar icon resources/wiring",
+    "No lyrics implementation or dependencies"
+  ],
+  "root_cause": {
+    "before": "A paused activity hovered by pointer had visible=true/pending=false. resetForScreenChange cleared model.isPointerInside but left mediaIdle.input.pointerInside=true, and no pending timer existed to rebuild.",
+    "fix": "After clearing the old screen pointer, resetForScreenChange re-evaluates mediaStateChanged() when the stored input still reports pointerInside=true. Existing pending deadlines continue with their remaining duration; new hovered-paused activity starts the normal three-second deadline. Identical metadata polls do not move an existing deadline.",
+    "paths": "Display selection/geometry, screen unplug, hide/fullscreen, disable/re-enable all share resetForScreenChange or update media input through mediaStateChanged.",
+    "scope": "PresentationController only; no coordinator/animation redesign, no new periodic timer."
+  },
+  "task": "docs/pi-tasks/v0009-r2-hovered-idle-reset.md",
+  "task_sha256": "aab050d6b21778f8c68682ad3d777371cb6603fbc80e9e6573e8ba7327725503",
+  "v0009r1_baseline": {
+    "Sources/Valora/PresentationController.swift": "3d58467d51e8d5cf08737733472d3f8bbaa56a85c7485f9e0f1b9a7fc449c165",
+    "Tests/ValoraTests/MultiDisplayCoordinatorTests.swift": "3f644d19c122e166fae370a4482f10a2bc82d6b5c5848c3adf1349971db7d306"
+  },
+  "v0009r1_report_sha256": "83d565de088c52f89fb26ebce878a90545c3fdac4e8b84970098bc2a5b2b3ecb",
+  "v0009r1_source_report": "/Users/wangqing/code/Valora/docs/verification/v0009-r1/source-fingerprints.json",
+  "v0009r2_owned": [
+    {
+      "path": "Sources/Valora/PresentationController.swift",
+      "v0009r1_sha256": "3d58467d51e8d5cf08737733472d3f8bbaa56a85c7485f9e0f1b9a7fc449c165",
+      "v0009r2_sha256": "7a83784bc225b8ced1421e6d60c2491c03177771925cd555da59514144edeec6"
+    },
+    {
+      "path": "Tests/ValoraTests/MultiDisplayCoordinatorTests.swift",
+      "v0009r1_sha256": "3f644d19c122e166fae370a4482f10a2bc82d6b5c5848c3adf1349971db7d306",
+      "v0009r2_sha256": "15f0bb64610c7a82bc0422d195322a824d99d4e1bf3def126e6e2ed2a4d0e037"
+    }
+  ]
+}

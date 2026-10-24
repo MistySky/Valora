@@ -1,0 +1,1003 @@
+Building for debugging...
+[Using on-disk description]
+[3 / 29]
+[6 / 30] NativeBridge
+[9 / 31] ReferenceCore
+[13 / 23] Valora-product
+[25 / 46] Valora-product
+[26 / 46] Valora-product
+[27 / 46] Valora
+[29 / 46] Valora-product
+[30 / 46] Valora-product
+[36 / 50] Valora
+[38 / 50] Valora
+[40 / 52] Valora
+[41 / 52] Valora
+[41 / 52] Valora-product
+[41 / 52] Valora
+[41 / 52] Valora-product
+[43 / 54] Valora
+[45 / 54] Valora-product
+[48 / 53] ValoraTests-product
+[54 / 59] ValoraTests-product
+/Users/wangqing/code/Valora/Tests/ValoraTests/RevivalSettingsReloadTests.swift:13:9: [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be referenced from a nonisolated context[0;0m
+ [0;36m7 |[0;0m final class RevivalSettingsReloadTests: XCTestCase {
+ [0;36m8 |[0;0m     private let suite = "com.wangqing.valora.review-batch-tests"
+ [0;36m9 |[0;0m     private var defaults: UserDefaults { UserDefaults(suiteName: suite)! }
+   [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+[0;36m10 |[0;0m 
+[0;36m11 |[0;0m     override func setUp() {
+[0;36m12 |[0;0m         super.setUp()
+[0;36m13 |[0;0m         defaults.removePersistentDomain(forName: suite)
+   [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be referenced from a nonisolated context[0;0m
+[0;36m14 |[0;0m     }
+[0;36m15 |[0;0m     override func tearDown() {
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/RevivalSettingsReloadTests.swift:16:9: [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be referenced from a nonisolated context[0;0m
+ [0;36m7 |[0;0m final class RevivalSettingsReloadTests: XCTestCase {
+ [0;36m8 |[0;0m     private let suite = "com.wangqing.valora.review-batch-tests"
+ [0;36m9 |[0;0m     private var defaults: UserDefaults { UserDefaults(suiteName: suite)! }
+   [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+[0;36m10 |[0;0m 
+[0;36m11 |[0;0m     override func setUp() {
+   [0;36m:[0;0m
+[0;36m14 |[0;0m     }
+[0;36m15 |[0;0m     override func tearDown() {
+[0;36m16 |[0;0m         defaults.removePersistentDomain(forName: suite)
+   [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be referenced from a nonisolated context[0;0m
+[0;36m17 |[0;0m         super.tearDown()
+[0;36m18 |[0;0m     }
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:16:9: [1;33mwarning: [1;39mmain actor-isolated property 'suite' can not be mutated from a nonisolated context[0;0m
+  [0;36m6 |[0;0m @MainActor
+  [0;36m7 |[0;0m final class SettingsReductionTests: XCTestCase {
+  [0;36m8 |[0;0m     private var suite = ""
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+    [0;36m:[0;0m
+ [0;36m14 |[0;0m     override func setUp() {
+ [0;36m15 |[0;0m         super.setUp()
+ [0;36m16 |[0;0m         suite = "com.wangqing.valora.settings-reduction.\(UUID().uuidString)"
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'suite' can not be mutated from a nonisolated context[0;0m
+ [0;36m17 |[0;0m         defaults = UserDefaults(suiteName: suite)!
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:17:9: [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be mutated from a nonisolated context[0;0m
+  [0;36m7 |[0;0m final class SettingsReductionTests: XCTestCase {
+  [0;36m8 |[0;0m     private var suite = ""
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+ [0;36m11 |[0;0m     private var model: AppModel!
+    [0;36m:[0;0m
+ [0;36m15 |[0;0m         super.setUp()
+ [0;36m16 |[0;0m         suite = "com.wangqing.valora.settings-reduction.\(UUID().uuidString)"
+ [0;36m17 |[0;0m         defaults = UserDefaults(suiteName: suite)!
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be mutated from a nonisolated context[0;0m
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:17:44: [1;33mwarning: [1;39mmain actor-isolated property 'suite' can not be referenced from a nonisolated context[0;0m
+  [0;36m6 |[0;0m @MainActor
+  [0;36m7 |[0;0m final class SettingsReductionTests: XCTestCase {
+  [0;36m8 |[0;0m     private var suite = ""
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+    [0;36m:[0;0m
+ [0;36m15 |[0;0m         super.setUp()
+ [0;36m16 |[0;0m         suite = "com.wangqing.valora.settings-reduction.\(UUID().uuidString)"
+ [0;36m17 |[0;0m         defaults = UserDefaults(suiteName: suite)!
+    [0;36m|[0;0m                                            `- [1;33mwarning: [1;39mmain actor-isolated property 'suite' can not be referenced from a nonisolated context[0;0m
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:18:9: [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be referenced from a nonisolated context[0;0m
+  [0;36m7 |[0;0m final class SettingsReductionTests: XCTestCase {
+  [0;36m8 |[0;0m     private var suite = ""
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+ [0;36m11 |[0;0m     private var model: AppModel!
+    [0;36m:[0;0m
+ [0;36m16 |[0;0m         suite = "com.wangqing.valora.settings-reduction.\(UUID().uuidString)"
+ [0;36m17 |[0;0m         defaults = UserDefaults(suiteName: suite)!
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be referenced from a nonisolated context[0;0m
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:18:50: [1;33mwarning: [1;39mmain actor-isolated property 'suite' can not be referenced from a nonisolated context[0;0m
+  [0;36m6 |[0;0m @MainActor
+  [0;36m7 |[0;0m final class SettingsReductionTests: XCTestCase {
+  [0;36m8 |[0;0m     private var suite = ""
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+    [0;36m:[0;0m
+ [0;36m16 |[0;0m         suite = "com.wangqing.valora.settings-reduction.\(UUID().uuidString)"
+ [0;36m17 |[0;0m         defaults = UserDefaults(suiteName: suite)!
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+    [0;36m|[0;0m                                                  `- [1;33mwarning: [1;39mmain actor-isolated property 'suite' can not be referenced from a nonisolated context[0;0m
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:19:9: [1;33mwarning: [1;39mmain actor-isolated property 'settings' can not be mutated from a nonisolated context[0;0m
+  [0;36m8 |[0;0m     private var suite = ""
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+ [0;36m11 |[0;0m     private var model: AppModel!
+ [0;36m12 |[0;0m     private var coordinator: WindowCoordinator!
+    [0;36m:[0;0m
+ [0;36m17 |[0;0m         defaults = UserDefaults(suiteName: suite)!
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'settings' can not be mutated from a nonisolated context[0;0m
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+ [0;36m21 |[0;0m         model.title = "Track"
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:19:20: [1;33mwarning: [1;39mcall to main actor-isolated initializer 'init(defaults:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m17 |[0;0m         defaults = UserDefaults(suiteName: suite)!
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+    [0;36m|[0;0m                    `- [1;33mwarning: [1;39mcall to main actor-isolated initializer 'init(defaults:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+ [0;36m21 |[0;0m         model.title = "Track"
+
+Valora.RevivalSettings.init:2:21: [1;39mnote: [1;39mcalls to initializer 'init(defaults:)' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m1 |[0;0m class RevivalSettings {
+[0;36m2 |[0;0m @MainActor internal init(defaults: UserDefaults = .standard)}
+  [0;36m|[0;0m                     `- [1;39mnote: [1;39mcalls to initializer 'init(defaults:)' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m3 |[0;0m 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:19:46: [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be referenced from a nonisolated context[0;0m
+  [0;36m7 |[0;0m final class SettingsReductionTests: XCTestCase {
+  [0;36m8 |[0;0m     private var suite = ""
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+ [0;36m11 |[0;0m     private var model: AppModel!
+    [0;36m:[0;0m
+ [0;36m17 |[0;0m         defaults = UserDefaults(suiteName: suite)!
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+    [0;36m|[0;0m                                              `- [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be referenced from a nonisolated context[0;0m
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+ [0;36m21 |[0;0m         model.title = "Track"
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:20:9: [1;33mwarning: [1;39mmain actor-isolated property 'model' can not be mutated from a nonisolated context[0;0m
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+ [0;36m11 |[0;0m     private var model: AppModel!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+ [0;36m12 |[0;0m     private var coordinator: WindowCoordinator!
+ [0;36m13 |[0;0m 
+    [0;36m:[0;0m
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'model' can not be mutated from a nonisolated context[0;0m
+ [0;36m21 |[0;0m         model.title = "Track"
+ [0;36m22 |[0;0m         model.artist = "Artist"
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:20:17: [1;33mwarning: [1;39mcall to main actor-isolated initializer 'init(settings:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+    [0;36m|[0;0m                 `- [1;33mwarning: [1;39mcall to main actor-isolated initializer 'init(settings:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m21 |[0;0m         model.title = "Track"
+ [0;36m22 |[0;0m         model.artist = "Artist"
+
+Valora.AppModel.init:2:21: [1;39mnote: [1;39mcalls to initializer 'init(settings:)' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m1 |[0;0m class AppModel {
+[0;36m2 |[0;0m @MainActor internal init(settings: Valora.RevivalSettings)}
+  [0;36m|[0;0m                     `- [1;39mnote: [1;39mcalls to initializer 'init(settings:)' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m3 |[0;0m 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:20:36: [1;33mwarning: [1;39mmain actor-isolated property 'settings' can not be referenced from a nonisolated context[0;0m
+  [0;36m8 |[0;0m     private var suite = ""
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+ [0;36m11 |[0;0m     private var model: AppModel!
+ [0;36m12 |[0;0m     private var coordinator: WindowCoordinator!
+    [0;36m:[0;0m
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+    [0;36m|[0;0m                                    `- [1;33mwarning: [1;39mmain actor-isolated property 'settings' can not be referenced from a nonisolated context[0;0m
+ [0;36m21 |[0;0m         model.title = "Track"
+ [0;36m22 |[0;0m         model.artist = "Artist"
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:21:15: [1;33mwarning: [1;39mmain actor-isolated property 'title' can not be mutated from a nonisolated context[0;0m
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+ [0;36m21 |[0;0m         model.title = "Track"
+    [0;36m|[0;0m               `- [1;33mwarning: [1;39mmain actor-isolated property 'title' can not be mutated from a nonisolated context[0;0m
+ [0;36m22 |[0;0m         model.artist = "Artist"
+ [0;36m23 |[0;0m         model.playing = true
+
+Valora.AppModel.title:2:36: [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+[0;36m1 |[0;0m class AppModel {
+[0;36m2 |[0;0m @Published @MainActor internal var title: String { get set }}
+  [0;36m|[0;0m                                    `- [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+[0;36m3 |[0;0m 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:21:9: [1;33mwarning: [1;39mmain actor-isolated property 'model' can not be referenced from a nonisolated context[0;0m
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+ [0;36m11 |[0;0m     private var model: AppModel!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+ [0;36m12 |[0;0m     private var coordinator: WindowCoordinator!
+ [0;36m13 |[0;0m 
+    [0;36m:[0;0m
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+ [0;36m21 |[0;0m         model.title = "Track"
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'model' can not be referenced from a nonisolated context[0;0m
+ [0;36m22 |[0;0m         model.artist = "Artist"
+ [0;36m23 |[0;0m         model.playing = true
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:22:15: [1;33mwarning: [1;39mmain actor-isolated property 'artist' can not be mutated from a nonisolated context[0;0m
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+ [0;36m21 |[0;0m         model.title = "Track"
+ [0;36m22 |[0;0m         model.artist = "Artist"
+    [0;36m|[0;0m               `- [1;33mwarning: [1;39mmain actor-isolated property 'artist' can not be mutated from a nonisolated context[0;0m
+ [0;36m23 |[0;0m         model.playing = true
+ [0;36m24 |[0;0m         settings.nowPlayingEnabled = true
+
+Valora.AppModel.artist:2:36: [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+[0;36m1 |[0;0m class AppModel {
+[0;36m2 |[0;0m @Published @MainActor internal var artist: String { get set }}
+  [0;36m|[0;0m                                    `- [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+[0;36m3 |[0;0m 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:22:9: [1;33mwarning: [1;39mmain actor-isolated property 'model' can not be referenced from a nonisolated context[0;0m
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+ [0;36m11 |[0;0m     private var model: AppModel!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+ [0;36m12 |[0;0m     private var coordinator: WindowCoordinator!
+ [0;36m13 |[0;0m 
+    [0;36m:[0;0m
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+ [0;36m21 |[0;0m         model.title = "Track"
+ [0;36m22 |[0;0m         model.artist = "Artist"
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'model' can not be referenced from a nonisolated context[0;0m
+ [0;36m23 |[0;0m         model.playing = true
+ [0;36m24 |[0;0m         settings.nowPlayingEnabled = true
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:23:15: [1;33mwarning: [1;39mmain actor-isolated property 'playing' can not be mutated from a nonisolated context[0;0m
+ [0;36m21 |[0;0m         model.title = "Track"
+ [0;36m22 |[0;0m         model.artist = "Artist"
+ [0;36m23 |[0;0m         model.playing = true
+    [0;36m|[0;0m               `- [1;33mwarning: [1;39mmain actor-isolated property 'playing' can not be mutated from a nonisolated context[0;0m
+ [0;36m24 |[0;0m         settings.nowPlayingEnabled = true
+ [0;36m25 |[0;0m         settings.autoCollapse = false
+
+Valora.AppModel.playing:2:36: [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+[0;36m1 |[0;0m class AppModel {
+[0;36m2 |[0;0m @Published @MainActor internal var playing: Bool { get set }}
+  [0;36m|[0;0m                                    `- [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+[0;36m3 |[0;0m 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:23:9: [1;33mwarning: [1;39mmain actor-isolated property 'model' can not be referenced from a nonisolated context[0;0m
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+ [0;36m11 |[0;0m     private var model: AppModel!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+ [0;36m12 |[0;0m     private var coordinator: WindowCoordinator!
+ [0;36m13 |[0;0m 
+    [0;36m:[0;0m
+ [0;36m21 |[0;0m         model.title = "Track"
+ [0;36m22 |[0;0m         model.artist = "Artist"
+ [0;36m23 |[0;0m         model.playing = true
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'model' can not be referenced from a nonisolated context[0;0m
+ [0;36m24 |[0;0m         settings.nowPlayingEnabled = true
+ [0;36m25 |[0;0m         settings.autoCollapse = false
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:24:18: [1;33mwarning: [1;39mmain actor-isolated property 'nowPlayingEnabled' can not be mutated from a nonisolated context[0;0m
+ [0;36m22 |[0;0m         model.artist = "Artist"
+ [0;36m23 |[0;0m         model.playing = true
+ [0;36m24 |[0;0m         settings.nowPlayingEnabled = true
+    [0;36m|[0;0m                  `- [1;33mwarning: [1;39mmain actor-isolated property 'nowPlayingEnabled' can not be mutated from a nonisolated context[0;0m
+ [0;36m25 |[0;0m         settings.autoCollapse = false
+ [0;36m26 |[0;0m         coordinator = WindowCoordinator(model)
+
+Valora.RevivalSettings.nowPlayingEnabled:2:36: [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+[0;36m1 |[0;0m class RevivalSettings {
+[0;36m2 |[0;0m @Published @MainActor internal var nowPlayingEnabled: Bool { get set }}
+  [0;36m|[0;0m                                    `- [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+[0;36m3 |[0;0m 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:24:9: [1;33mwarning: [1;39mmain actor-isolated property 'settings' can not be referenced from a nonisolated context[0;0m
+  [0;36m8 |[0;0m     private var suite = ""
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+ [0;36m11 |[0;0m     private var model: AppModel!
+ [0;36m12 |[0;0m     private var coordinator: WindowCoordinator!
+    [0;36m:[0;0m
+ [0;36m22 |[0;0m         model.artist = "Artist"
+ [0;36m23 |[0;0m         model.playing = true
+ [0;36m24 |[0;0m         settings.nowPlayingEnabled = true
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'settings' can not be referenced from a nonisolated context[0;0m
+ [0;36m25 |[0;0m         settings.autoCollapse = false
+ [0;36m26 |[0;0m         coordinator = WindowCoordinator(model)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:25:18: [1;33mwarning: [1;39mmain actor-isolated property 'autoCollapse' can not be mutated from a nonisolated context[0;0m
+ [0;36m23 |[0;0m         model.playing = true
+ [0;36m24 |[0;0m         settings.nowPlayingEnabled = true
+ [0;36m25 |[0;0m         settings.autoCollapse = false
+    [0;36m|[0;0m                  `- [1;33mwarning: [1;39mmain actor-isolated property 'autoCollapse' can not be mutated from a nonisolated context[0;0m
+ [0;36m26 |[0;0m         coordinator = WindowCoordinator(model)
+ [0;36m27 |[0;0m         coordinator.start(trackPointer: false)
+
+Valora.RevivalSettings.autoCollapse:2:36: [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+[0;36m1 |[0;0m class RevivalSettings {
+[0;36m2 |[0;0m @Published @MainActor internal var autoCollapse: Bool { get set }}
+  [0;36m|[0;0m                                    `- [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+[0;36m3 |[0;0m 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:25:9: [1;33mwarning: [1;39mmain actor-isolated property 'settings' can not be referenced from a nonisolated context[0;0m
+  [0;36m8 |[0;0m     private var suite = ""
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+ [0;36m11 |[0;0m     private var model: AppModel!
+ [0;36m12 |[0;0m     private var coordinator: WindowCoordinator!
+    [0;36m:[0;0m
+ [0;36m23 |[0;0m         model.playing = true
+ [0;36m24 |[0;0m         settings.nowPlayingEnabled = true
+ [0;36m25 |[0;0m         settings.autoCollapse = false
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'settings' can not be referenced from a nonisolated context[0;0m
+ [0;36m26 |[0;0m         coordinator = WindowCoordinator(model)
+ [0;36m27 |[0;0m         coordinator.start(trackPointer: false)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:26:9: [1;33mwarning: [1;39mmain actor-isolated property 'coordinator' can not be mutated from a nonisolated context[0;0m
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+ [0;36m11 |[0;0m     private var model: AppModel!
+ [0;36m12 |[0;0m     private var coordinator: WindowCoordinator!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+ [0;36m13 |[0;0m 
+ [0;36m14 |[0;0m     override func setUp() {
+    [0;36m:[0;0m
+ [0;36m24 |[0;0m         settings.nowPlayingEnabled = true
+ [0;36m25 |[0;0m         settings.autoCollapse = false
+ [0;36m26 |[0;0m         coordinator = WindowCoordinator(model)
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'coordinator' can not be mutated from a nonisolated context[0;0m
+ [0;36m27 |[0;0m         coordinator.start(trackPointer: false)
+ [0;36m28 |[0;0m     }
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:26:23: [1;33mwarning: [1;39mcall to main actor-isolated initializer 'init(_:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m24 |[0;0m         settings.nowPlayingEnabled = true
+ [0;36m25 |[0;0m         settings.autoCollapse = false
+ [0;36m26 |[0;0m         coordinator = WindowCoordinator(model)
+    [0;36m|[0;0m                       `- [1;33mwarning: [1;39mcall to main actor-isolated initializer 'init(_:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m27 |[0;0m         coordinator.start(trackPointer: false)
+ [0;36m28 |[0;0m     }
+
+Valora.WindowCoordinator.init:2:21: [1;39mnote: [1;39mcalls to initializer 'init(_:)' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m1 |[0;0m class WindowCoordinator {
+[0;36m2 |[0;0m @MainActor internal init(_ model: Valora.AppModel)}
+  [0;36m|[0;0m                     `- [1;39mnote: [1;39mcalls to initializer 'init(_:)' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m3 |[0;0m 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:26:41: [1;33mwarning: [1;39mmain actor-isolated property 'model' can not be referenced from a nonisolated context[0;0m
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+ [0;36m11 |[0;0m     private var model: AppModel!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+ [0;36m12 |[0;0m     private var coordinator: WindowCoordinator!
+ [0;36m13 |[0;0m 
+    [0;36m:[0;0m
+ [0;36m24 |[0;0m         settings.nowPlayingEnabled = true
+ [0;36m25 |[0;0m         settings.autoCollapse = false
+ [0;36m26 |[0;0m         coordinator = WindowCoordinator(model)
+    [0;36m|[0;0m                                         `- [1;33mwarning: [1;39mmain actor-isolated property 'model' can not be referenced from a nonisolated context[0;0m
+ [0;36m27 |[0;0m         coordinator.start(trackPointer: false)
+ [0;36m28 |[0;0m     }
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:27:21: [1;33mwarning: [1;39mcall to main actor-isolated instance method 'start(trackPointer:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m25 |[0;0m         settings.autoCollapse = false
+ [0;36m26 |[0;0m         coordinator = WindowCoordinator(model)
+ [0;36m27 |[0;0m         coordinator.start(trackPointer: false)
+    [0;36m|[0;0m                     `- [1;33mwarning: [1;39mcall to main actor-isolated instance method 'start(trackPointer:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m28 |[0;0m     }
+ [0;36m29 |[0;0m 
+
+Valora.WindowCoordinator.start:2:26: [1;39mnote: [1;39mcalls to instance method 'start(trackPointer:)' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m1 |[0;0m class WindowCoordinator {
+[0;36m2 |[0;0m @MainActor internal func start(trackPointer: Bool = true)}
+  [0;36m|[0;0m                          `- [1;39mnote: [1;39mcalls to instance method 'start(trackPointer:)' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m3 |[0;0m 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:27:9: [1;33mwarning: [1;39mmain actor-isolated property 'coordinator' can not be referenced from a nonisolated context[0;0m
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+ [0;36m11 |[0;0m     private var model: AppModel!
+ [0;36m12 |[0;0m     private var coordinator: WindowCoordinator!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+ [0;36m13 |[0;0m 
+ [0;36m14 |[0;0m     override func setUp() {
+    [0;36m:[0;0m
+ [0;36m25 |[0;0m         settings.autoCollapse = false
+ [0;36m26 |[0;0m         coordinator = WindowCoordinator(model)
+ [0;36m27 |[0;0m         coordinator.start(trackPointer: false)
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'coordinator' can not be referenced from a nonisolated context[0;0m
+ [0;36m28 |[0;0m     }
+ [0;36m29 |[0;0m 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:31:22: [1;33mwarning: [1;39mcall to main actor-isolated instance method 'cancelPendingHover()' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m29 |[0;0m 
+ [0;36m30 |[0;0m     override func tearDown() {
+ [0;36m31 |[0;0m         coordinator?.cancelPendingHover()
+    [0;36m|[0;0m                      `- [1;33mwarning: [1;39mcall to main actor-isolated instance method 'cancelPendingHover()' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m32 |[0;0m         coordinator?.collapse()
+ [0;36m33 |[0;0m         defaults.removePersistentDomain(forName: suite)
+
+Valora.WindowCoordinator.cancelPendingHover:2:26: [1;39mnote: [1;39mcalls to instance method 'cancelPendingHover()' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m1 |[0;0m class WindowCoordinator {
+[0;36m2 |[0;0m @MainActor internal func cancelPendingHover()}
+  [0;36m|[0;0m                          `- [1;39mnote: [1;39mcalls to instance method 'cancelPendingHover()' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m3 |[0;0m 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:31:9: [1;33mwarning: [1;39mmain actor-isolated property 'coordinator' can not be referenced from a nonisolated context[0;0m
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+ [0;36m11 |[0;0m     private var model: AppModel!
+ [0;36m12 |[0;0m     private var coordinator: WindowCoordinator!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+ [0;36m13 |[0;0m 
+ [0;36m14 |[0;0m     override func setUp() {
+    [0;36m:[0;0m
+ [0;36m29 |[0;0m 
+ [0;36m30 |[0;0m     override func tearDown() {
+ [0;36m31 |[0;0m         coordinator?.cancelPendingHover()
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'coordinator' can not be referenced from a nonisolated context[0;0m
+ [0;36m32 |[0;0m         coordinator?.collapse()
+ [0;36m33 |[0;0m         defaults.removePersistentDomain(forName: suite)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:32:22: [1;33mwarning: [1;39mcall to main actor-isolated instance method 'collapse()' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m30 |[0;0m     override func tearDown() {
+ [0;36m31 |[0;0m         coordinator?.cancelPendingHover()
+ [0;36m32 |[0;0m         coordinator?.collapse()
+    [0;36m|[0;0m                      `- [1;33mwarning: [1;39mcall to main actor-isolated instance method 'collapse()' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m33 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m34 |[0;0m         super.tearDown()
+
+Valora.WindowCoordinator.collapse:2:26: [1;39mnote: [1;39mcalls to instance method 'collapse()' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m1 |[0;0m class WindowCoordinator {
+[0;36m2 |[0;0m @MainActor internal func collapse()}
+  [0;36m|[0;0m                          `- [1;39mnote: [1;39mcalls to instance method 'collapse()' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m3 |[0;0m 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:32:9: [1;33mwarning: [1;39mmain actor-isolated property 'coordinator' can not be referenced from a nonisolated context[0;0m
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+ [0;36m11 |[0;0m     private var model: AppModel!
+ [0;36m12 |[0;0m     private var coordinator: WindowCoordinator!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+ [0;36m13 |[0;0m 
+ [0;36m14 |[0;0m     override func setUp() {
+    [0;36m:[0;0m
+ [0;36m30 |[0;0m     override func tearDown() {
+ [0;36m31 |[0;0m         coordinator?.cancelPendingHover()
+ [0;36m32 |[0;0m         coordinator?.collapse()
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'coordinator' can not be referenced from a nonisolated context[0;0m
+ [0;36m33 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m34 |[0;0m         super.tearDown()
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:33:9: [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be referenced from a nonisolated context[0;0m
+  [0;36m7 |[0;0m final class SettingsReductionTests: XCTestCase {
+  [0;36m8 |[0;0m     private var suite = ""
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+ [0;36m11 |[0;0m     private var model: AppModel!
+    [0;36m:[0;0m
+ [0;36m31 |[0;0m         coordinator?.cancelPendingHover()
+ [0;36m32 |[0;0m         coordinator?.collapse()
+ [0;36m33 |[0;0m         defaults.removePersistentDomain(forName: suite)
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be referenced from a nonisolated context[0;0m
+ [0;36m34 |[0;0m         super.tearDown()
+ [0;36m35 |[0;0m     }
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/SettingsReductionTests.swift:33:50: [1;33mwarning: [1;39mmain actor-isolated property 'suite' can not be referenced from a nonisolated context[0;0m
+  [0;36m6 |[0;0m @MainActor
+  [0;36m7 |[0;0m final class SettingsReductionTests: XCTestCase {
+  [0;36m8 |[0;0m     private var suite = ""
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+  [0;36m9 |[0;0m     private var defaults: UserDefaults!
+ [0;36m10 |[0;0m     private var settings: RevivalSettings!
+    [0;36m:[0;0m
+ [0;36m31 |[0;0m         coordinator?.cancelPendingHover()
+ [0;36m32 |[0;0m         coordinator?.collapse()
+ [0;36m33 |[0;0m         defaults.removePersistentDomain(forName: suite)
+    [0;36m|[0;0m                                                  `- [1;33mwarning: [1;39mmain actor-isolated property 'suite' can not be referenced from a nonisolated context[0;0m
+ [0;36m34 |[0;0m         super.tearDown()
+ [0;36m35 |[0;0m     }
+
+[#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>
+[56 / 59] ValoraTests-product
+/Users/wangqing/code/Valora/Tests/ValoraTests/MediaControllerRecoveryTests.swift:16:9: [1;33mwarning: [1;39mmain actor-isolated property 'suite' can not be mutated from a nonisolated context[0;0m
+  [0;36m5 |[0;0m @MainActor
+  [0;36m6 |[0;0m final class MediaControllerRecoveryTests: XCTestCase {
+  [0;36m7 |[0;0m     private var suite = ""
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+  [0;36m8 |[0;0m     private var defaults: UserDefaults!
+  [0;36m9 |[0;0m     private var settings: RevivalSettings!
+    [0;36m:[0;0m
+ [0;36m14 |[0;0m     override func setUp() {
+ [0;36m15 |[0;0m         super.setUp()
+ [0;36m16 |[0;0m         suite = "com.wangqing.valora.media-recovery.\(UUID().uuidString)"
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'suite' can not be mutated from a nonisolated context[0;0m
+ [0;36m17 |[0;0m         defaults = UserDefaults(suiteName: suite)!
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MediaControllerRecoveryTests.swift:17:9: [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be mutated from a nonisolated context[0;0m
+  [0;36m6 |[0;0m final class MediaControllerRecoveryTests: XCTestCase {
+  [0;36m7 |[0;0m     private var suite = ""
+  [0;36m8 |[0;0m     private var defaults: UserDefaults!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+  [0;36m9 |[0;0m     private var settings: RevivalSettings!
+ [0;36m10 |[0;0m     private var model: AppModel!
+    [0;36m:[0;0m
+ [0;36m15 |[0;0m         super.setUp()
+ [0;36m16 |[0;0m         suite = "com.wangqing.valora.media-recovery.\(UUID().uuidString)"
+ [0;36m17 |[0;0m         defaults = UserDefaults(suiteName: suite)!
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be mutated from a nonisolated context[0;0m
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MediaControllerRecoveryTests.swift:17:44: [1;33mwarning: [1;39mmain actor-isolated property 'suite' can not be referenced from a nonisolated context[0;0m
+  [0;36m5 |[0;0m @MainActor
+  [0;36m6 |[0;0m final class MediaControllerRecoveryTests: XCTestCase {
+  [0;36m7 |[0;0m     private var suite = ""
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+  [0;36m8 |[0;0m     private var defaults: UserDefaults!
+  [0;36m9 |[0;0m     private var settings: RevivalSettings!
+    [0;36m:[0;0m
+ [0;36m15 |[0;0m         super.setUp()
+ [0;36m16 |[0;0m         suite = "com.wangqing.valora.media-recovery.\(UUID().uuidString)"
+ [0;36m17 |[0;0m         defaults = UserDefaults(suiteName: suite)!
+    [0;36m|[0;0m                                            `- [1;33mwarning: [1;39mmain actor-isolated property 'suite' can not be referenced from a nonisolated context[0;0m
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MediaControllerRecoveryTests.swift:18:9: [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be referenced from a nonisolated context[0;0m
+  [0;36m6 |[0;0m final class MediaControllerRecoveryTests: XCTestCase {
+  [0;36m7 |[0;0m     private var suite = ""
+  [0;36m8 |[0;0m     private var defaults: UserDefaults!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+  [0;36m9 |[0;0m     private var settings: RevivalSettings!
+ [0;36m10 |[0;0m     private var model: AppModel!
+    [0;36m:[0;0m
+ [0;36m16 |[0;0m         suite = "com.wangqing.valora.media-recovery.\(UUID().uuidString)"
+ [0;36m17 |[0;0m         defaults = UserDefaults(suiteName: suite)!
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be referenced from a nonisolated context[0;0m
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MediaControllerRecoveryTests.swift:18:50: [1;33mwarning: [1;39mmain actor-isolated property 'suite' can not be referenced from a nonisolated context[0;0m
+  [0;36m5 |[0;0m @MainActor
+  [0;36m6 |[0;0m final class MediaControllerRecoveryTests: XCTestCase {
+  [0;36m7 |[0;0m     private var suite = ""
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+  [0;36m8 |[0;0m     private var defaults: UserDefaults!
+  [0;36m9 |[0;0m     private var settings: RevivalSettings!
+    [0;36m:[0;0m
+ [0;36m16 |[0;0m         suite = "com.wangqing.valora.media-recovery.\(UUID().uuidString)"
+ [0;36m17 |[0;0m         defaults = UserDefaults(suiteName: suite)!
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+    [0;36m|[0;0m                                                  `- [1;33mwarning: [1;39mmain actor-isolated property 'suite' can not be referenced from a nonisolated context[0;0m
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MediaControllerRecoveryTests.swift:19:9: [1;33mwarning: [1;39mmain actor-isolated property 'settings' can not be mutated from a nonisolated context[0;0m
+  [0;36m7 |[0;0m     private var suite = ""
+  [0;36m8 |[0;0m     private var defaults: UserDefaults!
+  [0;36m9 |[0;0m     private var settings: RevivalSettings!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+ [0;36m10 |[0;0m     private var model: AppModel!
+ [0;36m11 |[0;0m     private var fake: FakeSystemMediaSource!
+    [0;36m:[0;0m
+ [0;36m17 |[0;0m         defaults = UserDefaults(suiteName: suite)!
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'settings' can not be mutated from a nonisolated context[0;0m
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+ [0;36m21 |[0;0m         fake = FakeSystemMediaSource()
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MediaControllerRecoveryTests.swift:19:20: [1;33mwarning: [1;39mcall to main actor-isolated initializer 'init(defaults:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m17 |[0;0m         defaults = UserDefaults(suiteName: suite)!
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+    [0;36m|[0;0m                    `- [1;33mwarning: [1;39mcall to main actor-isolated initializer 'init(defaults:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+ [0;36m21 |[0;0m         fake = FakeSystemMediaSource()
+
+Valora.RevivalSettings.init:2:21: [1;39mnote: [1;39mcalls to initializer 'init(defaults:)' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m1 |[0;0m class RevivalSettings {
+[0;36m2 |[0;0m @MainActor internal init(defaults: UserDefaults = .standard)}
+  [0;36m|[0;0m                     `- [1;39mnote: [1;39mcalls to initializer 'init(defaults:)' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m3 |[0;0m 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MediaControllerRecoveryTests.swift:19:46: [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be referenced from a nonisolated context[0;0m
+  [0;36m6 |[0;0m final class MediaControllerRecoveryTests: XCTestCase {
+  [0;36m7 |[0;0m     private var suite = ""
+  [0;36m8 |[0;0m     private var defaults: UserDefaults!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+  [0;36m9 |[0;0m     private var settings: RevivalSettings!
+ [0;36m10 |[0;0m     private var model: AppModel!
+    [0;36m:[0;0m
+ [0;36m17 |[0;0m         defaults = UserDefaults(suiteName: suite)!
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+    [0;36m|[0;0m                                              `- [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be referenced from a nonisolated context[0;0m
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+ [0;36m21 |[0;0m         fake = FakeSystemMediaSource()
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MediaControllerRecoveryTests.swift:20:9: [1;33mwarning: [1;39mmain actor-isolated property 'model' can not be mutated from a nonisolated context[0;0m
+  [0;36m8 |[0;0m     private var defaults: UserDefaults!
+  [0;36m9 |[0;0m     private var settings: RevivalSettings!
+ [0;36m10 |[0;0m     private var model: AppModel!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+ [0;36m11 |[0;0m     private var fake: FakeSystemMediaSource!
+ [0;36m12 |[0;0m     private var controller: MediaController!
+    [0;36m:[0;0m
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'model' can not be mutated from a nonisolated context[0;0m
+ [0;36m21 |[0;0m         fake = FakeSystemMediaSource()
+ [0;36m22 |[0;0m     }
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MediaControllerRecoveryTests.swift:20:17: [1;33mwarning: [1;39mcall to main actor-isolated initializer 'init(settings:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+    [0;36m|[0;0m                 `- [1;33mwarning: [1;39mcall to main actor-isolated initializer 'init(settings:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m21 |[0;0m         fake = FakeSystemMediaSource()
+ [0;36m22 |[0;0m     }
+
+Valora.AppModel.init:2:21: [1;39mnote: [1;39mcalls to initializer 'init(settings:)' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m1 |[0;0m class AppModel {
+[0;36m2 |[0;0m @MainActor internal init(settings: Valora.RevivalSettings)}
+  [0;36m|[0;0m                     `- [1;39mnote: [1;39mcalls to initializer 'init(settings:)' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m3 |[0;0m 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MediaControllerRecoveryTests.swift:20:36: [1;33mwarning: [1;39mmain actor-isolated property 'settings' can not be referenced from a nonisolated context[0;0m
+  [0;36m7 |[0;0m     private var suite = ""
+  [0;36m8 |[0;0m     private var defaults: UserDefaults!
+  [0;36m9 |[0;0m     private var settings: RevivalSettings!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+ [0;36m10 |[0;0m     private var model: AppModel!
+ [0;36m11 |[0;0m     private var fake: FakeSystemMediaSource!
+    [0;36m:[0;0m
+ [0;36m18 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+    [0;36m|[0;0m                                    `- [1;33mwarning: [1;39mmain actor-isolated property 'settings' can not be referenced from a nonisolated context[0;0m
+ [0;36m21 |[0;0m         fake = FakeSystemMediaSource()
+ [0;36m22 |[0;0m     }
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MediaControllerRecoveryTests.swift:21:9: [1;33mwarning: [1;39mmain actor-isolated property 'fake' can not be mutated from a nonisolated context[0;0m
+  [0;36m9 |[0;0m     private var settings: RevivalSettings!
+ [0;36m10 |[0;0m     private var model: AppModel!
+ [0;36m11 |[0;0m     private var fake: FakeSystemMediaSource!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mmutation of this property is only permitted within the actor[0;0m
+ [0;36m12 |[0;0m     private var controller: MediaController!
+ [0;36m13 |[0;0m 
+    [0;36m:[0;0m
+ [0;36m19 |[0;0m         settings = RevivalSettings(defaults: defaults)
+ [0;36m20 |[0;0m         model = AppModel(settings: settings)
+ [0;36m21 |[0;0m         fake = FakeSystemMediaSource()
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'fake' can not be mutated from a nonisolated context[0;0m
+ [0;36m22 |[0;0m     }
+ [0;36m23 |[0;0m 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MediaControllerRecoveryTests.swift:25:21: [1;33mwarning: [1;39mcall to main actor-isolated instance method 'stop()' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m23 |[0;0m 
+ [0;36m24 |[0;0m     override func tearDown() {
+ [0;36m25 |[0;0m         controller?.stop()
+    [0;36m|[0;0m                     `- [1;33mwarning: [1;39mcall to main actor-isolated instance method 'stop()' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m26 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m27 |[0;0m         super.tearDown()
+
+Valora.MediaController.stop:2:26: [1;39mnote: [1;39mcalls to instance method 'stop()' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m1 |[0;0m class MediaController {
+[0;36m2 |[0;0m @MainActor internal func stop()}
+  [0;36m|[0;0m                          `- [1;39mnote: [1;39mcalls to instance method 'stop()' from outside of its actor context are implicitly asynchronous[0;0m
+[0;36m3 |[0;0m 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MediaControllerRecoveryTests.swift:25:9: [1;33mwarning: [1;39mmain actor-isolated property 'controller' can not be referenced from a nonisolated context[0;0m
+ [0;36m10 |[0;0m     private var model: AppModel!
+ [0;36m11 |[0;0m     private var fake: FakeSystemMediaSource!
+ [0;36m12 |[0;0m     private var controller: MediaController!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+ [0;36m13 |[0;0m 
+ [0;36m14 |[0;0m     override func setUp() {
+    [0;36m:[0;0m
+ [0;36m23 |[0;0m 
+ [0;36m24 |[0;0m     override func tearDown() {
+ [0;36m25 |[0;0m         controller?.stop()
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'controller' can not be referenced from a nonisolated context[0;0m
+ [0;36m26 |[0;0m         defaults.removePersistentDomain(forName: suite)
+ [0;36m27 |[0;0m         super.tearDown()
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MediaControllerRecoveryTests.swift:26:9: [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be referenced from a nonisolated context[0;0m
+  [0;36m6 |[0;0m final class MediaControllerRecoveryTests: XCTestCase {
+  [0;36m7 |[0;0m     private var suite = ""
+  [0;36m8 |[0;0m     private var defaults: UserDefaults!
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+  [0;36m9 |[0;0m     private var settings: RevivalSettings!
+ [0;36m10 |[0;0m     private var model: AppModel!
+    [0;36m:[0;0m
+ [0;36m24 |[0;0m     override func tearDown() {
+ [0;36m25 |[0;0m         controller?.stop()
+ [0;36m26 |[0;0m         defaults.removePersistentDomain(forName: suite)
+    [0;36m|[0;0m         `- [1;33mwarning: [1;39mmain actor-isolated property 'defaults' can not be referenced from a nonisolated context[0;0m
+ [0;36m27 |[0;0m         super.tearDown()
+ [0;36m28 |[0;0m     }
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MediaControllerRecoveryTests.swift:26:50: [1;33mwarning: [1;39mmain actor-isolated property 'suite' can not be referenced from a nonisolated context[0;0m
+  [0;36m5 |[0;0m @MainActor
+  [0;36m6 |[0;0m final class MediaControllerRecoveryTests: XCTestCase {
+  [0;36m7 |[0;0m     private var suite = ""
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mproperty declared here[0;0m
+  [0;36m8 |[0;0m     private var defaults: UserDefaults!
+  [0;36m9 |[0;0m     private var settings: RevivalSettings!
+    [0;36m:[0;0m
+ [0;36m24 |[0;0m     override func tearDown() {
+ [0;36m25 |[0;0m         controller?.stop()
+ [0;36m26 |[0;0m         defaults.removePersistentDomain(forName: suite)
+    [0;36m|[0;0m                                                  `- [1;33mwarning: [1;39mmain actor-isolated property 'suite' can not be referenced from a nonisolated context[0;0m
+ [0;36m27 |[0;0m         super.tearDown()
+ [0;36m28 |[0;0m     }
+
+[#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>
+[58 / 62] ValoraTests-product
+Build complete! (6.27秒)
+Test Suite 'All tests' started at 2026-10-23 23:05:38.325.
+Test Suite 'ValoraTests.xctest' started at 2026-10-23 23:05:38.325.
+Test Suite 'MediaControllerRecoveryTests' started at 2026-10-23 23:05:38.326.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testDisablePreventsReconnectAndDoesNotLoseSourceStop]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testDisablePreventsReconnectAndDoesNotLoseSourceStop]' passed (0.004 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testFailureRetryIsRateLimitedAndNotAReentrantLoop]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testFailureRetryIsRateLimitedAndNotAReentrantLoop]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testInitialStartFailureRecoversThroughExistingRefresh]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testInitialStartFailureRecoversThroughExistingRefresh]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testNormalSeekKeepsClampAndTruncationSemantics]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testNormalSeekKeepsClampAndTruncationSemantics]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testRepeatedRefreshDoesNotStartDuplicateAdapters]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testRepeatedRefreshDoesNotStartDuplicateAdapters]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testRunningStreamExitRecoversThroughExistingRefresh]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testRunningStreamExitRecoversThroughExistingRefresh]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testSeekMicrosBoundariesAreSafe]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testSeekMicrosBoundariesAreSafe]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testSeekRejectsUnrepresentableAndInvalidValuesWithoutCallingRunner]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testSeekRejectsUnrepresentableAndInvalidValuesWithoutCallingRunner]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testStopPreventsFurtherReconnects]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testStopPreventsFurtherReconnects]' passed (0.001 seconds).
+Test Suite 'MediaControllerRecoveryTests' passed at 2026-10-23 23:05:38.339.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.013 (0.014) seconds
+Test Suite 'MusicTitleExtrasIntegrationTests' started at 2026-10-23 23:05:38.339.
+Test Case '-[ValoraTests.MusicTitleExtrasIntegrationTests testRemovedTitleExtrasSettingCannotOverrideFixedFullTitle]' started.
+Test Case '-[ValoraTests.MusicTitleExtrasIntegrationTests testRemovedTitleExtrasSettingCannotOverrideFixedFullTitle]' passed (0.002 seconds).
+Test Suite 'MusicTitleExtrasIntegrationTests' passed at 2026-10-23 23:05:38.342.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+Test Suite 'RevivalSettingsReloadTests' started at 2026-10-23 23:05:38.342.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testFixedPoliciesIgnoreLegacyValuesAndKeepRetainedDefaults]' started.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testFixedPoliciesIgnoreLegacyValuesAndKeepRetainedDefaults]' passed (0.001 seconds).
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testHoverDelayIsRetainedAndClamped]' started.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testHoverDelayIsRetainedAndClamped]' passed (0.003 seconds).
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testNowPlayingToggleRemainsUserControlled]' started.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testNowPlayingToggleRemainsUserControlled]' passed (0.001 seconds).
+Test Suite 'RevivalSettingsReloadTests' passed at 2026-10-23 23:05:38.347.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.005 (0.005) seconds
+Test Suite 'SettingsReductionTests' started at 2026-10-23 23:05:38.347.
+Test Case '-[ValoraTests.SettingsReductionTests testDisplayChoiceIconsAreDistinctAndMapped]' started.
+Test Case '-[ValoraTests.SettingsReductionTests testDisplayChoiceIconsAreDistinctAndMapped]' passed (0.258 seconds).
+Test Case '-[ValoraTests.SettingsReductionTests testExistingSettingsWindowIsReused]' started.
+Test Case '-[ValoraTests.SettingsReductionTests testExistingSettingsWindowIsReused]' passed (0.158 seconds).
+Test Case '-[ValoraTests.SettingsReductionTests testHoverDelayExpandsAndCanBeCancelledByDisable]' started.
+Test Case '-[ValoraTests.SettingsReductionTests testHoverDelayExpandsAndCanBeCancelledByDisable]' passed (0.786 seconds).
+Test Case '-[ValoraTests.SettingsReductionTests testLegacyGestureCodeIsGoneAndNormalControlsRemain]' started.
+Test Case '-[ValoraTests.SettingsReductionTests testLegacyGestureCodeIsGoneAndNormalControlsRemain]' passed (0.091 seconds).
+Test Case '-[ValoraTests.SettingsReductionTests testPointerExitAndStopCancelPendingHover]' started.
+Test Case '-[ValoraTests.SettingsReductionTests testPointerExitAndStopCancelPendingHover]' passed (0.632 seconds).
+Test Suite 'SettingsReductionTests' passed at 2026-10-23 23:05:40.272.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 1.924 (1.925) seconds
+Test Suite 'ValoraTests.xctest' passed at 2026-10-23 23:05:40.272.
+	 Executed 18 tests, with 0 failures (0 unexpected) in 1.944 (1.946) seconds
+Test Suite 'All tests' passed at 2026-10-23 23:05:40.272.
+	 Executed 18 tests, with 0 failures (0 unexpected) in 1.944 (1.947) seconds
+Test Suite 'All tests' started at 2026-10-23 23:05:40.381.
+Test Suite 'ReferenceCoreTests.xctest' started at 2026-10-23 23:05:40.382.
+Test Suite 'ArtworkTransitionTests' started at 2026-10-23 23:05:40.382.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testDisableOrMissingArtworkInvalidatesPendingCompletion]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testDisableOrMissingArtworkInvalidatesPendingCompletion]' passed (0.001 seconds).
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testInitialAndDuplicateArtworkDoNotFlip]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testInitialAndDuplicateArtworkDoNotFlip]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testRapidChangesKeepOnlyNewestQueuedArtwork]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testRapidChangesKeepOnlyNewestQueuedArtwork]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testRecoveredScaleEndpointsAndPreferenceFallbacks]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testRecoveredScaleEndpointsAndPreferenceFallbacks]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testReturningToTargetDropsObsoleteQueue]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testReturningToTargetDropsObsoleteQueue]' passed (0.000 seconds).
+Test Suite 'ArtworkTransitionTests' passed at 2026-10-23 23:05:40.384.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.002) seconds
+Test Suite 'CompactWaveformTests' started at 2026-10-23 23:05:40.384.
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testExpandedConstructorHasItsOwnEnvelope]' started.
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testExpandedConstructorHasItsOwnEnvelope]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testRecoveredUnsignedHashVector]' started.
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testRecoveredUnsignedHashVector]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testSourceRevisionAndOverflowStayWithinRecoveredHeightRange]' started.
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testSourceRevisionAndOverflowStayWithinRecoveredHeightRange]' passed (0.000 seconds).
+Test Suite 'CompactWaveformTests' passed at 2026-10-23 23:05:40.384.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'GameMatcherTests' started at 2026-10-23 23:05:40.384.
+Test Case '-[ReferenceCoreTests.GameMatcherTests testNonGamesDoNotMatch]' started.
+Test Case '-[ReferenceCoreTests.GameMatcherTests testNonGamesDoNotMatch]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.GameMatcherTests testPathFragmentsAndCategoryFallback]' started.
+Test Case '-[ReferenceCoreTests.GameMatcherTests testPathFragmentsAndCategoryFallback]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.GameMatcherTests testRecoveredLeagueBundleIdentifiers]' started.
+Test Case '-[ReferenceCoreTests.GameMatcherTests testRecoveredLeagueBundleIdentifiers]' passed (0.000 seconds).
+Test Suite 'GameMatcherTests' passed at 2026-10-23 23:05:40.385.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'MarqueeTests' started at 2026-10-23 23:05:40.385.
+Test Case '-[ReferenceCoreTests.MarqueeTests testOverflowIncludesLeadingInset]' started.
+Test Case '-[ReferenceCoreTests.MarqueeTests testOverflowIncludesLeadingInset]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MarqueeTests testTwoRowsShareCycleButUseTheirOwnMovementDuration]' started.
+Test Case '-[ReferenceCoreTests.MarqueeTests testTwoRowsShareCycleButUseTheirOwnMovementDuration]' passed (0.000 seconds).
+Test Suite 'MarqueeTests' passed at 2026-10-23 23:05:40.385.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'MediaIdleTests' started at 2026-10-23 23:05:40.385.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testDurationChangeReplacesTaskAndZeroMeansNoGrace]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testDurationChangeReplacesTaskAndZeroMeansNoGrace]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testHoverCancelsThenExitStartsFullNewWait]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testHoverCancelsThenExitStartsFullNewWait]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testNotificationIsNotDismissedByAnOldMusicTimeout]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testNotificationIsNotDismissedByAnOldMusicTimeout]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testPausedTrackExpiresWithoutRepeatedPollsExtendingDeadline]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testPausedTrackExpiresWithoutRepeatedPollsExtendingDeadline]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testResumeAndSecondPauseRejectFirstPauseTimeout]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testResumeAndSecondPauseRejectFirstPauseTimeout]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testTrackSourceAndDisableInvalidateOldTasks]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testTrackSourceAndDisableInvalidateOldTasks]' passed (0.000 seconds).
+Test Suite 'MediaIdleTests' passed at 2026-10-23 23:05:40.386.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'MediaProgressTests' started at 2026-10-23 23:05:40.386.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testCancelledDragDoesNotLeakIntoNewTrack]' started.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testCancelledDragDoesNotLeakIntoNewTrack]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaProgressTests testDragIsRelativeAndDoesNotJumpWhenPlayerUpdates]' started.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testDragIsRelativeAndDoesNotJumpWhenPlayerUpdates]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaProgressTests testTapAfterDragIsSuppressedAndCoordinatesAreClamped]' started.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testTapAfterDragIsSuppressedAndCoordinatesAreClamped]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaProgressTests testUnknownDurationAndNonFiniteInputsCannotSeek]' started.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testUnknownDurationAndNonFiniteInputsCannotSeek]' passed (0.000 seconds).
+Test Suite 'MediaProgressTests' passed at 2026-10-23 23:05:40.387.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'MusicPreferencesTests' started at 2026-10-23 23:05:40.387.
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testDefaultsAndDictionaryRoundTrip]' started.
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testDefaultsAndDictionaryRoundTrip]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testDurationCannotCrashTaskSleepOrEscapeSliderBounds]' started.
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testDurationCannotCrashTaskSleepOrEscapeSliderBounds]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testOnlyTheKnownCurrentSourceHidesActivity]' started.
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testOnlyTheKnownCurrentSourceHidesActivity]' passed (0.000 seconds).
+Test Suite 'MusicPreferencesTests' passed at 2026-10-23 23:05:40.388.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'MusicTitleFormattingTests' started at 2026-10-23 23:05:40.388.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testDisabledPreservesRawTitleExactly]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testDisabledPreservesRawTitleExactly]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testEmptyProcessedTitleFallsBackToTrimmedOriginal]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testEmptyProcessedTitleFallsBackToTrimmedOriginal]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testNestedAndCrossedBracketsUseIndependentDepths]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testNestedAndCrossedBracketsUseIndependentDepths]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testUnicodeCharactersAndFullWidthBracketsArePreserved]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testUnicodeCharactersAndFullWidthBracketsArePreserved]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testUnmatchedClosersRemainAndOpenersHideRemainder]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testUnmatchedClosersRemainAndOpenersHideRemainder]' passed (0.000 seconds).
+Test Suite 'MusicTitleFormattingTests' passed at 2026-10-23 23:05:40.389.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'NotchContourTests' started at 2026-10-23 23:05:40.389.
+Test Case '-[ReferenceCoreTests.NotchContourTests testFloatingScreenUsesPillAndIgnoresDelayedNotchCornerFlag]' started.
+Test Case '-[ReferenceCoreTests.NotchContourTests testFloatingScreenUsesPillAndIgnoresDelayedNotchCornerFlag]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchContourTests testPhysicalCornersRequireBothExpandedFlags]' started.
+Test Case '-[ReferenceCoreTests.NotchContourTests testPhysicalCornersRequireBothExpandedFlags]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchContourTests testSimulatedNotchKeepsShouldersOnExternalScreen]' started.
+Test Case '-[ReferenceCoreTests.NotchContourTests testSimulatedNotchKeepsShouldersOnExternalScreen]' passed (0.000 seconds).
+Test Suite 'NotchContourTests' passed at 2026-10-23 23:05:40.389.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'NotchHoverTests' started at 2026-10-23 23:05:40.389.
+Test Case '-[ReferenceCoreTests.NotchHoverTests testElevationOnlyAppliesToCollapsedCutout]' started.
+Test Case '-[ReferenceCoreTests.NotchHoverTests testElevationOnlyAppliesToCollapsedCutout]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchHoverTests testEnlargedEdgeRemainsInInputEnvelope]' started.
+Test Case '-[ReferenceCoreTests.NotchHoverTests testEnlargedEdgeRemainsInInputEnvelope]' passed (0.000 seconds).
+Test Suite 'NotchHoverTests' passed at 2026-10-23 23:05:40.390.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'NotchTransitionTests' started at 2026-10-23 23:05:40.390.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testContentSurvivesCollapseAndInteractionWaitsForExpansion]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testContentSurvivesCollapseAndInteractionWaitsForExpansion]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testDuplicateRequestsKeepOriginalClockAndGeneration]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testDuplicateRequestsKeepOriginalClockAndGeneration]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testInterruptedExpansionCannotRestoreCollapsedVisuals]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testInterruptedExpansionCannotRestoreCollapsedVisuals]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testRapidAlternationRejectsEveryOlderGeneration]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testRapidAlternationRejectsEveryOlderGeneration]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testStaleCollapseCompletionCannotClearReopenedPanel]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testStaleCollapseCompletionCannotClearReopenedPanel]' passed (0.000 seconds).
+Test Suite 'NotchTransitionTests' passed at 2026-10-23 23:05:40.391.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'NotchTuningTests' started at 2026-10-23 23:05:40.391.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testExtremeFiniteValuesAreClampedToCandidateUIRangeAndNonFiniteIsZero]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testExtremeFiniteValuesAreClampedToCandidateUIRangeAndNonFiniteIsZero]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testNotificationAndQuickPeekReceiveTheSamePhysicalCompactOffset]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testNotificationAndQuickPeekReceiveTheSamePhysicalCompactOffset]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPhysicalFloatingAndSimulatedBranchesKeepTheirOwnBaseGeometry]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPhysicalFloatingAndSimulatedBranchesKeepTheirOwnBaseGeometry]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPhysicalGateRejectsFloatingAndForcedSimulatedScreens]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPhysicalGateRejectsFloatingAndForcedSimulatedScreens]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPositiveAndNegativeOffsetsApplyToPhysicalCompactOnly]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPositiveAndNegativeOffsetsApplyToPhysicalCompactOnly]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testZeroIsBaselineInEveryCompactBranch]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testZeroIsBaselineInEveryCompactBranch]' passed (0.000 seconds).
+Test Suite 'NotchTuningTests' passed at 2026-10-23 23:05:40.392.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'ReferenceCoreTests' started at 2026-10-23 23:05:40.392.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testMinimumAndLargerPhysicalGeometry]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testMinimumAndLargerPhysicalGeometry]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testMissingAuxiliaryAreaUsesNonNotchBranch]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testMissingAuxiliaryAreaUsesNonNotchBranch]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testNonNotchAndSimulatedBranchesFromArm64Registers]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testNonNotchAndSimulatedBranchesFromArm64Registers]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testObservedModelUIDAndAllReferenceProductAliases]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testObservedModelUIDAndAllReferenceProductAliases]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testPhysicalNotchOnUsersBuiltInDisplay]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testPhysicalNotchOnUsersBuiltInDisplay]' passed (0.000 seconds).
+Test Suite 'ReferenceCoreTests' passed at 2026-10-23 23:05:40.393.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'SongPeekTests' started at 2026-10-23 23:05:40.393.
+Test Case '-[ReferenceCoreTests.SongPeekTests testDisabledAndSourceResetNeverReplayOldChange]' started.
+Test Case '-[ReferenceCoreTests.SongPeekTests testDisabledAndSourceResetNeverReplayOldChange]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SongPeekTests testOnlySubsequentTrackChangeShowsPeek]' started.
+Test Case '-[ReferenceCoreTests.SongPeekTests testOnlySubsequentTrackChangeShowsPeek]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SongPeekTests testRapidChangesIgnoreOldExpiryAndExpansionCancels]' started.
+Test Case '-[ReferenceCoreTests.SongPeekTests testRapidChangesIgnoreOldExpiryAndExpansionCancels]' passed (0.000 seconds).
+Test Suite 'SongPeekTests' passed at 2026-10-23 23:05:40.394.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'SystemMediaSnapshotTests' started at 2026-10-23 23:05:40.394.
+Test Case '-[ReferenceCoreTests.SystemMediaSnapshotTests testRevisionPrefersContentItemIdentifier]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaSnapshotTests testRevisionPrefersContentItemIdentifier]' passed (0.000 seconds).
+Test Suite 'SystemMediaSnapshotTests' passed at 2026-10-23 23:05:40.394.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'SystemMediaTests' started at 2026-10-23 23:05:40.394.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testMissingOrInvalidTimingDoesNotInventProgress]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testMissingOrInvalidTimingDoesNotInventProgress]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SystemMediaTests testProgressUsesTimestampAndFreezesWhenPaused]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testProgressUsesTimestampAndFreezesWhenPaused]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SystemMediaTests testSameTitleDifferentSourceAlbumOrTrackInvalidatesIdentity]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testSameTitleDifferentSourceAlbumOrTrackInvalidatesIdentity]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SystemMediaTests testStateOnlyPauseDoesNotJumpBackAndResumeDoesNotCountPausedTime]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testStateOnlyPauseDoesNotJumpBackAndResumeDoesNotCountPausedTime]' passed (0.000 seconds).
+Test Suite 'SystemMediaTests' passed at 2026-10-23 23:05:40.395.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'VolumeKeyTests' started at 2026-10-23 23:05:40.395.
+Test Case '-[ReferenceCoreTests.VolumeKeyTests testKeyCodes]' started.
+Test Case '-[ReferenceCoreTests.VolumeKeyTests testKeyCodes]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.VolumeKeyTests testStepsAndClamp]' started.
+Test Case '-[ReferenceCoreTests.VolumeKeyTests testStepsAndClamp]' passed (0.000 seconds).
+Test Suite 'VolumeKeyTests' passed at 2026-10-23 23:05:40.395.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'ReferenceCoreTests.xctest' passed at 2026-10-23 23:05:40.395.
+	 Executed 62 tests, with 0 failures (0 unexpected) in 0.009 (0.014) seconds
+Test Suite 'All tests' passed at 2026-10-23 23:05:40.395.
+	 Executed 62 tests, with 0 failures (0 unexpected) in 0.009 (0.015) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

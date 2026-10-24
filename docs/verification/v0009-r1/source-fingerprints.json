@@ -1,0 +1,44 @@
+{
+  "decision": "docs/verification/independent-v0009/decision.md",
+  "decision_sha256": "5049745f0be8b6b90890f3623756d01c54eb9b9a7aa1049580a0c27eb9bf0048",
+  "generated_at": "2026-10-23T16:28:15.808486+00:00",
+  "preserved": [
+    "V0008 settings reduction and context menu",
+    "V0009 all-display interaction, one active screen, per-screen hit/hover cancellation",
+    "V0003 media recovery/seek guards",
+    "V0005 fixed policies and gesture/haptic removal",
+    "V0007 palette/display icon mapping",
+    "Codex Outline-v7 menu-bar icon resources/wiring"
+  ],
+  "root_cause": {
+    "before": "WindowCoordinator.place -> PresentationController.resetForScreenChange canceled idleTask but retained mediaIdle.input/pending. A later identical mediaStateChanged update returned false, so no deadline was rebuilt.",
+    "fix": "PresentationController records idleDeadline when arming; resetForScreenChange computes remaining time before cancelling and re-arms only when mediaIdle.pending. Same-value metadata polls do not move an existing deadline; disabled/hidden resets remain bounded.",
+    "scope": "PresentationController only; no coordinator/animation redesign, no new timers/features."
+  },
+  "task": "docs/pi-tasks/v0009-r1-idle-deadline.md",
+  "task_sha256": "262af877338e83496922e05762ab6a87724b1036341690f971a0bc284156266f",
+  "unchanged_contracts": {
+    "context_menu": "V0009 AppMenuCommands/NotchView menu unchanged; screenshots/evidence remain under docs/verification/v0009/.",
+    "media": "Shared AppModel/MediaController media source and fake command behavior unchanged; no real player writes.",
+    "multidisplay": "V0009 per-screen panels/active-only dynamics and Outline-v7 menu-bar icon unchanged.",
+    "settings": "V0008 reduced General/Now Playing pages unchanged."
+  },
+  "v0009_baseline": {
+    "Sources/Valora/PresentationController.swift": "d60ea7778a4c357d9d6f7cdad556cfc39b70d6f4e86ee37c80332437bc6e23d4",
+    "Tests/ValoraTests/MultiDisplayCoordinatorTests.swift": "4db17d54e365e2e5dbbc878cbff44f9472edffe2ac90326f2d9e006e3a1b5063"
+  },
+  "v0009_report_sha256": "08f5c94c68532ffb638393432bcf0908b9d455e0b339ed3573f4d14cff2eca39",
+  "v0009_source_report": "/Users/wangqing/code/Valora/docs/verification/v0009/source-fingerprints.json",
+  "v0009r1_owned": [
+    {
+      "path": "Sources/Valora/PresentationController.swift",
+      "v0009_sha256": "d60ea7778a4c357d9d6f7cdad556cfc39b70d6f4e86ee37c80332437bc6e23d4",
+      "v0009r1_sha256": "3d58467d51e8d5cf08737733472d3f8bbaa56a85c7485f9e0f1b9a7fc449c165"
+    },
+    {
+      "path": "Tests/ValoraTests/MultiDisplayCoordinatorTests.swift",
+      "v0009_sha256": "4db17d54e365e2e5dbbc878cbff44f9472edffe2ac90326f2d9e006e3a1b5063",
+      "v0009r1_sha256": "3f644d19c122e166fae370a4482f10a2bc82d6b5c5848c3adf1349971db7d306"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "source": {
+    "bundleIdentifier": "com.tencent.QQMusicMac",
+    "playing": false
+  },
+  "test": {
+    "initial_native_mode": "顺序播放",
+    "initial_playing": false,
+    "send6_exit": 0,
+    "send6_native_mode": "顺序播放",
+    "send7_exit": 0,
+    "send7_native_mode": "顺序播放",
+    "native_single_repeat_control_succeeded": true,
+    "send7_from_single_repeat_exit": 0,
+    "send7_from_single_repeat_native_mode": "单曲循环",
+    "restored_native_mode": "顺序播放",
+    "final_playing": false
+  },
+  "conclusion": "Current system send6/send7 path acknowledged but no native QQ mode change observed in paused session. No claim that all players or all QQ sessions unsupported."
+}

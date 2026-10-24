@@ -1,0 +1,55 @@
+{
+  "gates": {
+    "lyrics": "HTTP 2xx, required retcode=0 and code=0, then payload parse; API/HTTP failure is never no_lyrics.",
+    "probe_exit": "0 only when request_ok and no QRC request failures; no_lyrics/no_match remain distinct valid statuses and do not hide HTTP/API failures.",
+    "qrc": "HTTP 2xx, required <result>; result=-1 is no_content, result!=0 is business failure; content remains encrypted and undecoded.",
+    "search": "HTTP 2xx, required JSON code=0, song.list shape; otherwise search failure and no matching."
+  },
+  "generated_at": "2026-10-23T17:58:48.006608+00:00",
+  "independent_v0010_decision": "docs/verification/independent-v0010/decision.md",
+  "independent_v0010_decision_sha256": "1f4eace53ba6e3f6abda4217b69c2f92475725e38db163d9680392faae7b33c6",
+  "preserved": [
+    "No UI/startup/player wiring changes",
+    "Valora color app icon and Codex Outline-v7 menu-bar icon/resources unchanged",
+    "QRC decryption not implemented; synthetic parser not consumed by app",
+    "No real media/system/device writes; no source changes"
+  ],
+  "task": "docs/pi-tasks/v0010-r1-error-status-gates.md",
+  "task_sha256": "c14f18d0e9ff2cd87771886750f0f689f29cc106141b822555067c4455d27644",
+  "v0010_baseline": {
+    "Sources/ReferenceCore/QQMusicLyrics.swift": "7482daca98db7543f69f17b37f12b47166b552b7995536123d905b26cd2afee0",
+    "Tests/ReferenceCoreTests/QQMusicLyricsTests.swift": "9f1c63160c51ff299b75bb51ce1f6d66b9a956616607d13383ae0da4ae65897f",
+    "scripts/qq_lyrics_probe.swift": "38029872c2a0426b3c023a5ed7bad0d7cb522fda2a1a48f886ce59ec75beb991",
+    "scripts/qq_lyrics_sample.json": "134da88e399ac3058a02ff18bee49ee2f51bce86f9032de08b85357e39a657b9",
+    "scripts/run_qq_lyrics_probe.sh": "0071112c75401d78f0dff09931e22a4914187b4b4f59041b5789ca8b463c71c7"
+  },
+  "v0010_report_sha256": "5f4e7aa715871c05453485e3487d7db9b81851f41b81070a65a892f32e4b8455",
+  "v0010_source_report": "/Users/wangqing/code/Valora/docs/verification/v0010/source-fingerprints.json",
+  "v0010r1_owned": [
+    {
+      "path": "Sources/ReferenceCore/QQMusicLyrics.swift",
+      "v0010_sha256": "7482daca98db7543f69f17b37f12b47166b552b7995536123d905b26cd2afee0",
+      "v0010r1_sha256": "c46dc15091af493180a4f8057c10a53f9d87af778cbfcc4b4dde40c42ce661fd"
+    },
+    {
+      "path": "Tests/ReferenceCoreTests/QQMusicLyricsTests.swift",
+      "v0010_sha256": "9f1c63160c51ff299b75bb51ce1f6d66b9a956616607d13383ae0da4ae65897f",
+      "v0010r1_sha256": "b9f01ec54b80edb653096286aa09e8d23b78c68260e5f3409e204c9111c12dc0"
+    },
+    {
+      "path": "scripts/qq_lyrics_probe.swift",
+      "v0010_sha256": "38029872c2a0426b3c023a5ed7bad0d7cb522fda2a1a48f886ce59ec75beb991",
+      "v0010r1_sha256": "06c448a74003a7c35ed3b6e5ebedb50fd10c148465a51f734be82a169ecc632f"
+    },
+    {
+      "path": "scripts/run_qq_lyrics_probe.sh",
+      "v0010_sha256": "0071112c75401d78f0dff09931e22a4914187b4b4f59041b5789ca8b463c71c7",
+      "v0010r1_sha256": "14cd8a7307421f19b3d53767d7f139f1410bfee0b48dc7debcdb0e5ffefaf9e0"
+    },
+    {
+      "path": "scripts/qq_lyrics_sample.json",
+      "v0010_sha256": "134da88e399ac3058a02ff18bee49ee2f51bce86f9032de08b85357e39a657b9",
+      "v0010r1_sha256": "134da88e399ac3058a02ff18bee49ee2f51bce86f9032de08b85357e39a657b9"
+    }
+  ]
+}

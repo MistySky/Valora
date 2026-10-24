@@ -1,0 +1,98 @@
+{
+  "added_since_v0001": [
+    {
+      "path": "Tests/ValoraTests/MediaControllerRecoveryTests.swift",
+      "v0004_sha256": "b31cbf3717f8d0d062c9bdd239ab1263b7e3600c463b650d227cedd22a49d2fb"
+    }
+  ],
+  "all_changed_since_v0001": [
+    {
+      "path": "Sources/Valora/AppDelegate.swift",
+      "v0001_sha256": "3d2f393e66525956bc14c01a8ca733d8c1ae6e78faa2c70d5755f3d61ebce778",
+      "v0004_sha256": "0fca60173eb9d7dbf54241f30adac42e6e078411a9c09c7eb98794862241cf00"
+    },
+    {
+      "path": "Sources/Valora/AppRuntimeDefaults.swift",
+      "v0001_sha256": "2d54071fb3639983f17da1dbc6caa1f6c31756917d6e8fa7d1469dfe5e02e1a1",
+      "v0004_sha256": "9c37d0421c8fcc8eed2ee723cfb1e89d2c3d6968f06a2876ffb98993f3144962"
+    },
+    {
+      "path": "Sources/Valora/Controllers.swift",
+      "v0001_sha256": "e37c79ab276e8b8cf828d803c8858b28e47c078ebbf2762288249dbe46af9d85",
+      "v0004_sha256": "f536845d525f28824baefab52689af0bc9d65862ebc925e4e7101ef1e08f866f"
+    },
+    {
+      "path": "Sources/Valora/Verification.swift",
+      "v0001_sha256": "ea074322d57d46c102a9245ee2bb70ab1a59506c6d0b26b9b5e0a1aeef530100",
+      "v0004_sha256": "6900cab324cb3ece37a07c6f4e36fcf6625baef9b67b40ce66e68a3cead575de"
+    }
+  ],
+  "baseline": "/Users/wangqing/code/Valora/docs/verification/v0001/source-manifest.json",
+  "baseline_preserved_unmodified": true,
+  "current_file_count": 78,
+  "generated_at": "2026-10-23T03:48:27.585607+00:00",
+  "minimal_change_summary": [
+    "AppDelegate: NSStatusItem button now loads Contents/Resources/AppIcon.icns at 18 pt, non-template color image; old rectangle symbol removed.",
+    "AppRuntimeDefaults: QA-only --verify-menubar mode.",
+    "Verification: menu-bar button/image/window diagnostics and rendered button images.",
+    "V0003 Controllers recovery/seek changes are carried unchanged."
+  ],
+  "patches": {
+    "appdelegate": {
+      "path": "/Users/wangqing/code/Valora/docs/verification/v0004/appdelegate.diff",
+      "sha256": "f2d9247786a9549f19a6083c37507ae78c70334037e19e82d7b5c0318ef44427"
+    },
+    "appruntimedefaults": {
+      "path": "/Users/wangqing/code/Valora/docs/verification/v0004/appruntimedefaults.diff",
+      "sha256": "2b1b645d7796124eb653d25ae039802e889b22275c9150e8e26ee3966eda25d2"
+    },
+    "verification": {
+      "path": "/Users/wangqing/code/Valora/docs/verification/v0004/verification.diff",
+      "sha256": "61fea0f3d28f2576c29ff9179a56afa0a6b866f55bf311bb7ee0322236da10d7"
+    }
+  },
+  "preserved_history": {
+    "v0001_manifest_sha256": "9482ea3f9cacbd1ee44ea540b36f190c1587ec1d30f104080173ad0297315648",
+    "v0001_report": "/Users/wangqing/code/Valora/docs/reports/v0001.md",
+    "v0001_report_sha256": "5727e812e9177fd6eb5e5775067f6869abd6f0e026999bcc0487e7030b7ed313",
+    "v0002_icon_manifest_sha256": "409fbbd903213ffe0fc207f4436f7ccd9930bb8fd523dc2bb1855c068ba91e20",
+    "v0002_report": "/Users/wangqing/code/Valora/docs/reports/v0002.md",
+    "v0002_report_sha256": "411f0a26914d11a132625420bb313e4d5d35cf98affad65ecaf2c87a673ae34b",
+    "v0003_fingerprints_sha256": "7152dbb8646752909805e9d93c8d1c893ea25bec7eaed482590d11167581e0de",
+    "v0003_report": "/Users/wangqing/code/Valora/docs/reports/v0003.md",
+    "v0003_report_sha256": "7390e929476fd4eb99e58fe0be993d86fbf0cfe6562749bed0f27be9111d852e"
+  },
+  "removed_since_v0001": [],
+  "unchanged_since_v0001_count": 73,
+  "v0003_changes_carried": [
+    {
+      "path": "Sources/Valora/Controllers.swift",
+      "v0003_sha256": "f536845d525f28824baefab52689af0bc9d65862ebc925e4e7101ef1e08f866f",
+      "v0004_sha256": "f536845d525f28824baefab52689af0bc9d65862ebc925e4e7101ef1e08f866f"
+    },
+    {
+      "added_in_v0003": true,
+      "path": "Tests/ValoraTests/MediaControllerRecoveryTests.swift",
+      "v0003_sha256": "b31cbf3717f8d0d062c9bdd239ab1263b7e3600c463b650d227cedd22a49d2fb",
+      "v0004_sha256": "b31cbf3717f8d0d062c9bdd239ab1263b7e3600c463b650d227cedd22a49d2fb"
+    }
+  ],
+  "v0003_evidence": "/Users/wangqing/code/Valora/docs/verification/v0003/source-fingerprints.json",
+  "v0004_touched": [
+    {
+      "path": "Sources/Valora/AppDelegate.swift",
+      "v0003_sha256": "3d2f393e66525956bc14c01a8ca733d8c1ae6e78faa2c70d5755f3d61ebce778",
+      "v0004_sha256": "0fca60173eb9d7dbf54241f30adac42e6e078411a9c09c7eb98794862241cf00"
+    },
+    {
+      "path": "Sources/Valora/AppRuntimeDefaults.swift",
+      "v0003_sha256": "2d54071fb3639983f17da1dbc6caa1f6c31756917d6e8fa7d1469dfe5e02e1a1",
+      "v0004_sha256": "9c37d0421c8fcc8eed2ee723cfb1e89d2c3d6968f06a2876ffb98993f3144962"
+    },
+    {
+      "path": "Sources/Valora/Verification.swift",
+      "v0003_sha256": "ea074322d57d46c102a9245ee2bb70ab1a59506c6d0b26b9b5e0a1aeef530100",
+      "v0004_sha256": "6900cab324cb3ece37a07c6f4e36fcf6625baef9b67b40ce66e68a3cead575de"
+    }
+  ]
+}

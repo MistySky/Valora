@@ -1,0 +1,57 @@
+{
+  "reference_left": {
+    "accent": [
+      43,
+      205,
+      185
+    ],
+    "card": [
+      242,
+      243,
+      243
+    ],
+    "content": [
+      245,
+      246,
+      246
+    ],
+    "selected_row": [
+      218,
+      218,
+      218
+    ],
+    "sidebar": [
+      234,
+      234,
+      234
+    ]
+  },
+  "source": "reference left active original vs Valora general active light; both sampled from their own captures",
+  "valora_active": {
+    "accent": [
+      43,
+      205,
+      185
+    ],
+    "card": [
+      242,
+      243,
+      243
+    ],
+    "content": [
+      245,
+      246,
+      246
+    ],
+    "selected_row": [
+      218,
+      218,
+      218
+    ],
+    "sidebar": [
+      234,
+      234,
+      234
+    ]
+  }
+}

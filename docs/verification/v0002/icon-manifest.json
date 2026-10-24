@@ -1,0 +1,584 @@
+{
+  "all_byte_identical": true,
+  "build_verification": {
+    "adhoc_signed": true,
+    "architecture": "arm64",
+    "binary_sha256": "a323955c4d1bb467bbc8651858f578786b8988c171ce54350f28aef1eece7f61",
+    "build": "1",
+    "build_input": "/Users/wangqing/code/Valora/.build/out/Products/Release/Valora",
+    "built_at": "2026-10-23T02:59:05.050978+00:00",
+    "bundle_id": "com.wangqing.valora",
+    "icon_info_key": "AppIcon",
+    "icon_resource_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+    "icon_source": "/Users/wangqing/code/Valora/Resources/AppIcons/light/Velora-light.icns",
+    "icon_source_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+    "notarized": false,
+    "source_rebuilt": true,
+    "version": "0.1.0"
+  },
+  "dark_set": {
+    "automatic_appearance_switching": false,
+    "bundle_icon": false,
+    "note": "macOS does not derive a per-app dark icon from a second .icns alone; the light .icns is the normal default.",
+    "preserved_in_repository": true
+  },
+  "effective_icon": {
+    "bundle": "/Users/wangqing/code/Valora/dist/Valora.app/Contents/Resources/AppIcon.icns",
+    "bundle_exists": true,
+    "bundle_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+    "iconset_member_count": 8,
+    "iconset_members_readable": [
+      "icon_128x128.png",
+      "icon_128x128@2x.png",
+      "icon_16x16@2x.png",
+      "icon_256x256.png",
+      "icon_256x256@2x.png",
+      "icon_32x32@2x.png",
+      "icon_512x512.png",
+      "icon_512x512@2x.png"
+    ],
+    "info_key": "AppIcon",
+    "source": "/Users/wangqing/code/Valora/Resources/AppIcons/light/Velora-light.icns",
+    "source_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654"
+  },
+  "entries": [
+    {
+      "byte_identical": true,
+      "png_size": [
+        1024,
+        1024
+      ],
+      "relative_path": "dark/AppIcon.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/AppIcon.png",
+      "repository_bytes": 1101394,
+      "repository_sha256": "8d2b41eab0f9be4509dfa84d4356bc8c6abfd1d2db88b0eb2b64c2f9a099d182",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/AppIcon.png",
+      "source_bytes": 1101394,
+      "source_sha256": "8d2b41eab0f9be4509dfa84d4356bc8c6abfd1d2db88b0eb2b64c2f9a099d182"
+    },
+    {
+      "byte_identical": true,
+      "png_size": null,
+      "relative_path": "dark/Velora-dark.icns",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/Velora-dark.icns",
+      "repository_bytes": 1899925,
+      "repository_sha256": "63243bd19988395980f4cf418f4924800813c785885676bed51115b604dfb276",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/Velora-dark.icns",
+      "source_bytes": 1899925,
+      "source_sha256": "63243bd19988395980f4cf418f4924800813c785885676bed51115b604dfb276"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        128,
+        128
+      ],
+      "relative_path": "dark/Velora-dark.iconset/icon_128x128.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/Velora-dark.iconset/icon_128x128.png",
+      "repository_bytes": 26643,
+      "repository_sha256": "96f2ef132c43ac851d3af07604375500c6d6010e8dc51a39a52d2e1f017ceef6",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/Velora-dark.iconset/icon_128x128.png",
+      "source_bytes": 26643,
+      "source_sha256": "96f2ef132c43ac851d3af07604375500c6d6010e8dc51a39a52d2e1f017ceef6"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        256,
+        256
+      ],
+      "relative_path": "dark/Velora-dark.iconset/icon_128x128@2x.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/Velora-dark.iconset/icon_128x128@2x.png",
+      "repository_bytes": 86424,
+      "repository_sha256": "b1578eaec9a49c8ec3ac5678aca84f609821b03700a8d0978cc0ec6f2f667a15",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/Velora-dark.iconset/icon_128x128@2x.png",
+      "source_bytes": 86424,
+      "source_sha256": "b1578eaec9a49c8ec3ac5678aca84f609821b03700a8d0978cc0ec6f2f667a15"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        16,
+        16
+      ],
+      "relative_path": "dark/Velora-dark.iconset/icon_16x16.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/Velora-dark.iconset/icon_16x16.png",
+      "repository_bytes": 942,
+      "repository_sha256": "ce97863d33ce34dec1862d32a8da5d6e5926d44e0c0deb035becd40b966c0aa5",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/Velora-dark.iconset/icon_16x16.png",
+      "source_bytes": 942,
+      "source_sha256": "ce97863d33ce34dec1862d32a8da5d6e5926d44e0c0deb035becd40b966c0aa5"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        32,
+        32
+      ],
+      "relative_path": "dark/Velora-dark.iconset/icon_16x16@2x.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/Velora-dark.iconset/icon_16x16@2x.png",
+      "repository_bytes": 2805,
+      "repository_sha256": "5f93f06521e86661e1e9e7d561366e2281c69ab80d45545611eaefaee664daeb",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/Velora-dark.iconset/icon_16x16@2x.png",
+      "source_bytes": 2805,
+      "source_sha256": "5f93f06521e86661e1e9e7d561366e2281c69ab80d45545611eaefaee664daeb"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        256,
+        256
+      ],
+      "relative_path": "dark/Velora-dark.iconset/icon_256x256.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/Velora-dark.iconset/icon_256x256.png",
+      "repository_bytes": 86424,
+      "repository_sha256": "b1578eaec9a49c8ec3ac5678aca84f609821b03700a8d0978cc0ec6f2f667a15",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/Velora-dark.iconset/icon_256x256.png",
+      "source_bytes": 86424,
+      "source_sha256": "b1578eaec9a49c8ec3ac5678aca84f609821b03700a8d0978cc0ec6f2f667a15"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        512,
+        512
+      ],
+      "relative_path": "dark/Velora-dark.iconset/icon_256x256@2x.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/Velora-dark.iconset/icon_256x256@2x.png",
+      "repository_bytes": 315200,
+      "repository_sha256": "a497d5d3d9746da8f9296f11580e23151b5ca8b551623eb8b2fa0ba1c3c54ffc",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/Velora-dark.iconset/icon_256x256@2x.png",
+      "source_bytes": 315200,
+      "source_sha256": "a497d5d3d9746da8f9296f11580e23151b5ca8b551623eb8b2fa0ba1c3c54ffc"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        32,
+        32
+      ],
+      "relative_path": "dark/Velora-dark.iconset/icon_32x32.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/Velora-dark.iconset/icon_32x32.png",
+      "repository_bytes": 2805,
+      "repository_sha256": "5f93f06521e86661e1e9e7d561366e2281c69ab80d45545611eaefaee664daeb",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/Velora-dark.iconset/icon_32x32.png",
+      "source_bytes": 2805,
+      "source_sha256": "5f93f06521e86661e1e9e7d561366e2281c69ab80d45545611eaefaee664daeb"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        64,
+        64
+      ],
+      "relative_path": "dark/Velora-dark.iconset/icon_32x32@2x.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/Velora-dark.iconset/icon_32x32@2x.png",
+      "repository_bytes": 8731,
+      "repository_sha256": "739844bb4b929e9e9a16587f86f5e6216280e0e5eea7a2ae6d7f69799161d196",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/Velora-dark.iconset/icon_32x32@2x.png",
+      "source_bytes": 8731,
+      "source_sha256": "739844bb4b929e9e9a16587f86f5e6216280e0e5eea7a2ae6d7f69799161d196"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        512,
+        512
+      ],
+      "relative_path": "dark/Velora-dark.iconset/icon_512x512.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/Velora-dark.iconset/icon_512x512.png",
+      "repository_bytes": 315200,
+      "repository_sha256": "a497d5d3d9746da8f9296f11580e23151b5ca8b551623eb8b2fa0ba1c3c54ffc",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/Velora-dark.iconset/icon_512x512.png",
+      "source_bytes": 315200,
+      "source_sha256": "a497d5d3d9746da8f9296f11580e23151b5ca8b551623eb8b2fa0ba1c3c54ffc"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        1024,
+        1024
+      ],
+      "relative_path": "dark/Velora-dark.iconset/icon_512x512@2x.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/Velora-dark.iconset/icon_512x512@2x.png",
+      "repository_bytes": 1101394,
+      "repository_sha256": "8d2b41eab0f9be4509dfa84d4356bc8c6abfd1d2db88b0eb2b64c2f9a099d182",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/Velora-dark.iconset/icon_512x512@2x.png",
+      "source_bytes": 1101394,
+      "source_sha256": "8d2b41eab0f9be4509dfa84d4356bc8c6abfd1d2db88b0eb2b64c2f9a099d182"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        1024,
+        1024
+      ],
+      "relative_path": "dark/icon_1024.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/icon_1024.png",
+      "repository_bytes": 1101394,
+      "repository_sha256": "8d2b41eab0f9be4509dfa84d4356bc8c6abfd1d2db88b0eb2b64c2f9a099d182",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/icon_1024.png",
+      "source_bytes": 1101394,
+      "source_sha256": "8d2b41eab0f9be4509dfa84d4356bc8c6abfd1d2db88b0eb2b64c2f9a099d182"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        128,
+        128
+      ],
+      "relative_path": "dark/icon_128.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/icon_128.png",
+      "repository_bytes": 26643,
+      "repository_sha256": "96f2ef132c43ac851d3af07604375500c6d6010e8dc51a39a52d2e1f017ceef6",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/icon_128.png",
+      "source_bytes": 26643,
+      "source_sha256": "96f2ef132c43ac851d3af07604375500c6d6010e8dc51a39a52d2e1f017ceef6"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        16,
+        16
+      ],
+      "relative_path": "dark/icon_16.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/icon_16.png",
+      "repository_bytes": 942,
+      "repository_sha256": "ce97863d33ce34dec1862d32a8da5d6e5926d44e0c0deb035becd40b966c0aa5",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/icon_16.png",
+      "source_bytes": 942,
+      "source_sha256": "ce97863d33ce34dec1862d32a8da5d6e5926d44e0c0deb035becd40b966c0aa5"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        256,
+        256
+      ],
+      "relative_path": "dark/icon_256.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/icon_256.png",
+      "repository_bytes": 86424,
+      "repository_sha256": "b1578eaec9a49c8ec3ac5678aca84f609821b03700a8d0978cc0ec6f2f667a15",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/icon_256.png",
+      "source_bytes": 86424,
+      "source_sha256": "b1578eaec9a49c8ec3ac5678aca84f609821b03700a8d0978cc0ec6f2f667a15"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        32,
+        32
+      ],
+      "relative_path": "dark/icon_32.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/icon_32.png",
+      "repository_bytes": 2805,
+      "repository_sha256": "5f93f06521e86661e1e9e7d561366e2281c69ab80d45545611eaefaee664daeb",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/icon_32.png",
+      "source_bytes": 2805,
+      "source_sha256": "5f93f06521e86661e1e9e7d561366e2281c69ab80d45545611eaefaee664daeb"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        512,
+        512
+      ],
+      "relative_path": "dark/icon_512.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/icon_512.png",
+      "repository_bytes": 315200,
+      "repository_sha256": "a497d5d3d9746da8f9296f11580e23151b5ca8b551623eb8b2fa0ba1c3c54ffc",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/icon_512.png",
+      "source_bytes": 315200,
+      "source_sha256": "a497d5d3d9746da8f9296f11580e23151b5ca8b551623eb8b2fa0ba1c3c54ffc"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        64,
+        64
+      ],
+      "relative_path": "dark/icon_64.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/dark/icon_64.png",
+      "repository_bytes": 8731,
+      "repository_sha256": "739844bb4b929e9e9a16587f86f5e6216280e0e5eea7a2ae6d7f69799161d196",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/dark/icon_64.png",
+      "source_bytes": 8731,
+      "source_sha256": "739844bb4b929e9e9a16587f86f5e6216280e0e5eea7a2ae6d7f69799161d196"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        1024,
+        1024
+      ],
+      "relative_path": "light/AppIcon.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/AppIcon.png",
+      "repository_bytes": 957416,
+      "repository_sha256": "25a60ccf281c5b8b104966e1878f8882c48a8ba932d01f78cf6a243e6abce80d",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/AppIcon.png",
+      "source_bytes": 957416,
+      "source_sha256": "25a60ccf281c5b8b104966e1878f8882c48a8ba932d01f78cf6a243e6abce80d"
+    },
+    {
+      "byte_identical": true,
+      "png_size": null,
+      "relative_path": "light/Velora-light.icns",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/Velora-light.icns",
+      "repository_bytes": 1680915,
+      "repository_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/Velora-light.icns",
+      "source_bytes": 1680915,
+      "source_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        128,
+        128
+      ],
+      "relative_path": "light/Velora-light.iconset/icon_128x128.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/Velora-light.iconset/icon_128x128.png",
+      "repository_bytes": 22446,
+      "repository_sha256": "2fb5cd0f782741a89dad4ec1d71c7c62d84990d6c3081dfe1a79c5618cf5f34d",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/Velora-light.iconset/icon_128x128.png",
+      "source_bytes": 22446,
+      "source_sha256": "2fb5cd0f782741a89dad4ec1d71c7c62d84990d6c3081dfe1a79c5618cf5f34d"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        256,
+        256
+      ],
+      "relative_path": "light/Velora-light.iconset/icon_128x128@2x.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/Velora-light.iconset/icon_128x128@2x.png",
+      "repository_bytes": 77786,
+      "repository_sha256": "13c3cac9a7d823c84303b5f04424b91f91c499110cde29daf88625701245c194",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/Velora-light.iconset/icon_128x128@2x.png",
+      "source_bytes": 77786,
+      "source_sha256": "13c3cac9a7d823c84303b5f04424b91f91c499110cde29daf88625701245c194"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        16,
+        16
+      ],
+      "relative_path": "light/Velora-light.iconset/icon_16x16.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/Velora-light.iconset/icon_16x16.png",
+      "repository_bytes": 787,
+      "repository_sha256": "839cd77e240d6f8d1f2032770f8557d30ded88f62caa9f6d2beba27b8fcb4f6b",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/Velora-light.iconset/icon_16x16.png",
+      "source_bytes": 787,
+      "source_sha256": "839cd77e240d6f8d1f2032770f8557d30ded88f62caa9f6d2beba27b8fcb4f6b"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        32,
+        32
+      ],
+      "relative_path": "light/Velora-light.iconset/icon_16x16@2x.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/Velora-light.iconset/icon_16x16@2x.png",
+      "repository_bytes": 2318,
+      "repository_sha256": "317b095f9d7912bbb3347b69cdcafcf80be51e0275da180eee35448d1c60443d",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/Velora-light.iconset/icon_16x16@2x.png",
+      "source_bytes": 2318,
+      "source_sha256": "317b095f9d7912bbb3347b69cdcafcf80be51e0275da180eee35448d1c60443d"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        256,
+        256
+      ],
+      "relative_path": "light/Velora-light.iconset/icon_256x256.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/Velora-light.iconset/icon_256x256.png",
+      "repository_bytes": 77786,
+      "repository_sha256": "13c3cac9a7d823c84303b5f04424b91f91c499110cde29daf88625701245c194",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/Velora-light.iconset/icon_256x256.png",
+      "source_bytes": 77786,
+      "source_sha256": "13c3cac9a7d823c84303b5f04424b91f91c499110cde29daf88625701245c194"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        512,
+        512
+      ],
+      "relative_path": "light/Velora-light.iconset/icon_256x256@2x.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/Velora-light.iconset/icon_256x256@2x.png",
+      "repository_bytes": 288984,
+      "repository_sha256": "4ea039535d50c46239c6ac4f2cd044bc6e41e2628c262f9965b77cc78c1d5760",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/Velora-light.iconset/icon_256x256@2x.png",
+      "source_bytes": 288984,
+      "source_sha256": "4ea039535d50c46239c6ac4f2cd044bc6e41e2628c262f9965b77cc78c1d5760"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        32,
+        32
+      ],
+      "relative_path": "light/Velora-light.iconset/icon_32x32.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/Velora-light.iconset/icon_32x32.png",
+      "repository_bytes": 2318,
+      "repository_sha256": "317b095f9d7912bbb3347b69cdcafcf80be51e0275da180eee35448d1c60443d",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/Velora-light.iconset/icon_32x32.png",
+      "source_bytes": 2318,
+      "source_sha256": "317b095f9d7912bbb3347b69cdcafcf80be51e0275da180eee35448d1c60443d"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        64,
+        64
+      ],
+      "relative_path": "light/Velora-light.iconset/icon_32x32@2x.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/Velora-light.iconset/icon_32x32@2x.png",
+      "repository_bytes": 7138,
+      "repository_sha256": "6b90ac7b8651ad40800ba300be5fcca782999896db870d55dd7dfe76411e4bab",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/Velora-light.iconset/icon_32x32@2x.png",
+      "source_bytes": 7138,
+      "source_sha256": "6b90ac7b8651ad40800ba300be5fcca782999896db870d55dd7dfe76411e4bab"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        512,
+        512
+      ],
+      "relative_path": "light/Velora-light.iconset/icon_512x512.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/Velora-light.iconset/icon_512x512.png",
+      "repository_bytes": 288984,
+      "repository_sha256": "4ea039535d50c46239c6ac4f2cd044bc6e41e2628c262f9965b77cc78c1d5760",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/Velora-light.iconset/icon_512x512.png",
+      "source_bytes": 288984,
+      "source_sha256": "4ea039535d50c46239c6ac4f2cd044bc6e41e2628c262f9965b77cc78c1d5760"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        1024,
+        1024
+      ],
+      "relative_path": "light/Velora-light.iconset/icon_512x512@2x.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/Velora-light.iconset/icon_512x512@2x.png",
+      "repository_bytes": 957416,
+      "repository_sha256": "25a60ccf281c5b8b104966e1878f8882c48a8ba932d01f78cf6a243e6abce80d",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/Velora-light.iconset/icon_512x512@2x.png",
+      "source_bytes": 957416,
+      "source_sha256": "25a60ccf281c5b8b104966e1878f8882c48a8ba932d01f78cf6a243e6abce80d"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        1024,
+        1024
+      ],
+      "relative_path": "light/icon_1024.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/icon_1024.png",
+      "repository_bytes": 957416,
+      "repository_sha256": "25a60ccf281c5b8b104966e1878f8882c48a8ba932d01f78cf6a243e6abce80d",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/icon_1024.png",
+      "source_bytes": 957416,
+      "source_sha256": "25a60ccf281c5b8b104966e1878f8882c48a8ba932d01f78cf6a243e6abce80d"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        128,
+        128
+      ],
+      "relative_path": "light/icon_128.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/icon_128.png",
+      "repository_bytes": 22446,
+      "repository_sha256": "2fb5cd0f782741a89dad4ec1d71c7c62d84990d6c3081dfe1a79c5618cf5f34d",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/icon_128.png",
+      "source_bytes": 22446,
+      "source_sha256": "2fb5cd0f782741a89dad4ec1d71c7c62d84990d6c3081dfe1a79c5618cf5f34d"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        16,
+        16
+      ],
+      "relative_path": "light/icon_16.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/icon_16.png",
+      "repository_bytes": 787,
+      "repository_sha256": "839cd77e240d6f8d1f2032770f8557d30ded88f62caa9f6d2beba27b8fcb4f6b",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/icon_16.png",
+      "source_bytes": 787,
+      "source_sha256": "839cd77e240d6f8d1f2032770f8557d30ded88f62caa9f6d2beba27b8fcb4f6b"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        256,
+        256
+      ],
+      "relative_path": "light/icon_256.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/icon_256.png",
+      "repository_bytes": 77786,
+      "repository_sha256": "13c3cac9a7d823c84303b5f04424b91f91c499110cde29daf88625701245c194",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/icon_256.png",
+      "source_bytes": 77786,
+      "source_sha256": "13c3cac9a7d823c84303b5f04424b91f91c499110cde29daf88625701245c194"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        32,
+        32
+      ],
+      "relative_path": "light/icon_32.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/icon_32.png",
+      "repository_bytes": 2318,
+      "repository_sha256": "317b095f9d7912bbb3347b69cdcafcf80be51e0275da180eee35448d1c60443d",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/icon_32.png",
+      "source_bytes": 2318,
+      "source_sha256": "317b095f9d7912bbb3347b69cdcafcf80be51e0275da180eee35448d1c60443d"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        512,
+        512
+      ],
+      "relative_path": "light/icon_512.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/icon_512.png",
+      "repository_bytes": 288984,
+      "repository_sha256": "4ea039535d50c46239c6ac4f2cd044bc6e41e2628c262f9965b77cc78c1d5760",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/icon_512.png",
+      "source_bytes": 288984,
+      "source_sha256": "4ea039535d50c46239c6ac4f2cd044bc6e41e2628c262f9965b77cc78c1d5760"
+    },
+    {
+      "byte_identical": true,
+      "png_size": [
+        64,
+        64
+      ],
+      "relative_path": "light/icon_64.png",
+      "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/light/icon_64.png",
+      "repository_bytes": 7138,
+      "repository_sha256": "6b90ac7b8651ad40800ba300be5fcca782999896db870d55dd7dfe76411e4bab",
+      "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/light/icon_64.png",
+      "source_bytes": 7138,
+      "source_sha256": "6b90ac7b8651ad40800ba300be5fcca782999896db870d55dd7dfe76411e4bab"
+    }
+  ],
+  "file_count": 38,
+  "generated_at": "2026-10-23T02:59:05.704152+00:00",
+  "repository_root": "/Users/wangqing/code/Valora/Resources/AppIcons",
+  "source_note": "User-confirmed transparent-edge light/dark icon sets. No image editing or edge rework.",
+  "source_read_only": true,
+  "source_readme": {
+    "repository": "/Users/wangqing/code/Valora/Resources/AppIcons/README-source.md",
+    "repository_sha256": "469750b3f1dd2fd9e320ad7d1fac9311015a4814caa99209b4773b12973dc2ec",
+    "source": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent/README.md",
+    "source_sha256": "469750b3f1dd2fd9e320ad7d1fac9311015a4814caa99209b4773b12973dc2ec"
+  },
+  "source_root": "/Users/wangqing/Downloads/Velora-macOS-Icons-Transparent"
+}

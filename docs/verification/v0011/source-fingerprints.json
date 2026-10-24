@@ -1,0 +1,112 @@
+{
+  "continuation_plan_sha256": "3547f74e78ad74c8c2052e7998cde101422abcab50b489be9f3bc445267a7fca",
+  "generated_at": "2026-10-24T03:15:42.308394+00:00",
+  "preserved": [
+    "V0008 reduced settings and context menu",
+    "V0009 per-screen active ownership and one expanded panel",
+    "V0003 media recovery/seek guards",
+    "V0005 fixed policies and gesture removal",
+    "V0007 palette/display icon mapping",
+    "Valora color app icon and Outline-v7 menu bar resources/wiring"
+  ],
+  "resume_task": "docs/pi-tasks/v0011-resume-01.md",
+  "resume_task_sha256": "662911717d5e8f6212a8485240c7c0e39a9c75e80d9d990666a8f9add95f636f",
+  "scope": {
+    "service": "URLSession Swift 6 actor with V0010-R1 evaluators; no scripts, Go, QRC, local QQ database or account",
+    "settings": "one Show lyrics toggle, default off; existing General/Now Playing pages retained",
+    "sync": "current model.elapsed/playing state; no independent accumulated clock",
+    "ui": "compact 32pt QuickPeek row on the active screen only; expanded player unchanged",
+    "word_timing": "QRC encrypted/undecoded; no synthetic per-word highlight"
+  },
+  "task": "docs/pi-tasks/v0011-line-lyrics-display-sync.md",
+  "task_sha256": "7dbaf1137f6e6f802228eb11ee482579fa088b5ae8d9481340a998482f5a5781",
+  "v0010r1_decision_sha256": "fef8599e4f24c81f4b61f6fd1516844b624364963e6b0d6c0205c85f0684e8bb",
+  "v0010r1_report_sha256": "e9f372147e534c19c7323838756a776de45667ac4d3563f49e07cacbb155027f",
+  "v0010r1_source_report": "/Users/wangqing/code/Valora/docs/verification/v0010-r1/source-fingerprints.json",
+  "v0011_owned": [
+    {
+      "path": "Sources/ReferenceCore/LyricsTimeline.swift",
+      "v0011_sha256": "a6c4dfca45eca0219c48bf70ee7d46bba5e32ff1be77924ff3661b1beeb0fb4a"
+    },
+    {
+      "path": "Sources/ReferenceCore/QQMusicLyrics.swift",
+      "v0011_sha256": "f8e8ffb76c7856c8d2854ae9cd3bc1266872915c84f94373eea7b8a80866fc82"
+    },
+    {
+      "path": "Sources/ReferenceCore/MusicPreferences.swift",
+      "v0011_sha256": "cdc0e7f4d91dd5c8ad0d4fb34616115327169fb51a3e0a9827cbc7a81569ab6f"
+    },
+    {
+      "path": "Sources/Valora/LyricsService.swift",
+      "v0011_sha256": "a94e67c1e2ae0af9e19354d8d7af42ab3d0b2baee0eba19546b2896a400f8fdd"
+    },
+    {
+      "path": "Sources/Valora/LyricsController.swift",
+      "v0011_sha256": "58b14771f263fa68de27eec441f4ec9a84422a45917b1f8d67ec448774a42e20"
+    },
+    {
+      "path": "Sources/Valora/CompactLyricsView.swift",
+      "v0011_sha256": "8693bd83314be73175cabdeec8e98ee3980323e70711122e152e9bd02e29d262"
+    },
+    {
+      "path": "Sources/Valora/LyricsVerification.swift",
+      "v0011_sha256": "27c0015a1d4ea369d852b6bd30b2b0e6aefe2fbbe5caf8b02b2d7ec69b6f1354"
+    },
+    {
+      "path": "Sources/Valora/Models.swift",
+      "v0011_sha256": "9803823818ea0c6d11f351e9648eaf04a559f7da62278d8e576c837e9659699d"
+    },
+    {
+      "path": "Sources/Valora/NotchView.swift",
+      "v0011_sha256": "4fdab224e10f267218a8275f260295ab0079f75babb4650959fea9c030a5d9c5"
+    },
+    {
+      "path": "Sources/Valora/MarqueeLabel.swift",
+      "v0011_sha256": "b175cb366be6879833a8638c5cae09d36fa275ddef233da6dd4f19e6eb0a09fd"
+    },
+    {
+      "path": "Sources/Valora/SettingsView.swift",
+      "v0011_sha256": "c9f6579cbfa3ea6e8f6e9b75a99e00f90fd1a6fd2df37a64f05d5e9faba97e25"
+    },
+    {
+      "path": "Sources/Valora/SettingsLocalization.swift",
+      "v0011_sha256": "e9edb8c89028468b5230c3d6500533ed124ae808ea41651822b83c0c77f1861b"
+    },
+    {
+      "path": "Sources/Valora/AppDelegate.swift",
+      "v0011_sha256": "1cc7e33f89f274abf01e3c314f91b40abc6c558d9f9b74ca1f61571886397967"
+    },
+    {
+      "path": "Sources/Valora/AppRuntimeDefaults.swift",
+      "v0011_sha256": "81f1ddb6661590f4a73991530263ccd7ed06c6ac6e49fc051fdd78019e885457"
+    },
+    {
+      "path": "Sources/Valora/Controllers.swift",
+      "v0011_sha256": "d19906f920ea3824e2bfc161ff90a53937b9b299797ad1cd6dccc68b905a9fd2"
+    },
+    {
+      "path": "Sources/Valora/Verification.swift",
+      "v0011_sha256": "0b11c298972ed99f0787e49bead995beddf8af853b2c1511ba6e67346d0c64a7"
+    },
+    {
+      "path": "Tests/ReferenceCoreTests/LyricsTimelineTests.swift",
+      "v0011_sha256": "8c563c666926f47f4743f38603bf3a4a2b750ff56bc2c8f969902ade37475e82"
+    },
+    {
+      "path": "Tests/ValoraTests/LyricsServiceTests.swift",
+      "v0011_sha256": "387b2c5f855ae23577c2675e4e22f13d58dd8b1fdabe75247b4f6db2346f18b4"
+    },
+    {
+      "path": "Tests/ValoraTests/MultiDisplayCoordinatorTests.swift",
+      "v0011_sha256": "e6ac6d46583da7b40a17dbe05345238b79b47fb236a7a4cac54804ec00726704"
+    },
+    {
+      "path": "Tests/ValoraTests/RevivalSettingsReloadTests.swift",
+      "v0011_sha256": "5297a5907ba710545cd4328b0a4e4caa4662bae319155976f6f548c9c0468a2f"
+    },
+    {
+      "path": "Tests/ValoraTests/SettingsReductionTests.swift",
+      "v0011_sha256": "f17d9780dac70cfb16fe9d979ea6ed3595825369d985c6c0f03d220cde90de83"
+    }
+  ]
+}

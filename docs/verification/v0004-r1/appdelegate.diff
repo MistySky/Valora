@@ -1,0 +1,55 @@
+--- a/Sources/Valora/AppDelegate.swift
++++ b/Sources/Valora/AppDelegate.swift
+@@ -154,14 +154,45 @@
+         }
+     }
+ 
+-    /// The confirmed light icon is used as a normal, non-template color image.
+-    /// The full app icon is already packaged as Contents/Resources/AppIcon.icns.
++    /// Menu-bar-only monochrome V. It is drawn as a native AppKit vector with
++    /// transparent background, no squircle/glow/gradient, and template=true so
++    /// macOS can tint it for light/dark and the selected state. The app icon is
++    /// intentionally not reused as the menu-bar image.
+     private func statusBarImage() -> NSImage {
+-        let iconURL = Bundle.main.resourceURL?.appendingPathComponent("AppIcon.icns")
+-        let image = iconURL.flatMap { NSImage(contentsOf: $0) }
+-            ?? NSWorkspace.shared.icon(forFile: Bundle.main.bundlePath)
+-        image.size = NSSize(width: 18, height: 18)
+-        image.isTemplate = false
++        let points: CGFloat = 18
++        let image = NSImage(size: NSSize(width: points, height: points))
++        for scale in 1...3 {
++            let pixels = Int(points) * scale
++            guard let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: pixels, pixelsHigh: pixels,
++                                             bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
++                                             colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0),
++                  let context = NSGraphicsContext(bitmapImageRep: rep) else { continue }
++            NSGraphicsContext.saveGraphicsState()
++            NSGraphicsContext.current = context
++            context.cgContext.scaleBy(x: CGFloat(scale), y: CGFloat(scale))
++            NSColor.black.setStroke()
++            let path = NSBezierPath()
++            path.lineCapStyle = .round
++            path.lineJoinStyle = .round
++            path.lineWidth = 4.5
++            path.move(to: NSPoint(x: 4.3, y: 14.6))
++            path.curve(to: NSPoint(x: 7.7, y: 5.4),
++                       controlPoint1: NSPoint(x: 5.3, y: 11.5),
++                       controlPoint2: NSPoint(x: 6.6, y: 7.3))
++            path.curve(to: NSPoint(x: 10.3, y: 5.4),
++                       controlPoint1: NSPoint(x: 8.4, y: 3.6),
++                       controlPoint2: NSPoint(x: 9.6, y: 3.6))
++            path.curve(to: NSPoint(x: 13.7, y: 14.6),
++                       controlPoint1: NSPoint(x: 11.4, y: 7.3),
++                       controlPoint2: NSPoint(x: 12.7, y: 11.5))
++            path.stroke()
++            context.flushGraphics()
++            NSGraphicsContext.restoreGraphicsState()
++            rep.size = NSSize(width: points, height: points)
++            image.addRepresentation(rep)
++        }
++        image.size = NSSize(width: points, height: points)
++        image.isTemplate = true
+         return image
+     }
+ 

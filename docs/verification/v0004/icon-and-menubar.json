@@ -1,0 +1,20 @@
+{
+  "all_v0002_icon_files_unchanged": true,
+  "app_icon_unchanged_from_v0002": true,
+  "automatic_appearance_switching": false,
+  "dark_set_preserved": true,
+  "effective_icon_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "generated_at": "2026-10-23T03:48:27.587407+00:00",
+  "info_plist_icon_key": "AppIcon",
+  "menubar_runtime_note": "Narrow real-screen crops on the external display: icon present while Valora is running, blank at the same rectangle after normal quit.",
+  "menubar_runtime_running_png": "/Users/wangqing/code/Valora/docs/verification/v0004/menubar/menubar-screen-running.png",
+  "menubar_runtime_stopped_png": "/Users/wangqing/code/Valora/docs/verification/v0004/menubar/menubar-screen-stopped.png",
+  "menubar_size_points": [
+    18,
+    18
+  ],
+  "menubar_source": "Contents/Resources/AppIcon.icns",
+  "menubar_template": false,
+  "menubar_verification_json": "/Users/wangqing/code/Valora/docs/verification/v0004/menubar/menubar-verification.json",
+  "old_rectangle_symbol_present": false
+}

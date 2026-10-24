@@ -1,0 +1,98 @@
+{
+  "codex_icon_work_untouched": {
+    "menubar_resource": "Resources/MenuBarIcon-Outline-v7 (current Codex work)",
+    "menubar_verification_changed_by_v0007": false,
+    "package_icon_config_changed_by_v0007": false,
+    "status_bar_image_changed_by_v0007": false
+  },
+  "generated_at": "2026-10-23T10:09:17.622219+00:00",
+  "note": "V0005 source report is preserved; the mixed AppDelegate and Verification files are not claimed as wholly V0007 changes. Codex icon resources/package/MenuBarIconVerification were left untouched.",
+  "shared_files": [
+    {
+      "note": "Concurrent Codex menu-icon work plus the V0007 display-menu icon mapping / settings verifier changes; statusBarImage/package icon config/MenuBarIconVerification were not changed by this task.",
+      "path": "Sources/Valora/AppDelegate.swift",
+      "v0007_sha256": "96f9bf21df1648404e9adb4a3b643c59db58fa913d0f913757e33a7cea7ae4e8"
+    },
+    {
+      "note": "Concurrent Codex menu-icon work plus the V0007 display-menu icon mapping / settings verifier changes; statusBarImage/package icon config/MenuBarIconVerification were not changed by this task.",
+      "path": "Sources/Valora/Verification.swift",
+      "v0007_sha256": "79e5e7f1353863bac4b823191de6af5ad38e084d4be710a29db58ece08d571cd"
+    }
+  ],
+  "v0005_report_sha256": "3216f0e2f2c6f5d8206f7025a6ddc62558b8d6ee3282830f74e5de039460d912",
+  "v0005_source_report": "/Users/wangqing/code/Valora/docs/verification/v0005/source-fingerprints.json",
+  "v0007_owned": [
+    {
+      "path": "Sources/ReferenceCore/SystemMediaSnapshot.swift",
+      "status": "changed_in_v0007",
+      "v0005_sha256": "28c36f40a77fa3c3bfb7c4a0f1ecfb5cf94076d458f64b9b634780dfedb11f4c",
+      "v0007_sha256": "413cc7b7b430e6640ac033eda26942cfdf7dddc93a55496adaf9536eb955eaed"
+    },
+    {
+      "path": "Sources/Valora/SettingsPalette.swift",
+      "status": "added_in_v0007",
+      "v0005_sha256": null,
+      "v0007_sha256": "1a85362d5f90eecbde4bacb3cd100cc4eec9bb67edfd2e30b0cf76d555a3a2f0"
+    },
+    {
+      "path": "Sources/Valora/SettingsView.swift",
+      "status": "changed_in_v0007",
+      "v0005_sha256": "560b04b19465cc23f8c4548869416d42cfc4371ceeacf60eb4bb5e1b269e960e",
+      "v0007_sha256": "f6695ad4ab624bd7190acbf24e4f15c1584bf1db86be0eb16e5c5e7e49b228dc"
+    },
+    {
+      "path": "Sources/Valora/SettingsControls.swift",
+      "status": "changed_in_v0007",
+      "v0005_sha256": "7088c99ba7b906b369b61cb7b1518ca4fc48e27ce4dc1e4e292de5dca3f65e7f",
+      "v0007_sha256": "1ca99f48b63bca4ea6afee53ba02cb87553dc8eff92083a1221151034e8a2bd6"
+    },
+    {
+      "path": "Sources/Valora/SettingsWindow.swift",
+      "status": "changed_in_v0007",
+      "v0005_sha256": "5eee5d789ed6c78cea247fd31657b1e3e9981492d6870b3cb28bd0d91114124c",
+      "v0007_sha256": "6acf3a6af0ac6a864290bd03ef4d418c77394a98701136f44463240a0c503211"
+    },
+    {
+      "path": "Sources/Valora/SettingsDisplayCatalog.swift",
+      "status": "changed_in_v0007",
+      "v0005_sha256": "aa9f0df7d8186cb4322419afa1bb7ba045f40a18c122c32c1add26ac6c34ce6a",
+      "v0007_sha256": "131c8ede7aab1dacd4ce5c907e71d77d795bc4a559c5b674b31003b59eb70c03"
+    },
+    {
+      "path": "Sources/Valora/SettingsLocalization.swift",
+      "status": "changed_in_v0007",
+      "v0005_sha256": "486e0eecc44caed9648378148003ee8171c3e2c93cabbf5dc8f0fed6530702fa",
+      "v0007_sha256": "64ec27372289992abc02f94542180ddab4697a368f742ae3d763785a3267a3a3"
+    },
+    {
+      "path": "Sources/Valora/MusicPlayerContent.swift",
+      "status": "changed_in_v0007",
+      "v0005_sha256": "9308f2a54b7ae54729837ee55a0dd145854e36490d5403a60c34dbf811a347ad",
+      "v0007_sha256": "4ff8706ca82590e3dbc8094851e9e7e29768b8ad92a33a4fe1b00f59d48e2333"
+    },
+    {
+      "path": "Sources/Valora/Models.swift",
+      "status": "changed_in_v0007",
+      "v0005_sha256": "dcb19abb091decce17fbc31df65a6b4edc69d6bfb9e88c82e436ce7f9fcdb239",
+      "v0007_sha256": "02afdff791816d33b68b0a3c5733df9f7f3122a7adc5d3e5952a8a188e5e4ddc"
+    },
+    {
+      "path": "Sources/Valora/Controllers.swift",
+      "status": "changed_in_v0007",
+      "v0005_sha256": "e37c79ab276e8b8cf828d803c8858b28e47c078ebbf2762288249dbe46af9d85",
+      "v0007_sha256": "bbb0d0e5129d91ef111b037e4179aba07a320f6b6f8aade8185572a6e25a5aca"
+    },
+    {
+      "path": "Tests/ValoraTests/SettingsReductionTests.swift",
+      "status": "changed_in_v0007",
+      "v0005_sha256": "baaa590e9e942e56db134b3c69d2834c237a8187097d3f03fe9c770b3f636c53",
+      "v0007_sha256": "fdcdfb6fab39ebec5602d702458992bc968df4e8858f3a58968ec3fe3d336fc6"
+    },
+    {
+      "path": "Tests/ReferenceCoreTests/SystemMediaSnapshotTests.swift",
+      "status": "changed_in_v0007",
+      "v0005_sha256": "c3260a1a5f36a7f22af2261e03ad61807a6d9de702b93350d41cb44e1e2904df",
+      "v0007_sha256": "4567cdb6154a9656afc6fa5f76bdd092334032f2479f7db7a69296e74412fe1e"
+    }
+  ]
+}

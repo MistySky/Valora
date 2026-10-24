@@ -1,0 +1,246 @@
+{
+  "cookies_enabled" : false,
+  "generated_at" : "2026-10-23T17:34:44Z",
+  "input" : "\/Users\/wangqing\/code\/Valora\/scripts\/qq_lyrics_sample.json",
+  "probe" : "V0010 explicit public QQ Music sample probe",
+  "retry_count" : 0,
+  "samples" : [
+    {
+      "label" : "studio",
+      "lyrics" : {
+        "classification" : "timed_lrc",
+        "code" : 0,
+        "content_type" : "text\/html;charset=utf-8",
+        "first_timestamp" : 0,
+        "has_lyric_payload" : true,
+        "has_translation" : false,
+        "http_status" : 200,
+        "last_timestamp" : 262.86000000000001,
+        "line_count" : 63,
+        "metadata_artist" : "周杰伦",
+        "metadata_title" : "晴天",
+        "response_bytes" : 2671,
+        "retcode" : 0,
+        "subcode" : 0
+      },
+      "match" : {
+        "album" : "叶惠美",
+        "artist" : "周杰伦",
+        "duration" : 269,
+        "matched" : true,
+        "songID" : "97773",
+        "songmid" : "0039MnYb0qxYhV",
+        "title" : "晴天"
+      },
+      "qrc" : {
+        "content_characters" : 9808,
+        "content_present" : true,
+        "content_type" : "text\/html",
+        "decoded" : false,
+        "decryption" : "not_implemented",
+        "http_status" : 200,
+        "looks_like_hex_cipher" : true,
+        "reason" : "QRC payload is encrypted; no byte timing was claimed.",
+        "response_bytes" : 10454,
+        "result" : "0"
+      },
+      "sample" : {
+        "album" : "叶惠美",
+        "artist" : "周杰伦",
+        "duration" : 269,
+        "title" : "晴天"
+      },
+      "search" : {
+        "candidate_count" : 10,
+        "candidates" : [
+          {
+            "album" : "叶惠美",
+            "artist" : "周杰伦",
+            "duration" : 269,
+            "songID" : "97773",
+            "songmid" : "0039MnYb0qxYhV",
+            "title" : "晴天"
+          },
+          {
+            "album" : "周杰伦地表最强世界巡回演唱会",
+            "artist" : "周杰伦",
+            "duration" : 249,
+            "songID" : "244115385",
+            "songmid" : "004Fs2FP1EvZYc",
+            "title" : "晴天 (Live)"
+          },
+          {
+            "album" : "周杰伦 2004 无与伦比 演唱会 Live CD",
+            "artist" : "周杰伦",
+            "duration" : 299,
+            "songID" : "4962974",
+            "songmid" : "001398Rf3gykz8",
+            "title" : "晴天 (Live)"
+          },
+          {
+            "album" : "",
+            "artist" : "周杰伦",
+            "duration" : 218,
+            "songID" : "570701044",
+            "songmid" : "004SB5DZ1JTN7Y",
+            "title" : "晴天 (DJ阿lo版)"
+          },
+          {
+            "album" : "",
+            "artist" : "林俊杰 \/ 周杰伦",
+            "duration" : 239,
+            "songID" : "206063225",
+            "songmid" : "001naPHz2ER9qv",
+            "title" : "晴天 (Live)"
+          },
+          {
+            "album" : "",
+            "artist" : "周杰伦",
+            "duration" : 269,
+            "songID" : "125251595",
+            "songmid" : "001Wiw9y1SeFO4",
+            "title" : "晴天 (KTV版伴奏)"
+          },
+          {
+            "album" : "",
+            "artist" : "周杰伦",
+            "duration" : 116,
+            "songID" : "582517548",
+            "songmid" : "002f6kjO3yqwfd",
+            "title" : "晴天 (DJ 阿若版)"
+          },
+          {
+            "album" : "",
+            "artist" : "周杰伦",
+            "duration" : 268,
+            "songID" : "124802606",
+            "songmid" : "004OmEt53sLWcn",
+            "title" : "晴天"
+          }
+        ],
+        "content_type" : "application\/x-javascript;charset=utf-8",
+        "http_status" : 200,
+        "response_bytes" : 17479
+      }
+    },
+    {
+      "label" : "live",
+      "lyrics" : {
+        "classification" : "timed_lrc",
+        "code" : 0,
+        "content_type" : "text\/html;charset=utf-8",
+        "first_timestamp" : 0,
+        "has_lyric_payload" : true,
+        "has_translation" : false,
+        "http_status" : 200,
+        "last_timestamp" : 239.43000000000001,
+        "line_count" : 36,
+        "metadata_artist" : "周杰伦",
+        "metadata_title" : "晴天 (Live)",
+        "response_bytes" : 1769,
+        "retcode" : 0,
+        "subcode" : 0
+      },
+      "match" : {
+        "album" : "周杰伦地表最强世界巡回演唱会",
+        "artist" : "周杰伦",
+        "duration" : 249,
+        "matched" : true,
+        "songID" : "244115385",
+        "songmid" : "004Fs2FP1EvZYc",
+        "title" : "晴天 (Live)"
+      },
+      "qrc" : {
+        "content_characters" : 6784,
+        "content_present" : true,
+        "content_type" : "text\/html",
+        "decoded" : false,
+        "decryption" : "not_implemented",
+        "http_status" : 200,
+        "looks_like_hex_cipher" : true,
+        "reason" : "QRC payload is encrypted; no byte timing was claimed.",
+        "response_bytes" : 7438,
+        "result" : "0"
+      },
+      "sample" : {
+        "album" : "周杰伦地表最强世界巡回演唱会",
+        "artist" : "周杰伦",
+        "duration" : 249,
+        "title" : "晴天 (Live)"
+      },
+      "search" : {
+        "candidate_count" : 10,
+        "candidates" : [
+          {
+            "album" : "周杰伦地表最强世界巡回演唱会",
+            "artist" : "周杰伦",
+            "duration" : 249,
+            "songID" : "244115385",
+            "songmid" : "004Fs2FP1EvZYc",
+            "title" : "晴天 (Live)"
+          },
+          {
+            "album" : "",
+            "artist" : "林俊杰 \/ 周杰伦",
+            "duration" : 239,
+            "songID" : "206063225",
+            "songmid" : "001naPHz2ER9qv",
+            "title" : "晴天 (Live)"
+          },
+          {
+            "album" : "",
+            "artist" : "周杰伦 \/ 林俊杰",
+            "duration" : 13,
+            "songID" : "462410853",
+            "songmid" : "001zdZlm3kUtfV",
+            "title" : "晴天 (13秒2017地表最强世界巡回演唱会台北站片段|片段)"
+          },
+          {
+            "album" : "",
+            "artist" : "周杰伦",
+            "duration" : 580,
+            "songID" : "435569057",
+            "songmid" : "001GISFc0ay0vD",
+            "title" : "爱在西元前 + 园游会 + 倒影 + 晴天 + 牛仔很忙 + 轨迹 + (Live)"
+          },
+          {
+            "album" : "",
+            "artist" : "易广成",
+            "duration" : 64,
+            "songID" : "350057657",
+            "songmid" : "002xKV361hMjYd",
+            "title" : "晴天 (合唱版Live)"
+          },
+          {
+            "album" : "",
+            "artist" : "毕业生主角合唱团",
+            "duration" : 319,
+            "songID" : "583324081",
+            "songmid" : "000RwOJP3FNBkW",
+            "title" : "晴天 (2025仲夏毕业歌会现场)"
+          },
+          {
+            "album" : "叶惠美",
+            "artist" : "周杰伦",
+            "duration" : 269,
+            "songID" : "97773",
+            "songmid" : "0039MnYb0qxYhV",
+            "title" : "晴天"
+          },
+          {
+            "album" : "",
+            "artist" : "TOP登陆少年组合",
+            "duration" : 275,
+            "songID" : "604747994",
+            "songmid" : "00250ch92bSsoa",
+            "title" : "晴天 (2025 5\/5·ONE有引力演唱会)"
+          }
+        ],
+        "content_type" : "application\/x-javascript;charset=utf-8",
+        "http_status" : 200,
+        "response_bytes" : 17422
+      }
+    }
+  ],
+  "timeout_seconds" : 10
+}

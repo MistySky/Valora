@@ -1,0 +1,83 @@
+--- a/Sources/Valora/Verification.swift
++++ b/Sources/Valora/Verification.swift
+@@ -703,9 +703,9 @@
+     }
+ }
+ 
+-/// Read-only verification of the actual NSStatusItem button image and its live
+-/// status-bar window. It writes a small region hint for an optional shell
+-/// screenshot, then waits briefly so the caller can capture that region.
++/// Read-only verification of the actual NSStatusItem template image and its
++/// live status-bar window. The real-screen menu-bar crops are recorded by the
++/// caller; this mode never starts media or sends player commands.
+ enum MenuBarIconVerification {
+     @MainActor static func run(statusItem: NSStatusItem, output: String) {
+         Task { @MainActor in
+@@ -758,6 +758,30 @@
+                 ]
+             }
+ 
++            func templatePreview(background: NSColor, tint: NSColor, name: String) -> [String: Any]? {
++                guard let image,
++                      let cg = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return nil }
++                let pixels = 36
++                guard let context = CGContext(data: nil, width: pixels, height: pixels,
++                                              bitsPerComponent: 8, bytesPerRow: 0,
++                                              space: CGColorSpaceCreateDeviceRGB(),
++                                              bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return nil }
++                let rect = CGRect(x: 0, y: 0, width: pixels, height: pixels)
++                context.setFillColor(background.cgColor)
++                context.fill(rect)
++                context.clip(to: rect, mask: cg)
++                context.setFillColor(tint.cgColor)
++                context.fill(rect)
++                guard let rendered = context.makeImage() else { return nil }
++                let rep = NSBitmapImageRep(cgImage: rendered)
++                guard let png = rep.representation(using: .png, properties: [:]) else { return nil }
++                let url = directory.appendingPathComponent(name + ".png")
++                try? png.write(to: url)
++                return ["path": url.path, "pixels": pixels, "bytes": png.count,
++                        "background": background.description, "tint": tint.description,
++                        "note": "offscreen template-tint preview, not a real menu-bar capture"]
++            }
++
+             var windowCapture: [String: Any]?
+             var windowInfo: [String: Any] = [:]
+             if let window = button?.window {
+@@ -794,8 +818,9 @@
+             let result: [String: Any] = [
+                 "generated_at": ISO8601DateFormatter().string(from: Date()),
+                 "app": Bundle.main.bundlePath,
+-                "bundle_icon_path": iconURL?.path ?? NSNull(),
+-                "bundle_icon_sha256": iconSHA ?? NSNull(),
++                "app_bundle_icon_path": iconURL?.path ?? NSNull(),
++                "app_bundle_icon_sha256": iconSHA ?? NSNull(),
++                "menubar_source": "code-native AppKit vector (18 pt, 18/36/54 px reps)",
+                 "status_item_length": statusItem.length,
+                 "button_image_present": image != nil,
+                 "button_image_size": image.map { [Double($0.size.width), Double($0.size.height)] } ?? NSNull(),
+@@ -806,12 +831,22 @@
+                 "button_image_scaling": button.map { $0.imageScaling.rawValue } ?? NSNull(),
+                 "button_image_position": button.map { $0.imagePosition.rawValue } ?? NSNull(),
+                 "button_accessibility_label": button?.accessibilityLabel() ?? NSNull(),
++                "rendered_16": render(image, pixels: 16, name: "status-button-16") ?? NSNull(),
+                 "rendered_18": render(image, pixels: 18, name: "status-button-18") ?? NSNull(),
+                 "rendered_36": render(image, pixels: 36, name: "status-button-36") ?? NSNull(),
+-                "rendered_72": render(image, pixels: 72, name: "status-button-72") ?? NSNull(),
++                "rendered_54": render(image, pixels: 54, name: "status-button-54") ?? NSNull(),
++                "template_preview_light": templatePreview(background: NSColor(srgbRed: 0.867, green: 0.898, blue: 0.925, alpha: 1),
++                                                          tint: NSColor(srgbRed: 0.231, green: 0.231, blue: 0.239, alpha: 1),
++                                                          name: "template-preview-light") ?? NSNull(),
++                "template_preview_dark": templatePreview(background: NSColor(srgbRed: 0.110, green: 0.110, blue: 0.118, alpha: 1),
++                                                         tint: NSColor(srgbRed: 0.949, green: 0.949, blue: 0.969, alpha: 1),
++                                                         name: "template-preview-dark") ?? NSNull(),
++                "template_preview_selected": templatePreview(background: NSColor(srgbRed: 0.290, green: 0.290, blue: 0.310, alpha: 1),
++                                                             tint: .white,
++                                                             name: "template-preview-selected") ?? NSNull(),
+                 "window": windowInfo,
+                 "status_item_window_capture": windowCapture ?? NSNull(),
+-                "screen_capture_note": "Automatic status-item window/AX frames were not trusted on this multi-display setup. Use menubar-screen-running.png / menubar-screen-stopped.png, captured as a narrow real-screen menu-bar crop.",
++                "screen_capture_note": "This is an offscreen status-item control render, not a real-screen capture. Automatic status-item window/AX frames are not trusted on multi-display setups; any real menu-bar crop is recorded separately and must not be inferred from this render.",
+                 "player_command_sent": false,
+                 "music_media_started": false,
+                 "private_content_collected": false

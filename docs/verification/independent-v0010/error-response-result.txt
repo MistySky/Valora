@@ -1,0 +1,4 @@
+本地URLProtocol模拟，不发网络请求。
+HTTP503 + retcode/code0 + 带戳fixture -> classification=timed_lrc（错误）。
+HTTP200 + retcode/code1001 + 带戳fixture -> classification=timed_lrc（错误）。
+探针未把HTTP/API失败挡在内容分类之前；正常HTTP/API成功获取证据另见network/network-summary.json。

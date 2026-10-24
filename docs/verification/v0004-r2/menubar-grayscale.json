@@ -1,0 +1,65 @@
+{
+  "accessibility_label": "Valora",
+  "app_icon_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "app_icon_unchanged": true,
+  "button_image_is_template": false,
+  "button_image_position": 1,
+  "button_image_representations": [
+    {
+      "alpha": true,
+      "height": 36,
+      "width": 36
+    }
+  ],
+  "button_image_scaling": 0,
+  "button_image_size": [
+    18,
+    18
+  ],
+  "colorful_fraction": 0,
+  "dark_actual_capture": false,
+  "desaturation_method": "Core Image CIColorControls inputSaturation=0",
+  "generated_at": "2026-10-23T05:41:12.504213+00:00",
+  "preview_files": {
+    "dark": "/Users/wangqing/code/Valora/docs/verification/v0004-r2/menubar/grayscale-preview-dark.png",
+    "light": "/Users/wangqing/code/Valora/docs/verification/v0004-r2/menubar/grayscale-preview-light.png",
+    "note": "Offscreen grayscale previews; not real menu-bar captures."
+  },
+  "rendered_files": {
+    "16": "/Users/wangqing/code/Valora/docs/verification/v0004-r2/menubar/status-button-16.png",
+    "18": "/Users/wangqing/code/Valora/docs/verification/v0004-r2/menubar/status-button-18.png",
+    "36": "/Users/wangqing/code/Valora/docs/verification/v0004-r2/menubar/status-button-36.png",
+    "54": "/Users/wangqing/code/Valora/docs/verification/v0004-r2/menubar/status-button-54.png"
+  },
+  "screen_capture": {
+    "capture_command": "screencapture -x -D 2 -R 1024,0,64,30",
+    "capture_rect_points": [
+      1024,
+      0,
+      64,
+      30
+    ],
+    "changed_pixels_gt8": 1096,
+    "console_screen_locked": false,
+    "dark_actual_capture": false,
+    "display": "U2701B (display 2)",
+    "final_real_screen_capture_available": true,
+    "generated_at": "2026-10-23T05:39:23.139817+00:00",
+    "icon_absent_when_stopped_visually": true,
+    "icon_present_when_running": true,
+    "note": "Narrow real-screen menu-bar crop only; no desktop/window content. Dark/selected were not forced; dark uses a separate offscreen grayscale preview, and isTemplate=false keeps gray levels.",
+    "running_png": "docs/verification/v0004-r2/menubar/menubar-screen-running.png",
+    "selected_actual_capture": false,
+    "stopped_png": "docs/verification/v0004-r2/menubar/menubar-screen-stopped.png",
+    "total_pixels": 7680
+  },
+  "selected_actual_capture": false,
+  "selected_note": "isTemplate=false keeps the gray levels; no system appearance or selected UI was forced.",
+  "source": "Contents/Resources/AppIcon.icns desaturated with Core Image CIColorControls(saturation=0); isTemplate=false",
+  "transparent_corners": [
+    0,
+    0,
+    0,
+    0
+  ]
+}

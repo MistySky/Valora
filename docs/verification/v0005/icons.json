@@ -1,0 +1,14 @@
+{
+  "app_icon_path": "/Users/wangqing/code/Valora/dist/Valora.app/Contents/Resources/AppIcon.icns",
+  "app_icon_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "app_icon_unchanged_color_light": true,
+  "architecture": "arm64",
+  "build": "1",
+  "bundle_id": "com.wangqing.valora",
+  "generated_at": "2026-10-23T08:39:53.127947+00:00",
+  "info_icon_key": "AppIcon",
+  "menubar_icon_path": "/Users/wangqing/code/Valora/dist/Valora.app/Contents/Resources/MenuBarIcon.icns",
+  "menubar_icon_sha256": "63243bd19988395980f4cf418f4924800813c785885676bed51115b604dfb276",
+  "menubar_icon_unchanged_dark_source": true,
+  "version": "0.1.0"
+}

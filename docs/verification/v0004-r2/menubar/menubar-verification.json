@@ -1,0 +1,116 @@
+{
+  "app" : "\/Users\/wangqing\/code\/Valora\/dist\/Valora.app",
+  "app_bundle_icon_path" : "\/Users\/wangqing\/code\/Valora\/dist\/Valora.app\/Contents\/Resources\/AppIcon.icns",
+  "app_bundle_icon_sha256" : "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "button_accessibility_label" : "Valora",
+  "button_image_is_template" : false,
+  "button_image_position" : 1,
+  "button_image_present" : true,
+  "button_image_representations" : [
+    {
+      "alpha" : true,
+      "height" : 36,
+      "width" : 36
+    }
+  ],
+  "button_image_scaling" : 0,
+  "button_image_size" : [
+    18,
+    18
+  ],
+  "desaturation_method" : "Core Image CIColorControls inputSaturation=0",
+  "generated_at" : "2026-10-23T05:35:10Z",
+  "grayscale_preview_dark" : {
+    "background" : "sRGB IEC61966-2.1 colorspace hdrm(1) 0.11 0.11 0.118 1",
+    "bytes" : 1855,
+    "note" : "offscreen grayscale image preview, not a real menu-bar capture",
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004-r2\/menubar\/grayscale-preview-dark.png",
+    "pixels" : 36
+  },
+  "grayscale_preview_light" : {
+    "background" : "sRGB IEC61966-2.1 colorspace hdrm(1) 0.867 0.898 0.925 1",
+    "bytes" : 1883,
+    "note" : "offscreen grayscale image preview, not a real menu-bar capture",
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004-r2\/menubar\/grayscale-preview-light.png",
+    "pixels" : 36
+  },
+  "menubar_source" : "Contents\/Resources\/AppIcon.icns desaturated with Core Image CIColorControls(saturation=0); isTemplate=false",
+  "music_media_started" : false,
+  "player_command_sent" : false,
+  "private_content_collected" : false,
+  "rendered_16" : {
+    "bytes" : 713,
+    "colorfulFraction" : 0,
+    "cornerAlphas" : [
+      1,
+      1,
+      1,
+      1
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004-r2\/menubar\/status-button-16.png",
+    "pixels" : 16,
+    "sampledOpaquePixels" : 192,
+    "sha256" : "184caeae901e9ee99350d1afe13e5c30a96bca044ca812e5493994b570008b1e"
+  },
+  "rendered_18" : {
+    "bytes" : 824,
+    "colorfulFraction" : 0,
+    "cornerAlphas" : [
+      1,
+      1,
+      1,
+      1
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004-r2\/menubar\/status-button-18.png",
+    "pixels" : 18,
+    "sampledOpaquePixels" : 244,
+    "sha256" : "28bbb63c5bd834f4e6417ad2cb2560df62d2991625611ab2cce4a3e65cc12c8b"
+  },
+  "rendered_36" : {
+    "bytes" : 1869,
+    "colorfulFraction" : 0,
+    "cornerAlphas" : [
+      0,
+      0,
+      0,
+      0
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004-r2\/menubar\/status-button-36.png",
+    "pixels" : 36,
+    "sampledOpaquePixels" : 1000,
+    "sha256" : "1b1a7e6f196d2b6bc6159614191d11d6787c11ddb2bfd16a8e1ac1a02f4418a4"
+  },
+  "rendered_54" : {
+    "bytes" : 3431,
+    "colorfulFraction" : 0,
+    "cornerAlphas" : [
+      0,
+      0,
+      0,
+      0
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004-r2\/menubar\/status-button-54.png",
+    "pixels" : 54,
+    "sampledOpaquePixels" : 2392,
+    "sha256" : "9bd2f57bb976dff5fd5932fa9783a9321d0fac169162de80c65af05aa05909ed"
+  },
+  "screen_capture_note" : "This is an offscreen status-item control render, not a real-screen capture. Automatic status-item window\/AX frames are not trusted on multi-display setups; any real menu-bar crop is recorded separately and must not be inferred from this render.",
+  "source_is_full_app_icon" : true,
+  "status_item_length" : -2,
+  "status_item_window_capture" : {
+    "bytes" : 5367,
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004-r2\/menubar\/status-item-window.png",
+    "pixels" : [
+      76,
+      66
+    ],
+    "sha256" : "4bab41885952fb4ba396badac636ef09db17c18996279b3fbc03bd6b57005efc"
+  },
+  "window" : {
+    "button_accessibility_frame_points" : "{{1048, 1088.5}, {24, 24}}",
+    "frame_trusted_for_screen_capture" : false,
+    "screen_frame_points" : "{{0, 0}, {1728, 1117}}",
+    "window_frame_points" : "{{1041, 1084}, {38, 33}}",
+    "window_number" : 4294967296
+  }
+}

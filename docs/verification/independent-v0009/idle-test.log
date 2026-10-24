@@ -1,0 +1,485 @@
+Building for debugging...
+[Using on-disk description]
+[1 / 3]
+[2 / 7] ValoraTests-product
+[5 / 10] ValoraTests-product
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:16:9: warning: main actor-isolated property 'suite' can not be mutated from a nonisolated context
+  6 | @MainActor
+  7 | final class MultiDisplayCoordinatorTests: XCTestCase {
+  8 |     private var suite = ""
+    |                 `- note: mutation of this property is only permitted within the actor
+  9 |     private var defaults: UserDefaults!
+ 10 |     private var settings: RevivalSettings!
+    :
+ 14 |     override func setUp() {
+ 15 |         super.setUp()
+ 16 |         suite = "com.wangqing.valora.multidisplay.\(UUID().uuidString)"
+    |         `- warning: main actor-isolated property 'suite' can not be mutated from a nonisolated context
+ 17 |         defaults = UserDefaults(suiteName: suite)!
+ 18 |         defaults.removePersistentDomain(forName: suite)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:17:9: warning: main actor-isolated property 'defaults' can not be mutated from a nonisolated context
+  7 | final class MultiDisplayCoordinatorTests: XCTestCase {
+  8 |     private var suite = ""
+  9 |     private var defaults: UserDefaults!
+    |                 `- note: mutation of this property is only permitted within the actor
+ 10 |     private var settings: RevivalSettings!
+ 11 |     private var model: AppModel!
+    :
+ 15 |         super.setUp()
+ 16 |         suite = "com.wangqing.valora.multidisplay.\(UUID().uuidString)"
+ 17 |         defaults = UserDefaults(suiteName: suite)!
+    |         `- warning: main actor-isolated property 'defaults' can not be mutated from a nonisolated context
+ 18 |         defaults.removePersistentDomain(forName: suite)
+ 19 |         defaults.set(["showOnDisplay": "All displays"], forKey: "referenceSettingsUI")
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:17:44: warning: main actor-isolated property 'suite' can not be referenced from a nonisolated context
+  6 | @MainActor
+  7 | final class MultiDisplayCoordinatorTests: XCTestCase {
+  8 |     private var suite = ""
+    |                 `- note: property declared here
+  9 |     private var defaults: UserDefaults!
+ 10 |     private var settings: RevivalSettings!
+    :
+ 15 |         super.setUp()
+ 16 |         suite = "com.wangqing.valora.multidisplay.\(UUID().uuidString)"
+ 17 |         defaults = UserDefaults(suiteName: suite)!
+    |                                            `- warning: main actor-isolated property 'suite' can not be referenced from a nonisolated context
+ 18 |         defaults.removePersistentDomain(forName: suite)
+ 19 |         defaults.set(["showOnDisplay": "All displays"], forKey: "referenceSettingsUI")
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:18:9: warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+  7 | final class MultiDisplayCoordinatorTests: XCTestCase {
+  8 |     private var suite = ""
+  9 |     private var defaults: UserDefaults!
+    |                 `- note: property declared here
+ 10 |     private var settings: RevivalSettings!
+ 11 |     private var model: AppModel!
+    :
+ 16 |         suite = "com.wangqing.valora.multidisplay.\(UUID().uuidString)"
+ 17 |         defaults = UserDefaults(suiteName: suite)!
+ 18 |         defaults.removePersistentDomain(forName: suite)
+    |         `- warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+ 19 |         defaults.set(["showOnDisplay": "All displays"], forKey: "referenceSettingsUI")
+ 20 |         settings = RevivalSettings(defaults: defaults)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:18:50: warning: main actor-isolated property 'suite' can not be referenced from a nonisolated context
+  6 | @MainActor
+  7 | final class MultiDisplayCoordinatorTests: XCTestCase {
+  8 |     private var suite = ""
+    |                 `- note: property declared here
+  9 |     private var defaults: UserDefaults!
+ 10 |     private var settings: RevivalSettings!
+    :
+ 16 |         suite = "com.wangqing.valora.multidisplay.\(UUID().uuidString)"
+ 17 |         defaults = UserDefaults(suiteName: suite)!
+ 18 |         defaults.removePersistentDomain(forName: suite)
+    |                                                  `- warning: main actor-isolated property 'suite' can not be referenced from a nonisolated context
+ 19 |         defaults.set(["showOnDisplay": "All displays"], forKey: "referenceSettingsUI")
+ 20 |         settings = RevivalSettings(defaults: defaults)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:19:9: warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+  7 | final class MultiDisplayCoordinatorTests: XCTestCase {
+  8 |     private var suite = ""
+  9 |     private var defaults: UserDefaults!
+    |                 `- note: property declared here
+ 10 |     private var settings: RevivalSettings!
+ 11 |     private var model: AppModel!
+    :
+ 17 |         defaults = UserDefaults(suiteName: suite)!
+ 18 |         defaults.removePersistentDomain(forName: suite)
+ 19 |         defaults.set(["showOnDisplay": "All displays"], forKey: "referenceSettingsUI")
+    |         `- warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+ 20 |         settings = RevivalSettings(defaults: defaults)
+ 21 |         settings.forceSimulatedNotch = true
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:20:9: warning: main actor-isolated property 'settings' can not be mutated from a nonisolated context
+  8 |     private var suite = ""
+  9 |     private var defaults: UserDefaults!
+ 10 |     private var settings: RevivalSettings!
+    |                 `- note: mutation of this property is only permitted within the actor
+ 11 |     private var model: AppModel!
+ 12 |     private var coordinator: WindowCoordinator!
+    :
+ 18 |         defaults.removePersistentDomain(forName: suite)
+ 19 |         defaults.set(["showOnDisplay": "All displays"], forKey: "referenceSettingsUI")
+ 20 |         settings = RevivalSettings(defaults: defaults)
+    |         `- warning: main actor-isolated property 'settings' can not be mutated from a nonisolated context
+ 21 |         settings.forceSimulatedNotch = true
+ 22 |         model = AppModel(settings: settings)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:20:20: warning: call to main actor-isolated initializer 'init(defaults:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 18 |         defaults.removePersistentDomain(forName: suite)
+ 19 |         defaults.set(["showOnDisplay": "All displays"], forKey: "referenceSettingsUI")
+ 20 |         settings = RevivalSettings(defaults: defaults)
+    |                    `- warning: call to main actor-isolated initializer 'init(defaults:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 21 |         settings.forceSimulatedNotch = true
+ 22 |         model = AppModel(settings: settings)
+
+Valora.RevivalSettings.init:2:21: note: calls to initializer 'init(defaults:)' from outside of its actor context are implicitly asynchronous
+1 | class RevivalSettings {
+2 | @MainActor internal init(defaults: UserDefaults = .standard)}
+  |                     `- note: calls to initializer 'init(defaults:)' from outside of its actor context are implicitly asynchronous
+3 | 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:20:46: warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+  7 | final class MultiDisplayCoordinatorTests: XCTestCase {
+  8 |     private var suite = ""
+  9 |     private var defaults: UserDefaults!
+    |                 `- note: property declared here
+ 10 |     private var settings: RevivalSettings!
+ 11 |     private var model: AppModel!
+    :
+ 18 |         defaults.removePersistentDomain(forName: suite)
+ 19 |         defaults.set(["showOnDisplay": "All displays"], forKey: "referenceSettingsUI")
+ 20 |         settings = RevivalSettings(defaults: defaults)
+    |                                              `- warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+ 21 |         settings.forceSimulatedNotch = true
+ 22 |         model = AppModel(settings: settings)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:21:18: warning: main actor-isolated property 'forceSimulatedNotch' can not be mutated from a nonisolated context
+ 19 |         defaults.set(["showOnDisplay": "All displays"], forKey: "referenceSettingsUI")
+ 20 |         settings = RevivalSettings(defaults: defaults)
+ 21 |         settings.forceSimulatedNotch = true
+    |                  `- warning: main actor-isolated property 'forceSimulatedNotch' can not be mutated from a nonisolated context
+ 22 |         model = AppModel(settings: settings)
+ 23 |         model.title = "Track"
+
+Valora.RevivalSettings.forceSimulatedNotch:2:36: note: mutation of this property is only permitted within the actor
+1 | class RevivalSettings {
+2 | @Published @MainActor internal var forceSimulatedNotch: Bool { get set }}
+  |                                    `- note: mutation of this property is only permitted within the actor
+3 | 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:21:9: warning: main actor-isolated property 'settings' can not be referenced from a nonisolated context
+  8 |     private var suite = ""
+  9 |     private var defaults: UserDefaults!
+ 10 |     private var settings: RevivalSettings!
+    |                 `- note: property declared here
+ 11 |     private var model: AppModel!
+ 12 |     private var coordinator: WindowCoordinator!
+    :
+ 19 |         defaults.set(["showOnDisplay": "All displays"], forKey: "referenceSettingsUI")
+ 20 |         settings = RevivalSettings(defaults: defaults)
+ 21 |         settings.forceSimulatedNotch = true
+    |         `- warning: main actor-isolated property 'settings' can not be referenced from a nonisolated context
+ 22 |         model = AppModel(settings: settings)
+ 23 |         model.title = "Track"
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:22:9: warning: main actor-isolated property 'model' can not be mutated from a nonisolated context
+  9 |     private var defaults: UserDefaults!
+ 10 |     private var settings: RevivalSettings!
+ 11 |     private var model: AppModel!
+    |                 `- note: mutation of this property is only permitted within the actor
+ 12 |     private var coordinator: WindowCoordinator!
+ 13 | 
+    :
+ 20 |         settings = RevivalSettings(defaults: defaults)
+ 21 |         settings.forceSimulatedNotch = true
+ 22 |         model = AppModel(settings: settings)
+    |         `- warning: main actor-isolated property 'model' can not be mutated from a nonisolated context
+ 23 |         model.title = "Track"
+ 24 |         model.artist = "Artist"
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:22:17: warning: call to main actor-isolated initializer 'init(settings:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 20 |         settings = RevivalSettings(defaults: defaults)
+ 21 |         settings.forceSimulatedNotch = true
+ 22 |         model = AppModel(settings: settings)
+    |                 `- warning: call to main actor-isolated initializer 'init(settings:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 23 |         model.title = "Track"
+ 24 |         model.artist = "Artist"
+
+Valora.AppModel.init:2:21: note: calls to initializer 'init(settings:)' from outside of its actor context are implicitly asynchronous
+1 | class AppModel {
+2 | @MainActor internal init(settings: Valora.RevivalSettings)}
+  |                     `- note: calls to initializer 'init(settings:)' from outside of its actor context are implicitly asynchronous
+3 | 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:22:36: warning: main actor-isolated property 'settings' can not be referenced from a nonisolated context
+  8 |     private var suite = ""
+  9 |     private var defaults: UserDefaults!
+ 10 |     private var settings: RevivalSettings!
+    |                 `- note: property declared here
+ 11 |     private var model: AppModel!
+ 12 |     private var coordinator: WindowCoordinator!
+    :
+ 20 |         settings = RevivalSettings(defaults: defaults)
+ 21 |         settings.forceSimulatedNotch = true
+ 22 |         model = AppModel(settings: settings)
+    |                                    `- warning: main actor-isolated property 'settings' can not be referenced from a nonisolated context
+ 23 |         model.title = "Track"
+ 24 |         model.artist = "Artist"
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:23:15: warning: main actor-isolated property 'title' can not be mutated from a nonisolated context
+ 21 |         settings.forceSimulatedNotch = true
+ 22 |         model = AppModel(settings: settings)
+ 23 |         model.title = "Track"
+    |               `- warning: main actor-isolated property 'title' can not be mutated from a nonisolated context
+ 24 |         model.artist = "Artist"
+ 25 |         model.playing = true
+
+Valora.AppModel.title:2:36: note: mutation of this property is only permitted within the actor
+1 | class AppModel {
+2 | @Published @MainActor internal var title: String { get set }}
+  |                                    `- note: mutation of this property is only permitted within the actor
+3 | 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:23:9: warning: main actor-isolated property 'model' can not be referenced from a nonisolated context
+  9 |     private var defaults: UserDefaults!
+ 10 |     private var settings: RevivalSettings!
+ 11 |     private var model: AppModel!
+    |                 `- note: property declared here
+ 12 |     private var coordinator: WindowCoordinator!
+ 13 | 
+    :
+ 21 |         settings.forceSimulatedNotch = true
+ 22 |         model = AppModel(settings: settings)
+ 23 |         model.title = "Track"
+    |         `- warning: main actor-isolated property 'model' can not be referenced from a nonisolated context
+ 24 |         model.artist = "Artist"
+ 25 |         model.playing = true
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:24:15: warning: main actor-isolated property 'artist' can not be mutated from a nonisolated context
+ 22 |         model = AppModel(settings: settings)
+ 23 |         model.title = "Track"
+ 24 |         model.artist = "Artist"
+    |               `- warning: main actor-isolated property 'artist' can not be mutated from a nonisolated context
+ 25 |         model.playing = true
+ 26 |         let builtIn = DisplayDescriptor(id: "builtin", name: "Built-in display",
+
+Valora.AppModel.artist:2:36: note: mutation of this property is only permitted within the actor
+1 | class AppModel {
+2 | @Published @MainActor internal var artist: String { get set }}
+  |                                    `- note: mutation of this property is only permitted within the actor
+3 | 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:24:9: warning: main actor-isolated property 'model' can not be referenced from a nonisolated context
+  9 |     private var defaults: UserDefaults!
+ 10 |     private var settings: RevivalSettings!
+ 11 |     private var model: AppModel!
+    |                 `- note: property declared here
+ 12 |     private var coordinator: WindowCoordinator!
+ 13 | 
+    :
+ 22 |         model = AppModel(settings: settings)
+ 23 |         model.title = "Track"
+ 24 |         model.artist = "Artist"
+    |         `- warning: main actor-isolated property 'model' can not be referenced from a nonisolated context
+ 25 |         model.playing = true
+ 26 |         let builtIn = DisplayDescriptor(id: "builtin", name: "Built-in display",
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:25:15: warning: main actor-isolated property 'playing' can not be mutated from a nonisolated context
+ 23 |         model.title = "Track"
+ 24 |         model.artist = "Artist"
+ 25 |         model.playing = true
+    |               `- warning: main actor-isolated property 'playing' can not be mutated from a nonisolated context
+ 26 |         let builtIn = DisplayDescriptor(id: "builtin", name: "Built-in display",
+ 27 |             frame: CGRect(x: 0, y: 0, width: 1728, height: 1117), safeAreaTop: 32,
+
+Valora.AppModel.playing:2:36: note: mutation of this property is only permitted within the actor
+1 | class AppModel {
+2 | @Published @MainActor internal var playing: Bool { get set }}
+  |                                    `- note: mutation of this property is only permitted within the actor
+3 | 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:25:9: warning: main actor-isolated property 'model' can not be referenced from a nonisolated context
+  9 |     private var defaults: UserDefaults!
+ 10 |     private var settings: RevivalSettings!
+ 11 |     private var model: AppModel!
+    |                 `- note: property declared here
+ 12 |     private var coordinator: WindowCoordinator!
+ 13 | 
+    :
+ 23 |         model.title = "Track"
+ 24 |         model.artist = "Artist"
+ 25 |         model.playing = true
+    |         `- warning: main actor-isolated property 'model' can not be referenced from a nonisolated context
+ 26 |         let builtIn = DisplayDescriptor(id: "builtin", name: "Built-in display",
+ 27 |             frame: CGRect(x: 0, y: 0, width: 1728, height: 1117), safeAreaTop: 32,
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:33:9: warning: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+ 10 |     private var settings: RevivalSettings!
+ 11 |     private var model: AppModel!
+ 12 |     private var coordinator: WindowCoordinator!
+    |                 `- note: mutation of this property is only permitted within the actor
+ 13 | 
+ 14 |     override func setUp() {
+    :
+ 31 |             frame: CGRect(x: -1920, y: -200, width: 1920, height: 1080), safeAreaTop: 0,
+ 32 |             auxiliaryLeftWidth: nil, auxiliaryRightWidth: nil, menuBarHeight: 24)
+ 33 |         coordinator = WindowCoordinator(model, displayProvider: { [builtIn, external] })
+    |         `- warning: main actor-isolated property 'coordinator' can not be mutated from a nonisolated context
+ 34 |         coordinator.start(trackPointer: false)
+ 35 |     }
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:33:23: warning: call to main actor-isolated initializer 'init(_:displayProvider:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 31 |             frame: CGRect(x: -1920, y: -200, width: 1920, height: 1080), safeAreaTop: 0,
+ 32 |             auxiliaryLeftWidth: nil, auxiliaryRightWidth: nil, menuBarHeight: 24)
+ 33 |         coordinator = WindowCoordinator(model, displayProvider: { [builtIn, external] })
+    |                       `- warning: call to main actor-isolated initializer 'init(_:displayProvider:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 34 |         coordinator.start(trackPointer: false)
+ 35 |     }
+
+Valora.WindowCoordinator.init:2:21: note: calls to initializer 'init(_:displayProvider:)' from outside of its actor context are implicitly asynchronous
+1 | class WindowCoordinator {
+2 | @MainActor internal init(_ model: Valora.AppModel, displayProvider: (() -> [Valora.DisplayDescriptor])? = nil)}
+  |                     `- note: calls to initializer 'init(_:displayProvider:)' from outside of its actor context are implicitly asynchronous
+3 | 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:33:41: warning: main actor-isolated property 'model' can not be referenced from a nonisolated context
+  9 |     private var defaults: UserDefaults!
+ 10 |     private var settings: RevivalSettings!
+ 11 |     private var model: AppModel!
+    |                 `- note: property declared here
+ 12 |     private var coordinator: WindowCoordinator!
+ 13 | 
+    :
+ 31 |             frame: CGRect(x: -1920, y: -200, width: 1920, height: 1080), safeAreaTop: 0,
+ 32 |             auxiliaryLeftWidth: nil, auxiliaryRightWidth: nil, menuBarHeight: 24)
+ 33 |         coordinator = WindowCoordinator(model, displayProvider: { [builtIn, external] })
+    |                                         `- warning: main actor-isolated property 'model' can not be referenced from a nonisolated context
+ 34 |         coordinator.start(trackPointer: false)
+ 35 |     }
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:34:21: warning: call to main actor-isolated instance method 'start(trackPointer:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 32 |             auxiliaryLeftWidth: nil, auxiliaryRightWidth: nil, menuBarHeight: 24)
+ 33 |         coordinator = WindowCoordinator(model, displayProvider: { [builtIn, external] })
+ 34 |         coordinator.start(trackPointer: false)
+    |                     `- warning: call to main actor-isolated instance method 'start(trackPointer:)' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 35 |     }
+ 36 | 
+
+Valora.WindowCoordinator.start:2:26: note: calls to instance method 'start(trackPointer:)' from outside of its actor context are implicitly asynchronous
+1 | class WindowCoordinator {
+2 | @MainActor internal func start(trackPointer: Bool = true)}
+  |                          `- note: calls to instance method 'start(trackPointer:)' from outside of its actor context are implicitly asynchronous
+3 | 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:34:9: warning: main actor-isolated property 'coordinator' can not be referenced from a nonisolated context
+ 10 |     private var settings: RevivalSettings!
+ 11 |     private var model: AppModel!
+ 12 |     private var coordinator: WindowCoordinator!
+    |                 `- note: property declared here
+ 13 | 
+ 14 |     override func setUp() {
+    :
+ 32 |             auxiliaryLeftWidth: nil, auxiliaryRightWidth: nil, menuBarHeight: 24)
+ 33 |         coordinator = WindowCoordinator(model, displayProvider: { [builtIn, external] })
+ 34 |         coordinator.start(trackPointer: false)
+    |         `- warning: main actor-isolated property 'coordinator' can not be referenced from a nonisolated context
+ 35 |     }
+ 36 | 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:38:22: warning: call to main actor-isolated instance method 'cancelPendingHover()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 36 | 
+ 37 |     override func tearDown() {
+ 38 |         coordinator?.cancelPendingHover()
+    |                      `- warning: call to main actor-isolated instance method 'cancelPendingHover()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 39 |         coordinator?.collapse()
+ 40 |         defaults.removePersistentDomain(forName: suite)
+
+Valora.WindowCoordinator.cancelPendingHover:2:26: note: calls to instance method 'cancelPendingHover()' from outside of its actor context are implicitly asynchronous
+1 | class WindowCoordinator {
+2 | @MainActor internal func cancelPendingHover()}
+  |                          `- note: calls to instance method 'cancelPendingHover()' from outside of its actor context are implicitly asynchronous
+3 | 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:38:9: warning: main actor-isolated property 'coordinator' can not be referenced from a nonisolated context
+ 10 |     private var settings: RevivalSettings!
+ 11 |     private var model: AppModel!
+ 12 |     private var coordinator: WindowCoordinator!
+    |                 `- note: property declared here
+ 13 | 
+ 14 |     override func setUp() {
+    :
+ 36 | 
+ 37 |     override func tearDown() {
+ 38 |         coordinator?.cancelPendingHover()
+    |         `- warning: main actor-isolated property 'coordinator' can not be referenced from a nonisolated context
+ 39 |         coordinator?.collapse()
+ 40 |         defaults.removePersistentDomain(forName: suite)
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:39:22: warning: call to main actor-isolated instance method 'collapse()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 37 |     override func tearDown() {
+ 38 |         coordinator?.cancelPendingHover()
+ 39 |         coordinator?.collapse()
+    |                      `- warning: call to main actor-isolated instance method 'collapse()' in a synchronous nonisolated context [#ActorIsolatedCall]
+ 40 |         defaults.removePersistentDomain(forName: suite)
+ 41 |         super.tearDown()
+
+Valora.WindowCoordinator.collapse:2:26: note: calls to instance method 'collapse()' from outside of its actor context are implicitly asynchronous
+1 | class WindowCoordinator {
+2 | @MainActor internal func collapse()}
+  |                          `- note: calls to instance method 'collapse()' from outside of its actor context are implicitly asynchronous
+3 | 
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:39:9: warning: main actor-isolated property 'coordinator' can not be referenced from a nonisolated context
+ 10 |     private var settings: RevivalSettings!
+ 11 |     private var model: AppModel!
+ 12 |     private var coordinator: WindowCoordinator!
+    |                 `- note: property declared here
+ 13 | 
+ 14 |     override func setUp() {
+    :
+ 37 |     override func tearDown() {
+ 38 |         coordinator?.cancelPendingHover()
+ 39 |         coordinator?.collapse()
+    |         `- warning: main actor-isolated property 'coordinator' can not be referenced from a nonisolated context
+ 40 |         defaults.removePersistentDomain(forName: suite)
+ 41 |         super.tearDown()
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:40:9: warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+  7 | final class MultiDisplayCoordinatorTests: XCTestCase {
+  8 |     private var suite = ""
+  9 |     private var defaults: UserDefaults!
+    |                 `- note: property declared here
+ 10 |     private var settings: RevivalSettings!
+ 11 |     private var model: AppModel!
+    :
+ 38 |         coordinator?.cancelPendingHover()
+ 39 |         coordinator?.collapse()
+ 40 |         defaults.removePersistentDomain(forName: suite)
+    |         `- warning: main actor-isolated property 'defaults' can not be referenced from a nonisolated context
+ 41 |         super.tearDown()
+ 42 |     }
+
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:40:50: warning: main actor-isolated property 'suite' can not be referenced from a nonisolated context
+  6 | @MainActor
+  7 | final class MultiDisplayCoordinatorTests: XCTestCase {
+  8 |     private var suite = ""
+    |                 `- note: property declared here
+  9 |     private var defaults: UserDefaults!
+ 10 |     private var settings: RevivalSettings!
+    :
+ 38 |         coordinator?.cancelPendingHover()
+ 39 |         coordinator?.collapse()
+ 40 |         defaults.removePersistentDomain(forName: suite)
+    |                                                  `- warning: main actor-isolated property 'suite' can not be referenced from a nonisolated context
+ 41 |         super.tearDown()
+ 42 |     }
+
+[#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>
+[9 / 12] ValoraTests-product
+[11 / 15] ValoraTests-product
+Build complete! (1.72秒)
+Test Suite 'Selected tests' started at 2026-10-24 00:17:18.614.
+Test Suite 'ValoraTests.xctest' started at 2026-10-24 00:17:18.615.
+Test Suite 'MultiDisplayCoordinatorTests' started at 2026-10-24 00:17:18.615.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesDisplaySelectionChange]' started.
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:128: error: -[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesDisplaySelectionChange] : XCTAssertFalse failed - Paused activity must expire after its three-second grace period
+/Users/wangqing/code/Valora/Tests/ValoraTests/MultiDisplayCoordinatorTests.swift:129: error: -[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesDisplaySelectionChange] : XCTAssertFalse failed - No canceled idle deadline may remain pending forever
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesDisplaySelectionChange]' failed (4.368 seconds).
+Test Suite 'MultiDisplayCoordinatorTests' failed at 2026-10-24 00:17:22.984.
+	 Executed 1 test, with 2 failures (0 unexpected) in 4.368 (4.368) seconds
+Test Suite 'ValoraTests.xctest' failed at 2026-10-24 00:17:22.984.
+	 Executed 1 test, with 2 failures (0 unexpected) in 4.368 (4.368) seconds
+Test Suite 'Selected tests' failed at 2026-10-24 00:17:22.984.
+	 Executed 1 test, with 2 failures (0 unexpected) in 4.368 (4.369) seconds
+Test Suite 'Selected tests' started at 2026-10-24 00:17:23.091.
+Test Suite 'ReferenceCoreTests.xctest' started at 2026-10-24 00:17:23.092.
+Test Suite 'ReferenceCoreTests.xctest' passed at 2026-10-24 00:17:23.092.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-24 00:17:23.092.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Note: Some test targets reported failures:
+  - ValoraTests (XCTest)

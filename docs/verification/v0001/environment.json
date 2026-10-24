@@ -1,0 +1,33 @@
+{
+  "app_bundle": "/Users/wangqing/code/Valora/dist/Valora.app",
+  "architecture": "arm64",
+  "binary_arch": "arm64",
+  "binary_sha256": "9fd75c79c70b0147d5b22895194ecced923d9d74960c0c0eea2bea850b62928c",
+  "bundle_id": "com.wangqing.valora",
+  "codesign_verify": "--prepared:/Users/wangqing/code/Valora/dist/Valora.app/Contents/Frameworks/MediaRemoteAdapter.framework\n--validated:/Users/wangqing/code/Valora/dist/Valora.app/Contents/Frameworks/MediaRemoteAdapter.framework\n/Users/wangqing/code/Valora/dist/Valora.app: valid on disk\n/Users/wangqing/code/Valora/dist/Valora.app: satisfies its Designated Requirement",
+  "deployment_target_in_manifest": "macOS 27.0",
+  "framework_sha256": "630382837d6e14daa21559503e9ee987f6fb3f6adf5b5fdfab3e39eec1e712ea",
+  "host_os": "ProductName:\t\tmacOS\nProductVersion:\t\t27.0.1\nBuildVersion:\t\t26A434",
+  "ls_minimum": "27.0",
+  "macos_sdk": "27.0",
+  "macos_sdk_path": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk",
+  "recorded_at": "2026-10-23T02:34:59.185948+00:00",
+  "screens": [
+    "Built-in Retina Display {{0, 0}, {1728, 1117}} safeTop 32.0 aux 771.5 771.5",
+    "U2701B {{1728, 37}, {1920, 1080}} safeTop 0.0 aux -1 -1"
+  ],
+  "source_dirty_entries_preexisting": 81,
+  "source_git_head": "5bdd087f5637e7f9a6ed5e54d1861b200fbe3f43",
+  "source_read_only": true,
+  "source_write_performed": false,
+  "swift": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0",
+  "swift_language_mode": "v6",
+  "system_perl": "This is perl 5, version 34, subversion 1 (v5.34.1) built for darwin-thread-multi-2level\n(with 2 registered patches, see perl -V for more detail)",
+  "target": "/Users/wangqing/code/Valora",
+  "tests_referencecore": 76,
+  "tests_total": 98,
+  "tests_valora": 22,
+  "tool_version_manifest": "swift-tools-version: 6.4",
+  "ui_verification_checks": 91,
+  "xcode": "Xcode 27.1\nBuild version 27A9275"
+}

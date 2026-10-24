@@ -1,0 +1,39 @@
+Building for debugging...
+[Using on-disk description]
+[1 / 3]
+Build complete! (0.49秒)
+Test Suite 'Selected tests' started at 2026-10-24 00:08:12.910.
+Test Suite 'ValoraTests.xctest' started at 2026-10-24 00:08:12.912.
+Test Suite 'MultiDisplayCoordinatorTests' started at 2026-10-24 00:08:12.912.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testActiveScreenSwitchKeepsAtMostOneExpanded]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testActiveScreenSwitchKeepsAtMostOneExpanded]' passed (0.273 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testAllDisplaysCreatesOneInteractivePanelPerScreen]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testAllDisplaysCreatesOneInteractivePanelPerScreen]' passed (0.039 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testDragOwnershipBlocksScreenSwitch]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testDragOwnershipBlocksScreenSwitch]' passed (0.047 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testExternalPillGetsPeekWhenMultipleDisplaysAreEnabled]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testExternalPillGetsPeekWhenMultipleDisplaysAreEnabled]' passed (0.508 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testInjectedNegativeFramePanelAcceptsOnlyItsOwnContour]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testInjectedNegativeFramePanelAcceptsOnlyItsOwnContour]' passed (0.045 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testLeavingBeforeHoverDelayCancelsThePendingExpansion]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testLeavingBeforeHoverDelayCancelsThePendingExpansion]' passed (0.597 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testNegativeScreenFrameHitTestingUsesPerScreenGeometry]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testNegativeScreenFrameHitTestingUsesPerScreenGeometry]' passed (0.051 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testOrdinaryDesktopMovementDoesNotMoveTheExpandedPanel]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testOrdinaryDesktopMovementDoesNotMoveTheExpandedPanel]' passed (0.069 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPassivePanelPointerActivatesAndPeekTargetsIt]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPassivePanelPointerActivatesAndPeekTargetsIt]' passed (0.414 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testSelectingMainDisplayConvergesToOnePanel]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testSelectingMainDisplayConvergesToOnePanel]' passed (0.444 seconds).
+Test Suite 'MultiDisplayCoordinatorTests' passed at 2026-10-24 00:08:15.399.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 2.486 (2.488) seconds
+Test Suite 'ValoraTests.xctest' passed at 2026-10-24 00:08:15.399.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 2.486 (2.488) seconds
+Test Suite 'Selected tests' passed at 2026-10-24 00:08:15.400.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 2.486 (2.489) seconds
+Test Suite 'Selected tests' started at 2026-10-24 00:08:15.506.
+Test Suite 'ReferenceCoreTests.xctest' started at 2026-10-24 00:08:15.507.
+Test Suite 'ReferenceCoreTests.xctest' passed at 2026-10-24 00:08:15.507.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-24 00:08:15.507.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds

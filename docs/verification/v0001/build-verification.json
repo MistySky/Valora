@@ -1,0 +1,12 @@
+{
+  "adhoc_signed": true,
+  "architecture": "arm64",
+  "binary_sha256": "9fd75c79c70b0147d5b22895194ecced923d9d74960c0c0eea2bea850b62928c",
+  "build": "1",
+  "build_input": "/Users/wangqing/code/Valora/.build/out/Products/Release/Valora",
+  "built_at": "2026-10-23T02:32:58.190119+00:00",
+  "bundle_id": "com.wangqing.valora",
+  "notarized": false,
+  "source_rebuilt": true,
+  "version": "0.1.0"
+}

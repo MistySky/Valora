@@ -1,0 +1,162 @@
+{
+  "general_fixed": [
+    {
+      "consumer": "ScreenStateMonitor/WindowCoordinator",
+      "key": "hideWhileInFullscreen",
+      "value": true
+    },
+    {
+      "consumer": "ScreenStateMonitor/WindowCoordinator",
+      "key": "hideWhileInMissionControl",
+      "value": true
+    },
+    {
+      "consumer": "ScreenStateMonitor/WindowCoordinator",
+      "key": "hideWhileGaming",
+      "value": false
+    },
+    {
+      "consumer": "panel/settings-window sharingType readOnly; live diagnostic panelSharingType=1",
+      "key": "hideFromScreenCapture",
+      "value": false
+    },
+    {
+      "consumer": "AppModel.requestedExpansionActivity/canExpandActivity",
+      "key": "idleActivity",
+      "value": "nowPlaying"
+    },
+    {
+      "consumer": null,
+      "gap": "original renderer not connected; no effect claimed",
+      "key": "contrastOutline",
+      "value": true
+    },
+    {
+      "consumer": null,
+      "gap": "original renderer not connected; no effect claimed",
+      "key": "progressiveBlur",
+      "value": true
+    },
+    {
+      "consumer": "PresentationMetrics tuning=.zero; legacy offsets ignored",
+      "key": "notchWidthOffset/notchHeightOffset",
+      "value": 0
+    }
+  ],
+  "general_visible": [
+    {
+      "consumer": "LoginItem.isEnabled / SMAppService, only on user toggle",
+      "default": false,
+      "key": "launchAtLogin"
+    },
+    {
+      "consumer": "NotchGeometry/WindowCoordinator placement",
+      "default": false,
+      "key": "forceSimulatedNotch"
+    },
+    {
+      "consumer": "SettingsDisplayCatalog/WindowCoordinator",
+      "default": "Main display",
+      "key": "showOnDisplay"
+    },
+    {
+      "consumer": "WindowCoordinator pending hover task",
+      "default": false,
+      "key": "hoverEnabled"
+    },
+    {
+      "consumer": "WindowCoordinator pending hover task; cancelled on disable/exit/screen change/stop",
+      "default": 0.0,
+      "key": "hoverDelay",
+      "range": [
+        0,
+        1
+      ],
+      "step": 0.05
+    }
+  ],
+  "generated_at": "2026-10-23T08:39:53.113007+00:00",
+  "now_playing_fixed": [
+    {
+      "consumer": "MediaIdleState/PresentationController",
+      "key": "idleDuration",
+      "value": 3
+    },
+    {
+      "consumer": "AppModel.showsCompactWaveform",
+      "key": "disableWaveform",
+      "value": false
+    },
+    {
+      "consumer": "TransitioningArtwork/NotchView",
+      "key": "disableAlbumArtFlip",
+      "value": false
+    },
+    {
+      "consumer": "AppModel.sourceActivityHidden",
+      "key": "hideWhileSourceIsActive",
+      "value": false
+    },
+    {
+      "consumer": "MusicTitleFormatting.displayTitle",
+      "key": "hideSongTitleExtras",
+      "value": false
+    },
+    {
+      "consumer": "PresentationController.trackChanged",
+      "key": "enableQuickPeek",
+      "value": true
+    },
+    {
+      "consumer": "PresentationController.trackChanged",
+      "key": "whenSongChanges",
+      "value": true
+    },
+    {
+      "consumer": "PresentationController peek expiry",
+      "key": "peekDuration",
+      "value": 2
+    },
+    {
+      "consumer": "MediaController/SystemMediaSource only",
+      "key": "musicSource",
+      "value": "system"
+    }
+  ],
+  "now_playing_visible": [
+    {
+      "consumer": "MediaController/PresentationController/AppModel",
+      "default": true,
+      "key": "enableNowPlaying"
+    },
+    {
+      "consumer": null,
+      "default": "Explicit",
+      "key": "songTitleBadge",
+      "status": "disabled, no actual badge capability; unchanged"
+    },
+    {
+      "consumer": "MediaProgressView",
+      "default": "Monochrome",
+      "key": "progressStyle"
+    },
+    {
+      "consumer": "LiveAudioTap/CompactWaveform",
+      "default": false,
+      "key": "useLiveWaveform"
+    },
+    {
+      "consumer": null,
+      "default": "Shuffle",
+      "key": "controlChoice",
+      "status": "disabled, no actual Favorite/Shuffle/Repeat/Copy capability; unchanged"
+    }
+  ],
+  "old_preferences": "Fixed keys are sanitized/ignored at RevivalSettings load; retained keys (hover delay/style/live waveform/now playing/etc.) still read from their existing stores. No domain reset or old-app access.",
+  "unimplemented_gaps": [
+    "contrast outline renderer",
+    "progressive blur renderer",
+    "song title badge",
+    "Favorite/Shuffle/Repeat/Copy controls"
+  ]
+}

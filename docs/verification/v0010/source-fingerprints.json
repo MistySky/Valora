@@ -1,0 +1,54 @@
+{
+  "continuation_plan_sha256": "7a7836a17c1306664596d2547bf337f7f3d42cc2670ddde67172eab4742ed0bd",
+  "generated_at": "2026-10-23T17:29:45.897766+00:00",
+  "independent_v0009r2_decision_sha256": "f9b8a9a0755acf7c8cd52729e70bbcdacd996fabb0ef58464e90ddd8385bb3d1",
+  "no_ui_or_startup_wiring": [
+    "Package.swift unchanged",
+    "AppDelegate.swift unchanged",
+    "NotchView.swift unchanged",
+    "SettingsView.swift unchanged",
+    "WindowCoordinator.swift unchanged",
+    "menu-bar icon resources and package.py icon configuration unchanged"
+  ],
+  "reference_licenses": {
+    "LyricsKit": "MPL-2.0; protocol reference only, no source copied",
+    "Lyrimuse": "GPL-3.0; protocol observation only, no Go/source copied; local QQ database not read",
+    "probe": "original Swift 6 URLSession implementation"
+  },
+  "scope": {
+    "network": "manual explicit public samples only; no current player, account, cookie, local library or private credential",
+    "qrc": "encrypted content observed but not decoded; no word timing claimed",
+    "ui": "not connected to app startup, settings, player or QuickPeek"
+  },
+  "task": "docs/pi-tasks/v0010-qq-lyrics-probe.md",
+  "task_sha256": "0f4dd0e0c7416ae46fd7396ec2dbae2c1aec75e75c8764cf8f9b89d4390d41ce",
+  "v0009r2_report_sha256": "b66408880cd92f8588b6d51a5b53443a2b7d82281dd5808518a849d34e715cdd",
+  "v0009r2_source_report": "/Users/wangqing/code/Valora/docs/verification/v0009-r2/source-fingerprints.json",
+  "v0010_owned": [
+    {
+      "path": "Sources/ReferenceCore/QQMusicLyrics.swift",
+      "v0009r2_sha256": null,
+      "v0010_sha256": "7482daca98db7543f69f17b37f12b47166b552b7995536123d905b26cd2afee0"
+    },
+    {
+      "path": "Tests/ReferenceCoreTests/QQMusicLyricsTests.swift",
+      "v0009r2_sha256": null,
+      "v0010_sha256": "9f1c63160c51ff299b75bb51ce1f6d66b9a956616607d13383ae0da4ae65897f"
+    },
+    {
+      "path": "scripts/qq_lyrics_probe.swift",
+      "v0009r2_sha256": null,
+      "v0010_sha256": "38029872c2a0426b3c023a5ed7bad0d7cb522fda2a1a48f886ce59ec75beb991"
+    },
+    {
+      "path": "scripts/run_qq_lyrics_probe.sh",
+      "v0009r2_sha256": null,
+      "v0010_sha256": "0071112c75401d78f0dff09931e22a4914187b4b4f59041b5789ca8b463c71c7"
+    },
+    {
+      "path": "scripts/qq_lyrics_sample.json",
+      "v0009r2_sha256": null,
+      "v0010_sha256": "134da88e399ac3058a02ff18bee49ee2f51bce86f9032de08b85357e39a657b9"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+# Generated build and packaged candidates (reproducible from source).
+.build/
+.swiftpm/
+dist/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# Local dispatch state, not the reusable extension source.
+.pi/dispatch/
+
+# Machine-local files and credentials.
+.DS_Store
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.mobileprovision
+*.swp
+*.swo
+*~

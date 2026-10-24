@@ -1,0 +1,96 @@
+{
+  "added": [
+    {
+      "path": "Tests/ValoraTests/SettingsReductionTests.swift",
+      "v0005_sha256": "baaa590e9e942e56db134b3c69d2834c237a8187097d3f03fe9c770b3f636c53"
+    }
+  ],
+  "baseline": "/Users/wangqing/code/Valora/docs/verification/v0004-r3/source-fingerprints.json",
+  "baseline_preserved_unmodified": true,
+  "build_script": {
+    "path": "/Users/wangqing/code/Valora/scripts/package.py",
+    "sha256": "17b2118955ca04341f65d0a4e6fc447754220e04294de9eccfae3f3ed328b036"
+  },
+  "build_script_unchanged_from_r3": true,
+  "changed": [
+    {
+      "path": "Sources/ReferenceCore/ActivitySelection.swift",
+      "v0004_r3_sha256": "77d4f50b9b0946adbfde15d5f2ae437370b115070fc4095f8485053ab754bc80",
+      "v0005_sha256": "484d16b9882c427cddb5e1a9c421964b2ead2bb02d8e5cd77fc4dbc5a5f6f25e"
+    },
+    {
+      "path": "Sources/Valora/AppDelegate.swift",
+      "v0004_r3_sha256": "d389a09b7c1d5e2c69b5199360ed069e71fb85ccf235723068edbc381e511ebf",
+      "v0005_sha256": "579416b9020229e3c38daaf98c76ac18b37f66c6492b28773e439833021051bf"
+    },
+    {
+      "path": "Sources/Valora/Models.swift",
+      "v0004_r3_sha256": "34db7b29c77b02495e191be67566a1c5c8e619bb77ae41a191eae85f2772f690",
+      "v0005_sha256": "dcb19abb091decce17fbc31df65a6b4edc69d6bfb9e88c82e436ce7f9fcdb239"
+    },
+    {
+      "path": "Sources/Valora/NotchView.swift",
+      "v0004_r3_sha256": "1e90b3c95f038c79d4523bfd7b6972b8cb2d5a944edcaf08e8b54c591085a329",
+      "v0005_sha256": "1cbae2126d69fb394003a8070d811e60d68484c28f6d00b09169e78717ccbaab"
+    },
+    {
+      "path": "Sources/Valora/PresentationController.swift",
+      "v0004_r3_sha256": "db381a4a683e34297c7aa04c5e69dd49f9619c4676d06859f87b37b1f6e4ad58",
+      "v0005_sha256": "2e8c0838f14aa8f0fb841da8e2b33e1945bd9dced2c5ba4c053b61e17a8aa8b0"
+    },
+    {
+      "path": "Sources/Valora/SettingsLocalization.swift",
+      "v0004_r3_sha256": "0f3ba5533fca11af6cbb9dc45c44c80023d98aaf681b8dd264aabce60f6726ab",
+      "v0005_sha256": "486e0eecc44caed9648378148003ee8171c3e2c93cabbf5dc8f0fed6530702fa"
+    },
+    {
+      "path": "Sources/Valora/SettingsView.swift",
+      "v0004_r3_sha256": "e3140832d13f7e49b75125e43fe30ea10de90048e88fdb427225d39adbfa4258",
+      "v0005_sha256": "560b04b19465cc23f8c4548869416d42cfc4371ceeacf60eb4bb5e1b269e960e"
+    },
+    {
+      "path": "Sources/Valora/Verification.swift",
+      "v0004_r3_sha256": "dacdedf86f8190259a9e47589bfc744dec4d31db508e12838b017f718424194c",
+      "v0005_sha256": "d2c53ce3624b564607bfd1cb30933e157c91820c745ef96fb2732dfea216c132"
+    },
+    {
+      "path": "Sources/Valora/WindowCoordinator.swift",
+      "v0004_r3_sha256": "4c5402325bfb229ab7d54ff554004e87204bc43a590531f60abeda3c71b93d4b",
+      "v0005_sha256": "b14b2d7d3cd511d4f1a9918e3d22952b851489bf0ec9b0e4e8881261b248bc23"
+    },
+    {
+      "path": "Tests/ValoraTests/MusicTitleExtrasIntegrationTests.swift",
+      "v0004_r3_sha256": "5213850d92e13f251f96219acab1c216a27bcdea6e6f909bb8a6733479b21edb",
+      "v0005_sha256": "82f0e80ba53072687d062eee0feec7a08309c996330a70798efa9ae42d97bbf4"
+    },
+    {
+      "path": "Tests/ValoraTests/RevivalSettingsReloadTests.swift",
+      "v0004_r3_sha256": "59f26a0665d0e082c578bd4c65da4f3ca2e3dfbcfb5a7b3ee7a31b7979e60994",
+      "v0005_sha256": "5ad1bdb3174a3b5c51ede249b68e9ab42a81693715a7d97cb465a5277771cd72"
+    }
+  ],
+  "current_file_count": 72,
+  "generated_at": "2026-10-23T08:39:53.112177+00:00",
+  "minimal_change_summary": [
+    "Models/SettingsView: removed gesture, idle-activity, tuning, contrast/progressive/haptic and hidden music rows; fixed policies ignore old keys; added hover delay with real consumer.",
+    "WindowCoordinator/NotchView/PresentationController: removed scroll/drag/gesture dispatch, accumulation, skip/open/close/cycle and haptics; kept mouse hover/tap and normal controls.",
+    "ReferenceCore: removed gesture/activity-preference/general-preference models; activity file keeps presentation enums only.",
+    "Tests: removed gesture/tuning/activity integration tests; added fixed-policy, hover-cancel and source-removal checks."
+  ],
+  "preserved_history": {
+    "v0004_r3_artifact_sha256": "a9c8f7eecea62b2326142b727b0e188a9d10b5bdda41c6b8374d90d65f57424c",
+    "v0004_r3_fingerprints_sha256": "da36ed8df1846375f94a8cfb9b2845034c54aeff0bbe46784736c491efa34b32",
+    "v0004_r3_report": "/Users/wangqing/code/Valora/docs/reports/v0004-r3.md",
+    "v0004_r3_report_sha256": "a10e7ab9496904d680f89e5e0c9c48b870db3c418ee6d4197e2734e254107ca1"
+  },
+  "removed": [
+    "Sources/ReferenceCore/ActivityPreferences.swift",
+    "Sources/ReferenceCore/GeneralPreferences.swift",
+    "Sources/ReferenceCore/NotchGesture.swift",
+    "Tests/ReferenceCoreTests/ActivityPreferencesTests.swift",
+    "Tests/ReferenceCoreTests/NotchGestureTests.swift",
+    "Tests/ValoraTests/NotchTuningIntegrationTests.swift",
+    "Tests/ValoraTests/ScrollGestureEntryTests.swift"
+  ],
+  "unchanged_since_v0004_r3": 60
+}

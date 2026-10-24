@@ -1,0 +1,35 @@
+{
+  "added": [
+    {
+      "path": "Tests/ValoraTests/MediaControllerRecoveryTests.swift",
+      "v0003_sha256": "b31cbf3717f8d0d062c9bdd239ab1263b7e3600c463b650d227cedd22a49d2fb"
+    }
+  ],
+  "baseline": "/Users/wangqing/code/Valora/docs/verification/v0001/source-manifest.json",
+  "baseline_note": "V0001 manifest is preserved unmodified; V0002 did not change Sources/Tests.",
+  "changed": [
+    {
+      "path": "Sources/Valora/Controllers.swift",
+      "v0001_sha256": "e37c79ab276e8b8cf828d803c8858b28e47c078ebbf2762288249dbe46af9d85",
+      "v0003_sha256": "f536845d525f28824baefab52689af0bc9d65862ebc925e4e7101ef1e08f866f"
+    }
+  ],
+  "current_file_count": 78,
+  "generated_at": "2026-10-23T03:22:29.311742+00:00",
+  "minimal_change_summary": [
+    "Controllers.swift: injectable SystemMediaProviding; onError clears systemStarted and rate-limits retry; stop/deactivate blocks refresh; safe seekMicros conversion.",
+    "Tests/ValoraTests/MediaControllerRecoveryTests.swift: fake-source recovery/backoff/duplicate-start/stop/disable/seek-boundary tests."
+  ],
+  "patches": {
+    "controllers": {
+      "path": "/Users/wangqing/code/Valora/docs/verification/v0003/controllers.diff",
+      "sha256": "5a20f56943177b13bcafc6f97a21e9f5d3a0ab4a75cfe6f4c7bc5a2a40175073"
+    },
+    "tests": {
+      "path": "/Users/wangqing/code/Valora/docs/verification/v0003/media-controller-tests.diff",
+      "sha256": "10414864ecd5daa7c7289082b04f10c6317c8dd5e00d2d25a8f8cd0ff7f9952b"
+    }
+  },
+  "removed": [],
+  "unchanged_count": 76
+}

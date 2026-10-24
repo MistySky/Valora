@@ -1,0 +1,18 @@
+{
+  "samples": [
+    {
+      "label": "studio",
+      "title": "晴天",
+      "artist": "周杰伦",
+      "album": "叶惠美",
+      "duration": 269
+    },
+    {
+      "label": "live",
+      "title": "晴天 (Live)",
+      "artist": "周杰伦",
+      "album": "周杰伦地表最强世界巡回演唱会",
+      "duration": 249
+    }
+  ]
+}

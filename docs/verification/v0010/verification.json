@@ -1,0 +1,55 @@
+{
+  "full_regression": {
+    "log": "/Users/wangqing/code/Valora/docs/verification/v0010/test.log",
+    "prior_baseline": 97,
+    "reference_core": 78,
+    "total": 113,
+    "valora": 35
+  },
+  "generated_at": "2026-10-23T17:29:45.898925+00:00",
+  "limitations": [
+    "QQ interfaces are external and may change; only these public samples were tested.",
+    "No real media playback/control or system writes were performed.",
+    "No physical dual-screen or UI lyrics integration is claimed.",
+    "QRC word-level lyrics remain unverified and are not UI-connected."
+  ],
+  "multidisplay_regression": {
+    "checks": 12,
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0010/multidisplay/verification.json",
+    "note": "injected screens/fake media; not physical dual-screen",
+    "passed": true
+  },
+  "network_probe": {
+    "command": "./scripts/run_qq_lyrics_probe.sh docs/verification/v0010/network",
+    "cookies_enabled": false,
+    "result": "Both explicit samples matched by title, artist, album and duration; timed LRC responses had 63 and 36 lines. QRC content was present as encrypted HEX and was not claimed decoded.",
+    "retry_count": 0,
+    "run_at_utc": "2026-10-23T17:29:31Z",
+    "samples": [
+      "\u6674\u5929 / \u5468\u6770\u4f26 / \u53f6\u60e0\u7f8e / 269s",
+      "\u6674\u5929 (Live) / \u5468\u6770\u4f26 / \u5468\u6770\u4f26\u5730\u8868\u6700\u5f3a\u4e16\u754c\u5de1\u56de\u6f14\u5531\u4f1a / 249s"
+    ],
+    "summary": "/Users/wangqing/code/Valora/docs/verification/v0010/network/network-summary.json",
+    "timeout_seconds": 10
+  },
+  "offline": {
+    "command": "swift test --filter QQMusicLyricsTests",
+    "fixtures": "synthetic LRC/search JSON/QRC strings; no network dependency",
+    "log": "/Users/wangqing/code/Valora/docs/verification/v0010/test.log",
+    "test_count": 16
+  },
+  "qrc": {
+    "decoded": false,
+    "next_step": "/Users/wangqing/code/Valora/docs/verification/v0010/qrc-next-step.md",
+    "reason": "lyric_download.fcg returned result=0 with HEX content, but decryption/word timing was not implemented or claimed"
+  },
+  "settings_regression": {
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0010/settings/verification.json"
+  },
+  "task_sha256": "0f4dd0e0c7416ae46fd7396ec2dbae2c1aec75e75c8764cf8f9b89d4390d41ce",
+  "ui_regression": {
+    "checks": 74,
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0010/ui/verification.json",
+    "passed": true
+  }
+}

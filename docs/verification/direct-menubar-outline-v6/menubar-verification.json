@@ -1,0 +1,129 @@
+{
+  "app" : "\/Users\/wangqing\/code\/Valora\/dist\/Valora.app",
+  "app_bundle_icon_path" : "\/Users\/wangqing\/code\/Valora\/dist\/Valora.app\/Contents\/Resources\/AppIcon.icns",
+  "app_bundle_icon_sha256" : "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "button_accessibility_label" : "Valora",
+  "button_image_is_template" : true,
+  "button_image_position" : 1,
+  "button_image_present" : true,
+  "button_image_representations" : [
+    {
+      "alpha" : true,
+      "height" : 20,
+      "width" : 20
+    },
+    {
+      "alpha" : true,
+      "height" : 40,
+      "width" : 40
+    },
+    {
+      "alpha" : true,
+      "height" : 60,
+      "width" : 60
+    }
+  ],
+  "button_image_scaling" : 0,
+  "button_image_size" : [
+    20,
+    20
+  ],
+  "desaturation_method" : "system template tint from ribbon alpha mask",
+  "generated_at" : "2026-10-23T09:36:06Z",
+  "grayscale_preview_dark" : {
+    "background" : "sRGB IEC61966-2.1 colorspace hdrm(1) 0.11 0.11 0.118 1",
+    "bytes" : 1140,
+    "note" : "offscreen grayscale image preview, not a real menu-bar capture",
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/direct-menubar-outline-v6\/grayscale-preview-dark.png",
+    "pixels" : 36
+  },
+  "grayscale_preview_light" : {
+    "background" : "sRGB IEC61966-2.1 colorspace hdrm(1) 0.867 0.898 0.925 1",
+    "bytes" : 1774,
+    "note" : "offscreen grayscale image preview, not a real menu-bar capture",
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/direct-menubar-outline-v6\/grayscale-preview-light.png",
+    "pixels" : 36
+  },
+  "menubar_icon_path" : "\/Users\/wangqing\/code\/Valora\/dist\/Valora.app\/Contents\/Resources\/MenuBarIcon.png",
+  "menubar_icon_sha256" : "796857488ef95ed8d66e42da804a7efee617c96de0f11bbc62bb2f4da4dc21e7",
+  "menubar_source" : "Borderless ribbon V template PNG representations (20\/40\/60 pixels); isTemplate=true",
+  "music_media_started" : false,
+  "player_command_sent" : false,
+  "private_content_collected" : false,
+  "rendered_16" : {
+    "bytes" : 458,
+    "colorfulFraction" : 0,
+    "cornerAlphas" : [
+      0.19215686274509805,
+      0.19215686274509805,
+      0,
+      0
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/direct-menubar-outline-v6\/status-button-16.png",
+    "pixels" : 16,
+    "sampledOpaquePixels" : 0,
+    "sha256" : "e7b87584010e427448b929e0fd2f175a900f996bdfb8b22508fc51314abdf109"
+  },
+  "rendered_18" : {
+    "bytes" : 529,
+    "colorfulFraction" : 0,
+    "cornerAlphas" : [
+      0.090196078431372548,
+      0.10196078431372549,
+      0,
+      0
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/direct-menubar-outline-v6\/status-button-18.png",
+    "pixels" : 18,
+    "sampledOpaquePixels" : 0,
+    "sha256" : "e0bbb6d9156deaf632289a1f36c701e0b3a2afe75ac0b2e99ca24121729ccfa9"
+  },
+  "rendered_36" : {
+    "bytes" : 1186,
+    "colorfulFraction" : 0,
+    "cornerAlphas" : [
+      0,
+      0,
+      0,
+      0
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/direct-menubar-outline-v6\/status-button-36.png",
+    "pixels" : 36,
+    "sampledOpaquePixels" : 11,
+    "sha256" : "38ce8482a0e023ab992c03c8cee4594bbe66cfade2ef969aea0004c55cb27d1d"
+  },
+  "rendered_54" : {
+    "bytes" : 1839,
+    "colorfulFraction" : 0,
+    "cornerAlphas" : [
+      0,
+      0,
+      0,
+      0
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/direct-menubar-outline-v6\/status-button-54.png",
+    "pixels" : 54,
+    "sampledOpaquePixels" : 175,
+    "sha256" : "c3460f58308dc4e0b03eb01844618c0e10f0c848fd7deb1b16a5dee39c531d78"
+  },
+  "screen_capture_note" : "This is an offscreen status-item control render, not a real-screen capture. Automatic status-item window\/AX frames are not trusted on multi-display setups; any real menu-bar crop is recorded separately and must not be inferred from this render.",
+  "source_is_full_app_icon" : false,
+  "source_set" : "generated borderless ribbon V based on user light artwork",
+  "status_item_length" : -2,
+  "status_item_window_capture" : {
+    "bytes" : 4596,
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/direct-menubar-outline-v6\/status-item-window.png",
+    "pixels" : [
+      76,
+      66
+    ],
+    "sha256" : "ed67d60d53214b6308cc83f7f9a355b6892dcc0d3c2e2b98f49be8b673f1e0c2"
+  },
+  "window" : {
+    "button_accessibility_frame_points" : "{{998, 1088.5}, {24, 24}}",
+    "frame_trusted_for_screen_capture" : false,
+    "screen_frame_points" : "{{0, 0}, {1728, 1117}}",
+    "window_frame_points" : "{{991, 1084}, {38, 33}}",
+    "window_number" : 4294967296
+  }
+}

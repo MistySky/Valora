@@ -1,0 +1,43 @@
+--- a/Sources/Valora/AppDelegate.swift
++++ b/Sources/Valora/AppDelegate.swift
+@@ -37,6 +37,15 @@
+         model.media = MediaController(model)
+         model.audio = AudioOutputController(model)
+ 
++        if startupMode == .verifyMenuBar {
++            guard let output = AppRuntimeDefaults.value(after: "--verify-menubar", arguments: CommandLine.arguments) else {
++                fputs("--verify-menubar requires an output directory\n", stderr); NSApp.terminate(nil); return
++            }
++            setupMenu()
++            MenuBarIconVerification.run(statusItem: statusItem, output: output)
++            return
++        }
++
+         if startupMode == .verifySettings {
+             guard let output = AppRuntimeDefaults.value(after: "--verify-settings", arguments: CommandLine.arguments) else {
+                 fputs("--verify-settings requires an output directory\n", stderr); NSApp.terminate(nil); return
+@@ -145,9 +154,23 @@
+         }
+     }
+ 
++    /// The confirmed light icon is used as a normal, non-template color image.
++    /// The full app icon is already packaged as Contents/Resources/AppIcon.icns.
++    private func statusBarImage() -> NSImage {
++        let iconURL = Bundle.main.resourceURL?.appendingPathComponent("AppIcon.icns")
++        let image = iconURL.flatMap { NSImage(contentsOf: $0) }
++            ?? NSWorkspace.shared.icon(forFile: Bundle.main.bundlePath)
++        image.size = NSSize(width: 18, height: 18)
++        image.isTemplate = false
++        return image
++    }
++
+     private func setupMenu() {
+         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+-        statusItem.button?.image = NSImage(systemSymbolName:"rectangle.topthird.inset.filled", accessibilityDescription:"Valora")
++        statusItem.button?.image = statusBarImage()
++        statusItem.button?.imageScaling = .scaleProportionallyDown
++        statusItem.button?.imagePosition = .imageOnly
++        statusItem.button?.setAccessibilityLabel("Valora")
+         let statusMenu = NSMenu()
+         statusMenu.delegate = self
+         statusItem.menu = statusMenu

@@ -1,0 +1,318 @@
+Building for debugging...
+[Using on-disk description]
+Build complete! (0.35秒)
+Test Suite 'All tests' started at 2026-10-24 01:24:24.532.
+Test Suite 'ValoraTests.xctest' started at 2026-10-24 01:24:24.533.
+Test Suite 'MediaControllerRecoveryTests' started at 2026-10-24 01:24:24.533.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testDisablePreventsReconnectAndDoesNotLoseSourceStop]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testDisablePreventsReconnectAndDoesNotLoseSourceStop]' passed (0.005 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testFailureRetryIsRateLimitedAndNotAReentrantLoop]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testFailureRetryIsRateLimitedAndNotAReentrantLoop]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testInitialStartFailureRecoversThroughExistingRefresh]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testInitialStartFailureRecoversThroughExistingRefresh]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testNormalSeekKeepsClampAndTruncationSemantics]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testNormalSeekKeepsClampAndTruncationSemantics]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testPlaybackCommandsUseSingleSharedFakePlayer]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testPlaybackCommandsUseSingleSharedFakePlayer]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testRepeatedRefreshDoesNotStartDuplicateAdapters]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testRepeatedRefreshDoesNotStartDuplicateAdapters]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testRunningStreamExitRecoversThroughExistingRefresh]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testRunningStreamExitRecoversThroughExistingRefresh]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testSeekMicrosBoundariesAreSafe]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testSeekMicrosBoundariesAreSafe]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testSeekRejectsUnrepresentableAndInvalidValuesWithoutCallingRunner]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testSeekRejectsUnrepresentableAndInvalidValuesWithoutCallingRunner]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testStopPreventsFurtherReconnects]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testStopPreventsFurtherReconnects]' passed (0.001 seconds).
+Test Suite 'MediaControllerRecoveryTests' passed at 2026-10-24 01:24:24.547.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.012 (0.014) seconds
+Test Suite 'MultiDisplayCoordinatorTests' started at 2026-10-24 01:24:24.547.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testActiveScreenSwitchKeepsAtMostOneExpanded]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testActiveScreenSwitchKeepsAtMostOneExpanded]' passed (0.283 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testAllDisplaysCreatesOneInteractivePanelPerScreen]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testAllDisplaysCreatesOneInteractivePanelPerScreen]' passed (0.050 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testDragOwnershipBlocksScreenSwitch]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testDragOwnershipBlocksScreenSwitch]' passed (0.051 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testExternalPillGetsPeekWhenMultipleDisplaysAreEnabled]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testExternalPillGetsPeekWhenMultipleDisplaysAreEnabled]' passed (0.484 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testInjectedNegativeFramePanelAcceptsOnlyItsOwnContour]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testInjectedNegativeFramePanelAcceptsOnlyItsOwnContour]' passed (0.054 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testLeavingBeforeHoverDelayCancelsThePendingExpansion]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testLeavingBeforeHoverDelayCancelsThePendingExpansion]' passed (0.632 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testNegativeScreenFrameHitTestingUsesPerScreenGeometry]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testNegativeScreenFrameHitTestingUsesPerScreenGeometry]' passed (0.064 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testOrdinaryDesktopMovementDoesNotMoveTheExpandedPanel]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testOrdinaryDesktopMovementDoesNotMoveTheExpandedPanel]' passed (0.089 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPassivePanelPointerActivatesAndPeekTargetsIt]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPassivePanelPointerActivatesAndPeekTargetsIt]' passed (0.466 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedHoveredActivityExpiresAfterDirectScreenReset]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedHoveredActivityExpiresAfterDirectScreenReset]' passed (4.052 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedHoveredActivityExpiresAfterDisplaySelectionClearsPointer]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedHoveredActivityExpiresAfterDisplaySelectionClearsPointer]' passed (4.101 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesDisableThenEnable]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesDisableThenEnable]' passed (4.011 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesDisplaySelectionChange]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesDisplaySelectionChange]' passed (4.100 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesScreenReset]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesScreenReset]' passed (3.985 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testSameValueMetadataPollsDoNotPostponePausedIdleDeadline]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testSameValueMetadataPollsDoNotPostponePausedIdleDeadline]' passed (3.800 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testSelectingMainDisplayConvergesToOnePanel]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testSelectingMainDisplayConvergesToOnePanel]' passed (0.414 seconds).
+Test Suite 'MultiDisplayCoordinatorTests' passed at 2026-10-24 01:24:51.184.
+	 Executed 16 tests, with 0 failures (0 unexpected) in 26.635 (26.638) seconds
+Test Suite 'MusicTitleExtrasIntegrationTests' started at 2026-10-24 01:24:51.184.
+Test Case '-[ValoraTests.MusicTitleExtrasIntegrationTests testRemovedTitleExtrasSettingCannotOverrideFixedFullTitle]' started.
+Test Case '-[ValoraTests.MusicTitleExtrasIntegrationTests testRemovedTitleExtrasSettingCannotOverrideFixedFullTitle]' passed (0.003 seconds).
+Test Suite 'MusicTitleExtrasIntegrationTests' passed at 2026-10-24 01:24:51.188.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.003 (0.003) seconds
+Test Suite 'RevivalSettingsReloadTests' started at 2026-10-24 01:24:51.188.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testFixedPoliciesIgnoreLegacyValuesAndKeepRetainedDefaults]' started.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testFixedPoliciesIgnoreLegacyValuesAndKeepRetainedDefaults]' passed (0.002 seconds).
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testHoverDelayIsRetainedAndClamped]' started.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testHoverDelayIsRetainedAndClamped]' passed (0.005 seconds).
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testNowPlayingToggleRemainsUserControlled]' started.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testNowPlayingToggleRemainsUserControlled]' passed (0.001 seconds).
+Test Suite 'RevivalSettingsReloadTests' passed at 2026-10-24 01:24:51.196.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.008 (0.008) seconds
+Test Suite 'SettingsReductionTests' started at 2026-10-24 01:24:51.196.
+Test Case '-[ValoraTests.SettingsReductionTests testDisplayChoiceIconsAreDistinctAndMapped]' started.
+Test Case '-[ValoraTests.SettingsReductionTests testDisplayChoiceIconsAreDistinctAndMapped]' passed (0.053 seconds).
+Test Case '-[ValoraTests.SettingsReductionTests testExistingSettingsWindowIsReused]' started.
+Test Case '-[ValoraTests.SettingsReductionTests testExistingSettingsWindowIsReused]' passed (0.217 seconds).
+Test Case '-[ValoraTests.SettingsReductionTests testHoverDelayExpandsAndCanBeCancelledByDisable]' started.
+Test Case '-[ValoraTests.SettingsReductionTests testHoverDelayExpandsAndCanBeCancelledByDisable]' passed (1.163 seconds).
+Test Case '-[ValoraTests.SettingsReductionTests testLegacyGestureCodeIsGoneAndNormalControlsRemain]' started.
+Test Case '-[ValoraTests.SettingsReductionTests testLegacyGestureCodeIsGoneAndNormalControlsRemain]' passed (0.024 seconds).
+Test Case '-[ValoraTests.SettingsReductionTests testPointerExitAndStopCancelPendingHover]' started.
+Test Case '-[ValoraTests.SettingsReductionTests testPointerExitAndStopCancelPendingHover]' passed (0.933 seconds).
+Test Suite 'SettingsReductionTests' passed at 2026-10-24 01:24:53.587.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 2.390 (2.391) seconds
+Test Suite 'ValoraTests.xctest' passed at 2026-10-24 01:24:53.587.
+	 Executed 35 tests, with 0 failures (0 unexpected) in 29.049 (29.054) seconds
+Test Suite 'All tests' passed at 2026-10-24 01:24:53.587.
+	 Executed 35 tests, with 0 failures (0 unexpected) in 29.049 (29.055) seconds
+Test Suite 'All tests' started at 2026-10-24 01:24:53.707.
+Test Suite 'ReferenceCoreTests.xctest' started at 2026-10-24 01:24:53.708.
+Test Suite 'ArtworkTransitionTests' started at 2026-10-24 01:24:53.708.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testDisableOrMissingArtworkInvalidatesPendingCompletion]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testDisableOrMissingArtworkInvalidatesPendingCompletion]' passed (0.001 seconds).
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testInitialAndDuplicateArtworkDoNotFlip]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testInitialAndDuplicateArtworkDoNotFlip]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testRapidChangesKeepOnlyNewestQueuedArtwork]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testRapidChangesKeepOnlyNewestQueuedArtwork]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testRecoveredScaleEndpointsAndPreferenceFallbacks]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testRecoveredScaleEndpointsAndPreferenceFallbacks]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testReturningToTargetDropsObsoleteQueue]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testReturningToTargetDropsObsoleteQueue]' passed (0.000 seconds).
+Test Suite 'ArtworkTransitionTests' passed at 2026-10-24 01:24:53.710.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.002) seconds
+Test Suite 'CompactWaveformTests' started at 2026-10-24 01:24:53.710.
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testExpandedConstructorHasItsOwnEnvelope]' started.
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testExpandedConstructorHasItsOwnEnvelope]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testRecoveredUnsignedHashVector]' started.
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testRecoveredUnsignedHashVector]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testSourceRevisionAndOverflowStayWithinRecoveredHeightRange]' started.
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testSourceRevisionAndOverflowStayWithinRecoveredHeightRange]' passed (0.000 seconds).
+Test Suite 'CompactWaveformTests' passed at 2026-10-24 01:24:53.711.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'GameMatcherTests' started at 2026-10-24 01:24:53.711.
+Test Case '-[ReferenceCoreTests.GameMatcherTests testNonGamesDoNotMatch]' started.
+Test Case '-[ReferenceCoreTests.GameMatcherTests testNonGamesDoNotMatch]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.GameMatcherTests testPathFragmentsAndCategoryFallback]' started.
+Test Case '-[ReferenceCoreTests.GameMatcherTests testPathFragmentsAndCategoryFallback]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.GameMatcherTests testRecoveredLeagueBundleIdentifiers]' started.
+Test Case '-[ReferenceCoreTests.GameMatcherTests testRecoveredLeagueBundleIdentifiers]' passed (0.000 seconds).
+Test Suite 'GameMatcherTests' passed at 2026-10-24 01:24:53.711.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'MarqueeTests' started at 2026-10-24 01:24:53.711.
+Test Case '-[ReferenceCoreTests.MarqueeTests testOverflowIncludesLeadingInset]' started.
+Test Case '-[ReferenceCoreTests.MarqueeTests testOverflowIncludesLeadingInset]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MarqueeTests testTwoRowsShareCycleButUseTheirOwnMovementDuration]' started.
+Test Case '-[ReferenceCoreTests.MarqueeTests testTwoRowsShareCycleButUseTheirOwnMovementDuration]' passed (0.000 seconds).
+Test Suite 'MarqueeTests' passed at 2026-10-24 01:24:53.712.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'MediaIdleTests' started at 2026-10-24 01:24:53.712.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testDurationChangeReplacesTaskAndZeroMeansNoGrace]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testDurationChangeReplacesTaskAndZeroMeansNoGrace]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testHoverCancelsThenExitStartsFullNewWait]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testHoverCancelsThenExitStartsFullNewWait]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testNotificationIsNotDismissedByAnOldMusicTimeout]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testNotificationIsNotDismissedByAnOldMusicTimeout]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testPausedTrackExpiresWithoutRepeatedPollsExtendingDeadline]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testPausedTrackExpiresWithoutRepeatedPollsExtendingDeadline]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testResumeAndSecondPauseRejectFirstPauseTimeout]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testResumeAndSecondPauseRejectFirstPauseTimeout]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testTrackSourceAndDisableInvalidateOldTasks]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testTrackSourceAndDisableInvalidateOldTasks]' passed (0.000 seconds).
+Test Suite 'MediaIdleTests' passed at 2026-10-24 01:24:53.713.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'MediaProgressTests' started at 2026-10-24 01:24:53.713.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testCancelledDragDoesNotLeakIntoNewTrack]' started.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testCancelledDragDoesNotLeakIntoNewTrack]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaProgressTests testDragIsRelativeAndDoesNotJumpWhenPlayerUpdates]' started.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testDragIsRelativeAndDoesNotJumpWhenPlayerUpdates]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaProgressTests testTapAfterDragIsSuppressedAndCoordinatesAreClamped]' started.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testTapAfterDragIsSuppressedAndCoordinatesAreClamped]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaProgressTests testUnknownDurationAndNonFiniteInputsCannotSeek]' started.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testUnknownDurationAndNonFiniteInputsCannotSeek]' passed (0.000 seconds).
+Test Suite 'MediaProgressTests' passed at 2026-10-24 01:24:53.713.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'MusicPreferencesTests' started at 2026-10-24 01:24:53.713.
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testDefaultsAndDictionaryRoundTrip]' started.
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testDefaultsAndDictionaryRoundTrip]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testDurationCannotCrashTaskSleepOrEscapeSliderBounds]' started.
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testDurationCannotCrashTaskSleepOrEscapeSliderBounds]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testOnlyTheKnownCurrentSourceHidesActivity]' started.
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testOnlyTheKnownCurrentSourceHidesActivity]' passed (0.000 seconds).
+Test Suite 'MusicPreferencesTests' passed at 2026-10-24 01:24:53.714.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'MusicTitleFormattingTests' started at 2026-10-24 01:24:53.714.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testDisabledPreservesRawTitleExactly]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testDisabledPreservesRawTitleExactly]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testEmptyProcessedTitleFallsBackToTrimmedOriginal]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testEmptyProcessedTitleFallsBackToTrimmedOriginal]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testNestedAndCrossedBracketsUseIndependentDepths]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testNestedAndCrossedBracketsUseIndependentDepths]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testUnicodeCharactersAndFullWidthBracketsArePreserved]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testUnicodeCharactersAndFullWidthBracketsArePreserved]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testUnmatchedClosersRemainAndOpenersHideRemainder]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testUnmatchedClosersRemainAndOpenersHideRemainder]' passed (0.000 seconds).
+Test Suite 'MusicTitleFormattingTests' passed at 2026-10-24 01:24:53.715.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'NotchContourTests' started at 2026-10-24 01:24:53.715.
+Test Case '-[ReferenceCoreTests.NotchContourTests testFloatingScreenUsesPillAndIgnoresDelayedNotchCornerFlag]' started.
+Test Case '-[ReferenceCoreTests.NotchContourTests testFloatingScreenUsesPillAndIgnoresDelayedNotchCornerFlag]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchContourTests testPhysicalCornersRequireBothExpandedFlags]' started.
+Test Case '-[ReferenceCoreTests.NotchContourTests testPhysicalCornersRequireBothExpandedFlags]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchContourTests testSimulatedNotchKeepsShouldersOnExternalScreen]' started.
+Test Case '-[ReferenceCoreTests.NotchContourTests testSimulatedNotchKeepsShouldersOnExternalScreen]' passed (0.000 seconds).
+Test Suite 'NotchContourTests' passed at 2026-10-24 01:24:53.716.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'NotchHoverTests' started at 2026-10-24 01:24:53.716.
+Test Case '-[ReferenceCoreTests.NotchHoverTests testElevationOnlyAppliesToCollapsedCutout]' started.
+Test Case '-[ReferenceCoreTests.NotchHoverTests testElevationOnlyAppliesToCollapsedCutout]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchHoverTests testEnlargedEdgeRemainsInInputEnvelope]' started.
+Test Case '-[ReferenceCoreTests.NotchHoverTests testEnlargedEdgeRemainsInInputEnvelope]' passed (0.000 seconds).
+Test Suite 'NotchHoverTests' passed at 2026-10-24 01:24:53.716.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'NotchTransitionTests' started at 2026-10-24 01:24:53.716.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testContentSurvivesCollapseAndInteractionWaitsForExpansion]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testContentSurvivesCollapseAndInteractionWaitsForExpansion]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testDuplicateRequestsKeepOriginalClockAndGeneration]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testDuplicateRequestsKeepOriginalClockAndGeneration]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testInterruptedExpansionCannotRestoreCollapsedVisuals]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testInterruptedExpansionCannotRestoreCollapsedVisuals]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testRapidAlternationRejectsEveryOlderGeneration]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testRapidAlternationRejectsEveryOlderGeneration]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testStaleCollapseCompletionCannotClearReopenedPanel]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testStaleCollapseCompletionCannotClearReopenedPanel]' passed (0.000 seconds).
+Test Suite 'NotchTransitionTests' passed at 2026-10-24 01:24:53.717.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'NotchTuningTests' started at 2026-10-24 01:24:53.717.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testExtremeFiniteValuesAreClampedToCandidateUIRangeAndNonFiniteIsZero]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testExtremeFiniteValuesAreClampedToCandidateUIRangeAndNonFiniteIsZero]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testNotificationAndQuickPeekReceiveTheSamePhysicalCompactOffset]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testNotificationAndQuickPeekReceiveTheSamePhysicalCompactOffset]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPhysicalFloatingAndSimulatedBranchesKeepTheirOwnBaseGeometry]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPhysicalFloatingAndSimulatedBranchesKeepTheirOwnBaseGeometry]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPhysicalGateRejectsFloatingAndForcedSimulatedScreens]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPhysicalGateRejectsFloatingAndForcedSimulatedScreens]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPositiveAndNegativeOffsetsApplyToPhysicalCompactOnly]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPositiveAndNegativeOffsetsApplyToPhysicalCompactOnly]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testZeroIsBaselineInEveryCompactBranch]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testZeroIsBaselineInEveryCompactBranch]' passed (0.000 seconds).
+Test Suite 'NotchTuningTests' passed at 2026-10-24 01:24:53.719.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'QQMusicLyricsTests' started at 2026-10-24 01:24:53.719.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testAlbumMismatchIsRejected]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testAlbumMismatchIsRejected]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testAmbiguousCandidatesAreNotPickedByPosition]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testAmbiguousCandidatesAreNotPickedByPosition]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testArtistMismatchAndEmptyCandidates]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testArtistMismatchAndEmptyCandidates]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testDurationMismatchIsRejected]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testDurationMismatchIsRejected]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExactAlbumIsPreferredOverUnknownAlbum]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExactAlbumIsPreferredOverUnknownAlbum]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExactStudioMatchRequiresMetadataAgreement]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExactStudioMatchRequiresMetadataAgreement]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExplicitLiveRequestMatchesOnlyLiveVersion]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExplicitLiveRequestMatchesOnlyLiveVersion]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLiveVersionIsNotChosenForStudioRequest]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLiveVersionIsNotChosenForStudioRequest]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCClassifiesPlainInstrumentalAndEmpty]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCClassifiesPlainInstrumentalAndEmpty]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCRejectsInvalidTimeBoundariesAndEmptyTimedText]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCRejectsInvalidTimeBoundariesAndEmptyTimedText]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCTimedLinesMetadataMultipleTimestampsAndOffset]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCTimedLinesMetadataMultipleTimestampsAndOffset]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricResponseSupportsPlainAndBase64Payloads]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricResponseSupportsPlainAndBase64Payloads]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testQRCWordTimingParserDoesNotInventTimestamps]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testQRCWordTimingParserDoesNotInventTimestamps]' passed (0.001 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testRemixAndInstrumentalTagsAreTreatedAsVersions]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testRemixAndInstrumentalTagsAreTreatedAsVersions]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testSearchParserAcceptsCurrentShapeAndLegacyJSONP]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testSearchParserAcceptsCurrentShapeAndLegacyJSONP]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testSearchParserReportsAPIError]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testSearchParserReportsAPIError]' passed (0.000 seconds).
+Test Suite 'QQMusicLyricsTests' passed at 2026-10-24 01:24:53.723.
+	 Executed 16 tests, with 0 failures (0 unexpected) in 0.004 (0.005) seconds
+Test Suite 'ReferenceCoreTests' started at 2026-10-24 01:24:53.724.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testMinimumAndLargerPhysicalGeometry]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testMinimumAndLargerPhysicalGeometry]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testMissingAuxiliaryAreaUsesNonNotchBranch]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testMissingAuxiliaryAreaUsesNonNotchBranch]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testNonNotchAndSimulatedBranchesFromArm64Registers]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testNonNotchAndSimulatedBranchesFromArm64Registers]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testObservedModelUIDAndAllReferenceProductAliases]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testObservedModelUIDAndAllReferenceProductAliases]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testPhysicalNotchOnUsersBuiltInDisplay]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testPhysicalNotchOnUsersBuiltInDisplay]' passed (0.000 seconds).
+Test Suite 'ReferenceCoreTests' passed at 2026-10-24 01:24:53.724.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'SongPeekTests' started at 2026-10-24 01:24:53.724.
+Test Case '-[ReferenceCoreTests.SongPeekTests testDisabledAndSourceResetNeverReplayOldChange]' started.
+Test Case '-[ReferenceCoreTests.SongPeekTests testDisabledAndSourceResetNeverReplayOldChange]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SongPeekTests testOnlySubsequentTrackChangeShowsPeek]' started.
+Test Case '-[ReferenceCoreTests.SongPeekTests testOnlySubsequentTrackChangeShowsPeek]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SongPeekTests testRapidChangesIgnoreOldExpiryAndExpansionCancels]' started.
+Test Case '-[ReferenceCoreTests.SongPeekTests testRapidChangesIgnoreOldExpiryAndExpansionCancels]' passed (0.000 seconds).
+Test Suite 'SongPeekTests' passed at 2026-10-24 01:24:53.725.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'SystemMediaSnapshotTests' started at 2026-10-24 01:24:53.725.
+Test Case '-[ReferenceCoreTests.SystemMediaSnapshotTests testRevisionPrefersContentItemIdentifier]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaSnapshotTests testRevisionPrefersContentItemIdentifier]' passed (0.000 seconds).
+Test Suite 'SystemMediaSnapshotTests' passed at 2026-10-24 01:24:53.725.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'SystemMediaTests' started at 2026-10-24 01:24:53.725.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testMissingOrInvalidTimingDoesNotInventProgress]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testMissingOrInvalidTimingDoesNotInventProgress]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SystemMediaTests testProgressUsesTimestampAndFreezesWhenPaused]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testProgressUsesTimestampAndFreezesWhenPaused]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SystemMediaTests testSameTitleDifferentSourceAlbumOrTrackInvalidatesIdentity]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testSameTitleDifferentSourceAlbumOrTrackInvalidatesIdentity]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SystemMediaTests testStateOnlyPauseDoesNotJumpBackAndResumeDoesNotCountPausedTime]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testStateOnlyPauseDoesNotJumpBackAndResumeDoesNotCountPausedTime]' passed (0.000 seconds).
+Test Suite 'SystemMediaTests' passed at 2026-10-24 01:24:53.726.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'VolumeKeyTests' started at 2026-10-24 01:24:53.726.
+Test Case '-[ReferenceCoreTests.VolumeKeyTests testKeyCodes]' started.
+Test Case '-[ReferenceCoreTests.VolumeKeyTests testKeyCodes]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.VolumeKeyTests testStepsAndClamp]' started.
+Test Case '-[ReferenceCoreTests.VolumeKeyTests testStepsAndClamp]' passed (0.000 seconds).
+Test Suite 'VolumeKeyTests' passed at 2026-10-24 01:24:53.726.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'ReferenceCoreTests.xctest' passed at 2026-10-24 01:24:53.726.
+	 Executed 78 tests, with 0 failures (0 unexpected) in 0.013 (0.018) seconds
+Test Suite 'All tests' passed at 2026-10-24 01:24:53.726.
+	 Executed 78 tests, with 0 failures (0 unexpected) in 0.013 (0.020) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

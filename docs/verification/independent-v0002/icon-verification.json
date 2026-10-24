@@ -1,0 +1,301 @@
+{
+  "app" : "\/Users\/wangqing\/code\/Valora\/dist\/Valora.app",
+  "app_exists" : true,
+  "bundle_icon_exists" : true,
+  "bundle_icon_path" : "\/Users\/wangqing\/code\/Valora\/dist\/Valora.app\/Contents\/Resources\/AppIcon.icns",
+  "bundle_icon_sha256" : "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "bundle_identifier" : "com.wangqing.valora",
+  "bundle_matches_expected_source" : true,
+  "cache_policy" : {
+    "launchservices_cache_modified" : false,
+    "note" : "NSWorkspace icon is read for the current bundle path. This verifier does not run lsregister, clear caches or change global appearance."
+  },
+  "dark_set_selected_for_bundle" : false,
+  "expected_source" : "\/Users\/wangqing\/code\/Valora\/Resources\/AppIcons\/light\/Velora-light.icns",
+  "expected_source_sha256" : "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "icns_image_count" : 8,
+  "icns_images" : [
+    {
+      "height" : 1024,
+      "index" : 0,
+      "rendered_1024" : {
+        "bytes" : 1207233,
+        "colorfulFraction" : 0.52029629629629626,
+        "cornerAlphas" : [
+          0,
+          0,
+          0,
+          0
+        ],
+        "path" : "\/tmp\/valora-independent-icons\/icns-direct-1024.png",
+        "pixels" : 1024,
+        "sampledOpaquePixels" : 3375,
+        "sha256" : "6ec9975263b8ff669a8363bf0bab6d6577c0eca5f67146759f9fe4c4f23d50cf"
+      },
+      "width" : 1024
+    },
+    {
+      "height" : 512,
+      "index" : 1,
+      "width" : 512
+    },
+    {
+      "height" : 512,
+      "index" : 2,
+      "width" : 512
+    },
+    {
+      "height" : 256,
+      "index" : 3,
+      "width" : 256
+    },
+    {
+      "height" : 256,
+      "index" : 4,
+      "width" : 256
+    },
+    {
+      "height" : 128,
+      "index" : 5,
+      "width" : 128
+    },
+    {
+      "height" : 64,
+      "index" : 6,
+      "width" : 64
+    },
+    {
+      "height" : 32,
+      "index" : 7,
+      "width" : 32
+    }
+  ],
+  "icns_uti" : "com.apple.icns",
+  "info_icon_key" : "AppIcon",
+  "ls_minimum_system" : "27.0",
+  "ls_ui_element" : true,
+  "nsworkspace_icon_point_size" : [
+    32,
+    32
+  ],
+  "nsworkspace_rendered_16" : {
+    "bytes" : 883,
+    "colorfulFraction" : 0.5252525252525253,
+    "cornerAlphas" : [
+      0.9882352941176471,
+      0.9882352941176471,
+      0.9882352941176471,
+      0.9882352941176471
+    ],
+    "path" : "\/tmp\/valora-independent-icons\/finder-16.png",
+    "pixels" : 16,
+    "sampledOpaquePixels" : 198,
+    "sha256" : "c202574962058817e5e6949866b71ae2410fe42a75eb09202b8c1321e50dbeea"
+  },
+  "nsworkspace_rendered_32" : {
+    "bytes" : 2627,
+    "colorfulFraction" : 0.5161290322580645,
+    "cornerAlphas" : [
+      0.011764705882352941,
+      0.011764705882352941,
+      0.035294117647058823,
+      0.035294117647058823
+    ],
+    "path" : "\/tmp\/valora-independent-icons\/finder-32.png",
+    "pixels" : 32,
+    "sampledOpaquePixels" : 868,
+    "sha256" : "7be97860d47d57ace019446de498a142956fd3bb83c70ced692b0b9ad30ce49d"
+  },
+  "nsworkspace_rendered_128" : {
+    "bytes" : 26423,
+    "colorfulFraction" : 0.52576722640416906,
+    "cornerAlphas" : [
+      0,
+      0,
+      0,
+      0
+    ],
+    "path" : "\/tmp\/valora-independent-icons\/finder-128.png",
+    "pixels" : 128,
+    "sampledOpaquePixels" : 3454,
+    "sha256" : "dfd638153023b00bc8a48fc41a6e7a437c269000e142474c5ab891983ae737cd"
+  },
+  "nsworkspace_rendered_512" : {
+    "bytes" : 337513,
+    "colorfulFraction" : 0.52857565886881852,
+    "cornerAlphas" : [
+      0,
+      0,
+      0,
+      0
+    ],
+    "path" : "\/tmp\/valora-independent-icons\/finder-512.png",
+    "pixels" : 512,
+    "sampledOpaquePixels" : 3377,
+    "sha256" : "ff7d40932a718011b173292916311d61818389bbaec38f3565af5178ba284f24"
+  },
+  "nsworkspace_representations" : [
+    {
+      "alpha" : false,
+      "height" : 32,
+      "width" : 32
+    },
+    {
+      "alpha" : false,
+      "height" : 32,
+      "width" : 32
+    },
+    {
+      "alpha" : false,
+      "height" : 64,
+      "width" : 64
+    },
+    {
+      "alpha" : false,
+      "height" : 64,
+      "width" : 64
+    },
+    {
+      "alpha" : false,
+      "height" : 16,
+      "width" : 16
+    },
+    {
+      "alpha" : false,
+      "height" : 16,
+      "width" : 16
+    },
+    {
+      "alpha" : false,
+      "height" : 32,
+      "width" : 32
+    },
+    {
+      "alpha" : false,
+      "height" : 32,
+      "width" : 32
+    },
+    {
+      "alpha" : false,
+      "height" : 18,
+      "width" : 18
+    },
+    {
+      "alpha" : false,
+      "height" : 18,
+      "width" : 18
+    },
+    {
+      "alpha" : false,
+      "height" : 36,
+      "width" : 36
+    },
+    {
+      "alpha" : false,
+      "height" : 36,
+      "width" : 36
+    },
+    {
+      "alpha" : false,
+      "height" : 24,
+      "width" : 24
+    },
+    {
+      "alpha" : false,
+      "height" : 24,
+      "width" : 24
+    },
+    {
+      "alpha" : false,
+      "height" : 48,
+      "width" : 48
+    },
+    {
+      "alpha" : false,
+      "height" : 48,
+      "width" : 48
+    },
+    {
+      "alpha" : false,
+      "height" : 128,
+      "width" : 128
+    },
+    {
+      "alpha" : false,
+      "height" : 128,
+      "width" : 128
+    },
+    {
+      "alpha" : false,
+      "height" : 256,
+      "width" : 256
+    },
+    {
+      "alpha" : false,
+      "height" : 256,
+      "width" : 256
+    },
+    {
+      "alpha" : false,
+      "height" : 256,
+      "width" : 256
+    },
+    {
+      "alpha" : false,
+      "height" : 256,
+      "width" : 256
+    },
+    {
+      "alpha" : false,
+      "height" : 512,
+      "width" : 512
+    },
+    {
+      "alpha" : false,
+      "height" : 512,
+      "width" : 512
+    },
+    {
+      "alpha" : false,
+      "height" : 512,
+      "width" : 512
+    },
+    {
+      "alpha" : false,
+      "height" : 512,
+      "width" : 512
+    },
+    {
+      "alpha" : false,
+      "height" : 1024,
+      "width" : 1024
+    },
+    {
+      "alpha" : false,
+      "height" : 1024,
+      "width" : 1024
+    },
+    {
+      "alpha" : false,
+      "height" : 1024,
+      "width" : 1024
+    },
+    {
+      "alpha" : false,
+      "height" : 1024,
+      "width" : 1024
+    },
+    {
+      "alpha" : false,
+      "height" : 2048,
+      "width" : 2048
+    },
+    {
+      "alpha" : false,
+      "height" : 2048,
+      "width" : 2048
+    }
+  ],
+  "product_identity" : "Valora",
+  "supplied_asset_names_unchanged" : true
+}

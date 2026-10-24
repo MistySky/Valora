@@ -1,0 +1,108 @@
+{
+  "context_menu": {
+    "commands": "AppMenuCommands.versionText/settingsTitle/quitTitle/settingsKey/quitKey",
+    "no_extra_items": true,
+    "quit_action": "AppDelegate.quit via model.quitAction; not executed in verification",
+    "settings_action": "AppDelegate.showSettings reuses the existing settingsWindow",
+    "source": "NotchView.settingsMenuItem on outer compact ZStack and expanded content"
+  },
+  "generated_at": "2026-10-23T16:07:49.439156+00:00",
+  "preserved": [
+    "V0005 fixed policies and gesture/haptic removal",
+    "V0007 settings palette and display icon mapping",
+    "V0003 media recovery and finite seek guards",
+    "single-screen expanded/compact/artwork flip/waveform/marquee/volume behavior",
+    "menu-bar playback/display items (not copied into the notch menu)"
+  ],
+  "shared_files": [
+    {
+      "note": "Contains concurrent Codex menu-bar icon wiring; V0009 did not modify statusBarImage, package.py icon config, MenuBarIconVerification or Resources/MenuBarIcon-*.",
+      "path": "Sources/Valora/AppDelegate.swift",
+      "v0009_sha256": "175ed57aaa73eb7c0e0424a6706179afbccb4ab25e24d61f36ab9ce2fec748ba"
+    }
+  ],
+  "state_ownership": {
+    "active_screen": "WindowCoordinator.active selects the only full NotchView; other enabled panels render compactOnly with fixed geometryOverride.",
+    "context_menu": "AppMenuCommands shared wording/shortcuts; NotchView contextMenu renders disabled version, Settings\u2026, separator, Quit Valora; actions reuse showSettings/quit.",
+    "drag_ownership": "AppModel.pointerInteractionActive is set by progress/volume drag begin and cleared on end/cancel; WindowCoordinator refuses activation while set.",
+    "expanded": "AppModel.presentation.expanded remains the one visual transition for the active panel; switching active collapses first, then activates the new panel.",
+    "hit_testing": "DisplayDescriptor frames (including negative origins) + per-screen geometry/localContour; containsMouse is a pure static seam tested with injected coordinates.",
+    "hover_cancel": "Per-panel DispatchWorkItem is generation-guarded and cancelled on pointer exit, activation, display selection/place, disable/hide and deinit.",
+    "multi_display_peek": "AppModel.allowsMultiDisplayDynamic is true only for multiple enabled all-display panels; it permits the existing peek path on an external pill without changing single-display policy.",
+    "peek_target": "MediaController.updateSongPeek -> AppModel.trackChangedHandler -> WindowCoordinator.handleTrackChanged -> peekTarget (active pointer, pointer screen, then active fallback).",
+    "per_screen": "WindowCoordinator.ScreenPanel owns its DisplayDescriptor, NSPanel, NotchGeometry, pointerInside, pendingHover and hoverGeneration.",
+    "shared_media": "AppModel.media/title/artist/album/artwork/playing/elapsed/duration/output; MediaController and SystemMediaSource remain single instances."
+  },
+  "task": "docs/pi-tasks/v0009-multidisplay-active-interaction.md",
+  "task_sha256": "9c84397c676e19d7569c3e28642d2fbcf8a2aedaafb7a8c7c834b2cf1e9a7d49",
+  "user_authorization": "User approved: all enabled displays may be operated; dynamic playback presentation follows the screen being operated. Not claimed as the original Alcove default.",
+  "v0008_report_sha256": "65943aa5a642231fd34ddeee3277b06eef7ef5bc28dec83b4ef01f01026789fd",
+  "v0008_source_report": "/Users/wangqing/code/Valora/docs/verification/v0008/source-fingerprints.json",
+  "v0009_owned": [
+    {
+      "path": "Sources/Valora/WindowCoordinator.swift",
+      "v0008_sha256": null,
+      "v0009_sha256": "bac0b9670d82a43f324f764b54fe15a1903f837c8fdf4c243a02f3db0d6637e2"
+    },
+    {
+      "path": "Sources/Valora/Models.swift",
+      "v0008_sha256": "ce04b7df79793d16a4b1fe28516964181213eac7d31828ada79d061347db6fb1",
+      "v0009_sha256": "a58ce62faa2ff5eda9b7231a71d354f5d7c1791ffcbfd07fb0b90fc29fd28ea3"
+    },
+    {
+      "path": "Sources/Valora/PresentationController.swift",
+      "v0008_sha256": null,
+      "v0009_sha256": "d60ea7778a4c357d9d6f7cdad556cfc39b70d6f4e86ee37c80332437bc6e23d4"
+    },
+    {
+      "path": "Sources/Valora/NotchView.swift",
+      "v0008_sha256": "0fcaea423faf2543f94a239c228986f3a1ce399ba647de7e115e9e0780117957",
+      "v0009_sha256": "71c2b52461b1b364bd26fae111e1259e235db7490465c6a809ba73d390a738fa"
+    },
+    {
+      "path": "Sources/Valora/MediaProgressView.swift",
+      "v0008_sha256": null,
+      "v0009_sha256": "9d12ff1769a00e25db02bde36cc513e2076361cc748a90e4e81c91701e8024c2"
+    },
+    {
+      "path": "Sources/Valora/OutputVolumeView.swift",
+      "v0008_sha256": null,
+      "v0009_sha256": "1b6f9c1131fbe68aeb8cd463e943d1eb5195736e299f9688fb884c05e0f929f9"
+    },
+    {
+      "path": "Sources/Valora/Controllers.swift",
+      "v0008_sha256": "f536845d525f28824baefab52689af0bc9d65862ebc925e4e7101ef1e08f866f",
+      "v0009_sha256": "4f5ee5136067359c832b133a18964750fc8a6a4620ecd07f81a24fb4767dbeeb"
+    },
+    {
+      "path": "Sources/Valora/AppMenuCommands.swift",
+      "v0008_sha256": null,
+      "v0009_sha256": "34ea638806d7dae44b7a2886e6587f6455c9bc65d5c59788ecf3b28498d74128"
+    },
+    {
+      "path": "Sources/Valora/MultiDisplayVerification.swift",
+      "v0008_sha256": null,
+      "v0009_sha256": "6d23e881bb26dfdeef2fa6cdb52d10c0f2590de18368a68fb2cea1f8fc000cb4"
+    },
+    {
+      "path": "Sources/Valora/AppRuntimeDefaults.swift",
+      "v0008_sha256": null,
+      "v0009_sha256": "caea5719b30443b3222f19458bb38affded3674b355d9143bbd29f6e254d1225"
+    },
+    {
+      "path": "Sources/Valora/Verification.swift",
+      "v0008_sha256": "e9a00facb9410fa7a92aa20434918e997807b45e946dcd1e3d9dc96fa9af0c4b",
+      "v0009_sha256": "e667cf08b8a9345bd278cda420f916742f87000580cf50964585d8151e18aead"
+    },
+    {
+      "path": "Tests/ValoraTests/MultiDisplayCoordinatorTests.swift",
+      "v0008_sha256": null,
+      "v0009_sha256": "4db17d54e365e2e5dbbc878cbff44f9472edffe2ac90326f2d9e006e3a1b5063"
+    },
+    {
+      "path": "Tests/ValoraTests/MediaControllerRecoveryTests.swift",
+      "v0008_sha256": "b31cbf3717f8d0d062c9bdd239ab1263b7e3600c463b650d227cedd22a49d2fb",
+      "v0009_sha256": "7761ae3d6c1ff8623903f7e702596b5f625b1dc62b94b8f68a6ae0cbce0fba69"
+    }
+  ]
+}

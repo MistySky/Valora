@@ -1,0 +1,120 @@
+{
+  "app" : "\/Users\/wangqing\/code\/Valora\/dist\/Valora.app",
+  "bundle_icon_path" : "\/Users\/wangqing\/code\/Valora\/dist\/Valora.app\/Contents\/Resources\/AppIcon.icns",
+  "bundle_icon_sha256" : "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "button_accessibility_label" : "Valora",
+  "button_image_is_template" : false,
+  "button_image_position" : 1,
+  "button_image_present" : true,
+  "button_image_representations" : [
+    {
+      "alpha" : true,
+      "height" : 1024,
+      "width" : 1024
+    },
+    {
+      "alpha" : true,
+      "height" : 512,
+      "width" : 512
+    },
+    {
+      "alpha" : true,
+      "height" : 512,
+      "width" : 512
+    },
+    {
+      "alpha" : true,
+      "height" : 256,
+      "width" : 256
+    },
+    {
+      "alpha" : true,
+      "height" : 256,
+      "width" : 256
+    },
+    {
+      "alpha" : true,
+      "height" : 128,
+      "width" : 128
+    },
+    {
+      "alpha" : true,
+      "height" : 64,
+      "width" : 64
+    },
+    {
+      "alpha" : true,
+      "height" : 32,
+      "width" : 32
+    }
+  ],
+  "button_image_scaling" : 0,
+  "button_image_size" : [
+    18,
+    18
+  ],
+  "generated_at" : "2026-10-23T03:42:18Z",
+  "music_media_started" : false,
+  "player_command_sent" : false,
+  "private_content_collected" : false,
+  "rendered_18" : {
+    "bytes" : 1087,
+    "colorfulFraction" : 0.5357142857142857,
+    "cornerAlphas" : [
+      1,
+      1,
+      1,
+      1
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004\/menubar\/status-button-18.png",
+    "pixels" : 18,
+    "sampledOpaquePixels" : 252,
+    "sha256" : "bb4e2c43c21b48af221e3c8c3341f51582991d381c29042cdfd11dc66fab0ae9"
+  },
+  "rendered_36" : {
+    "bytes" : 3008,
+    "colorfulFraction" : 0.51190476190476186,
+    "cornerAlphas" : [
+      0,
+      0,
+      0,
+      0
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004\/menubar\/status-button-36.png",
+    "pixels" : 36,
+    "sampledOpaquePixels" : 1092,
+    "sha256" : "bfb75ac6bb69ebec4df830f51f30a82be7b26eb822b8c90e89243c9dbdffbcbf"
+  },
+  "rendered_72" : {
+    "bytes" : 9936,
+    "colorfulFraction" : 0.53681988742964348,
+    "cornerAlphas" : [
+      0,
+      0,
+      0,
+      0
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004\/menubar\/status-button-72.png",
+    "pixels" : 72,
+    "sampledOpaquePixels" : 4264,
+    "sha256" : "e5bf8893162704ad8d26274bbdf6a02ceba1f1efdd5d444dbb6c9de7feba0ed4"
+  },
+  "screen_capture_note" : "Automatic status-item window\/AX frames were not trusted on this multi-display setup. Use menubar-screen-running.png \/ menubar-screen-stopped.png, captured as a narrow real-screen menu-bar crop.",
+  "status_item_length" : -2,
+  "status_item_window_capture" : {
+    "bytes" : 3737,
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0004\/menubar\/status-item-window.png",
+    "pixels" : [
+      76,
+      66
+    ],
+    "sha256" : "36c1208065517c5c6e93e686ff2bac57ca91917af7fd15e29c4fa1508b1694ea"
+  },
+  "window" : {
+    "button_accessibility_frame_points" : "{{2988, 1089.5}, {24, 24}}",
+    "frame_trusted_for_screen_capture" : false,
+    "screen_frame_points" : "{{1728, 37}, {1920, 1080}}",
+    "window_frame_points" : "{{2981, 1085}, {38, 33}}",
+    "window_number" : 4294967296
+  }
+}

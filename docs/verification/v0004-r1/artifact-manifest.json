@@ -1,0 +1,82 @@
+{
+  "app": "/Users/wangqing/code/Valora/dist/Valora.app",
+  "architecture": "arm64",
+  "binary_sha256": "639335e3fbce65a617bfa3be5c04d73bc9d5b79b0d8c2bdd74dbe0d5c333cd14",
+  "build": "1",
+  "build_verification": {
+    "adhoc_signed": true,
+    "architecture": "arm64",
+    "binary_sha256": "639335e3fbce65a617bfa3be5c04d73bc9d5b79b0d8c2bdd74dbe0d5c333cd14",
+    "build": "1",
+    "build_input": "/Users/wangqing/code/Valora/.build/out/Products/Release/Valora",
+    "built_at": "2026-10-23T04:08:56.699703+00:00",
+    "bundle_id": "com.wangqing.valora",
+    "icon_info_key": "AppIcon",
+    "icon_resource_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+    "icon_source": "/Users/wangqing/code/Valora/Resources/AppIcons/light/Velora-light.icns",
+    "icon_source_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+    "notarized": false,
+    "source_rebuilt": true,
+    "version": "0.1.0"
+  },
+  "bundle_bytes": 4849357,
+  "bundle_identifier": "com.wangqing.valora",
+  "codesign_verify": "--prepared:/Users/wangqing/code/Valora/dist/Valora.app/Contents/Frameworks/MediaRemoteAdapter.framework\n--validated:/Users/wangqing/code/Valora/dist/Valora.app/Contents/Frameworks/MediaRemoteAdapter.framework\n/Users/wangqing/code/Valora/dist/Valora.app: valid on disk\n/Users/wangqing/code/Valora/dist/Valora.app: satisfies its Designated Requirement",
+  "effective_icon_sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "file_count": 10,
+  "files": [
+    {
+      "bytes": 149680,
+      "path": "Contents/Frameworks/MediaRemoteAdapter.framework/MediaRemoteAdapter",
+      "sha256": "630382837d6e14daa21559503e9ee987f6fb3f6adf5b5fdfab3e39eec1e712ea"
+    },
+    {
+      "bytes": 560,
+      "path": "Contents/Frameworks/MediaRemoteAdapter.framework/Resources/Info.plist",
+      "sha256": "16e15ab7bfff3c6e004d3f6f46a174143269a5b085bd7721c0c8b8b9b0dfd22f"
+    },
+    {
+      "bytes": 2442,
+      "path": "Contents/Frameworks/MediaRemoteAdapter.framework/_CodeSignature/CodeResources",
+      "sha256": "09b560adca73701c03092eaacd6157c3b8f591d93bf63e65f3d8dfc051e6f536"
+    },
+    {
+      "bytes": 894,
+      "path": "Contents/Info.plist",
+      "sha256": "416e4821629995786c69d20a8a4f596d673a4c34339f9a28249cc7ec84692906"
+    },
+    {
+      "bytes": 2999152,
+      "path": "Contents/MacOS/Valora",
+      "sha256": "639335e3fbce65a617bfa3be5c04d73bc9d5b79b0d8c2bdd74dbe0d5c333cd14"
+    },
+    {
+      "bytes": 1680915,
+      "path": "Contents/Resources/AppIcon.icns",
+      "sha256": "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654"
+    },
+    {
+      "bytes": 1521,
+      "path": "Contents/Resources/MediaRemote/LICENSE",
+      "sha256": "a489c16a6be195584fa0b35e28fca54abc8492eb0cc05d851dd24f522f4900a2"
+    },
+    {
+      "bytes": 8882,
+      "path": "Contents/Resources/MediaRemote/mediaremote-adapter.pl",
+      "sha256": "d97802e46db9535e2549e178c105ebf417a0254b3929fc32f08ecfd14d49a85f"
+    },
+    {
+      "bytes": 1844,
+      "path": "Contents/Resources/MediaRemote/provenance.json",
+      "sha256": "79276686706454f053d24f517070bee939fd36a8d434e2552cea2e17ac4394b5"
+    },
+    {
+      "bytes": 3467,
+      "path": "Contents/_CodeSignature/CodeResources",
+      "sha256": "dd73b0e6f425cac8fcec0636d12aa485e22993d0c00415c5db01ba9938c6c43e"
+    }
+  ],
+  "generated_at": "2026-10-23T04:12:43.109500+00:00",
+  "info_plist_icon_key": "AppIcon",
+  "version": "0.1.0"
+}

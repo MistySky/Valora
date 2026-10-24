@@ -1,0 +1,114 @@
+{
+  "added_since_v0001": [
+    {
+      "path": "Tests/ValoraTests/MediaControllerRecoveryTests.swift",
+      "v0004_r2_sha256": "b31cbf3717f8d0d062c9bdd239ab1263b7e3600c463b650d227cedd22a49d2fb"
+    }
+  ],
+  "all_sources_changed_since_v0001": [
+    {
+      "path": "Sources/Valora/AppDelegate.swift",
+      "v0001_sha256": "3d2f393e66525956bc14c01a8ca733d8c1ae6e78faa2c70d5755f3d61ebce778",
+      "v0004_r2_sha256": "c4a13146c127908598fb3daf368a98d840963c012032bd2c7a57b299b0042f78"
+    },
+    {
+      "path": "Sources/Valora/AppRuntimeDefaults.swift",
+      "v0001_sha256": "2d54071fb3639983f17da1dbc6caa1f6c31756917d6e8fa7d1469dfe5e02e1a1",
+      "v0004_r2_sha256": "9c37d0421c8fcc8eed2ee723cfb1e89d2c3d6968f06a2876ffb98993f3144962"
+    },
+    {
+      "path": "Sources/Valora/Controllers.swift",
+      "v0001_sha256": "e37c79ab276e8b8cf828d803c8858b28e47c078ebbf2762288249dbe46af9d85",
+      "v0004_r2_sha256": "f536845d525f28824baefab52689af0bc9d65862ebc925e4e7101ef1e08f866f"
+    },
+    {
+      "path": "Sources/Valora/Verification.swift",
+      "v0001_sha256": "ea074322d57d46c102a9245ee2bb70ab1a59506c6d0b26b9b5e0a1aeef530100",
+      "v0004_r2_sha256": "f3d6effc9dec0c6c3def59fa4079c34fc7fa23757964a63f24226fabc66d9b36"
+    }
+  ],
+  "baseline": "/Users/wangqing/code/Valora/docs/verification/v0004-r1/source-fingerprints.json",
+  "baseline_preserved_unmodified": true,
+  "current_file_count": 78,
+  "generated_at": "2026-10-23T05:41:12.503513+00:00",
+  "minimal_change_summary": [
+    "AppDelegate: menu bar loads the complete confirmed AppIcon.icns and desaturates it with Core Image CIColorControls(saturation=0); isTemplate=false; squircle/shading/transparency preserved.",
+    "Verification: grayscale source/reps, transparent corners, light/dark offscreen previews, and real-screen crop status.",
+    "Custom-drawn V code removed; app icon, music, and menu behavior untouched."
+  ],
+  "patches": {
+    "appdelegate": {
+      "path": "/Users/wangqing/code/Valora/docs/verification/v0004-r2/appdelegate.diff",
+      "sha256": "78dc08b5509e33878b71177248d84ef1b5bb16eb231a2849525297cb30278bc7"
+    },
+    "verification": {
+      "path": "/Users/wangqing/code/Valora/docs/verification/v0004-r2/verification.diff",
+      "sha256": "40a29ef089282362c40c256b5f189ff48a69a1d506e1eddc0e6bc6310d8c8322"
+    }
+  },
+  "preserved_history": {
+    "v0004_r1_fingerprints_sha256": "4982a3330c34b17361cc01205f99641eeb6c997f8faa75dead97f7f8a1c5a2a9",
+    "v0004_r1_menubar_sha256": "b099c239e931cf2016ea7879f6430582aa9dba2cc33e163ddcbd7fc112b8d4c4",
+    "v0004_r1_report": "/Users/wangqing/code/Valora/docs/reports/v0004-r1.md",
+    "v0004_r1_report_sha256": "6e8599869e7bab11dc05f04fea56860cb12e818c648b99fc9c1f29babed99f85"
+  },
+  "removed": [
+    "scripts/build_media_adapter.py",
+    "scripts/package.py",
+    "scripts/build.sh",
+    "vendor/mediaremote-adapter/.clang-format",
+    "vendor/mediaremote-adapter/.cmake-format",
+    "vendor/mediaremote-adapter/.gitignore",
+    "vendor/mediaremote-adapter/.gitmodules",
+    "vendor/mediaremote-adapter/.perltidyrc",
+    "vendor/mediaremote-adapter/.vscode/extensions.json",
+    "vendor/mediaremote-adapter/.vscode/settings.json",
+    "vendor/mediaremote-adapter/CMakeLists.txt",
+    "vendor/mediaremote-adapter/LICENSE",
+    "vendor/mediaremote-adapter/Makefile",
+    "vendor/mediaremote-adapter/README.md",
+    "vendor/mediaremote-adapter/bin/mediaremote-adapter.pl",
+    "vendor/mediaremote-adapter/include/MediaRemoteAdapter.h",
+    "vendor/mediaremote-adapter/scripts/mediaremote-adapter-dev.sh",
+    "vendor/mediaremote-adapter/scripts/update-readme-badges.py",
+    "vendor/mediaremote-adapter/src/adapter/env.h",
+    "vendor/mediaremote-adapter/src/adapter/env.m",
+    "vendor/mediaremote-adapter/src/adapter/get.h",
+    "vendor/mediaremote-adapter/src/adapter/get.m",
+    "vendor/mediaremote-adapter/src/adapter/globals.h",
+    "vendor/mediaremote-adapter/src/adapter/globals.m",
+    "vendor/mediaremote-adapter/src/adapter/keys.h",
+    "vendor/mediaremote-adapter/src/adapter/keys.m",
+    "vendor/mediaremote-adapter/src/adapter/now_playing.h",
+    "vendor/mediaremote-adapter/src/adapter/now_playing.m",
+    "vendor/mediaremote-adapter/src/adapter/repeat.m",
+    "vendor/mediaremote-adapter/src/adapter/seek.m",
+    "vendor/mediaremote-adapter/src/adapter/send.m",
+    "vendor/mediaremote-adapter/src/adapter/shuffle.m",
+    "vendor/mediaremote-adapter/src/adapter/speed.m",
+    "vendor/mediaremote-adapter/src/adapter/stream.m",
+    "vendor/mediaremote-adapter/src/adapter/test.m",
+    "vendor/mediaremote-adapter/src/private/MediaRemote.h",
+    "vendor/mediaremote-adapter/src/private/MediaRemote.m",
+    "vendor/mediaremote-adapter/src/test/NowPlayingTest.h",
+    "vendor/mediaremote-adapter/src/test/NowPlayingTest.m",
+    "vendor/mediaremote-adapter/src/test/main.m",
+    "vendor/mediaremote-adapter/src/utility/Debounce.h",
+    "vendor/mediaremote-adapter/src/utility/Debounce.m",
+    "vendor/mediaremote-adapter/src/utility/helpers.h",
+    "vendor/mediaremote-adapter/src/utility/helpers.m"
+  ],
+  "unchanged_since_v0004_r1": 76,
+  "v0004_r2_touched": [
+    {
+      "path": "Sources/Valora/AppDelegate.swift",
+      "v0004_r1_sha256": "fd04698191a482cfb0485bb7b8f1f4dd419d86a6bd26065f473e5424e6f39442",
+      "v0004_r2_sha256": "c4a13146c127908598fb3daf368a98d840963c012032bd2c7a57b299b0042f78"
+    },
+    {
+      "path": "Sources/Valora/Verification.swift",
+      "v0004_r1_sha256": "e81e54c4962299ef355fee761f806271dc6a8421641193518ce401fa0678caa2",
+      "v0004_r2_sha256": "f3d6effc9dec0c6c3def59fa4079c34fc7fa23757964a63f24226fabc66d9b36"
+    }
+  ]
+}

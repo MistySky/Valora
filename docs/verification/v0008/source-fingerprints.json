@@ -1,0 +1,99 @@
+{
+  "context_menu": {
+    "callback": "Sources/Valora/AppDelegate.swift model.showSettingsAction = { [weak self] in self?.showSettings() }",
+    "notch_view": "Sources/Valora/NotchView.swift outer ZStack .contextMenu { Button(\"\u8bbe\u7f6e\u2026\") { model.showSettingsAction?() } }",
+    "scope": "outer ZStack and expanded content share settingsMenuItem; secondary compact panels use the same NotchView",
+    "shared_window": "AppDelegate.showSettings reuses SettingsWindowFactory window if settingsWindow != nil"
+  },
+  "generated_at": "2026-10-23T15:11:14.136049+00:00",
+  "preserved": [
+    "General: launch at login, force simulated notch, display on, hover toggle/conditional delay",
+    "Now Playing: master toggle, progress style, live waveform",
+    "play/pause, previous/next, progress seek drag, volume/output, media read, artwork flip, QuickPeek, pause/resume grace",
+    "V0005 fixed defaults and gesture/haptic removal; V0007 colors and display icon mapping"
+  ],
+  "removed_dedicated_chain": [
+    "SettingsView: whole Favorite/Shuffle/Repeat/Copy choices group and controlChoice binding",
+    "RevivalSettings: controlChoice storage/sanitization",
+    "MusicPlayerContent: extraControl button and controlChoice branch",
+    "AppModel: shuffleMode/repeatMode fields",
+    "MediaController: shuffle/repeat snapshot fields, clear/reset and send 6/7 command path",
+    "SystemMediaSnapshot: shuffleMode/repeatMode parsing",
+    "MediaControllerRecoveryTests: shuffle/repeat command test",
+    "SystemMediaSnapshotTests: shuffle/repeat mode test",
+    "SettingsReductionTests: controlChoice/consumer assertions",
+    "SettingsVerification: Repeat-selected capture and controlChoice mutation",
+    "SettingsControls/Localization: Favorite preview cycle and resting labels"
+  ],
+  "shared_files": [
+    {
+      "note": "Also contains concurrent Codex menu-icon work; V0008 did not modify statusBarImage/package.py icon config/MenuBarIconVerification.",
+      "path": "Sources/Valora/AppDelegate.swift",
+      "v0008_sha256": "a61dd8f5f2247236570fecc03d5558f973d49b60f683e20cd90580da7a764243"
+    },
+    {
+      "note": "Also contains concurrent Codex menu-icon work; V0008 did not modify statusBarImage/package.py icon config/MenuBarIconVerification.",
+      "path": "Sources/Valora/Verification.swift",
+      "v0008_sha256": "e9a00facb9410fa7a92aa20434918e997807b45e946dcd1e3d9dc96fa9af0c4b"
+    }
+  ],
+  "v0007_report_sha256": "a3e074a48cec80daea8033248db8ccc99d3ff23afaf9de3a51db2f5373946738",
+  "v0007_source_report": "/Users/wangqing/code/Valora/docs/verification/v0007/source-fingerprints.json",
+  "v0008_owned": [
+    {
+      "path": "Sources/ReferenceCore/SystemMediaSnapshot.swift",
+      "v0007_sha256": "413cc7b7b430e6640ac033eda26942cfdf7dddc93a55496adaf9536eb955eaed",
+      "v0008_sha256": "28c36f40a77fa3c3bfb7c4a0f1ecfb5cf94076d458f64b9b634780dfedb11f4c"
+    },
+    {
+      "path": "Sources/Valora/SettingsView.swift",
+      "v0007_sha256": "f6695ad4ab624bd7190acbf24e4f15c1584bf1db86be0eb16e5c5e7e49b228dc",
+      "v0008_sha256": "7b6aea3ce590dd9785c3696dd033a3467c16938990c13dfb560b2dce19632049"
+    },
+    {
+      "path": "Sources/Valora/SettingsControls.swift",
+      "v0007_sha256": "1ca99f48b63bca4ea6afee53ba02cb87553dc8eff92083a1221151034e8a2bd6",
+      "v0008_sha256": "7fee50a44e58560c68b24258ed01705d109717a9d8d3f4ea54c20510f5dc285b"
+    },
+    {
+      "path": "Sources/Valora/SettingsLocalization.swift",
+      "v0007_sha256": "64ec27372289992abc02f94542180ddab4697a368f742ae3d763785a3267a3a3",
+      "v0008_sha256": "f059347c6c227dfbacf70505008efb98fd63a649326900732cebaab54b6412c3"
+    },
+    {
+      "path": "Sources/Valora/MusicPlayerContent.swift",
+      "v0007_sha256": "4ff8706ca82590e3dbc8094851e9e7e29768b8ad92a33a4fe1b00f59d48e2333",
+      "v0008_sha256": "9308f2a54b7ae54729837ee55a0dd145854e36490d5403a60c34dbf811a347ad"
+    },
+    {
+      "path": "Sources/Valora/Models.swift",
+      "v0007_sha256": "02afdff791816d33b68b0a3c5733df9f7f3122a7adc5d3e5952a8a188e5e4ddc",
+      "v0008_sha256": "ce04b7df79793d16a4b1fe28516964181213eac7d31828ada79d061347db6fb1"
+    },
+    {
+      "path": "Sources/Valora/Controllers.swift",
+      "v0007_sha256": "bbb0d0e5129d91ef111b037e4179aba07a320f6b6f8aade8185572a6e25a5aca",
+      "v0008_sha256": "f536845d525f28824baefab52689af0bc9d65862ebc925e4e7101ef1e08f866f"
+    },
+    {
+      "path": "Sources/Valora/NotchView.swift",
+      "v0007_sha256": null,
+      "v0008_sha256": "0fcaea423faf2543f94a239c228986f3a1ce399ba647de7e115e9e0780117957"
+    },
+    {
+      "path": "Tests/ValoraTests/SettingsReductionTests.swift",
+      "v0007_sha256": "fdcdfb6fab39ebec5602d702458992bc968df4e8858f3a58968ec3fe3d336fc6",
+      "v0008_sha256": "a544acdb1e28d7c48c9a5bfc0e994282c66fbcc7153918473d4e752db486fff8"
+    },
+    {
+      "path": "Tests/ValoraTests/MediaControllerRecoveryTests.swift",
+      "v0007_sha256": null,
+      "v0008_sha256": "b31cbf3717f8d0d062c9bdd239ab1263b7e3600c463b650d227cedd22a49d2fb"
+    },
+    {
+      "path": "Tests/ReferenceCoreTests/SystemMediaSnapshotTests.swift",
+      "v0007_sha256": "4567cdb6154a9656afc6fa5f76bdd092334032f2479f7db7a69296e74412fe1e",
+      "v0008_sha256": "a62de1030aff38232220cec52c1615fb49bd72c765975b1f75ba5ce2802817ca"
+    }
+  ]
+}

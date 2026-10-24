@@ -1,0 +1,129 @@
+{
+  "app" : "\/Users\/wangqing\/code\/Valora\/dist\/Valora.app",
+  "app_bundle_icon_path" : "\/Users\/wangqing\/code\/Valora\/dist\/Valora.app\/Contents\/Resources\/AppIcon.icns",
+  "app_bundle_icon_sha256" : "df342247f803caac0a1b36ddc098b27be10970fc109e74c199c38536de2c3654",
+  "button_accessibility_label" : "Valora",
+  "button_image_is_template" : true,
+  "button_image_position" : 1,
+  "button_image_present" : true,
+  "button_image_representations" : [
+    {
+      "alpha" : true,
+      "height" : 20,
+      "width" : 20
+    },
+    {
+      "alpha" : true,
+      "height" : 40,
+      "width" : 40
+    },
+    {
+      "alpha" : true,
+      "height" : 60,
+      "width" : 60
+    }
+  ],
+  "button_image_scaling" : 0,
+  "button_image_size" : [
+    20,
+    20
+  ],
+  "desaturation_method" : "system template tint from ribbon alpha mask",
+  "generated_at" : "2026-10-23T15:57:53Z",
+  "grayscale_preview_dark" : {
+    "background" : "sRGB IEC61966-2.1 colorspace hdrm(1) 0.11 0.11 0.118 1",
+    "bytes" : 1287,
+    "note" : "offscreen grayscale image preview, not a real menu-bar capture",
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0009\/menubar\/grayscale-preview-dark.png",
+    "pixels" : 36
+  },
+  "grayscale_preview_light" : {
+    "background" : "sRGB IEC61966-2.1 colorspace hdrm(1) 0.867 0.898 0.925 1",
+    "bytes" : 2038,
+    "note" : "offscreen grayscale image preview, not a real menu-bar capture",
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0009\/menubar\/grayscale-preview-light.png",
+    "pixels" : 36
+  },
+  "menubar_icon_path" : "\/Users\/wangqing\/code\/Valora\/dist\/Valora.app\/Contents\/Resources\/MenuBarIcon.png",
+  "menubar_icon_sha256" : "0757a9ae93e7e03001d4d142886cfe8bddafde4e72f833516faccf434dd27c02",
+  "menubar_source" : "Borderless ribbon V template PNG representations (20\/40\/60 pixels); isTemplate=true",
+  "music_media_started" : false,
+  "player_command_sent" : false,
+  "private_content_collected" : false,
+  "rendered_16" : {
+    "bytes" : 488,
+    "colorfulFraction" : 0,
+    "cornerAlphas" : [
+      0.42352941176470588,
+      0.44313725490196076,
+      0,
+      0
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0009\/menubar\/status-button-16.png",
+    "pixels" : 16,
+    "sampledOpaquePixels" : 14,
+    "sha256" : "a8ecbf6208e060b73489a0d58bdb1a312c0e2b794a3f7aefc421b46b1dd8584b"
+  },
+  "rendered_18" : {
+    "bytes" : 573,
+    "colorfulFraction" : 0,
+    "cornerAlphas" : [
+      0.16862745098039217,
+      0.19607843137254902,
+      0,
+      0
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0009\/menubar\/status-button-18.png",
+    "pixels" : 18,
+    "sampledOpaquePixels" : 24,
+    "sha256" : "699fe9309f2e60dcd2c080d9c14571ed33ae171a9ccacb22db2c0181c80e2999"
+  },
+  "rendered_36" : {
+    "bytes" : 1154,
+    "colorfulFraction" : 0,
+    "cornerAlphas" : [
+      0,
+      0,
+      0,
+      0
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0009\/menubar\/status-button-36.png",
+    "pixels" : 36,
+    "sampledOpaquePixels" : 185,
+    "sha256" : "87810148b53636e7fecbfbb9d4069c17ea3d26cfe17abda23c1c7d64eba2bf86"
+  },
+  "rendered_54" : {
+    "bytes" : 1926,
+    "colorfulFraction" : 0,
+    "cornerAlphas" : [
+      0,
+      0,
+      0,
+      0
+    ],
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0009\/menubar\/status-button-54.png",
+    "pixels" : 54,
+    "sampledOpaquePixels" : 404,
+    "sha256" : "37542ebe9c43f9d1c2f806e5fc33d0ff73bee3ac876ee5fa76d7d2a080374472"
+  },
+  "screen_capture_note" : "This is an offscreen status-item control render, not a real-screen capture. Automatic status-item window\/AX frames are not trusted on multi-display setups; any real menu-bar crop is recorded separately and must not be inferred from this render.",
+  "source_is_full_app_icon" : false,
+  "source_set" : "generated borderless ribbon V based on user light artwork",
+  "status_item_length" : -2,
+  "status_item_window_capture" : {
+    "bytes" : 1896,
+    "path" : "\/Users\/wangqing\/code\/Valora\/docs\/verification\/v0009\/menubar\/status-item-window.png",
+    "pixels" : [
+      76,
+      66
+    ],
+    "sha256" : "135fbdf9a244cc38658e27a0332f9ba016021115bf3ea0ce241428ffac765f72"
+  },
+  "window" : {
+    "button_accessibility_frame_points" : "{{1266, 1052.5}, {24, 24}}",
+    "frame_trusted_for_screen_capture" : false,
+    "screen_frame_points" : "{{0, 0}, {1920, 1080}}",
+    "window_frame_points" : "{{1259, 1048}, {38, 33}}",
+    "window_number" : 4294967296
+  }
+}

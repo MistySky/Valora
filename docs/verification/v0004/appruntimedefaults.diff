@@ -1,0 +1,26 @@
+--- a/Sources/Valora/AppRuntimeDefaults.swift
++++ b/Sources/Valora/AppRuntimeDefaults.swift
+@@ -10,6 +10,7 @@
+ 
+     private static let qaArguments: Set<String> = [
+         "--verify-music",
++        "--verify-menubar",
+         "--verify-settings",
+         "--verify-system-media",
+         "--verify-audio-tap",
+@@ -25,6 +26,7 @@
+         case production
+         case verifyAudioTap
+         case verifyMusic
++        case verifyMenuBar
+         case verifySettings
+         case verifySystemMedia
+         case previewMusic
+@@ -38,6 +40,7 @@
+     static func startupMode(arguments: [String]) -> StartupMode {
+         if arguments.contains("--verify-audio-tap") { return .verifyAudioTap }
+         if arguments.contains("--verify-music") { return .verifyMusic }
++        if arguments.contains("--verify-menubar") { return .verifyMenuBar }
+         if arguments.contains("--verify-settings") { return .verifySettings }
+         if arguments.contains("--verify-system-media") { return .verifySystemMedia }
+         if arguments.contains("--preview-settings") { return .previewSettings }

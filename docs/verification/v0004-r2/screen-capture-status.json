@@ -1,0 +1,22 @@
+{
+  "capture_command": "screencapture -x -D 2 -R 1024,0,64,30",
+  "capture_rect_points": [
+    1024,
+    0,
+    64,
+    30
+  ],
+  "changed_pixels_gt8": 1096,
+  "console_screen_locked": false,
+  "dark_actual_capture": false,
+  "display": "U2701B (display 2)",
+  "final_real_screen_capture_available": true,
+  "generated_at": "2026-10-23T05:39:23.139817+00:00",
+  "icon_absent_when_stopped_visually": true,
+  "icon_present_when_running": true,
+  "note": "Narrow real-screen menu-bar crop only; no desktop/window content. Dark/selected were not forced; dark uses a separate offscreen grayscale preview, and isTemplate=false keeps gray levels.",
+  "running_png": "docs/verification/v0004-r2/menubar/menubar-screen-running.png",
+  "selected_actual_capture": false,
+  "stopped_png": "docs/verification/v0004-r2/menubar/menubar-screen-stopped.png",
+  "total_pixels": 7680
+}

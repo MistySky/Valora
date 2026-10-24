@@ -1,0 +1,1153 @@
+{
+  "entries": [
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/AppDelegate.swift",
+      "destination_sha256": "3d2f393e66525956bc14c01a8ca733d8c1ae6e78faa2c70d5755f3d61ebce778",
+      "mode": "adapted",
+      "notes": "trimmed to music + General/Now Playing; production services and QA verifier entry points; vendor identity removed",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/AppDelegate.swift",
+      "source_sha256": "d6adb0893a991d77eabe4b4e807421bd41bb57098433bf41d8ec2a6110cadc22"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/AppRuntimeDefaults.swift",
+      "destination_sha256": "2d54071fb3639983f17da1dbc6caa1f6c31756917d6e8fa7d1469dfe5e02e1a1",
+      "mode": "adapted",
+      "notes": "QA suite renamed to com.wangqing.valora.qa; removed lock/battery/airpods QA modes",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/AppRuntimeDefaults.swift",
+      "source_sha256": "75ae0c2ef9c3e9fe4bb39f2e24c5963770ec0f5a854e9eb346b21e9ca453fe19"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/ArtworkPalette.swift",
+      "destination_sha256": "011c5a2913e03cc56502b66b995f14065cafbd99981ccc8eb40bcd71bd2c2620",
+      "mode": "verbatim",
+      "notes": "verbatim palette extraction",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/ArtworkPalette.swift",
+      "source_sha256": "011c5a2913e03cc56502b66b995f14065cafbd99981ccc8eb40bcd71bd2c2620"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/AudioOutputController.swift",
+      "destination_sha256": "62db77e61fccee7d1458fc10df6317e4c9fc16ab2f089f01edf0cb1133ce99e8",
+      "mode": "adapted",
+      "notes": "MainActor + scheduler isolation; CoreAudio volume/mute consumers preserved",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/AudioOutputController.swift",
+      "source_sha256": "848ac706da0edc9d4e5c6fc22400ca645c61a8f848d0bf1aa9d1fe85c2ccbf9d"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/AudioTap.swift",
+      "destination_sha256": "beb69f04184985bbb6132e2575a301c265b486d2530cfab10bdd6566bc2976ba",
+      "mode": "adapted",
+      "notes": "Swift 6 @unchecked Sendable with documented lock/serial-queue invariants; labels renamed to Valora",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/AudioTap.swift",
+      "source_sha256": "778d235d9637611bcc8160ce9732e74ca3e267e0af1e2469b0dff89bb6e91b90"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/CompactPlaybackControl.swift",
+      "destination_sha256": "a007881b31891687911ada60fa16cdec4866599c64e1ee4afb14fe1bceda0acc",
+      "mode": "adapted",
+      "notes": "verbatim native waveform; MainActor annotations only",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/CompactPlaybackControl.swift",
+      "source_sha256": "f0635791c7e87d76e3ac1c4c46118cd1c4a46d0c27f457585ceb9af6a5270b05"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/Controllers.swift",
+      "destination_sha256": "e37c79ab276e8b8cf828d803c8858b28e47c078ebbf2762288249dbe46af9d85",
+      "mode": "adapted",
+      "notes": "MediaController only; removed AppleScript/QQ/player-selection branches (system source only)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/Controllers.swift",
+      "source_sha256": "64096cf11dd80e6ac09764c19c6569c482ffeee14518df41dbd2367627979bfc"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/LoginItem.swift",
+      "destination_sha256": "3285dc475d8cdb28c427d1e1f5eeba50d685004bbc9783d3393813f47091f3d3",
+      "mode": "verbatim",
+      "notes": "verbatim ServiceManagement registration; only user toggles it",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/LoginItem.swift",
+      "source_sha256": "3285dc475d8cdb28c427d1e1f5eeba50d685004bbc9783d3393813f47091f3d3"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/MarqueeLabel.swift",
+      "destination_sha256": "47a8f86dd6567e9844018dd76eafcfad681588bd34d8c23511f44d6e0ff6bc37",
+      "mode": "adapted",
+      "notes": "verbatim native marquee; MainActor annotation only",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/MarqueeLabel.swift",
+      "source_sha256": "537a23f1517ab7e7983a23fa6ff08f32dcf6a0a5ced1e6ab440a5de3c3f3531c"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/MediaProgressView.swift",
+      "destination_sha256": "adbd23a55c056c988c3f520eb9afc2be65a146d966e9395ea89a3e1046ccfbb2",
+      "mode": "verbatim",
+      "notes": "verbatim progress styles, drag/tap rules, remaining-time toggle",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/MediaProgressView.swift",
+      "source_sha256": "adbd23a55c056c988c3f520eb9afc2be65a146d966e9395ea89a3e1046ccfbb2"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/Models.swift",
+      "destination_sha256": "34db7b29c77b02495e191be67566a1c5c8e619bb77ae41a191eae85f2772f690",
+      "mode": "adapted",
+      "notes": "music-only AppModel + two-page RevivalSettings; removed bluetooth/battery/brightness/focus/lock/source state",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/Models.swift",
+      "source_sha256": "87421ff975e96df1b45b80e47515c9d25af958b13c4a85c5b79d8d8b14a1cef9"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/MusicPlayerContent.swift",
+      "destination_sha256": "9308f2a54b7ae54729837ee55a0dd145854e36490d5403a60c34dbf811a347ad",
+      "mode": "verbatim",
+      "notes": "verbatim layout/controls/output volume row",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/MusicPlayerContent.swift",
+      "source_sha256": "9308f2a54b7ae54729837ee55a0dd145854e36490d5403a60c34dbf811a347ad"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/NotchView.swift",
+      "destination_sha256": "1e90b3c95f038c79d4523bfd7b6972b8cb2d5a944edcaf08e8b54c591085a329",
+      "mode": "adapted",
+      "notes": "music branches only; artwork/compact waveform/Quick Peek/expanded player retained; notification/lock/device/battery branches removed",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/NotchView.swift",
+      "source_sha256": "fa2562371c26158aed36e2d9195fc1b8c55b200ff7f46a3cd9fe0fb913e17f9e"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/OutputVolumeView.swift",
+      "destination_sha256": "a24cd66302c2cbe0ce5479c093154429c29d85b257ac49841a5e699a18984f2a",
+      "mode": "verbatim",
+      "notes": "verbatim expanded-player volume row",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/OutputVolumeView.swift",
+      "source_sha256": "a24cd66302c2cbe0ce5479c093154429c29d85b257ac49841a5e699a18984f2a"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/PresentationController.swift",
+      "destination_sha256": "db381a4a683e34297c7aa04c5e69dd49f9619c4676d06859f87b37b1f6e4ad58",
+      "mode": "adapted",
+      "notes": "MainActor; notification/lock chevrons removed; expansion lifecycle, peek and idle timing preserved",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/PresentationController.swift",
+      "source_sha256": "69290453512687908f931116dc35650dc9ab3ad06977037d20eeea4ded982d32"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/ScreenStateMonitor.swift",
+      "destination_sha256": "e06bdae3a2d996908b97065f975aa999e641814b9d40a531931f32a35eab4c39",
+      "mode": "adapted",
+      "notes": "MainActor; fullscreen/Mission Control/gaming detectors preserved for General",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/ScreenStateMonitor.swift",
+      "source_sha256": "a7584687faabda2121b48029e5f4c19d1bbf721dc2eaf0f1e9988ac67561db38"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/SettingsCatalog.swift",
+      "destination_sha256": "da6db0fcb1a04477c9925efd0e408af855d6b6d7f81b24feac40e7ff5a9a1b65",
+      "mode": "adapted",
+      "notes": "two-page catalog; Valora draft notification name; same preference dictionary",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/SettingsCatalog.swift",
+      "source_sha256": "29762f3c30eec1f82051b6436cf41d50f0dfcd6df79351ea730f28a3a4058444"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/SettingsControls.swift",
+      "destination_sha256": "7088c99ba7b906b369b61cb7b1518ca4fc48e27ce4dc1e4e292de5dca3f65e7f",
+      "mode": "adapted",
+      "notes": "removed vendor brand image previews and airpods movie tiles; added explicit unavailable choice state",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/SettingsControls.swift",
+      "source_sha256": "849a467846302b6dd1b79f88673e11e87e422e3835d18805b7ec437111ed3ba0"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/SettingsDisplayCatalog.swift",
+      "destination_sha256": "aa9f0df7d8186cb4322419afa1bb7ba045f40a18c122c32c1add26ac6c34ce6a",
+      "mode": "verbatim",
+      "notes": "verbatim display selection/hit-area catalog",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/SettingsDisplayCatalog.swift",
+      "source_sha256": "aa9f0df7d8186cb4322419afa1bb7ba045f40a18c122c32c1add26ac6c34ce6a"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/SettingsLocalization.swift",
+      "destination_sha256": "0f3ba5533fca11af6cbb9dc45c44c80023d98aaf681b8dd264aabce60f6726ab",
+      "mode": "verbatim",
+      "notes": "verbatim zh-Hans presentation translation",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/SettingsLocalization.swift",
+      "source_sha256": "0f3ba5533fca11af6cbb9dc45c44c80023d98aaf681b8dd264aabce60f6726ab"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/SettingsNumberEditor.swift",
+      "destination_sha256": "d915a9b36f1f65ca303cfdabe768ab7e3537d74d9f56587fe241e30624387c54",
+      "mode": "verbatim",
+      "notes": "verbatim inline number editor",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/SettingsNumberEditor.swift",
+      "source_sha256": "d915a9b36f1f65ca303cfdabe768ab7e3537d74d9f56587fe241e30624387c54"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/SettingsView.swift",
+      "destination_sha256": "e3140832d13f7e49b75125e43fe30ea10de90048e88fdb427225d39adbfa4258",
+      "mode": "adapted",
+      "notes": "only General + Now Playing; removed other pages/source cards/About; unsupported rows disabled in place",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/SettingsView.swift",
+      "source_sha256": "a97398193de23207f5b31eed74be588aae1b572b7644e9db808da6b779ee6b72"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/SettingsWindow.swift",
+      "destination_sha256": "5eee5d789ed6c78cea247fd31657b1e3e9981492d6870b3cb28bd0d91114124c",
+      "mode": "verbatim",
+      "notes": "verbatim 620x687 settings window factory",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/SettingsWindow.swift",
+      "source_sha256": "5eee5d789ed6c78cea247fd31657b1e3e9981492d6870b3cb28bd0d91114124c"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/SystemMediaSource.swift",
+      "destination_sha256": "5fba87232324961ffb2e1a700e9309e09194181147e517c9d0d56be850967a62",
+      "mode": "adapted",
+      "notes": "Swift 6 Sendable/lock adaptation; same Perl + MediaRemoteAdapter stream/get/send/seek semantics",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/SystemMediaSource.swift",
+      "source_sha256": "fa026f86d8d58c37b50ebdbb10e71e35455c6011159d80bb360fee68ddeb23da"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/TrafficLightsView.swift",
+      "destination_sha256": "002cf5f9d6700730b4970fb864908fb0aafa64b5ac94130b9537c93ba521ee8b",
+      "mode": "adapted",
+      "notes": "verbatim traffic light chrome; MainActor annotation",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/TrafficLightsView.swift",
+      "source_sha256": "bf0174f06fbc66abff16f74e79e85e3eca6b678b64360e3dc0d38ac987a6bff5"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/TransitioningArtwork.swift",
+      "destination_sha256": "fe8ca45a9ed7209d0ea82cedfcd1ffd46b16fc9151e019874d95727eecaa6cba",
+      "mode": "adapted",
+      "notes": "verbatim artwork flip controller/view; MainActor annotation only",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/TransitioningArtwork.swift",
+      "source_sha256": "78b83ab9cb6d824ace2da9b8313a29f8ac4f2a9d1e0fd8fae2be608768691e90"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/Verification.swift",
+      "destination_sha256": "ea074322d57d46c102a9245ee2bb70ab1a59506c6d0b26b9b5e0a1aeef530100",
+      "mode": "new (harness adapted)",
+      "notes": "music-only synthetic checks + settings renders + read-only system media check; no production commands",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/PresentationVerification.swift",
+      "source_sha256": "2cdb93f88d1e0e8cb1faf25bcdda64b4dfda356a9501ae4caeb54ccdc6569cdb"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/WindowCoordinator.swift",
+      "destination_sha256": "4c5402325bfb229ab7d54ff554004e87204bc43a590531f60abeda3c71b93d4b",
+      "mode": "adapted",
+      "notes": "MainActor; notification/lock subscriptions and panels removed; display, hit-test, hover, scroll and secondary compact panels preserved",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/WindowCoordinator.swift",
+      "source_sha256": "c670acccd30a6f67e19bb922d4e609d2a3c08d7cef2a65d99af4773b0ec66b01"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/Valora/main.swift",
+      "destination_sha256": "2c147d14413c85d3c03b60cde6f67ce9f20af627aee00f6ce593cbaec05f5d83",
+      "mode": "verbatim",
+      "notes": "verbatim entry point",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/AlcoveRevival/main.swift",
+      "source_sha256": "2c147d14413c85d3c03b60cde6f67ce9f20af627aee00f6ce593cbaec05f5d83"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/ActivityPreferences.swift",
+      "destination_sha256": "e193495d5e00ef02ca0bc60a72dfcf9df4c6b139a850207292be228531e06928",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/ActivityPreferences.swift",
+      "source_sha256": "7d676f310a0bd05dfd016c23c4a2a76a453ded600596104d4fae03101301f4f2"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/ActivitySelection.swift",
+      "destination_sha256": "77d4f50b9b0946adbfde15d5f2ae437370b115070fc4095f8485053ab754bc80",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/ActivitySelection.swift",
+      "source_sha256": "9ccd73419342bc515e0cd2fb0c4977fb64aa69a7c5bb3aee46f568d82aadf91d"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/AirPodsModel.swift",
+      "destination_sha256": "45f008c26dde3796edd34348d74b790e5b63a5524bf60276003c557b5fd58d3d",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/AirPodsModel.swift",
+      "source_sha256": "486b165a90a01a5c496bffd91f7a1aa66f5cfd0d80ee25b2148fb74797ec33e2"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/ArtworkTransitionState.swift",
+      "destination_sha256": "12652c89d6c8e4528356ea9647563e67038c8b6f23fbad179ad7ef616ab61c03",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/ArtworkTransitionState.swift",
+      "source_sha256": "c43990cc263c0662a4267d92a30ad59c70174721587e3e67d733e43fc70cbc02"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/CompactWaveformMetrics.swift",
+      "destination_sha256": "72ce6bd17c8ececc3aa4948fffcd3464096b444c456463eed89cba503cc90215",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/CompactWaveformMetrics.swift",
+      "source_sha256": "14960679663a2c1904741881eb736a3e3a035ccdf0fc3778ac86df4d570e7e27"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/GameMatcher.swift",
+      "destination_sha256": "8f153fe86eedfbd26d96cc86cf305adc1d3ba6100b6565e0294058d75cec9b97",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/GameMatcher.swift",
+      "source_sha256": "7e8cc55bd2a10aacfea2d8fa30db4f94914c12f44c3e6a313ab1aae16f3206b4"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/GeneralPreferences.swift",
+      "destination_sha256": "163e64604bc8c89344937c6654e050daae0a27508cc8facd2f04e5dc3531a700",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/GeneralPreferences.swift",
+      "source_sha256": "28f0291b2b5345440b09485bb7c74f91fd929f8426e1fc94c0da9f5f61da2f5e"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/MarqueeMetrics.swift",
+      "destination_sha256": "f8a07efc673a8dd4133febddc090c426cfb59e00e5d194b9a3011839babc167a",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/MarqueeMetrics.swift",
+      "source_sha256": "9686a480ef60b26d066dc60b51d4444ff07f526d824da706c18ce2555adc5534"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/MediaIdleState.swift",
+      "destination_sha256": "b1ed0883953020f671d7a62e57e7e75427b407c2476df484e126292f37def3a8",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/MediaIdleState.swift",
+      "source_sha256": "13fc6b2951a7693b5c260dada1c7dfc0c97c3eb571906f105ee18687806d0298"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/MediaProgressState.swift",
+      "destination_sha256": "f7a5ccca8a9aa9cc7083286d47cc4932b77b4e062b71768ee7fd5fe187f74b30",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/MediaProgressState.swift",
+      "source_sha256": "5241cafd87be7b371f506c2b40f1e4bd4c3c55f8599e3e4a5d5bc77c95bb9652"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/MusicPreferences.swift",
+      "destination_sha256": "a7cf64138c24effd9473e4e91595adc4debaaa907309a0b7d524ef71570e7e72",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/MusicPreferences.swift",
+      "source_sha256": "14d2e43008e36ee3fa9a7208cdb1894664905bbd0cda141e416854411ff4befd"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/MusicTitleFormatting.swift",
+      "destination_sha256": "0e92fded5d05e6ef1824a20032c8972f57ab4997df2f19ba7bcc6e5ddac37bee",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/MusicTitleFormatting.swift",
+      "source_sha256": "01b9626c30b362d39b2ef1405d4b9ebf7fb991201dfb77aaa41f71bb54a58a01"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/NotchContour.swift",
+      "destination_sha256": "937d89061a1104b1cf7eed1908fbddbb839d7464461e68024a17ed0be15a25f6",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/NotchContour.swift",
+      "source_sha256": "966e7c1edd2075459e77f8f08cc264839c91706560e8b1691f01f50899f7da76"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/NotchGeometry.swift",
+      "destination_sha256": "edd3a078377b7f00de39ced579843ec29b67fcc39c6098e703aa21de403ee349",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/NotchGeometry.swift",
+      "source_sha256": "fdbdcb41fde311e9e6bc97315e843f854db587bf2765c708e53ea8c104466af3"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/NotchGesture.swift",
+      "destination_sha256": "4b7dfbba37c3ee6defae474eed133fa0190e85ce255882ff80c1e6b8422750b2",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/NotchGesture.swift",
+      "source_sha256": "72dc28123f5929224c28ef2e75580033d9ec9025b451fe7e2a65103037ba5289"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/NotchHoverMetrics.swift",
+      "destination_sha256": "514dc3cbc429eb7422c40bc3fa1bce007db57f2db6ec91c370202cd66bc68d39",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/NotchHoverMetrics.swift",
+      "source_sha256": "a758746b7146115f770c2c771bf6955b4622bf21aee555f23aa4b54c83ead056"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/NotchTransitionState.swift",
+      "destination_sha256": "91ec58e9555c45fd6d975eb0c3f50a8030a77c2998f9fdee7a4d0842ab1a1422",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/NotchTransitionState.swift",
+      "source_sha256": "c59b5c12e17a74d9e47fda394102e673815817183d629b94aa7f25d1e3105447"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/NotchTuning.swift",
+      "destination_sha256": "d480fd00e51cd26050a33fe0602dfa580687509d5dff27796a637a13bfbcc26f",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/NotchTuning.swift",
+      "source_sha256": "a9f20c33474d4563b7e69c2a889f8d47057074454a2f0e4aef5f0a99cc1fea28"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/PresentationMetrics.swift",
+      "destination_sha256": "6db8e76e786b19bd1cc90e0affee2c43fbd13647b5b109d5cae0fde4b5e9af34",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/PresentationMetrics.swift",
+      "source_sha256": "4941e07b068783d57606be2b2aa7a3769e031eacd383ec3e9f8e83c50aafa5c6"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/SongPeekState.swift",
+      "destination_sha256": "865d8ff958bae9037a478aeabc1ad405a2966a10644ade3d33d460720ee1e760",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/SongPeekState.swift",
+      "source_sha256": "ae9d7971cff2f5c0ede0242a29430879ffd5ec272dac4a63db72293c9bc03f6f"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/SystemMediaSnapshot.swift",
+      "destination_sha256": "28c36f40a77fa3c3bfb7c4a0f1ecfb5cf94076d458f64b9b634780dfedb11f4c",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/SystemMediaSnapshot.swift",
+      "source_sha256": "8c2f1f169462292a7ee618926adb9c244e321abd400e4f374f900f7aecf95a87"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/VolumeKey.swift",
+      "destination_sha256": "3c5790e70be499a1eff1372557d5cbed65878db344204cf04d61c47e053b868d",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/VolumeKey.swift",
+      "source_sha256": "465f03b3459d92a9457c8c8b6d18ea967024ce0227aad5a07b5d36c27d91170a"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/ReferenceCore/VolumeNotice.swift",
+      "destination_sha256": "bd912c90b66db778fe0b7ba84341a7ce077294a9070cb444293df020e65ff544",
+      "mode": "adapted",
+      "notes": "pure model retained; explicit Sendable conformance for Swift 6 boundaries",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/ReferenceCore/VolumeNotice.swift",
+      "source_sha256": "7f311d069e5b28b79d941a7590767c92c7369915707d67b780b996b8e395c7e4"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/ActivityPreferencesTests.swift",
+      "destination_sha256": "6bf063a10cd79566ffa8f2a216a96484db3158c8c86bd51152227207c9fca62c",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/ActivityPreferencesTests.swift",
+      "source_sha256": "6bf063a10cd79566ffa8f2a216a96484db3158c8c86bd51152227207c9fca62c"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/ArtworkTransitionTests.swift",
+      "destination_sha256": "4dcc79d8569a3b8e984ba207565c649b302f28517c7c2f848ac11df324859094",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/ArtworkTransitionTests.swift",
+      "source_sha256": "4dcc79d8569a3b8e984ba207565c649b302f28517c7c2f848ac11df324859094"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/CompactWaveformTests.swift",
+      "destination_sha256": "62b74e8b5287292a4ae97d539d4e7eaf0eab075199fd9d010b1b979f62461131",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/CompactWaveformTests.swift",
+      "source_sha256": "62b74e8b5287292a4ae97d539d4e7eaf0eab075199fd9d010b1b979f62461131"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/GameMatcherTests.swift",
+      "destination_sha256": "9ff958bc1669545b067fa1d1971910a3422f524611ce3f67a5a99bec01341e91",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/GameMatcherTests.swift",
+      "source_sha256": "9ff958bc1669545b067fa1d1971910a3422f524611ce3f67a5a99bec01341e91"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/MarqueeTests.swift",
+      "destination_sha256": "b7042f4c253ef378bac9a4b13efad6f99d29a322b3e7bd0a405ebe63523d6b23",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/MarqueeTests.swift",
+      "source_sha256": "b7042f4c253ef378bac9a4b13efad6f99d29a322b3e7bd0a405ebe63523d6b23"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/MediaIdleTests.swift",
+      "destination_sha256": "cb2761970f8dc11a9143b9d66c59099249f1893766ccd5ffb1eeed7880e90fc6",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/MediaIdleTests.swift",
+      "source_sha256": "cb2761970f8dc11a9143b9d66c59099249f1893766ccd5ffb1eeed7880e90fc6"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/MediaProgressTests.swift",
+      "destination_sha256": "0f751a60610a821939a94c7befcf4cc84d945f2317a413ed046687858e0d33bf",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/MediaProgressTests.swift",
+      "source_sha256": "0f751a60610a821939a94c7befcf4cc84d945f2317a413ed046687858e0d33bf"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/MusicPreferencesTests.swift",
+      "destination_sha256": "e8a62fa0dc097353d31483cb2f2fdfcdae54d669fbb67d2ee23ede9aa9ca5c2c",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/MusicPreferencesTests.swift",
+      "source_sha256": "e8a62fa0dc097353d31483cb2f2fdfcdae54d669fbb67d2ee23ede9aa9ca5c2c"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/MusicTitleFormattingTests.swift",
+      "destination_sha256": "dd0a2697671d84b906e0526a2826d440cfebd98d9afb82b561c6b4d7715d7a11",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/MusicTitleFormattingTests.swift",
+      "source_sha256": "dd0a2697671d84b906e0526a2826d440cfebd98d9afb82b561c6b4d7715d7a11"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/NotchContourTests.swift",
+      "destination_sha256": "813f10e22175aed338e6ca26ff1491dc82354e4962dda605a85547a427415171",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/NotchContourTests.swift",
+      "source_sha256": "813f10e22175aed338e6ca26ff1491dc82354e4962dda605a85547a427415171"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/NotchGestureTests.swift",
+      "destination_sha256": "142b4891055afa0b56be686c57ae0f8bf791bbe2191f376d5c6e1b59f628b22f",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/NotchGestureTests.swift",
+      "source_sha256": "142b4891055afa0b56be686c57ae0f8bf791bbe2191f376d5c6e1b59f628b22f"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/NotchHoverTests.swift",
+      "destination_sha256": "ab0ca05ee2165369eb5f007dd23139adce564986eb8a4cbe756fd593243a4884",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/NotchHoverTests.swift",
+      "source_sha256": "ab0ca05ee2165369eb5f007dd23139adce564986eb8a4cbe756fd593243a4884"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/NotchTransitionTests.swift",
+      "destination_sha256": "90b187d71101691cbb25a35a424d6d75d3e69cbbd9a2f225f256bdf30aca1f48",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/NotchTransitionTests.swift",
+      "source_sha256": "90b187d71101691cbb25a35a424d6d75d3e69cbbd9a2f225f256bdf30aca1f48"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/NotchTuningTests.swift",
+      "destination_sha256": "0a7f7f9464c25b6298e8890a57f75bb630fa91262811f8035e623851c0987548",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/NotchTuningTests.swift",
+      "source_sha256": "0a7f7f9464c25b6298e8890a57f75bb630fa91262811f8035e623851c0987548"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/ReferenceCoreTests.swift",
+      "destination_sha256": "4b635611caf3b223f0ba252cf280b88527f9c13d34bbd1ded1e4316e64775111",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/ReferenceCoreTests.swift",
+      "source_sha256": "4b635611caf3b223f0ba252cf280b88527f9c13d34bbd1ded1e4316e64775111"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/SongPeekTests.swift",
+      "destination_sha256": "2d98238c925b9758f7e8fd1662a437a1a697c80ad8c2497eb5efbe238681ffd6",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/SongPeekTests.swift",
+      "source_sha256": "2d98238c925b9758f7e8fd1662a437a1a697c80ad8c2497eb5efbe238681ffd6"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/SystemMediaSnapshotTests.swift",
+      "destination_sha256": "c3260a1a5f36a7f22af2261e03ad61807a6d9de702b93350d41cb44e1e2904df",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/SystemMediaSnapshotTests.swift",
+      "source_sha256": "c3260a1a5f36a7f22af2261e03ad61807a6d9de702b93350d41cb44e1e2904df"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/SystemMediaTests.swift",
+      "destination_sha256": "f8c6461b446262c616e8fcd4b453bcb1a8069b93daf8c6afd3ccb1dd225e6d0c",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/SystemMediaTests.swift",
+      "source_sha256": "f8c6461b446262c616e8fcd4b453bcb1a8069b93daf8c6afd3ccb1dd225e6d0c"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ReferenceCoreTests/VolumeKeyTests.swift",
+      "destination_sha256": "0e1befc4d28ca1febb883f9eb60307abaf10cdf47bee9810508a29293bac4896",
+      "mode": "verbatim",
+      "notes": "module name only (ReferenceCore unchanged)",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/ReferenceCoreTests/VolumeKeyTests.swift",
+      "source_sha256": "0e1befc4d28ca1febb883f9eb60307abaf10cdf47bee9810508a29293bac4896"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ValoraTests/MusicTitleExtrasIntegrationTests.swift",
+      "destination_sha256": "5213850d92e13f251f96219acab1c216a27bcdea6e6f909bb8a6733479b21edb",
+      "mode": "adapted",
+      "notes": "module/suite renamed; API rename reloadPreferences; MainActor annotations",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/AlcoveSettingsTests/MusicTitleExtrasIntegrationTests.swift",
+      "source_sha256": "b82c91fdc440aa8146afb2967b89165c277cd3670f1c6dd2992bdf9b79bd6c49"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ValoraTests/NotchTuningIntegrationTests.swift",
+      "destination_sha256": "755bac17cb8c0a7daeb91f4bd103d95eadbdbb7b26c837e4535695127d7cae69",
+      "mode": "adapted",
+      "notes": "module/suite renamed; API rename reloadPreferences; MainActor annotations",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/AlcoveSettingsTests/NotchTuningIntegrationTests.swift",
+      "source_sha256": "8c5fba4081af0202909f342611c80690ee8431e1b7c088a6c1616faa8899720c"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ValoraTests/RevivalSettingsReloadTests.swift",
+      "destination_sha256": "59f26a0665d0e082c578bd4c65da4f3ca2e3dfbcfb5a7b3ee7a31b7979e60994",
+      "mode": "new",
+      "notes": "rewritten for the two-page RevivalSettings surface",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/AlcoveSettingsTests/RevivalSettingsReloadTests.swift",
+      "source_sha256": "9b01d2a79b805c4fb96d2ac377a92d0bf81599cd7cd8f7cc69127bad8685d1eb"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Tests/ValoraTests/ScrollGestureEntryTests.swift",
+      "destination_sha256": "c071039f639b7c96cb5e7777adb86b19f4e0f11a981a413eb452927e52877d6b",
+      "mode": "adapted",
+      "notes": "module/suite renamed; API rename reloadPreferences; MainActor annotations",
+      "source": "/Users/wangqing/code/alcove-revival-archive/tests/AlcoveSettingsTests/ScrollGestureEntryTests.swift",
+      "source_sha256": "74b837f3d5c5ab660a800c79c6208ea7a8792a54d86759fb47926d0ce88478f8"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/NativeBridge/include/NativeBridge.h",
+      "destination_sha256": "5ead4d7c170bd8e052b9f35e9ebe79db3e19207608a49e886ae7c0b8a8b0a532",
+      "mode": "new (trimmed bridge)",
+      "notes": "four music-only C functions: portable flag, output snapshot, set volume, set mute",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/NativeBridge/include/NativeBridge.h",
+      "source_sha256": "7ca84b08164c5f49a3b4aa2af2106392d1fd67790705bfe69c489dd6dfcebd85"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/Sources/NativeBridge/NativeBridge.m",
+      "destination_sha256": "3bec213b37ff62ac1c7f4c8525b22f6680d6380b6aed9cf9d9e94d08fed7790d",
+      "mode": "new (trimmed bridge)",
+      "notes": "CoreAudio output/volume implementations copied; battery/Bluetooth/QQ/lock-space bridges excluded",
+      "source": "/Users/wangqing/code/alcove-revival-archive/Sources/NativeBridge/NativeBridge.m",
+      "source_sha256": "47944581b5fed13c22eea1ccbf6c85dc9f24464ec08886da48adc80a3cd5ef93"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/scripts/build_media_adapter.py",
+      "destination_sha256": "af94af9fe94c60a5d64a7f84ca005ac78aad9338f65d526557fad4babc994a45",
+      "mode": "adapted",
+      "notes": "macOS 27 minimum, explicit provenance hashes, no network",
+      "source": "/Users/wangqing/code/alcove-revival-archive/scripts/build_media_adapter.py",
+      "source_sha256": "b2bf7e2517f97b8fd7a08fd6372cc2c5b83818f71ac770e4bbc187091161563f"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/scripts/package.py",
+      "destination_sha256": "ccc732c25933bfb1a5928aed668925dfd73ef4caa5a9c8bac7600ae76dbdeeae",
+      "mode": "adapted",
+      "notes": "Valora identity, new bundle ID, no vendor icon/entitlements, adapter framework + license + provenance",
+      "source": "/Users/wangqing/code/alcove-revival-archive/scripts/package.py",
+      "source_sha256": "bd988c555aded3b824f3d572f545dba715d90937321746530beefb4b38361f5d"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/scripts/build.sh",
+      "destination_sha256": "fe14e0ba559eb41ee9a18d70bbee7e3890cb895c23e44c458c18b238477069e6",
+      "mode": "adapted",
+      "notes": "Valora product/package paths",
+      "source": "/Users/wangqing/code/alcove-revival-archive/scripts/build.sh",
+      "source_sha256": "f8c02623d2226948941f352ce3f7fa02df93ffc99e269e9809b99409b17f8438"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/.clang-format",
+      "destination_sha256": "66912ad6e65e2cf5ff1db800bcbc6aff7ff48de67c16d5a1e8b8f68032c85b0c",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/.clang-format",
+      "source_sha256": "66912ad6e65e2cf5ff1db800bcbc6aff7ff48de67c16d5a1e8b8f68032c85b0c"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/.cmake-format",
+      "destination_sha256": "110cd6564444ad9403e1b3fe0acedcc186011dd213476abd47b1af0fc43a4ef4",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/.cmake-format",
+      "source_sha256": "110cd6564444ad9403e1b3fe0acedcc186011dd213476abd47b1af0fc43a4ef4"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/.gitignore",
+      "destination_sha256": "410c41b10c3de2d4cec8f2bd5927bd3b044ac21dd23f07637296061841ac9a24",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/.gitignore",
+      "source_sha256": "410c41b10c3de2d4cec8f2bd5927bd3b044ac21dd23f07637296061841ac9a24"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/.gitmodules",
+      "destination_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/.gitmodules",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/.perltidyrc",
+      "destination_sha256": "038c562623fd04ce3d3982761f642bb92d0e2c19742a5409779d98c784503472",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/.perltidyrc",
+      "source_sha256": "038c562623fd04ce3d3982761f642bb92d0e2c19742a5409779d98c784503472"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/.vscode/extensions.json",
+      "destination_sha256": "428321ae64d000792355aea73a2e593ee6bba4bad43ca24db93c73ef0b61fd08",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/.vscode/extensions.json",
+      "source_sha256": "428321ae64d000792355aea73a2e593ee6bba4bad43ca24db93c73ef0b61fd08"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/.vscode/settings.json",
+      "destination_sha256": "0aeda224cd197502bc8df4536a69376f8c41a0b65020cb4e8f76b9556ef68335",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/.vscode/settings.json",
+      "source_sha256": "0aeda224cd197502bc8df4536a69376f8c41a0b65020cb4e8f76b9556ef68335"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/CMakeLists.txt",
+      "destination_sha256": "6a98e75be51e28f59d00374beab9b73f019e3348db5070e56b9f596475e02bbc",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/CMakeLists.txt",
+      "source_sha256": "6a98e75be51e28f59d00374beab9b73f019e3348db5070e56b9f596475e02bbc"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/LICENSE",
+      "destination_sha256": "a489c16a6be195584fa0b35e28fca54abc8492eb0cc05d851dd24f522f4900a2",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/LICENSE",
+      "source_sha256": "a489c16a6be195584fa0b35e28fca54abc8492eb0cc05d851dd24f522f4900a2"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/Makefile",
+      "destination_sha256": "e9015116d6416dd555bcfc7aac9fa4dd6e7d91454b1af7997e5f2e5c66720aea",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/Makefile",
+      "source_sha256": "e9015116d6416dd555bcfc7aac9fa4dd6e7d91454b1af7997e5f2e5c66720aea"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/README.md",
+      "destination_sha256": "73021ed63cb4ac9ea0d63f92ceed75cf720eb91a11862f64e90dcc8d74312bb0",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/README.md",
+      "source_sha256": "73021ed63cb4ac9ea0d63f92ceed75cf720eb91a11862f64e90dcc8d74312bb0"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/bin/mediaremote-adapter.pl",
+      "destination_sha256": "d97802e46db9535e2549e178c105ebf417a0254b3929fc32f08ecfd14d49a85f",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/bin/mediaremote-adapter.pl",
+      "source_sha256": "d97802e46db9535e2549e178c105ebf417a0254b3929fc32f08ecfd14d49a85f"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/include/MediaRemoteAdapter.h",
+      "destination_sha256": "c0339a1f1ec71ff28df51fb239cd1e46580ebcafbdef4b2f32c8f49409da2b49",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/include/MediaRemoteAdapter.h",
+      "source_sha256": "c0339a1f1ec71ff28df51fb239cd1e46580ebcafbdef4b2f32c8f49409da2b49"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/scripts/mediaremote-adapter-dev.sh",
+      "destination_sha256": "6bd6287588e0953a2d494319b718a1fbe0b084db922b2ef2bf22f1f40dcb0d06",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/scripts/mediaremote-adapter-dev.sh",
+      "source_sha256": "6bd6287588e0953a2d494319b718a1fbe0b084db922b2ef2bf22f1f40dcb0d06"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/scripts/update-readme-badges.py",
+      "destination_sha256": "00b9f663527ac1008f90f2526774cd8b46fd335e51b9799d3e230f6da539b9b8",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/scripts/update-readme-badges.py",
+      "source_sha256": "00b9f663527ac1008f90f2526774cd8b46fd335e51b9799d3e230f6da539b9b8"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/env.h",
+      "destination_sha256": "7bc8c96974cba1eefe4e4cf24bb6fbc9c46bbf76912d7acbf701cc9d93bebfdd",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/env.h",
+      "source_sha256": "7bc8c96974cba1eefe4e4cf24bb6fbc9c46bbf76912d7acbf701cc9d93bebfdd"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/env.m",
+      "destination_sha256": "96b79b32180c473dcf98c2c97fb086257d031594d3086f8a0b3ca5045ee62d3c",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/env.m",
+      "source_sha256": "96b79b32180c473dcf98c2c97fb086257d031594d3086f8a0b3ca5045ee62d3c"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/get.h",
+      "destination_sha256": "393d385a1a72017ef735368f949dba7c4e72f8afa6e4badccb6d5e904184b903",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/get.h",
+      "source_sha256": "393d385a1a72017ef735368f949dba7c4e72f8afa6e4badccb6d5e904184b903"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/get.m",
+      "destination_sha256": "8663a55f9299f0f48fe251ae57843917ddb2fde40ce43ec6d9f845ec4df91770",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/get.m",
+      "source_sha256": "8663a55f9299f0f48fe251ae57843917ddb2fde40ce43ec6d9f845ec4df91770"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/globals.h",
+      "destination_sha256": "cda3a3a2653fa669be50124723529ecb2611e0525ec651975c853895b7296c78",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/globals.h",
+      "source_sha256": "cda3a3a2653fa669be50124723529ecb2611e0525ec651975c853895b7296c78"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/globals.m",
+      "destination_sha256": "31455fb7c5b51663837dcfe037cc01505a1f5d294bfdc29c1c1676fafea321e7",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/globals.m",
+      "source_sha256": "31455fb7c5b51663837dcfe037cc01505a1f5d294bfdc29c1c1676fafea321e7"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/keys.h",
+      "destination_sha256": "f2d657da143b11509993d95922f8fcf1ae018c3c06d5ba516a19e08108201f86",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/keys.h",
+      "source_sha256": "f2d657da143b11509993d95922f8fcf1ae018c3c06d5ba516a19e08108201f86"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/keys.m",
+      "destination_sha256": "c14ff8fdf1a5f82bde9e1c45b8e6c59847130e0491df658d103a93cbc5bbce49",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/keys.m",
+      "source_sha256": "c14ff8fdf1a5f82bde9e1c45b8e6c59847130e0491df658d103a93cbc5bbce49"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/now_playing.h",
+      "destination_sha256": "4483c088f3c03f3e35257ef715c45a2a3c67df90736d3cdff501db5be470a26c",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/now_playing.h",
+      "source_sha256": "4483c088f3c03f3e35257ef715c45a2a3c67df90736d3cdff501db5be470a26c"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/now_playing.m",
+      "destination_sha256": "7d53073adac8934576d8efb137c0e529caa882efadcd6506e2514bed7c997314",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/now_playing.m",
+      "source_sha256": "7d53073adac8934576d8efb137c0e529caa882efadcd6506e2514bed7c997314"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/repeat.m",
+      "destination_sha256": "dc12c7364e71bda67d4736b0885bd59f567a59133edb636664b19a896f9e3394",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/repeat.m",
+      "source_sha256": "dc12c7364e71bda67d4736b0885bd59f567a59133edb636664b19a896f9e3394"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/seek.m",
+      "destination_sha256": "89e0a182c0ab51b48a629c4809b282dd211d126f5467426627f27107c6862600",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/seek.m",
+      "source_sha256": "89e0a182c0ab51b48a629c4809b282dd211d126f5467426627f27107c6862600"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/send.m",
+      "destination_sha256": "b1cd333df5207a0ba1a3688724963ead68b028523a4bdc348cb680202b1143ed",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/send.m",
+      "source_sha256": "b1cd333df5207a0ba1a3688724963ead68b028523a4bdc348cb680202b1143ed"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/shuffle.m",
+      "destination_sha256": "f8c6764a50737f9ee33e43f42d02fe339c6c0721e931d16271c3665f0060ba83",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/shuffle.m",
+      "source_sha256": "f8c6764a50737f9ee33e43f42d02fe339c6c0721e931d16271c3665f0060ba83"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/speed.m",
+      "destination_sha256": "e4995a2d3b9082cc8c9a923551da2c1e0adcb6e1c4bf529df384cfad9145a5f8",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/speed.m",
+      "source_sha256": "e4995a2d3b9082cc8c9a923551da2c1e0adcb6e1c4bf529df384cfad9145a5f8"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/stream.m",
+      "destination_sha256": "de865d907a38ec8b92597db7c63e5ba0acdead51054546ad4cea784ef62d7c00",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/stream.m",
+      "source_sha256": "de865d907a38ec8b92597db7c63e5ba0acdead51054546ad4cea784ef62d7c00"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/adapter/test.m",
+      "destination_sha256": "3cfe583dc05b8e6e6848b6cffcb2d0752e28abd71d5d315f3774f4bf481bd8ed",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/adapter/test.m",
+      "source_sha256": "3cfe583dc05b8e6e6848b6cffcb2d0752e28abd71d5d315f3774f4bf481bd8ed"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/private/MediaRemote.h",
+      "destination_sha256": "14651fcfb560cee9553f7dd2a8f805b91b3d03b9de386abc37d73a629d83ef03",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/private/MediaRemote.h",
+      "source_sha256": "14651fcfb560cee9553f7dd2a8f805b91b3d03b9de386abc37d73a629d83ef03"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/private/MediaRemote.m",
+      "destination_sha256": "10dbaa1fcfbf14e57d3140e294d005267d51c7d624e67c90638467c70a29cca5",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/private/MediaRemote.m",
+      "source_sha256": "10dbaa1fcfbf14e57d3140e294d005267d51c7d624e67c90638467c70a29cca5"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/test/NowPlayingTest.h",
+      "destination_sha256": "214041764c0f375bd9c2567239c6e2e5e23b7c39a3efaec8562538b509b3307f",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/test/NowPlayingTest.h",
+      "source_sha256": "214041764c0f375bd9c2567239c6e2e5e23b7c39a3efaec8562538b509b3307f"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/test/NowPlayingTest.m",
+      "destination_sha256": "8a6b2a5205ca0f143d196076a3f8343bd4511ca76b53ec772f1a7e929dd23ebc",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/test/NowPlayingTest.m",
+      "source_sha256": "8a6b2a5205ca0f143d196076a3f8343bd4511ca76b53ec772f1a7e929dd23ebc"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/test/main.m",
+      "destination_sha256": "a23090e3bc4d32c89332b20d99d67c11bf7d69cc42519d19503035a417efcf8f",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/test/main.m",
+      "source_sha256": "a23090e3bc4d32c89332b20d99d67c11bf7d69cc42519d19503035a417efcf8f"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/utility/Debounce.h",
+      "destination_sha256": "9bfaa2a9e9598257707944b67c55caef31709f5d2ca7e31a33765cd4f84133b6",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/utility/Debounce.h",
+      "source_sha256": "9bfaa2a9e9598257707944b67c55caef31709f5d2ca7e31a33765cd4f84133b6"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/utility/Debounce.m",
+      "destination_sha256": "e11684ce10be056aad37f6f7b16b67801ab7b3b54437707420d2edc85010d1bf",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/utility/Debounce.m",
+      "source_sha256": "e11684ce10be056aad37f6f7b16b67801ab7b3b54437707420d2edc85010d1bf"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/utility/helpers.h",
+      "destination_sha256": "ed9b94dddb4458b34de2867c83624fe7be9fc9a9ac000b5ca413a80f5539202c",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/utility/helpers.h",
+      "source_sha256": "ed9b94dddb4458b34de2867c83624fe7be9fc9a9ac000b5ca413a80f5539202c"
+    },
+    {
+      "destination": "/Users/wangqing/code/Valora/vendor/mediaremote-adapter/src/utility/helpers.m",
+      "destination_sha256": "0b61db6dd408487554aba5d17f077fba3770c03bad92036d78bac7b26eb84290",
+      "mode": "verbatim",
+      "notes": "pinned BSD-3-Clause upstream source kept intact",
+      "source": "/Users/wangqing/code/alcove-revival-archive/vendor/mediaremote-adapter/src/utility/helpers.m",
+      "source_sha256": "0b61db6dd408487554aba5d17f077fba3770c03bad92036d78bac7b26eb84290"
+    }
+  ],
+  "entry_count": 121,
+  "excluded": [
+    {
+      "reason": "battery activity out of scope",
+      "source": "Sources/AlcoveRevival/BatteryMonitor.swift"
+    },
+    {
+      "reason": "battery activity out of scope",
+      "source": "Sources/AlcoveRevival/BatteryNoticeView.swift"
+    },
+    {
+      "reason": "brightness HUD out of scope",
+      "source": "Sources/AlcoveRevival/BrightnessController.swift"
+    },
+    {
+      "reason": "brightness HUD out of scope",
+      "source": "Sources/AlcoveRevival/BrightnessNoticeView.swift"
+    },
+    {
+      "reason": "brightness HUD out of scope",
+      "source": "Sources/AlcoveRevival/BrightnessServices.swift"
+    },
+    {
+      "reason": "device connection activity out of scope",
+      "source": "Sources/AlcoveRevival/ConnectionArrivalArtwork.swift"
+    },
+    {
+      "reason": "Focus integration out of scope",
+      "source": "Sources/AlcoveRevival/FocusManager.swift"
+    },
+    {
+      "reason": "Focus activity out of scope",
+      "source": "Sources/AlcoveRevival/FocusNoticeView.swift"
+    },
+    {
+      "reason": "lock screen out of scope",
+      "source": "Sources/AlcoveRevival/LockFrostedBackground.swift"
+    },
+    {
+      "reason": "lock screen out of scope",
+      "source": "Sources/AlcoveRevival/LockInformationView.swift"
+    },
+    {
+      "reason": "lock screen music out of scope",
+      "source": "Sources/AlcoveRevival/LockMusicCoordinator.swift"
+    },
+    {
+      "reason": "lock screen harness out of scope",
+      "source": "Sources/AlcoveRevival/LockMusicVerification.swift"
+    },
+    {
+      "reason": "replaced by music-only Verification.swift",
+      "source": "Sources/AlcoveRevival/PresentationVerification.swift"
+    },
+    {
+      "reason": "replaced by two-page renderer in Verification.swift",
+      "source": "Sources/AlcoveRevival/SettingsVerification.swift"
+    },
+    {
+      "reason": "volume-key HUD out of scope (expanded-player slider kept)",
+      "source": "Sources/AlcoveRevival/VolumeKeyMonitor.swift"
+    },
+    {
+      "reason": "volume HUD out of scope",
+      "source": "Sources/AlcoveRevival/VolumeNoticeController.swift"
+    },
+    {
+      "reason": "volume HUD out of scope",
+      "source": "Sources/AlcoveRevival/VolumeNoticeView.swift"
+    },
+    {
+      "reason": "replaced by music-only Verification.swift",
+      "source": "Sources/AlcoveRevival/PresentationVerification.swift"
+    },
+    {
+      "reason": "replaced by two-page renderer in Verification.swift",
+      "source": "Sources/AlcoveRevival/SettingsVerification.swift"
+    },
+    {
+      "reason": "belongs to an excluded product feature",
+      "source": "Sources/ReferenceCore/AirPodsMaxColor.swift"
+    },
+    {
+      "reason": "belongs to an excluded product feature",
+      "source": "Sources/ReferenceCore/BatteryNotice.swift"
+    },
+    {
+      "reason": "belongs to an excluded product feature",
+      "source": "Sources/ReferenceCore/BrightnessNotice.swift"
+    },
+    {
+      "reason": "belongs to an excluded product feature",
+      "source": "Sources/ReferenceCore/ConnectivityPreferences.swift"
+    },
+    {
+      "reason": "belongs to an excluded product feature",
+      "source": "Sources/ReferenceCore/DeviceBatteryAlert.swift"
+    },
+    {
+      "reason": "belongs to an excluded product feature",
+      "source": "Sources/ReferenceCore/FocusNotice.swift"
+    },
+    {
+      "reason": "belongs to an excluded product feature",
+      "source": "Sources/ReferenceCore/KeepAwakeController.swift"
+    },
+    {
+      "reason": "belongs to an excluded product feature",
+      "source": "Sources/ReferenceCore/LockIndicatorState.swift"
+    },
+    {
+      "reason": "belongs to an excluded product feature",
+      "source": "Sources/ReferenceCore/LockMusicState.swift"
+    },
+    {
+      "reason": "belongs to an excluded product feature",
+      "source": "Sources/ReferenceCore/PresentationEffects.swift"
+    },
+    {
+      "reason": "belongs to an excluded product feature",
+      "source": "Sources/ReferenceCore/SoundPreview.swift"
+    },
+    {
+      "reason": "tests an excluded feature or removed settings page",
+      "source": "tests/AlcoveSettingsTests/ActivityPreferencesIntegrationTests.swift"
+    },
+    {
+      "reason": "tests an excluded feature or removed settings page",
+      "source": "tests/AlcoveSettingsTests/AppRuntimeDefaultsIntegrationTests.swift"
+    },
+    {
+      "reason": "tests an excluded feature or removed settings page",
+      "source": "tests/AlcoveSettingsTests/BatteryMonitorTests.swift"
+    },
+    {
+      "reason": "tests an excluded feature or removed settings page",
+      "source": "tests/AlcoveSettingsTests/BrightnessSettingsWiringTests.swift"
+    },
+    {
+      "reason": "tests an excluded feature or removed settings page",
+      "source": "tests/AlcoveSettingsTests/FocusManagerTests.swift"
+    },
+    {
+      "reason": "tests an excluded feature or removed settings page",
+      "source": "tests/AlcoveSettingsTests/KeepAwakeWiringTests.swift"
+    },
+    {
+      "reason": "tests an excluded feature or removed settings page",
+      "source": "tests/AlcoveSettingsTests/LockInformationWiringTests.swift"
+    },
+    {
+      "reason": "tests an excluded feature or removed settings page",
+      "source": "tests/AlcoveSettingsTests/PresentationEffectsIntegrationTests.swift"
+    },
+    {
+      "reason": "tests an excluded feature or removed settings page",
+      "source": "tests/AlcoveSettingsTests/VolumeSettingsWiringTests.swift"
+    },
+    {
+      "reason": "3D device connection movies out of scope; vendor media not redistributed",
+      "source": "Sources/AlcoveRevival/Resources/airpods-*.mp4"
+    },
+    {
+      "reason": "lock/battery sound effects out of scope; vendor audio not redistributed",
+      "source": "Sources/AlcoveRevival/Resources/*.caf"
+    },
+    {
+      "reason": "vendor app identity/icon not migrated; Valora has its own new identity",
+      "source": "scripts/AppIcon.icns / AppIcon.iconset"
+    },
+    {
+      "reason": "vendor brand marks used only by the disabled audio-format tile; removed in favor of SF Symbol",
+      "source": "Sources/AlcoveRevival/Resources/format-*.png"
+    }
+  ],
+  "generated_at": "2026-10-23T02:34:58.724325+00:00",
+  "sdk": "27.0",
+  "source_root": "/Users/wangqing/code/alcove-revival-archive",
+  "source_root_read_only": true,
+  "task": "V0001 local source migration",
+  "toolchain": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0"
+}

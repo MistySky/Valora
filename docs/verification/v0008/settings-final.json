@@ -1,0 +1,31 @@
+{
+  "extra_controls": "removed; no controlChoice, shuffleMode/repeatMode, send 6/7, extra player button or dedicated tests",
+  "fixed": "V0005 fixed policies remain; no new fixed rows or placeholders.",
+  "gaps": [
+    "contrast outline / progressive blur renderers remain unsupported (previously disclosed)",
+    "no fabricated explicit/format data",
+    "no real player control verification executed"
+  ],
+  "generated_at": "2026-10-23T15:11:14.137199+00:00",
+  "removed": [
+    "title badge group (user addendum)",
+    "Favorite/Shuffle/Repeat/Copy extra controls group"
+  ],
+  "title_badge": "removed; no key consumer or placeholder",
+  "visible": {
+    "General": [
+      "Launch at login",
+      "Force simulated notch",
+      "Display on",
+      "Expand on hover"
+    ],
+    "General conditional": [
+      "Hover delay only when Expand on hover is enabled"
+    ],
+    "Now Playing": [
+      "Now Playing",
+      "Progress style",
+      "Use live waveform"
+    ]
+  }
+}

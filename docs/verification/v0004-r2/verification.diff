@@ -1,0 +1,78 @@
+--- a/Sources/Valora/Verification.swift
++++ b/Sources/Valora/Verification.swift
+@@ -758,28 +758,26 @@
+                 ]
+             }
+ 
+-            func templatePreview(background: NSColor, tint: NSColor, name: String) -> [String: Any]? {
++            func imagePreview(background: NSColor, name: String) -> [String: Any]? {
+                 guard let image,
+-                      let cg = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return nil }
+-                let pixels = 36
+-                guard let context = CGContext(data: nil, width: pixels, height: pixels,
+-                                              bitsPerComponent: 8, bytesPerRow: 0,
+-                                              space: CGColorSpaceCreateDeviceRGB(),
+-                                              bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return nil }
+-                let rect = CGRect(x: 0, y: 0, width: pixels, height: pixels)
+-                context.setFillColor(background.cgColor)
+-                context.fill(rect)
+-                context.clip(to: rect, mask: cg)
+-                context.setFillColor(tint.cgColor)
+-                context.fill(rect)
+-                guard let rendered = context.makeImage() else { return nil }
+-                let rep = NSBitmapImageRep(cgImage: rendered)
++                      let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: 36, pixelsHigh: 36,
++                                                 bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true, isPlanar: false,
++                                                 colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0),
++                      let context = NSGraphicsContext(bitmapImageRep: rep) else { return nil }
++                NSGraphicsContext.saveGraphicsState()
++                NSGraphicsContext.current = context
++                background.setFill()
++                NSRect(x: 0, y: 0, width: 36, height: 36).fill()
++                image.draw(in: NSRect(x: 0, y: 0, width: 36, height: 36),
++                           from: .zero, operation: .sourceOver, fraction: 1)
++                context.flushGraphics()
++                NSGraphicsContext.restoreGraphicsState()
+                 guard let png = rep.representation(using: .png, properties: [:]) else { return nil }
+                 let url = directory.appendingPathComponent(name + ".png")
+                 try? png.write(to: url)
+-                return ["path": url.path, "pixels": pixels, "bytes": png.count,
+-                        "background": background.description, "tint": tint.description,
+-                        "note": "offscreen template-tint preview, not a real menu-bar capture"]
++                return ["path": url.path, "pixels": 36, "bytes": png.count,
++                        "background": background.description,
++                        "note": "offscreen grayscale image preview, not a real menu-bar capture"]
+             }
+ 
+             var windowCapture: [String: Any]?
+@@ -820,7 +818,9 @@
+                 "app": Bundle.main.bundlePath,
+                 "app_bundle_icon_path": iconURL?.path ?? NSNull(),
+                 "app_bundle_icon_sha256": iconSHA ?? NSNull(),
+-                "menubar_source": "code-native AppKit vector (18 pt, 18/36/54 px reps)",
++                "menubar_source": "Contents/Resources/AppIcon.icns desaturated with Core Image CIColorControls(saturation=0); isTemplate=false",
++                "desaturation_method": "Core Image CIColorControls inputSaturation=0",
++                "source_is_full_app_icon": true,
+                 "status_item_length": statusItem.length,
+                 "button_image_present": image != nil,
+                 "button_image_size": image.map { [Double($0.size.width), Double($0.size.height)] } ?? NSNull(),
+@@ -835,15 +835,10 @@
+                 "rendered_18": render(image, pixels: 18, name: "status-button-18") ?? NSNull(),
+                 "rendered_36": render(image, pixels: 36, name: "status-button-36") ?? NSNull(),
+                 "rendered_54": render(image, pixels: 54, name: "status-button-54") ?? NSNull(),
+-                "template_preview_light": templatePreview(background: NSColor(srgbRed: 0.867, green: 0.898, blue: 0.925, alpha: 1),
+-                                                          tint: NSColor(srgbRed: 0.231, green: 0.231, blue: 0.239, alpha: 1),
+-                                                          name: "template-preview-light") ?? NSNull(),
+-                "template_preview_dark": templatePreview(background: NSColor(srgbRed: 0.110, green: 0.110, blue: 0.118, alpha: 1),
+-                                                         tint: NSColor(srgbRed: 0.949, green: 0.949, blue: 0.969, alpha: 1),
+-                                                         name: "template-preview-dark") ?? NSNull(),
+-                "template_preview_selected": templatePreview(background: NSColor(srgbRed: 0.290, green: 0.290, blue: 0.310, alpha: 1),
+-                                                             tint: .white,
+-                                                             name: "template-preview-selected") ?? NSNull(),
++                "grayscale_preview_light": imagePreview(background: NSColor(srgbRed: 0.867, green: 0.898, blue: 0.925, alpha: 1),
++                                                        name: "grayscale-preview-light") ?? NSNull(),
++                "grayscale_preview_dark": imagePreview(background: NSColor(srgbRed: 0.110, green: 0.110, blue: 0.118, alpha: 1),
++                                                       name: "grayscale-preview-dark") ?? NSNull(),
+                 "window": windowInfo,
+                 "status_item_window_capture": windowCapture ?? NSNull(),
+                 "screen_capture_note": "This is an offscreen status-item control render, not a real-screen capture. Automatic status-item window/AX frames are not trusted on multi-display setups; any real menu-bar crop is recorded separately and must not be inferred from this render.",

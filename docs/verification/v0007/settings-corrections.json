@@ -1,0 +1,73 @@
+{
+  "colors": {
+    "reference_active_light": {
+      "accent": "#2BCDBA",
+      "card": "#F2F3F3",
+      "content": "#F5F6F6",
+      "selected_row": "#DADADA",
+      "sidebar": "#EAEAEA"
+    },
+    "source": "docs/verification/v0007/color-samples.json + General.png samples",
+    "valora_active_light": {
+      "accent": "#2BCDBA",
+      "card": "#F2F3F3",
+      "content": "#F5F6F6",
+      "selected_row": "#DADADA",
+      "sidebar": "#EAEAEA"
+    }
+  },
+  "display_icon_mapping": {
+    "All displays": "display.2",
+    "Built-in display": "laptopcomputer",
+    "Main display": "desktopcomputer",
+    "specific external": "display"
+  },
+  "evidence": {
+    "comparison": "/Users/wangqing/code/Valora/docs/verification/v0007/general-active-comparison.png",
+    "general": "/Users/wangqing/code/Valora/docs/verification/v0007/settings/General.png",
+    "general_all_displays": "/Users/wangqing/code/Valora/docs/verification/v0007/settings/General-all-displays.png",
+    "general_hover_on": "/Users/wangqing/code/Valora/docs/verification/v0007/settings/General-hover-on.png",
+    "now_playing": "/Users/wangqing/code/Valora/docs/verification/v0007/settings/Now-Playing.png",
+    "now_playing_repeat": "/Users/wangqing/code/Valora/docs/verification/v0007/settings/Now-Playing-repeat-selected.png"
+  },
+  "generated_at": "2026-10-23T10:09:17.622798+00:00",
+  "hover_delay": {
+    "cancellation": [
+      "pointer exit",
+      "hover disabled",
+      "hover delay changed",
+      "screen/display change",
+      "stop/teardown",
+      "app termination"
+    ],
+    "default_seconds": 0,
+    "hidden_when": "hoverEnabled == false",
+    "range_seconds": [
+      0,
+      1
+    ],
+    "step": 0.05,
+    "visible_when": "hoverEnabled == true"
+  },
+  "now_playing": {
+    "extra_controls": {
+      "Copy": {
+        "available": false,
+        "reason": "system snapshot has no media URL/link; copying title is not equivalent and is not offered."
+      },
+      "Favorite": {
+        "available": false,
+        "reason": "MediaRemote adapter exposes isLiked/supportsIsLiked metadata but no favorite write command."
+      },
+      "Repeat": {
+        "available": true,
+        "reason": "adapter send command 7; payload repeatMode read; expanded player extra control uses MediaController.command(7)."
+      },
+      "Shuffle": {
+        "available": true,
+        "reason": "adapter send command 6; payload shuffleMode read; expanded player extra control uses MediaController.command(6)."
+      }
+    },
+    "title_badge_removed": "User requested removal; no title-badge row, separator, key consumer, or placeholder remains. System payload still has no Explicit/format fields."
+  }
+}

@@ -1,0 +1,21 @@
+Building for debugging...
+[Using on-disk description]
+[1 / 1]
+Build complete! (0.49秒)
+Test Suite 'Selected tests' started at 2026-10-24 00:44:07.787.
+Test Suite 'ValoraTests.xctest' started at 2026-10-24 00:44:07.788.
+Test Suite 'MultiDisplayCoordinatorTests' started at 2026-10-24 00:44:07.788.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedHoveredActivityExpiresAfterDirectScreenReset]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedHoveredActivityExpiresAfterDirectScreenReset]' passed (4.145 seconds).
+Test Suite 'MultiDisplayCoordinatorTests' passed at 2026-10-24 00:44:11.933.
+	 Executed 1 test, with 0 failures (0 unexpected) in 4.145 (4.145) seconds
+Test Suite 'ValoraTests.xctest' passed at 2026-10-24 00:44:11.934.
+	 Executed 1 test, with 0 failures (0 unexpected) in 4.145 (4.145) seconds
+Test Suite 'Selected tests' passed at 2026-10-24 00:44:11.934.
+	 Executed 1 test, with 0 failures (0 unexpected) in 4.145 (4.146) seconds
+Test Suite 'Selected tests' started at 2026-10-24 00:44:12.038.
+Test Suite 'ReferenceCoreTests.xctest' started at 2026-10-24 00:44:12.039.
+Test Suite 'ReferenceCoreTests.xctest' passed at 2026-10-24 00:44:12.039.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-10-24 00:44:12.039.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds

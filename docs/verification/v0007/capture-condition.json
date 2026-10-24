@@ -1,0 +1,6 @@
+{
+  "real_screen_menu_bar": "Not part of this settings task; Codex icon work remains untouched",
+  "reference_left": "Original Alcove active light window",
+  "reference_right": "Current Valora inactive white window in the user screenshot; not used as static color proof",
+  "v0007_capture": "Active light General/Now Playing NSHostingView render + window-chrome; sampled colors match left original"
+}
