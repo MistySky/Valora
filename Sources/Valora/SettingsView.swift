@@ -11,10 +11,20 @@ struct SettingsView: View {
     @ObservedObject var settings: RevivalSettings
     @ObservedObject var navigation: SettingsNavigation
     @ObservedObject var draft: SettingsDraft
+    @ObservedObject var permissions: AppPermissions
     @Environment(\.controlActiveState) private var active
     @Environment(\.colorScheme) private var colorScheme
     @State private var notice: String? = nil
     private var page: SettingsPage { navigation.page }
+
+    init(model: AppModel, settings: RevivalSettings, navigation: SettingsNavigation,
+         draft: SettingsDraft, permissions: AppPermissions = AppPermissions()) {
+        self.model = model
+        self.settings = settings
+        self.navigation = navigation
+        self.draft = draft
+        self.permissions = permissions
+    }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -79,12 +89,14 @@ struct SettingsView: View {
                 do {
                     try LoginItem.set(enabled)
                     let status = LoginItem.status
+                    permissions.refresh()
                     FileHandle.standardError.write(Data("login-item set \(enabled) status=\(status.rawValue)\n".utf8))
                     if status != .enabled {
                         draft.binding("launchAtLogin", false).wrappedValue = false
                         notice = "请在系统设置 → 通用 → 登录项中允许 Valora。"
                     }
                 } catch {
+                    permissions.refresh()
                     FileHandle.standardError.write(Data("login-item error \(error)\n".utf8))
                     draft.binding("launchAtLogin", false).wrappedValue = false
                     notice = "无法设置登录项：\(error.localizedDescription)"
@@ -93,11 +105,62 @@ struct SettingsView: View {
             .alert("Valora", isPresented: Binding(get: { notice != nil }, set: { if !$0 { notice = nil } })) {
                 Button("好", role: .cancel) { notice = nil }
             } message: { Text(notice ?? "") }
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+                permissions.refresh()
+            }
+            .onChange(of: permissions.bluetooth) { _, state in
+                if state != .authorized, settings.bluetoothEnabled { settings.bluetoothEnabled = false }
+            }
+            .onChange(of: permissions.audioCapture) { _, state in
+                if state == .denied || state == .restricted {
+                    if draft.value("useLiveWaveform", false) { draft.binding("useLiveWaveform", false).wrappedValue = false }
+                    LiveAudioTap.shared.stopAsync()
+                }
+            }
+            .onChange(of: permissions.loginItem) { _, state in
+                if state == .requiresApproval, draft.value("launchAtLogin", false) {
+                    draft.binding("launchAtLogin", false).wrappedValue = false
+                }
+            }
+            .onChange(of: permissions.message) { _, message in
+                if let message { notice = message }
+            }
+    }
+
+    private var bluetoothBinding: Binding<Bool> {
+        PermissionToggleRouting.make(
+            value: $settings.bluetoothEnabled,
+            authorized: permissions.bluetooth == .authorized,
+            pending: permissions.bluetoothEnablePending,
+            begin: { permissions.beginBluetoothEnable { settings.bluetoothEnabled = true } },
+            cancel: { permissions.cancelBluetoothEnable() })
+    }
+
+    private var audioBinding: Binding<Bool> {
+        let value = draft.binding("useLiveWaveform", false)
+        return PermissionToggleRouting.make(
+            value: value,
+            authorized: permissions.audioCapture == .authorized,
+            pending: permissions.audioEnablePending,
+            begin: { permissions.beginAudioEnable { value.wrappedValue = true } },
+            cancel: { permissions.cancelAudioEnable() })
+    }
+
+    private var loginBinding: Binding<Bool> {
+        let value = draft.binding("launchAtLogin", false)
+        return PermissionToggleRouting.make(
+            value: value,
+            authorized: permissions.loginItem == .enabled,
+            pending: permissions.loginEnablePending,
+            begin: { permissions.beginLoginEnable { value.wrappedValue = true } },
+            cancel: { permissions.cancelLoginEnable() })
     }
 
     private var sidebar: some View {
         VStack(alignment: .leading, spacing: 0) {
             navigationRow(.general)
+            sectionTitle("Notifications")
+            navigationRow(.connectivity)
             sectionTitle("Live Activities")
             navigationRow(.nowPlaying)
             Spacer(minLength: 0)
@@ -147,6 +210,7 @@ struct SettingsView: View {
     @ViewBuilder private var pageContent: some View {
         switch page {
         case .general: general
+        case .connectivity: connectivity
         case .nowPlaying: music
         }
     }
@@ -154,7 +218,9 @@ struct SettingsView: View {
     private var general: some View {
         Group {
             SettingsCard {
-                toggle("Launch at login", "launchAtLogin"); SettingsRule()
+                SettingsToggleRow(title: "Launch at login",
+                                  value: loginBinding,
+                                  blocked: permissions.loginBlocked); SettingsRule()
                 SettingsToggleRow(title: "Force simulated notch", value: $settings.forceSimulatedNotch); SettingsRule()
                 HStack {
                     Text(SettingsText.localized("Display on")); Spacer()
@@ -175,11 +241,21 @@ struct SettingsView: View {
         }
     }
 
+    private var connectivity: some View {
+        SettingsCard {
+            SettingsToggleRow(title: "Connectivity", value: bluetoothBinding,
+                              symbol: "headphones", blocked: permissions.bluetoothBlocked)
+            // Appearance is automatic; no 3D/Symbols tile is exposed.
+        }
+    }
+
     private var music: some View {
         SettingsCard {
             toggle("Now Playing", "enableNowPlaying", true, symbol: "play.fill"); SettingsRule()
             choices("progressStyle", "Monochrome", [("Monochrome", ""), ("Colored", ""), ("Gradient", "")], style: "progress", height: 36); SettingsRule()
-            toggle("Use live waveform", "useLiveWaveform"); SettingsRule()
+            SettingsToggleRow(title: "Use live waveform",
+                              value: audioBinding,
+                              blocked: permissions.audioBlocked); SettingsRule()
             toggle("Show lyrics", "showLyrics")
         }
     }

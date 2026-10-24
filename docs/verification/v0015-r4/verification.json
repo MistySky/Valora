@@ -1,0 +1,49 @@
+{
+  "task": "docs/pi-tasks/v0015-r4-permission-async-cancellation.md",
+  "task_sha256": "8ddfb180332f03b8d41b0d9ed896abf43de62f56d6a763051dbabe29b75fd7bb",
+  "r3_decision": "docs/verification/independent-v0015-r3/decision.md",
+  "tests": {
+    "valora": 91,
+    "reference_core": 114,
+    "total": 205
+  },
+  "qa": {
+    "connectivity": {
+      "passed": true,
+      "checks": 31
+    },
+    "lyrics": {
+      "passed": true,
+      "checks": 31
+    },
+    "music": {
+      "passed": true,
+      "checks": 74
+    },
+    "multidisplay": {
+      "passed": true,
+      "checks": 12
+    },
+    "settings": {
+      "pendingScreenshot": true,
+      "offAfterCancelScreenshot": true,
+      "handImageOnly": true
+    }
+  },
+  "artifact": {
+    "binary_sha256": "1cfeee92afd92c3f42bee98e5be02df3a81a50040e2cdfe6943ea9f7aea23d2c",
+    "file_count": 29,
+    "bytes": 6589495,
+    "codesign": "--prepared:/Users/wangqing/code/Valora/dist/Valora.app/Contents/Frameworks/MediaRemoteAdapter.framework\n--validated:/Users/wangqing/code/Valora/dist/Valora.app/Contents/Frameworks/MediaRemoteAdapter.framework\ndist/Valora.app: valid on disk\ndist/Valora.app: satisfies its Designated Requirement"
+  },
+  "fixes": [
+    "login callback generation; stale callback cannot complete new intent",
+    "audio refresh keeps pending until async callback; no old-denied clear",
+    "audio cancel/repeat activation/stale callback tests",
+    "first registration requiresApproval ownership and injected unregister",
+    "hand Image/switch-only interaction preserved"
+  ],
+  "limitations": [
+    "No real OS permission dialog/TCC/login item write, AirPods, sound, 3D or physical display verification."
+  ]
+}

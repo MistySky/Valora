@@ -1,0 +1,1707 @@
+{
+  "checks" : [
+    {
+      "name" : "fake lyrics reached ready",
+      "passed" : true
+    },
+    {
+      "name" : "compact lyric row is visible",
+      "passed" : true
+    },
+    {
+      "name" : "compact play produced Timeline callbacks",
+      "passed" : true
+    },
+    {
+      "name" : "compact play advanced elapsed",
+      "passed" : true
+    },
+    {
+      "name" : "compact play crossed short\/long lines",
+      "passed" : true
+    },
+    {
+      "name" : "compact play advanced real words",
+      "passed" : true
+    },
+    {
+      "name" : "stable play did not repeat the lyric request",
+      "passed" : true
+    },
+    {
+      "name" : "compact play had display-link callbacks",
+      "passed" : true
+    },
+    {
+      "name" : "expanded player keeps lyric row",
+      "passed" : true
+    },
+    {
+      "name" : "expanded timeline keeps refreshing",
+      "passed" : true
+    },
+    {
+      "name" : "expanded does not mount a second compact lyric Timeline",
+      "passed" : true
+    },
+    {
+      "name" : "expanded lyric survives volume-row hide",
+      "passed" : true
+    },
+    {
+      "name" : "collapse restores compact lyric row",
+      "passed" : true
+    },
+    {
+      "name" : "seek to long line selects timed words",
+      "passed" : true
+    },
+    {
+      "name" : "backward seek selects short line",
+      "passed" : true
+    },
+    {
+      "name" : "forward seek selects later short line",
+      "passed" : true
+    },
+    {
+      "name" : "resume after seek refreshes timeline",
+      "passed" : true
+    },
+    {
+      "name" : "pause stops Timeline callbacks before mature idle",
+      "passed" : true
+    },
+    {
+      "name" : "pause preserves selected lyric line before mature idle",
+      "passed" : true
+    },
+    {
+      "name" : "pause has no Timeline refresh after idle transition",
+      "passed" : true
+    },
+    {
+      "name" : "paused activity follows mature idle hide",
+      "passed" : true
+    },
+    {
+      "name" : "line-only long LRC has no fake words",
+      "passed" : true
+    },
+    {
+      "name" : "line-only long LRC still refreshes timeline",
+      "passed" : true
+    },
+    {
+      "name" : "line-only long LRC creates no word transitions",
+      "passed" : true
+    },
+    {
+      "name" : "hidden notch panel is not visible",
+      "passed" : true
+    },
+    {
+      "name" : "hide stops Timeline callbacks",
+      "passed" : true
+    },
+    {
+      "name" : "showing notch restores compact lyrics",
+      "passed" : true
+    },
+    {
+      "name" : "lyrics-off removes the compact row",
+      "passed" : true
+    },
+    {
+      "name" : "lyrics-off stops Timeline callbacks",
+      "passed" : true
+    },
+    {
+      "name" : "lyrics-on restores ready state",
+      "passed" : true
+    },
+    {
+      "name" : "active screen moved to injected external display",
+      "passed" : true
+    },
+    {
+      "name" : "one passive panel remains",
+      "passed" : true
+    },
+    {
+      "name" : "active screen still refreshes lyrics",
+      "passed" : true
+    },
+    {
+      "name" : "passive screen performs no lyric Timeline callbacks",
+      "passed" : true
+    },
+    {
+      "name" : "quick A→B→A starts all requests",
+      "passed" : true
+    },
+    {
+      "name" : "quick A→B→A cancels stale requests",
+      "passed" : true
+    },
+    {
+      "name" : "quick A→B→A leaves no provider request in flight",
+      "passed" : true
+    },
+    {
+      "name" : "final A resolves to ready lyrics",
+      "passed" : true
+    },
+    {
+      "name" : "lyrics controller owns no dangling request task",
+      "passed" : true
+    }
+  ],
+  "environment" : {
+    "hostName" : "wq-macbook-pro.local",
+    "os" : "Version 27.0.1 (Build 26A434)",
+    "physicalMemoryBytes" : 34359738368,
+    "processorCount" : 10
+  },
+  "initialProvider" : {
+    "calls" : 1,
+    "cancellations" : 0,
+    "completions" : 1,
+    "inFlight" : 0
+  },
+  "limitations" : [
+    "CADisplayLink callbacks are not equal to displayed\/rendered frames; no compositor frame counter or human smoothness claim.",
+    "Injected two-screen display is not physical dual-screen verification.",
+    "Fake word timing is not real QQ voice alignment; real alignment remains for user hardware\/network testing.",
+    "CPU\/RSS are process-wide and hardware\/OS specific; no universal threshold is asserted."
+  ],
+  "method" : {
+    "displayLink" : "NSWindow.displayLink on the audit NSWindow; scheduling callbacks, not rendered frames",
+    "measurementOverhead" : "one 1s MainActor resource sample, one display-link callback stream, one disabled-by-default Timeline probe branch; baseline-play-no-probe is recorded separately",
+    "media" : "fake AppModel; no MediaController\/audio\/network started",
+    "phasesTotalSeconds" : 159,
+    "resourceSampler" : "getrusage(RUSAGE_SELF) + mach_task_basic_info.resident_size, 1s samples",
+    "timelineProbe" : "SwiftUI TimelineView body callback, 30Hz local lyric timeline"
+  },
+  "passed" : true,
+  "pauseDiagnostics" : {
+    "after" : "nil",
+    "before" : "第二句短句",
+    "lastTickOffset" : 0,
+    "ticks" : 0
+  },
+  "phases" : [
+    {
+      "actualSeconds" : 10.04512758331839,
+      "display" : {
+        "callbacks" : 0,
+        "maxGap" : 0,
+        "meanGap" : 0,
+        "minGap" : 0,
+        "note" : "CADisplayLink callbacks for the audit NSWindow; not rendered-frame count"
+      },
+      "name" : "baseline-play-no-probe",
+      "provider" : {
+        "calls" : 0,
+        "cancellations" : 0,
+        "completions" : 0,
+        "inFlight" : 0
+      },
+      "requestedSeconds" : 10,
+      "resources" : {
+        "cpuPercent" : 6.9419128250598119,
+        "cpuSeconds" : 0.69732400000000005,
+        "rssMaxBytes" : 67158016,
+        "rssMeanBytes" : 66028885,
+        "rssMinBytes" : 64192512,
+        "sampleCount" : 12,
+        "sampleIntervalSeconds" : 1
+      },
+      "samples" : [
+        {
+          "cpuSeconds" : 0.22548699999999999,
+          "elapsedSeconds" : 0,
+          "rssBytes" : 65978368,
+          "wallSeconds" : 272355.74357687501
+        },
+        {
+          "cpuSeconds" : 0.29241800000000001,
+          "elapsedSeconds" : 1.0661894583608955,
+          "rssBytes" : 65978368,
+          "wallSeconds" : 272356.80976633338
+        },
+        {
+          "cpuSeconds" : 0.35180800000000001,
+          "elapsedSeconds" : 2.09587583335815,
+          "rssBytes" : 65994752,
+          "wallSeconds" : 272357.83945270837
+        },
+        {
+          "cpuSeconds" : 0.41227400000000003,
+          "elapsedSeconds" : 3.1129702083417214,
+          "rssBytes" : 65994752,
+          "wallSeconds" : 272358.85654708336
+        },
+        {
+          "cpuSeconds" : 0.49829899999999999,
+          "elapsedSeconds" : 4.179567874991335,
+          "rssBytes" : 67158016,
+          "wallSeconds" : 272359.92314475001
+        },
+        {
+          "cpuSeconds" : 0.57251600000000002,
+          "elapsedSeconds" : 5.2373546250164509,
+          "rssBytes" : 67158016,
+          "wallSeconds" : 272360.98093150003
+        },
+        {
+          "cpuSeconds" : 0.64763399999999993,
+          "elapsedSeconds" : 6.2551038333331235,
+          "rssBytes" : 67158016,
+          "wallSeconds" : 272361.99868070835
+        },
+        {
+          "cpuSeconds" : 0.72262000000000004,
+          "elapsedSeconds" : 7.3074843750218861,
+          "rssBytes" : 67158016,
+          "wallSeconds" : 272363.05106125004
+        },
+        {
+          "cpuSeconds" : 0.80353399999999997,
+          "elapsedSeconds" : 8.3117989583406597,
+          "rssBytes" : 67158016,
+          "wallSeconds" : 272364.05537583336
+        },
+        {
+          "cpuSeconds" : 0.86772000000000005,
+          "elapsedSeconds" : 9.3127077083336189,
+          "rssBytes" : 64192512,
+          "wallSeconds" : 272365.05628458335
+        },
+        {
+          "cpuSeconds" : 0.922767,
+          "elapsedSeconds" : 10.045073208340909,
+          "rssBytes" : 64208896,
+          "wallSeconds" : 272365.78865008336
+        },
+        {
+          "cpuSeconds" : 0.92281100000000005,
+          "elapsedSeconds" : 10.04512758331839,
+          "rssBytes" : 64208896,
+          "wallSeconds" : 272365.78870445833
+        }
+      ],
+      "timeline" : {
+        "activeTicks" : 0,
+        "firstElapsed" : 0,
+        "firstTickOffset" : 0,
+        "lastElapsed" : 0,
+        "lastTickOffset" : 0,
+        "lineChanges" : 0,
+        "maxInterval" : 0,
+        "meanInterval" : 0,
+        "minInterval" : 0,
+        "passiveTicks" : 0,
+        "roleTicks" : {
+
+        },
+        "wordChanges" : 0
+      }
+    },
+    {
+      "actualSeconds" : 30.038738291652407,
+      "display" : {
+        "callbacks" : 1797,
+        "maxGap" : 0.034912333358079195,
+        "meanGap" : 0.016713024290087468,
+        "minGap" : 0.015087541658431292,
+        "note" : "CADisplayLink callbacks for the audit NSWindow; not rendered-frame count"
+      },
+      "name" : "compact-play-word-sync",
+      "provider" : {
+        "calls" : 0,
+        "cancellations" : 0,
+        "completions" : 0,
+        "inFlight" : 0
+      },
+      "requestedSeconds" : 30,
+      "resources" : {
+        "cpuPercent" : 6.8177231018025681,
+        "cpuSeconds" : 2.0479580000000004,
+        "rssMaxBytes" : 67534848,
+        "rssMeanBytes" : 65020168,
+        "rssMinBytes" : 64438272,
+        "sampleCount" : 31,
+        "sampleIntervalSeconds" : 1
+      },
+      "samples" : [
+        {
+          "cpuSeconds" : 0.99029,
+          "elapsedSeconds" : 0,
+          "rssBytes" : 64471040,
+          "wallSeconds" : 272366.59683058335
+        },
+        {
+          "cpuSeconds" : 1.0778479999999999,
+          "elapsedSeconds" : 1.0587299999897368,
+          "rssBytes" : 64471040,
+          "wallSeconds" : 272367.65556058334
+        },
+        {
+          "cpuSeconds" : 1.1599249999999999,
+          "elapsedSeconds" : 2.1042255000211298,
+          "rssBytes" : 64487424,
+          "wallSeconds" : 272368.70105608337
+        },
+        {
+          "cpuSeconds" : 1.240912,
+          "elapsedSeconds" : 3.1814266250003129,
+          "rssBytes" : 64487424,
+          "wallSeconds" : 272369.77825720835
+        },
+        {
+          "cpuSeconds" : 1.316384,
+          "elapsedSeconds" : 4.2245061666471884,
+          "rssBytes" : 64487424,
+          "wallSeconds" : 272370.82133675
+        },
+        {
+          "cpuSeconds" : 1.3986019999999999,
+          "elapsedSeconds" : 5.2596055833273567,
+          "rssBytes" : 64487424,
+          "wallSeconds" : 272371.85643616668
+        },
+        {
+          "cpuSeconds" : 1.4769410000000001,
+          "elapsedSeconds" : 6.3261356250150129,
+          "rssBytes" : 64438272,
+          "wallSeconds" : 272372.92296620837
+        },
+        {
+          "cpuSeconds" : 1.55135,
+          "elapsedSeconds" : 7.3927194583229721,
+          "rssBytes" : 64438272,
+          "wallSeconds" : 272373.98955004168
+        },
+        {
+          "cpuSeconds" : 1.6331279999999999,
+          "elapsedSeconds" : 8.4384167916723527,
+          "rssBytes" : 64667648,
+          "wallSeconds" : 272375.03524737502
+        },
+        {
+          "cpuSeconds" : 1.7039939999999998,
+          "elapsedSeconds" : 9.4601512916851789,
+          "rssBytes" : 64667648,
+          "wallSeconds" : 272376.05698187504
+        },
+        {
+          "cpuSeconds" : 1.7740089999999999,
+          "elapsedSeconds" : 10.52654337498825,
+          "rssBytes" : 64667648,
+          "wallSeconds" : 272377.12337395834
+        },
+        {
+          "cpuSeconds" : 1.8405040000000001,
+          "elapsedSeconds" : 11.593041000014637,
+          "rssBytes" : 64684032,
+          "wallSeconds" : 272378.18987158337
+        },
+        {
+          "cpuSeconds" : 1.908064,
+          "elapsedSeconds" : 12.659941375022754,
+          "rssBytes" : 64684032,
+          "wallSeconds" : 272379.25677195837
+        },
+        {
+          "cpuSeconds" : 1.9755469999999999,
+          "elapsedSeconds" : 13.669467708328739,
+          "rssBytes" : 64684032,
+          "wallSeconds" : 272380.26629829168
+        },
+        {
+          "cpuSeconds" : 2.042357,
+          "elapsedSeconds" : 14.735302500019316,
+          "rssBytes" : 64684032,
+          "wallSeconds" : 272381.33213308337
+        },
+        {
+          "cpuSeconds" : 2.1058940000000002,
+          "elapsedSeconds" : 15.80026641668519,
+          "rssBytes" : 64700416,
+          "wallSeconds" : 272382.39709700004
+        },
+        {
+          "cpuSeconds" : 2.1733709999999999,
+          "elapsedSeconds" : 16.859585041645914,
+          "rssBytes" : 64716800,
+          "wallSeconds" : 272383.456415625
+        },
+        {
+          "cpuSeconds" : 2.2389939999999999,
+          "elapsedSeconds" : 17.8597209166619,
+          "rssBytes" : 64716800,
+          "wallSeconds" : 272384.45655150001
+        },
+        {
+          "cpuSeconds" : 2.3123480000000001,
+          "elapsedSeconds" : 18.922073166642804,
+          "rssBytes" : 64716800,
+          "wallSeconds" : 272385.51890374999
+        },
+        {
+          "cpuSeconds" : 2.3829020000000001,
+          "elapsedSeconds" : 19.988614708359819,
+          "rssBytes" : 64716800,
+          "wallSeconds" : 272386.58544529171
+        },
+        {
+          "cpuSeconds" : 2.4471990000000003,
+          "elapsedSeconds" : 21.053881375002675,
+          "rssBytes" : 64749568,
+          "wallSeconds" : 272387.65071195835
+        },
+        {
+          "cpuSeconds" : 2.5128560000000002,
+          "elapsedSeconds" : 22.058249666646589,
+          "rssBytes" : 64765952,
+          "wallSeconds" : 272388.65508025
+        },
+        {
+          "cpuSeconds" : 2.581445,
+          "elapsedSeconds" : 23.12387595832115,
+          "rssBytes" : 64765952,
+          "wallSeconds" : 272389.72070654167
+        },
+        {
+          "cpuSeconds" : 2.657216,
+          "elapsedSeconds" : 24.204722750000656,
+          "rssBytes" : 64765952,
+          "wallSeconds" : 272390.80155333335
+        },
+        {
+          "cpuSeconds" : 2.7221649999999999,
+          "elapsedSeconds" : 25.250149166677147,
+          "rssBytes" : 64765952,
+          "wallSeconds" : 272391.84697975003
+        },
+        {
+          "cpuSeconds" : 2.7851679999999996,
+          "elapsedSeconds" : 26.260085708345287,
+          "rssBytes" : 64798720,
+          "wallSeconds" : 272392.8569162917
+        },
+        {
+          "cpuSeconds" : 2.8588629999999999,
+          "elapsedSeconds" : 27.316284583357628,
+          "rssBytes" : 64798720,
+          "wallSeconds" : 272393.91311516671
+        },
+        {
+          "cpuSeconds" : 2.9330240000000001,
+          "elapsedSeconds" : 28.382350041647442,
+          "rssBytes" : 67534848,
+          "wallSeconds" : 272394.979180625
+        },
+        {
+          "cpuSeconds" : 3.0007380000000001,
+          "elapsedSeconds" : 29.409434958302882,
+          "rssBytes" : 67534848,
+          "wallSeconds" : 272396.00626554166
+        },
+        {
+          "cpuSeconds" : 3.0382220000000002,
+          "elapsedSeconds" : 30.038724416692276,
+          "rssBytes" : 67534848,
+          "wallSeconds" : 272396.63555500004
+        },
+        {
+          "cpuSeconds" : 3.0382480000000003,
+          "elapsedSeconds" : 30.038738291652407,
+          "rssBytes" : 67534848,
+          "wallSeconds" : 272396.635568875
+        }
+      ],
+      "timeline" : {
+        "activeTicks" : 901,
+        "firstElapsed" : 12.152830123901367,
+        "firstTickOffset" : 0.016183083294890821,
+        "lastElapsed" : 42.152801513671875,
+        "lastTickOffset" : 30.015150166640524,
+        "lineChanges" : 3,
+        "maxInterval" : 0.04408295830944553,
+        "meanInterval" : 0.033332185648161816,
+        "minInterval" : 0.019050750008318573,
+        "passiveTicks" : 0,
+        "roleTicks" : {
+          "active" : 901
+        },
+        "wordChanges" : 6
+      }
+    },
+    {
+      "actualSeconds" : 5.0029294166597538,
+      "display" : {
+        "callbacks" : 298,
+        "maxGap" : 0.035819708369672298,
+        "meanGap" : 0.016779296717101627,
+        "minGap" : 0.014180166646838188,
+        "note" : "CADisplayLink callbacks for the audit NSWindow; not rendered-frame count"
+      },
+      "name" : "expanded-with-volume",
+      "provider" : {
+        "calls" : 0,
+        "cancellations" : 0,
+        "completions" : 0,
+        "inFlight" : 0
+      },
+      "requestedSeconds" : 5,
+      "resources" : {
+        "cpuPercent" : 7.876425333681647,
+        "cpuSeconds" : 0.39405200000000029,
+        "rssMaxBytes" : 72237056,
+        "rssMeanBytes" : 72148114,
+        "rssMinBytes" : 72089600,
+        "sampleCount" : 7,
+        "sampleIntervalSeconds" : 1
+      },
+      "samples" : [
+        {
+          "cpuSeconds" : 3.2983929999999999,
+          "elapsedSeconds" : 0,
+          "rssBytes" : 72171520,
+          "wallSeconds" : 272398.05354175001
+        },
+        {
+          "cpuSeconds" : 3.3738429999999999,
+          "elapsedSeconds" : 1.0205602500354871,
+          "rssBytes" : 72171520,
+          "wallSeconds" : 272399.07410200004
+        },
+        {
+          "cpuSeconds" : 3.4447199999999998,
+          "elapsedSeconds" : 2.0869922083220445,
+          "rssBytes" : 72187904,
+          "wallSeconds" : 272400.14053395833
+        },
+        {
+          "cpuSeconds" : 3.5349889999999999,
+          "elapsedSeconds" : 3.1521415416500531,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272401.20568329166
+        },
+        {
+          "cpuSeconds" : 3.6222009999999996,
+          "elapsedSeconds" : 4.2039496666984633,
+          "rssBytes" : 72089600,
+          "wallSeconds" : 272402.25749141671
+        },
+        {
+          "cpuSeconds" : 3.6924109999999999,
+          "elapsedSeconds" : 5.0028955416637473,
+          "rssBytes" : 72089600,
+          "wallSeconds" : 272403.05643729167
+        },
+        {
+          "cpuSeconds" : 3.6924450000000002,
+          "elapsedSeconds" : 5.0029294166597538,
+          "rssBytes" : 72089600,
+          "wallSeconds" : 272403.05647116667
+        }
+      ],
+      "timeline" : {
+        "activeTicks" : 150,
+        "firstElapsed" : 2.6247447252273561,
+        "firstTickOffset" : 0.0085814999765716493,
+        "lastElapsed" : 7.5914066553115847,
+        "lastTickOffset" : 4.975577000004705,
+        "lineChanges" : 2,
+        "maxInterval" : 0.045820916711818427,
+        "meanInterval" : 0.033335540268645193,
+        "minInterval" : 0.020700124965514988,
+        "passiveTicks" : 0,
+        "roleTicks" : {
+          "expanded" : 150
+        },
+        "wordChanges" : 2
+      }
+    },
+    {
+      "actualSeconds" : 5.0395347499870695,
+      "display" : {
+        "callbacks" : 302,
+        "maxGap" : 0.016666625044308603,
+        "meanGap" : 0.01666662500002437,
+        "minGap" : 0.016666624986100942,
+        "note" : "CADisplayLink callbacks for the audit NSWindow; not rendered-frame count"
+      },
+      "name" : "resumed-after-seek",
+      "provider" : {
+        "calls" : 0,
+        "cancellations" : 0,
+        "completions" : 0,
+        "inFlight" : 0
+      },
+      "requestedSeconds" : 5,
+      "resources" : {
+        "cpuPercent" : 6.4602590546842782,
+        "cpuSeconds" : 0.32556700000000038,
+        "rssMaxBytes" : 72105984,
+        "rssMeanBytes" : 72105984,
+        "rssMinBytes" : 72105984,
+        "sampleCount" : 7,
+        "sampleIntervalSeconds" : 1
+      },
+      "samples" : [
+        {
+          "cpuSeconds" : 4.0289719999999996,
+          "elapsedSeconds" : 0,
+          "rssBytes" : 72105984,
+          "wallSeconds" : 272405.71584833338
+        },
+        {
+          "cpuSeconds" : 4.0926640000000001,
+          "elapsedSeconds" : 1.0239155833260156,
+          "rssBytes" : 72105984,
+          "wallSeconds" : 272406.7397639167
+        },
+        {
+          "cpuSeconds" : 4.1615729999999997,
+          "elapsedSeconds" : 2.0852973749861121,
+          "rssBytes" : 72105984,
+          "wallSeconds" : 272407.80114570836
+        },
+        {
+          "cpuSeconds" : 4.2282039999999999,
+          "elapsedSeconds" : 3.1169848749996163,
+          "rssBytes" : 72105984,
+          "wallSeconds" : 272408.83283320838
+        },
+        {
+          "cpuSeconds" : 4.2952139999999996,
+          "elapsedSeconds" : 4.1401355416164733,
+          "rssBytes" : 72105984,
+          "wallSeconds" : 272409.85598387499
+        },
+        {
+          "cpuSeconds" : 4.3545100000000003,
+          "elapsedSeconds" : 5.0395049583166838,
+          "rssBytes" : 72105984,
+          "wallSeconds" : 272410.75535329169
+        },
+        {
+          "cpuSeconds" : 4.3545389999999999,
+          "elapsedSeconds" : 5.0395347499870695,
+          "rssBytes" : 72105984,
+          "wallSeconds" : 272410.75538308336
+        }
+      ],
+      "timeline" : {
+        "activeTicks" : 151,
+        "firstElapsed" : 22.294825267791747,
+        "firstTickOffset" : 0.029592666658572853,
+        "lastElapsed" : 27.294820499420165,
+        "lastTickOffset" : 5.0294859582791105,
+        "lineChanges" : 1,
+        "maxInterval" : 0.037694666651077569,
+        "meanInterval" : 0.033332621944136914,
+        "minInterval" : 0.028416583314538002,
+        "passiveTicks" : 0,
+        "roleTicks" : {
+          "active" : 151
+        },
+        "wordChanges" : 1
+      }
+    },
+    {
+      "actualSeconds" : 1.0649444166338071,
+      "display" : {
+        "callbacks" : 64,
+        "maxGap" : 0.016666625044308603,
+        "meanGap" : 0.016666624999959908,
+        "minGap" : 0.016666624986100942,
+        "note" : "CADisplayLink callbacks for the audit NSWindow; not rendered-frame count"
+      },
+      "name" : "paused-before-idle",
+      "provider" : {
+        "calls" : 0,
+        "cancellations" : 0,
+        "completions" : 0,
+        "inFlight" : 0
+      },
+      "requestedSeconds" : 1,
+      "resources" : {
+        "cpuPercent" : 1.3215713214861906,
+        "cpuSeconds" : 0.014074000000000808,
+        "rssMaxBytes" : 72269824,
+        "rssMeanBytes" : 72269824,
+        "rssMinBytes" : 72269824,
+        "sampleCount" : 3,
+        "sampleIntervalSeconds" : 1
+      },
+      "samples" : [
+        {
+          "cpuSeconds" : 4.4212229999999995,
+          "elapsedSeconds" : 0,
+          "rssBytes" : 72269824,
+          "wallSeconds" : 272411.84283162502
+        },
+        {
+          "cpuSeconds" : 4.4352539999999996,
+          "elapsedSeconds" : 1.0649009166518226,
+          "rssBytes" : 72269824,
+          "wallSeconds" : 272412.90773254167
+        },
+        {
+          "cpuSeconds" : 4.4352970000000003,
+          "elapsedSeconds" : 1.0649444166338071,
+          "rssBytes" : 72269824,
+          "wallSeconds" : 272412.90777604165
+        }
+      ],
+      "timeline" : {
+        "activeTicks" : 0,
+        "firstElapsed" : 0,
+        "firstTickOffset" : 0,
+        "lastElapsed" : 0,
+        "lastTickOffset" : 0,
+        "lineChanges" : 0,
+        "maxInterval" : 0,
+        "meanInterval" : 0,
+        "minInterval" : 0,
+        "passiveTicks" : 0,
+        "roleTicks" : {
+
+        },
+        "wordChanges" : 0
+      }
+    },
+    {
+      "actualSeconds" : 30.032298624981195,
+      "display" : {
+        "callbacks" : 1801,
+        "maxGap" : 0.035392083285842091,
+        "meanGap" : 0.016685215833325249,
+        "minGap" : 0.014607791672460735,
+        "note" : "CADisplayLink callbacks for the audit NSWindow; not rendered-frame count"
+      },
+      "name" : "paused-through-idle",
+      "provider" : {
+        "calls" : 0,
+        "cancellations" : 0,
+        "completions" : 0,
+        "inFlight" : 0
+      },
+      "requestedSeconds" : 30,
+      "resources" : {
+        "cpuPercent" : 1.4255319093154093,
+        "cpuSeconds" : 0.42811999999999983,
+        "rssMaxBytes" : 72237056,
+        "rssMeanBytes" : 72217500,
+        "rssMinBytes" : 72155136,
+        "sampleCount" : 31,
+        "sampleIntervalSeconds" : 1
+      },
+      "samples" : [
+        {
+          "cpuSeconds" : 4.5970279999999999,
+          "elapsedSeconds" : 0,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272414.76311804168
+        },
+        {
+          "cpuSeconds" : 4.6383019999999995,
+          "elapsedSeconds" : 1.0663695833645761,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272415.82948762504
+        },
+        {
+          "cpuSeconds" : 4.6497390000000003,
+          "elapsedSeconds" : 2.1318062083446421,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272416.89492425002
+        },
+        {
+          "cpuSeconds" : 4.6643699999999999,
+          "elapsedSeconds" : 3.1981181250303052,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272417.96123616671
+        },
+        {
+          "cpuSeconds" : 4.6785030000000001,
+          "elapsedSeconds" : 4.2364752083085477,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272418.99959324999
+        },
+        {
+          "cpuSeconds" : 4.6930080000000007,
+          "elapsedSeconds" : 5.3118629999808036,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272420.07498104166
+        },
+        {
+          "cpuSeconds" : 4.706124,
+          "elapsedSeconds" : 6.3763446666416712,
+          "rssBytes" : 72204288,
+          "wallSeconds" : 272421.13946270832
+        },
+        {
+          "cpuSeconds" : 4.7198480000000007,
+          "elapsedSeconds" : 7.4395918333320878,
+          "rssBytes" : 72220672,
+          "wallSeconds" : 272422.20270987501
+        },
+        {
+          "cpuSeconds" : 4.731592,
+          "elapsedSeconds" : 8.5056835416471586,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272423.26880158333
+        },
+        {
+          "cpuSeconds" : 4.7428129999999999,
+          "elapsedSeconds" : 9.5714010000228882,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272424.3345190417
+        },
+        {
+          "cpuSeconds" : 4.7576419999999997,
+          "elapsedSeconds" : 10.578581375011709,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272425.34169941669
+        },
+        {
+          "cpuSeconds" : 4.7715290000000001,
+          "elapsedSeconds" : 11.590405083319638,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272426.353523125
+        },
+        {
+          "cpuSeconds" : 4.7850239999999999,
+          "elapsedSeconds" : 12.657148416677956,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272427.42026645836
+        },
+        {
+          "cpuSeconds" : 4.8005589999999998,
+          "elapsedSeconds" : 13.723402291652746,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272428.48652033333
+        },
+        {
+          "cpuSeconds" : 4.8141889999999998,
+          "elapsedSeconds" : 14.787563999998383,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272429.55068204168
+        },
+        {
+          "cpuSeconds" : 4.8292760000000001,
+          "elapsedSeconds" : 15.829842166684102,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272430.59296020836
+        },
+        {
+          "cpuSeconds" : 4.8434889999999999,
+          "elapsedSeconds" : 16.896642874984536,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272431.65976091666
+        },
+        {
+          "cpuSeconds" : 4.8582339999999995,
+          "elapsedSeconds" : 17.954444749979302,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272432.71756279166
+        },
+        {
+          "cpuSeconds" : 4.8726229999999999,
+          "elapsedSeconds" : 19.012321291666012,
+          "rssBytes" : 72237056,
+          "wallSeconds" : 272433.77543933335
+        },
+        {
+          "cpuSeconds" : 4.8880720000000002,
+          "elapsedSeconds" : 20.073491041664965,
+          "rssBytes" : 72187904,
+          "wallSeconds" : 272434.83660908334
+        },
+        {
+          "cpuSeconds" : 4.9037769999999998,
+          "elapsedSeconds" : 21.139900458336342,
+          "rssBytes" : 72187904,
+          "wallSeconds" : 272435.90301850002
+        },
+        {
+          "cpuSeconds" : 4.9173419999999997,
+          "elapsedSeconds" : 22.206558083358686,
+          "rssBytes" : 72187904,
+          "wallSeconds" : 272436.96967612504
+        },
+        {
+          "cpuSeconds" : 4.9323779999999999,
+          "elapsedSeconds" : 23.244857541692909,
+          "rssBytes" : 72204288,
+          "wallSeconds" : 272438.00797558337
+        },
+        {
+          "cpuSeconds" : 4.9460839999999999,
+          "elapsedSeconds" : 24.307425374980085,
+          "rssBytes" : 72204288,
+          "wallSeconds" : 272439.07054341666
+        },
+        {
+          "cpuSeconds" : 4.9596169999999997,
+          "elapsedSeconds" : 25.374270625005011,
+          "rssBytes" : 72204288,
+          "wallSeconds" : 272440.13738866668
+        },
+        {
+          "cpuSeconds" : 4.9755409999999998,
+          "elapsedSeconds" : 26.43861291668145,
+          "rssBytes" : 72204288,
+          "wallSeconds" : 272441.20173095836
+        },
+        {
+          "cpuSeconds" : 4.9897429999999998,
+          "elapsedSeconds" : 27.505245083360933,
+          "rssBytes" : 72204288,
+          "wallSeconds" : 272442.26836312504
+        },
+        {
+          "cpuSeconds" : 5.0039610000000003,
+          "elapsedSeconds" : 28.572236375010107,
+          "rssBytes" : 72204288,
+          "wallSeconds" : 272443.33535441669
+        },
+        {
+          "cpuSeconds" : 5.0188980000000001,
+          "elapsedSeconds" : 29.639026416698471,
+          "rssBytes" : 72155136,
+          "wallSeconds" : 272444.40214445838
+        },
+        {
+          "cpuSeconds" : 5.025137,
+          "elapsedSeconds" : 30.032287291658577,
+          "rssBytes" : 72171520,
+          "wallSeconds" : 272444.79540533334
+        },
+        {
+          "cpuSeconds" : 5.0251479999999997,
+          "elapsedSeconds" : 30.032298624981195,
+          "rssBytes" : 72171520,
+          "wallSeconds" : 272444.79541666666
+        }
+      ],
+      "timeline" : {
+        "activeTicks" : 0,
+        "firstElapsed" : 0,
+        "firstTickOffset" : 0,
+        "lastElapsed" : 0,
+        "lastTickOffset" : 0,
+        "lineChanges" : 0,
+        "maxInterval" : 0,
+        "meanInterval" : 0,
+        "minInterval" : 0,
+        "passiveTicks" : 0,
+        "roleTicks" : {
+
+        },
+        "wordChanges" : 0
+      }
+    },
+    {
+      "actualSeconds" : 8.0290043333661743,
+      "display" : {
+        "callbacks" : 482,
+        "maxGap" : 0.016666625044308603,
+        "meanGap" : 0.016666624999896521,
+        "minGap" : 0.016666624986100942,
+        "note" : "CADisplayLink callbacks for the audit NSWindow; not rendered-frame count"
+      },
+      "name" : "line-only-long",
+      "provider" : {
+        "calls" : 0,
+        "cancellations" : 0,
+        "completions" : 0,
+        "inFlight" : 0
+      },
+      "requestedSeconds" : 8,
+      "resources" : {
+        "cpuPercent" : 6.8023378406998694,
+        "cpuSeconds" : 0.54615999999999953,
+        "rssMaxBytes" : 72400896,
+        "rssMeanBytes" : 72392704,
+        "rssMinBytes" : 72384512,
+        "sampleCount" : 10,
+        "sampleIntervalSeconds" : 1
+      },
+      "samples" : [
+        {
+          "cpuSeconds" : 5.2005800000000004,
+          "elapsedSeconds" : 0,
+          "rssBytes" : 72384512,
+          "wallSeconds" : 272446.12226545834
+        },
+        {
+          "cpuSeconds" : 5.2581899999999999,
+          "elapsedSeconds" : 1.0622127500246279,
+          "rssBytes" : 72384512,
+          "wallSeconds" : 272447.18447820836
+        },
+        {
+          "cpuSeconds" : 5.3338599999999996,
+          "elapsedSeconds" : 2.1270472083706409,
+          "rssBytes" : 72384512,
+          "wallSeconds" : 272448.24931266671
+        },
+        {
+          "cpuSeconds" : 5.3999540000000001,
+          "elapsedSeconds" : 3.1416819583391771,
+          "rssBytes" : 72384512,
+          "wallSeconds" : 272449.26394741668
+        },
+        {
+          "cpuSeconds" : 5.4778500000000001,
+          "elapsedSeconds" : 4.2011630000197329,
+          "rssBytes" : 72384512,
+          "wallSeconds" : 272450.32342845836
+        },
+        {
+          "cpuSeconds" : 5.5522580000000001,
+          "elapsedSeconds" : 5.2128937499946915,
+          "rssBytes" : 72400896,
+          "wallSeconds" : 272451.33515920833
+        },
+        {
+          "cpuSeconds" : 5.6234990000000007,
+          "elapsedSeconds" : 6.2217969166813418,
+          "rssBytes" : 72400896,
+          "wallSeconds" : 272452.34406237502
+        },
+        {
+          "cpuSeconds" : 5.7009650000000001,
+          "elapsedSeconds" : 7.2915684166946448,
+          "rssBytes" : 72400896,
+          "wallSeconds" : 272453.41383387503
+        },
+        {
+          "cpuSeconds" : 5.7467259999999998,
+          "elapsedSeconds" : 8.0289892083383165,
+          "rssBytes" : 72400896,
+          "wallSeconds" : 272454.15125466668
+        },
+        {
+          "cpuSeconds" : 5.74674,
+          "elapsedSeconds" : 8.0290043333661743,
+          "rssBytes" : 72400896,
+          "wallSeconds" : 272454.15126979171
+        }
+      ],
+      "timeline" : {
+        "activeTicks" : 241,
+        "firstElapsed" : 41.577767968177795,
+        "firstTickOffset" : 0.022594666690565646,
+        "lastElapsed" : 49.577760338783264,
+        "lastTickOffset" : 8.0229474166408181,
+        "lineChanges" : 1,
+        "maxInterval" : 0.043712750019039959,
+        "meanInterval" : 0.033334803124792721,
+        "minInterval" : 0.022479416627902538,
+        "passiveTicks" : 0,
+        "roleTicks" : {
+          "active" : 241
+        },
+        "wordChanges" : 0
+      }
+    },
+    {
+      "actualSeconds" : 30.054510458314326,
+      "display" : {
+        "callbacks" : 0,
+        "maxGap" : 0,
+        "meanGap" : 0,
+        "minGap" : 0,
+        "note" : "CADisplayLink callbacks for the audit NSWindow; not rendered-frame count"
+      },
+      "name" : "hidden-notch",
+      "provider" : {
+        "calls" : 0,
+        "cancellations" : 0,
+        "completions" : 0,
+        "inFlight" : 0
+      },
+      "requestedSeconds" : 30,
+      "resources" : {
+        "cpuPercent" : 0.58978169099062294,
+        "cpuSeconds" : 0.17725599999999986,
+        "rssMaxBytes" : 72433664,
+        "rssMeanBytes" : 72388211,
+        "rssMinBytes" : 72351744,
+        "sampleCount" : 31,
+        "sampleIntervalSeconds" : 1
+      },
+      "samples" : [
+        {
+          "cpuSeconds" : 5.7587190000000001,
+          "elapsedSeconds" : 0,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272455.36438745836
+        },
+        {
+          "cpuSeconds" : 5.7636959999999995,
+          "elapsedSeconds" : 1.0646963333128951,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272456.42908379168
+        },
+        {
+          "cpuSeconds" : 5.7699110000000005,
+          "elapsedSeconds" : 2.0894979583099484,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272457.45388541667
+        },
+        {
+          "cpuSeconds" : 5.7766419999999998,
+          "elapsedSeconds" : 3.0914607499726117,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272458.45584820834
+        },
+        {
+          "cpuSeconds" : 5.7822809999999993,
+          "elapsedSeconds" : 4.1570794166764244,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272459.52146687504
+        },
+        {
+          "cpuSeconds" : 5.7888780000000004,
+          "elapsedSeconds" : 5.2052027499885298,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272460.56959020835
+        },
+        {
+          "cpuSeconds" : 5.793831,
+          "elapsedSeconds" : 6.2421117083285935,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272461.60649916669
+        },
+        {
+          "cpuSeconds" : 5.7972149999999996,
+          "elapsedSeconds" : 7.251979291671887,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272462.61636675004
+        },
+        {
+          "cpuSeconds" : 5.8037590000000003,
+          "elapsedSeconds" : 8.2683994166436605,
+          "rssBytes" : 72384512,
+          "wallSeconds" : 272463.63278687501
+        },
+        {
+          "cpuSeconds" : 5.8102729999999996,
+          "elapsedSeconds" : 9.2891187083441764,
+          "rssBytes" : 72384512,
+          "wallSeconds" : 272464.65350616671
+        },
+        {
+          "cpuSeconds" : 5.8157719999999999,
+          "elapsedSeconds" : 10.2916199999745,
+          "rssBytes" : 72400896,
+          "wallSeconds" : 272465.65600745834
+        },
+        {
+          "cpuSeconds" : 5.8222519999999998,
+          "elapsedSeconds" : 11.358055041637272,
+          "rssBytes" : 72400896,
+          "wallSeconds" : 272466.7224425
+        },
+        {
+          "cpuSeconds" : 5.8283959999999997,
+          "elapsedSeconds" : 12.423277916677762,
+          "rssBytes" : 72400896,
+          "wallSeconds" : 272467.78766537504
+        },
+        {
+          "cpuSeconds" : 5.8364039999999999,
+          "elapsedSeconds" : 13.477379541669507,
+          "rssBytes" : 72400896,
+          "wallSeconds" : 272468.84176700003
+        },
+        {
+          "cpuSeconds" : 5.8426450000000001,
+          "elapsedSeconds" : 14.492219958337955,
+          "rssBytes" : 72351744,
+          "wallSeconds" : 272469.8566074167
+        },
+        {
+          "cpuSeconds" : 5.8480019999999993,
+          "elapsedSeconds" : 15.493563083291519,
+          "rssBytes" : 72351744,
+          "wallSeconds" : 272470.85795054166
+        },
+        {
+          "cpuSeconds" : 5.8558750000000002,
+          "elapsedSeconds" : 16.560159124957863,
+          "rssBytes" : 72351744,
+          "wallSeconds" : 272471.92454658332
+        },
+        {
+          "cpuSeconds" : 5.862031,
+          "elapsedSeconds" : 17.62612129165791,
+          "rssBytes" : 72351744,
+          "wallSeconds" : 272472.99050875002
+        },
+        {
+          "cpuSeconds" : 5.8702589999999999,
+          "elapsedSeconds" : 18.637548999977298,
+          "rssBytes" : 72368128,
+          "wallSeconds" : 272474.00193645834
+        },
+        {
+          "cpuSeconds" : 5.8759569999999997,
+          "elapsedSeconds" : 19.689072541659698,
+          "rssBytes" : 72368128,
+          "wallSeconds" : 272475.05346000002
+        },
+        {
+          "cpuSeconds" : 5.8818770000000002,
+          "elapsedSeconds" : 20.755934833316132,
+          "rssBytes" : 72368128,
+          "wallSeconds" : 272476.12032229168
+        },
+        {
+          "cpuSeconds" : 5.889303,
+          "elapsedSeconds" : 21.777304249990266,
+          "rssBytes" : 72368128,
+          "wallSeconds" : 272477.14169170836
+        },
+        {
+          "cpuSeconds" : 5.8945959999999999,
+          "elapsedSeconds" : 22.839700791635551,
+          "rssBytes" : 72351744,
+          "wallSeconds" : 272478.20408825
+        },
+        {
+          "cpuSeconds" : 5.9016349999999997,
+          "elapsedSeconds" : 23.909450583334547,
+          "rssBytes" : 72351744,
+          "wallSeconds" : 272479.2738380417
+        },
+        {
+          "cpuSeconds" : 5.9076339999999998,
+          "elapsedSeconds" : 24.976119291677605,
+          "rssBytes" : 72351744,
+          "wallSeconds" : 272480.34050675004
+        },
+        {
+          "cpuSeconds" : 5.9130530000000006,
+          "elapsedSeconds" : 26.043007374973968,
+          "rssBytes" : 72368128,
+          "wallSeconds" : 272481.40739483334
+        },
+        {
+          "cpuSeconds" : 5.921805,
+          "elapsedSeconds" : 27.091116666677408,
+          "rssBytes" : 72368128,
+          "wallSeconds" : 272482.45550412504
+        },
+        {
+          "cpuSeconds" : 5.9269689999999997,
+          "elapsedSeconds" : 28.112911625008564,
+          "rssBytes" : 72368128,
+          "wallSeconds" : 272483.47729908337
+        },
+        {
+          "cpuSeconds" : 5.9315119999999997,
+          "elapsedSeconds" : 29.181775750010274,
+          "rssBytes" : 72384512,
+          "wallSeconds" : 272484.54616320838
+        },
+        {
+          "cpuSeconds" : 5.9359489999999999,
+          "elapsedSeconds" : 30.054483583313413,
+          "rssBytes" : 72384512,
+          "wallSeconds" : 272485.41887104168
+        },
+        {
+          "cpuSeconds" : 5.935975,
+          "elapsedSeconds" : 30.054510458314326,
+          "rssBytes" : 72384512,
+          "wallSeconds" : 272485.41889791668
+        }
+      ],
+      "timeline" : {
+        "activeTicks" : 0,
+        "firstElapsed" : 0,
+        "firstTickOffset" : 0,
+        "lastElapsed" : 0,
+        "lastTickOffset" : 0,
+        "lineChanges" : 0,
+        "maxInterval" : 0,
+        "meanInterval" : 0,
+        "minInterval" : 0,
+        "passiveTicks" : 0,
+        "roleTicks" : {
+
+        },
+        "wordChanges" : 0
+      }
+    },
+    {
+      "actualSeconds" : 20.005971750011668,
+      "display" : {
+        "callbacks" : 1200,
+        "maxGap" : 0.035293249995447695,
+        "meanGap" : 0.016680525437838635,
+        "minGap" : 0.01470662496285513,
+        "note" : "CADisplayLink callbacks for the audit NSWindow; not rendered-frame count"
+      },
+      "name" : "lyrics-off",
+      "provider" : {
+        "calls" : 0,
+        "cancellations" : 0,
+        "completions" : 0,
+        "inFlight" : 0
+      },
+      "requestedSeconds" : 20,
+      "resources" : {
+        "cpuPercent" : 1.7573002920980074,
+        "cpuSeconds" : 0.35156499999999991,
+        "rssMaxBytes" : 72433664,
+        "rssMeanBytes" : 72422493,
+        "rssMinBytes" : 72384512,
+        "sampleCount" : 22,
+        "sampleIntervalSeconds" : 1
+      },
+      "samples" : [
+        {
+          "cpuSeconds" : 6.0056380000000003,
+          "elapsedSeconds" : 0,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272487.15553491667
+        },
+        {
+          "cpuSeconds" : 6.0250830000000004,
+          "elapsedSeconds" : 1.0642165833269246,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272488.2197515
+        },
+        {
+          "cpuSeconds" : 6.0452999999999992,
+          "elapsedSeconds" : 2.0981021666666493,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272489.25363708334
+        },
+        {
+          "cpuSeconds" : 6.0642489999999993,
+          "elapsedSeconds" : 3.1013470416655764,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272490.25688195834
+        },
+        {
+          "cpuSeconds" : 6.0832280000000001,
+          "elapsedSeconds" : 4.1107325000339188,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272491.26626741671
+        },
+        {
+          "cpuSeconds" : 6.0999610000000004,
+          "elapsedSeconds" : 5.1746838333201595,
+          "rssBytes" : 72384512,
+          "wallSeconds" : 272492.33021874999
+        },
+        {
+          "cpuSeconds" : 6.1179069999999998,
+          "elapsedSeconds" : 6.2391549166641198,
+          "rssBytes" : 72400896,
+          "wallSeconds" : 272493.39468983334
+        },
+        {
+          "cpuSeconds" : 6.1370180000000003,
+          "elapsedSeconds" : 7.2994232500204816,
+          "rssBytes" : 72400896,
+          "wallSeconds" : 272494.45495816669
+        },
+        {
+          "cpuSeconds" : 6.154522,
+          "elapsedSeconds" : 8.2998392916633748,
+          "rssBytes" : 72400896,
+          "wallSeconds" : 272495.45537420834
+        },
+        {
+          "cpuSeconds" : 6.1735439999999997,
+          "elapsedSeconds" : 9.3928527917014435,
+          "rssBytes" : 72400896,
+          "wallSeconds" : 272496.54838770838
+        },
+        {
+          "cpuSeconds" : 6.1907589999999999,
+          "elapsedSeconds" : 10.457292666658759,
+          "rssBytes" : 72400896,
+          "wallSeconds" : 272497.61282758333
+        },
+        {
+          "cpuSeconds" : 6.2099200000000003,
+          "elapsedSeconds" : 11.499953416700009,
+          "rssBytes" : 72400896,
+          "wallSeconds" : 272498.65548833337
+        },
+        {
+          "cpuSeconds" : 6.2293060000000002,
+          "elapsedSeconds" : 12.565380375017412,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272499.72091529169
+        },
+        {
+          "cpuSeconds" : 6.2475160000000001,
+          "elapsedSeconds" : 13.631704750005156,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272500.78723966668
+        },
+        {
+          "cpuSeconds" : 6.2660159999999996,
+          "elapsedSeconds" : 14.686537416651845,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272501.84207233333
+        },
+        {
+          "cpuSeconds" : 6.2828099999999996,
+          "elapsedSeconds" : 15.701141208352055,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272502.85667612503
+        },
+        {
+          "cpuSeconds" : 6.29887,
+          "elapsedSeconds" : 16.768112750025466,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272503.9236476667
+        },
+        {
+          "cpuSeconds" : 6.3172420000000002,
+          "elapsedSeconds" : 17.835162708361167,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272504.99069762503
+        },
+        {
+          "cpuSeconds" : 6.3345730000000007,
+          "elapsedSeconds" : 18.843842250003945,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272505.99937716668
+        },
+        {
+          "cpuSeconds" : 6.3558750000000002,
+          "elapsedSeconds" : 19.913349166687112,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272507.06888408336
+        },
+        {
+          "cpuSeconds" : 6.3571759999999999,
+          "elapsedSeconds" : 20.005944958364125,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272507.16147987504
+        },
+        {
+          "cpuSeconds" : 6.3572030000000002,
+          "elapsedSeconds" : 20.005971750011668,
+          "rssBytes" : 72433664,
+          "wallSeconds" : 272507.16150666669
+        }
+      ],
+      "timeline" : {
+        "activeTicks" : 0,
+        "firstElapsed" : 0,
+        "firstTickOffset" : 0,
+        "lastElapsed" : 0,
+        "lastTickOffset" : 0,
+        "lineChanges" : 0,
+        "maxInterval" : 0,
+        "meanInterval" : 0,
+        "minInterval" : 0,
+        "passiveTicks" : 0,
+        "roleTicks" : {
+
+        },
+        "wordChanges" : 0
+      }
+    },
+    {
+      "actualSeconds" : 20.02348104165867,
+      "display" : {
+        "callbacks" : 1200,
+        "maxGap" : 0.035462874977383763,
+        "meanGap" : 0.016680634000563483,
+        "minGap" : 0.014537000039126724,
+        "note" : "CADisplayLink callbacks for the audit NSWindow; not rendered-frame count"
+      },
+      "name" : "passive-external-active",
+      "provider" : {
+        "calls" : 0,
+        "cancellations" : 0,
+        "completions" : 0,
+        "inFlight" : 0
+      },
+      "requestedSeconds" : 20,
+      "resources" : {
+        "cpuPercent" : 6.3635488622034817,
+        "cpuSeconds" : 1.2742040000000001,
+        "rssMaxBytes" : 72531968,
+        "rssMeanBytes" : 72498455,
+        "rssMinBytes" : 72482816,
+        "sampleCount" : 22,
+        "sampleIntervalSeconds" : 1
+      },
+      "samples" : [
+        {
+          "cpuSeconds" : 6.5113789999999998,
+          "elapsedSeconds" : 0,
+          "rssBytes" : 72531968,
+          "wallSeconds" : 272509.34911841666
+        },
+        {
+          "cpuSeconds" : 6.5754580000000002,
+          "elapsedSeconds" : 1.0667488333419897,
+          "rssBytes" : 72531968,
+          "wallSeconds" : 272510.41586725001
+        },
+        {
+          "cpuSeconds" : 6.6332060000000004,
+          "elapsedSeconds" : 2.1049294166732579,
+          "rssBytes" : 72531968,
+          "wallSeconds" : 272511.45404783334
+        },
+        {
+          "cpuSeconds" : 6.7000130000000002,
+          "elapsedSeconds" : 3.1061572500038892,
+          "rssBytes" : 72531968,
+          "wallSeconds" : 272512.45527566667
+        },
+        {
+          "cpuSeconds" : 6.761247,
+          "elapsedSeconds" : 4.1068262500339188,
+          "rssBytes" : 72531968,
+          "wallSeconds" : 272513.4559446667
+        },
+        {
+          "cpuSeconds" : 6.8233159999999993,
+          "elapsedSeconds" : 5.1073717083781958,
+          "rssBytes" : 72531968,
+          "wallSeconds" : 272514.45649012504
+        },
+        {
+          "cpuSeconds" : 6.8912379999999995,
+          "elapsedSeconds" : 6.1740882917074487,
+          "rssBytes" : 72531968,
+          "wallSeconds" : 272515.52320670837
+        },
+        {
+          "cpuSeconds" : 6.9566609999999995,
+          "elapsedSeconds" : 7.2258025417104363,
+          "rssBytes" : 72482816,
+          "wallSeconds" : 272516.57492095837
+        },
+        {
+          "cpuSeconds" : 7.0275379999999998,
+          "elapsedSeconds" : 8.236009250045754,
+          "rssBytes" : 72482816,
+          "wallSeconds" : 272517.58512766671
+        },
+        {
+          "cpuSeconds" : 7.098668,
+          "elapsedSeconds" : 9.3030825833557174,
+          "rssBytes" : 72482816,
+          "wallSeconds" : 272518.65220100002
+        },
+        {
+          "cpuSeconds" : 7.1595420000000001,
+          "elapsedSeconds" : 10.306524916668423,
+          "rssBytes" : 72482816,
+          "wallSeconds" : 272519.65564333333
+        },
+        {
+          "cpuSeconds" : 7.227544,
+          "elapsedSeconds" : 11.307201541669201,
+          "rssBytes" : 72482816,
+          "wallSeconds" : 272520.65631995833
+        },
+        {
+          "cpuSeconds" : 7.2977479999999995,
+          "elapsedSeconds" : 12.366423541679978,
+          "rssBytes" : 72482816,
+          "wallSeconds" : 272521.71554195834
+        },
+        {
+          "cpuSeconds" : 7.3683450000000006,
+          "elapsedSeconds" : 13.448767916706856,
+          "rssBytes" : 72482816,
+          "wallSeconds" : 272522.79788633337
+        },
+        {
+          "cpuSeconds" : 7.4360270000000002,
+          "elapsedSeconds" : 14.490181833331008,
+          "rssBytes" : 72482816,
+          "wallSeconds" : 272523.83930024999
+        },
+        {
+          "cpuSeconds" : 7.4990560000000004,
+          "elapsedSeconds" : 15.506862958369311,
+          "rssBytes" : 72482816,
+          "wallSeconds" : 272524.85598137503
+        },
+        {
+          "cpuSeconds" : 7.5660590000000001,
+          "elapsedSeconds" : 16.507839708356187,
+          "rssBytes" : 72482816,
+          "wallSeconds" : 272525.85695812502
+        },
+        {
+          "cpuSeconds" : 7.6294809999999993,
+          "elapsedSeconds" : 17.574029875046108,
+          "rssBytes" : 72482816,
+          "wallSeconds" : 272526.92314829171
+        },
+        {
+          "cpuSeconds" : 7.7004789999999996,
+          "elapsedSeconds" : 18.646075458382256,
+          "rssBytes" : 72482816,
+          "wallSeconds" : 272527.99519387505
+        },
+        {
+          "cpuSeconds" : 7.7668020000000002,
+          "elapsedSeconds" : 19.648567416705191,
+          "rssBytes" : 72482816,
+          "wallSeconds" : 272528.99768583337
+        },
+        {
+          "cpuSeconds" : 7.7855709999999991,
+          "elapsedSeconds" : 20.02346941671567,
+          "rssBytes" : 72482816,
+          "wallSeconds" : 272529.37258783338
+        },
+        {
+          "cpuSeconds" : 7.7855829999999999,
+          "elapsedSeconds" : 20.02348104165867,
+          "rssBytes" : 72482816,
+          "wallSeconds" : 272529.37259945832
+        }
+      ],
+      "timeline" : {
+        "activeTicks" : 600,
+        "firstElapsed" : 104.79371201992035,
+        "firstTickOffset" : 0.012654958351049572,
+        "lastElapsed" : 124.79369294643402,
+        "lastTickOffset" : 20.012314708321355,
+        "lineChanges" : 1,
+        "maxInterval" : 0.058168208342976868,
+        "meanInterval" : 0.03338841360596044,
+        "minInterval" : 0.022745041700545698,
+        "passiveTicks" : 0,
+        "roleTicks" : {
+          "active" : 600
+        },
+        "wordChanges" : 0
+      }
+    }
+  ],
+  "rapidProvider" : {
+    "calls" : 3,
+    "cancellations" : 2,
+    "completions" : 1,
+    "inFlight" : 0
+  }
+}

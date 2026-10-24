@@ -1,0 +1,61 @@
+{
+  "app": "dist/Valora.app",
+  "binary_sha256": "c3212f552eecd418a4e3e83c4d91c299588ad77fe2f557ce6fe6292ccadb86a6",
+  "file_count": 13,
+  "bytes": 5482302,
+  "files": [
+    {
+      "path": "Contents/Frameworks/MediaRemoteAdapter.framework/MediaRemoteAdapter",
+      "bytes": 149680
+    },
+    {
+      "path": "Contents/Frameworks/MediaRemoteAdapter.framework/Resources/Info.plist",
+      "bytes": 560
+    },
+    {
+      "path": "Contents/Frameworks/MediaRemoteAdapter.framework/_CodeSignature/CodeResources",
+      "bytes": 2442
+    },
+    {
+      "path": "Contents/Info.plist",
+      "bytes": 894
+    },
+    {
+      "path": "Contents/MacOS/Valora",
+      "bytes": 3627568
+    },
+    {
+      "path": "Contents/Resources/AppIcon.icns",
+      "bytes": 1680915
+    },
+    {
+      "path": "Contents/Resources/MediaRemote/LICENSE",
+      "bytes": 1521
+    },
+    {
+      "path": "Contents/Resources/MediaRemote/mediaremote-adapter.pl",
+      "bytes": 8882
+    },
+    {
+      "path": "Contents/Resources/MediaRemote/provenance.json",
+      "bytes": 1844
+    },
+    {
+      "path": "Contents/Resources/MenuBarIcon.png",
+      "bytes": 572
+    },
+    {
+      "path": "Contents/Resources/MenuBarIcon@2x.png",
+      "bytes": 1217
+    },
+    {
+      "path": "Contents/Resources/MenuBarIcon@3x.png",
+      "bytes": 2020
+    },
+    {
+      "path": "Contents/_CodeSignature/CodeResources",
+      "bytes": 4187
+    }
+  ],
+  "codesign_verify": "--prepared:/Users/wangqing/code/Valora/dist/Valora.app/Contents/Frameworks/MediaRemoteAdapter.framework\n--validated:/Users/wangqing/code/Valora/dist/Valora.app/Contents/Frameworks/MediaRemoteAdapter.framework\ndist/Valora.app: valid on disk\ndist/Valora.app: satisfies its Designated Requirement"
+}

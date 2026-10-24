@@ -1,0 +1,48 @@
+{
+  "task": "docs/pi-tasks/v0015-r3-permission-intent-completion.md",
+  "task_sha256": "b8bc5960cc7bb5485dc0fc3cb2fb2d9415b27b413528e8fa6501cab0a48cdfce",
+  "r2_decision": "docs/verification/independent-v0015-r2/decision.md",
+  "tests": {
+    "valora": 87,
+    "reference_core": 114,
+    "total": 201
+  },
+  "qa": {
+    "connectivity": {
+      "passed": true,
+      "checks": 31
+    },
+    "lyrics": {
+      "passed": true,
+      "checks": 31
+    },
+    "music": {
+      "passed": true,
+      "checks": 74
+    },
+    "multidisplay": {
+      "passed": true,
+      "checks": 12
+    },
+    "settings": {
+      "pendingScreenshot": true,
+      "handImageOnly": true,
+      "switchIsOnlyEntry": true
+    }
+  },
+  "artifact": {
+    "binary_sha256": "13d4a34eea760f9ba74c831beddc4447c5d017a6815d802928a43e6990d6f40e",
+    "file_count": 29,
+    "bytes": 6586807,
+    "codesign": "--prepared:/Users/wangqing/code/Valora/dist/Valora.app/Contents/Frameworks/MediaRemoteAdapter.framework\n--validated:/Users/wangqing/code/Valora/dist/Valora.app/Contents/Frameworks/MediaRemoteAdapter.framework\ndist/Valora.app: valid on disk\ndist/Valora.app: satisfies its Designated Requirement"
+  },
+  "fixes": [
+    "published pending state immediately returns switch to off on cancel",
+    "audio pending resolves after confirmed callback/return attempts; no timeout guess",
+    "first login registration keeps pending across requiresApproval",
+    "actual Binding routing tested"
+  ],
+  "limitations": [
+    "No real OS permission dialog/TCC/login item write, AirPods, sound, 3D or physical display verification."
+  ]
+}

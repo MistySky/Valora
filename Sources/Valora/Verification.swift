@@ -466,7 +466,11 @@ enum SettingsVerification {
                 settings.forceSimulatedNotch = false
                 settings.hoverEnabled = false
                 let navigation = SettingsNavigation()
-                let root = SettingsView(model:model,settings:settings,navigation:navigation,draft:draft)
+                let permissions = AppPermissions(bluetooth: .authorized,
+                                                 audioCapture: .authorized,
+                                                 loginItem: .enabled)
+                let root = SettingsView(model:model,settings:settings,navigation:navigation,
+                                        draft:draft,permissions:permissions)
                     .environment(\.controlActiveState, .active).environment(\.colorScheme, .light)
                 let (window, host) = SettingsWindowFactory.make(rootView: root)
                 host.appearance = NSAppearance(named: .aqua)
@@ -504,8 +508,33 @@ enum SettingsVerification {
                     try? await Task.sleep(nanoseconds: 200_000_000)
                     try capture(name + "-bottom")
                 }
+                // Connectivity page: only the total switch. A denied fake state
+                // exercises the original hand accessory without touching TCC.
+                navigation.page = .connectivity
+                navigation.revealBottom = false
+                settings.bluetoothEnabled = true
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Connectivity")
+                permissions.verificationSet(bluetooth: .denied)
+                permissions.beginBluetoothEnable {}
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Connectivity-permission-pending")
+                permissions.cancelBluetoothEnable()
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Connectivity-permission")
+                permissions.verificationSet(bluetooth: .authorized)
+                settings.bluetoothEnabled = false
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Connectivity-off")
+                settings.bluetoothEnabled = true
+                try? await Task.sleep(nanoseconds: 200_000_000)
+
                 // Same active light condition as the original reference.
                 navigation.page = .general; navigation.revealBottom = false
+                permissions.verificationSet(loginItem: .requiresApproval)
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("General-login-approval")
+                permissions.verificationSet(loginItem: .enabled)
                 settings.hoverEnabled = true
                 try? await Task.sleep(nanoseconds: 200_000_000)
                 try capture("General-hover-on")
@@ -516,10 +545,15 @@ enum SettingsVerification {
                 draft.binding("showOnDisplay", "All displays").wrappedValue = "Main display"
                 navigation.page = .nowPlaying; navigation.revealBottom = false
                 host.appearance = NSAppearance(named: .darkAqua)
-                host.rootView = SettingsView(model:model,settings:settings,navigation:navigation,draft:draft)
+                host.rootView = SettingsView(model:model,settings:settings,navigation:navigation,
+                                             draft:draft,permissions:permissions)
                     .environment(\.controlActiveState, .active).environment(\.colorScheme, .dark)
                 try? await Task.sleep(nanoseconds: 200_000_000)
                 try capture("Now-Playing-dark")
+                permissions.verificationSet(audioCapture: .unknown)
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Now-Playing-permission")
+                permissions.verificationSet(audioCapture: .authorized)
                 // Retained setting round-trip; fixed policy values are checked by tests.
                 draft.binding("hoverDelay", 0.0).wrappedValue = 0.25
                 draft.binding("progressStyle", "Monochrome").wrappedValue = "Gradient"
@@ -547,6 +581,7 @@ enum SettingsVerification {
                     "pagesRendered": rendered,
                     "preferencePersistenceVerified": persisted,
                     "preferencesUseIsolatedDomain": isolated,
+                    "permissionStateScreenshots": ["Connectivity-permission-pending", "Connectivity-permission", "General-login-approval", "Now-Playing-permission"],
                     "windowPoints": [620, 687],
                     "sidebarPoints": 225,
                     "renderedPages": SettingsPage.allCases.map(\.rawValue),

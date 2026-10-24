@@ -1,0 +1,53 @@
+{
+  "checks" : [
+    {
+      "name" : "injected all-displays creates two panels",
+      "passed" : true
+    },
+    {
+      "name" : "secondary count excludes active panel",
+      "passed" : true
+    },
+    {
+      "name" : "built-in starts active",
+      "passed" : true
+    },
+    {
+      "name" : "external panel becomes active",
+      "passed" : true
+    },
+    {
+      "name" : "active external pill expands",
+      "passed" : true
+    },
+    {
+      "name" : "passive built-in remains the only secondary",
+      "passed" : true
+    },
+    {
+      "name" : "switching active collapses the previous panel",
+      "passed" : true
+    },
+    {
+      "name" : "first screen becomes active",
+      "passed" : true
+    },
+    {
+      "name" : "track change previews on the pointer target screen",
+      "passed" : true
+    },
+    {
+      "name" : "passive panel content remains shared and compact",
+      "passed" : true
+    },
+    {
+      "name" : "negative-origin external hit test accepts its contour",
+      "passed" : true
+    },
+    {
+      "name" : "negative-origin external transparent area passes through",
+      "passed" : true
+    }
+  ],
+  "passed" : true
+}

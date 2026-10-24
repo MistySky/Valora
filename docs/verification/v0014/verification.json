@@ -1,0 +1,30 @@
+{
+  "task": "docs/pi-tasks/v0014-isolated-fluidity-audit.md",
+  "task_sha256": "72dbd241a9dd4060a540ef7d3d9ca098961eaf9f42a961e10888f8af578f69bd",
+  "audit": "docs/verification/v0014/audit/audit.json",
+  "audit_passed": true,
+  "audit_checks": 39,
+  "tests": {
+    "valora": 63,
+    "reference_core": 105,
+    "total": 168
+  },
+  "qa": {
+    "lyrics": 31,
+    "music": 74,
+    "multidisplay": 12
+  },
+  "artifact": {
+    "binary_sha256": "0a833f5f94c921c68ff98e9edacdb4f18b33e8fdd94355b919d7b19e42856149",
+    "file_count": 13,
+    "bytes": 5595550,
+    "codesign": "--prepared:/Users/wangqing/code/Valora/dist/Valora.app/Contents/Frameworks/MediaRemoteAdapter.framework\n--validated:/Users/wangqing/code/Valora/dist/Valora.app/Contents/Frameworks/MediaRemoteAdapter.framework\ndist/Valora.app: valid on disk\ndist/Valora.app: satisfies its Designated Requirement"
+  },
+  "fix": "passive NotchView no longer mounts hidden expanded content/lyric Timeline",
+  "limitations": [
+    "CADisplayLink callbacks are not equal to displayed/rendered frames; no compositor frame counter or human smoothness claim.",
+    "Injected two-screen display is not physical dual-screen verification.",
+    "Fake word timing is not real QQ voice alignment; real alignment remains for user hardware/network testing.",
+    "CPU/RSS are process-wide and hardware/OS specific; no universal threshold is asserted."
+  ]
+}

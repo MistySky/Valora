@@ -1,0 +1,26 @@
+{
+  "request": {
+    "title": "知否知否",
+    "artist": "胡夏",
+    "album": "知否知否应是绿肥红瘦 电视剧原声带",
+    "duration": 276
+  },
+  "candidate": {
+    "songmid": "002krvKI4Jgvq9",
+    "title": "知否知否",
+    "artist": "胡夏 / 郁可唯",
+    "album": "知否知否应是绿肥红瘦 电视剧原声带",
+    "duration": 276
+  },
+  "male_version": {
+    "songmid": "001qxsQM2CmqB2",
+    "title": "知否知否 (男声版)",
+    "artist": "胡夏",
+    "album": "知否知否应是绿肥红瘦 电视剧原声带",
+    "duration": 276
+  },
+  "result": "matched collaboration candidate",
+  "male_version_result": "noMatch(versionMismatch)",
+  "rule": "request artist set must be a subset of candidate artist set after title/version/album/duration gates; no contains and no first-candidate selection",
+  "source": "docs/verification/zhifou-lyrics-diagnosis/findings.md and search-summary.json; offline matcher regression"
+}

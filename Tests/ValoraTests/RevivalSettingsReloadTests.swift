@@ -86,6 +86,28 @@ final class RevivalSettingsReloadTests: XCTestCase {
         XCTAssertEqual(settings.hoverDelay, 1.0, accuracy: 0.0001)
     }
 
+    func testConnectivityPolicyIsFixedAndSwitchDefaultsOff() {
+        defaults.set([
+            "connectivityModel": "Symbols",
+            "connectivityDuration": 1.0,
+            "warnOnLowConnectBattery": false,
+            "lowConnectBatteryThreshold": 30,
+            "playSoundOnLowConnectBattery": false
+        ], forKey: "referenceSettingsUI")
+        let settings = RevivalSettings(defaults: defaults)
+        XCTAssertFalse(settings.bluetoothEnabled)
+        XCTAssertTrue(settings.connectivityPreferences.uses3DModels, "legacy appearance selection must be ignored")
+        XCTAssertEqual(settings.connectivityPreferences.duration, 5)
+        XCTAssertEqual(settings.connectivityPreferences.lowBatteryThreshold, 20)
+        XCTAssertTrue(settings.connectivityPreferences.warnOnLowBattery)
+        XCTAssertTrue(settings.connectivityPreferences.playSoundOnLowBattery)
+
+        settings.bluetoothEnabled = true
+        XCTAssertTrue(RevivalSettings(defaults: defaults).bluetoothEnabled)
+        settings.reloadPreferences()
+        XCTAssertTrue(settings.connectivityPreferences.uses3DModels)
+    }
+
     func testShowLyricsDefaultsOffAndPersists() {
         let settings = RevivalSettings(defaults: defaults)
         XCTAssertFalse(settings.musicPreferences.showLyrics)

@@ -1,0 +1,31 @@
+{
+  "task": "docs/pi-tasks/v0013-confirmed-residual-cleanup.md",
+  "task_sha256": "618de76e28b08371ef3890920a0ff6bb64629aa5431d5abae2edbbfacc6716de",
+  "tests": {
+    "valora": 63,
+    "reference_core": 105,
+    "total": 168
+  },
+  "lyrics_qa": {
+    "checks": 31,
+    "passed": true
+  },
+  "artifact": {
+    "binary_sha256": "c3212f552eecd418a4e3e83c4d91c299588ad77fe2f557ce6fe6292ccadb86a6",
+    "file_count": 13,
+    "bytes": 5482302
+  },
+  "warnings_remaining": [
+    "unhandled fixture resource",
+    "MarqueeLabel.measure actor-isolation in LyricsLineMetrics (not dead-code cleanup)"
+  ],
+  "removed": [
+    "Models.lyricFallbackText",
+    "WindowCoordinator updateVisibility unused active binding",
+    "WindowCoordinator scheduleHover unused local generation"
+  ],
+  "comments_corrected": [
+    "LyricsService QRC-first/MIT path",
+    "QQMusicLyrics QRCParser live decryption path"
+  ]
+}

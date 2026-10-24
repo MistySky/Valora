@@ -11,6 +11,7 @@ mkdir -p "$OUT"
 # start or link the Valora app, and the probe is not part of normal app startup.
 swiftc -swift-version 6 -DQQ_LYRICS_PROBE_MAIN -O -parse-as-library \
   "$ROOT/Sources/ReferenceCore/QQMusicLyrics.swift" \
+  "$ROOT/Sources/ReferenceCore/QQMusicQRC.swift" \
   "$ROOT/scripts/qq_lyrics_probe.swift" \
   -o "$BIN"
 "$BIN" --input "$INPUT" --out "$OUT"

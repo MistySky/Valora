@@ -47,8 +47,58 @@ final class LyricsTimelineTests: XCTestCase {
         XCTAssertEqual(lines.map(\.text), ["first", "second"])
     }
 
+    func testWordProgressHonorsShortAndLongWordDurations() {
+        let line = LyricLine(start: 10, text: "短长", words: [
+            LyricWord(text: "短", start: 10, duration: 0.2),
+            LyricWord(text: "长", start: 10.2, duration: 1.5)
+        ])
+        let timeline = LyricTimeline(lines: [line])
+        XCTAssertNil(timeline.wordProgress(in: line, at: 9.9))
+        let short = timeline.wordProgress(in: line, at: 10.1)
+        XCTAssertEqual(short?.index, 0)
+        XCTAssertEqual(short?.fraction ?? 0, 0.5, accuracy: 0.001)
+        let long = timeline.wordProgress(in: line, at: 10.95)
+        XCTAssertEqual(long?.index, 1)
+        XCTAssertEqual(long?.fraction ?? 0, 0.5, accuracy: 0.001)
+        XCTAssertEqual(timeline.wordProgress(in: line, at: 11.8)?.fraction, 1)
+    }
+
     func testShowLyricsDefaultsOffAndPersistsFromReferenceDictionary() {
         XCTAssertFalse(MusicPreferences().showLyrics)
         XCTAssertTrue(MusicPreferences(values: ["showLyrics": true]).showLyrics)
+    }
+}
+
+final class LyricsPlaybackClockTests: XCTestCase {
+    func testClockInterpolatesWithoutUsingNetworkTime() {
+        let start = Date(timeIntervalSinceReferenceDate: 100)
+        let clock = LyricsPlaybackClock(anchorElapsed: 10, anchorDate: start,
+                                        rate: 1, playing: true)
+        XCTAssertEqual(clock.elapsed(at: start), 10, accuracy: 0.0001)
+        XCTAssertEqual(clock.elapsed(at: start.addingTimeInterval(0.1)), 10.1, accuracy: 0.0001)
+        XCTAssertEqual(clock.elapsed(at: start.addingTimeInterval(0.2)), 10.2, accuracy: 0.0001)
+        let fast = LyricsPlaybackClock(anchorElapsed: 10, anchorDate: start,
+                                       rate: 2, playing: true)
+        XCTAssertEqual(fast.elapsed(at: start.addingTimeInterval(0.1)), 10.2, accuracy: 0.0001)
+    }
+
+    func testPausedClockDoesNotAdvance() {
+        let start = Date(timeIntervalSinceReferenceDate: 100)
+        let clock = LyricsPlaybackClock(anchorElapsed: 15, anchorDate: start,
+                                        rate: 1, playing: false)
+        XCTAssertEqual(clock.elapsed(at: start.addingTimeInterval(5)), 15, accuracy: 0.0001)
+        let zeroRate = LyricsPlaybackClock(anchorElapsed: 15, anchorDate: start,
+                                           rate: 0, playing: true)
+        XCTAssertEqual(zeroRate.elapsed(at: start.addingTimeInterval(5)), 15, accuracy: 0.0001)
+    }
+
+    func testSeekIsAnExplicitAnchorResetInBothDirections() {
+        let start = Date(timeIntervalSinceReferenceDate: 100)
+        let forward = LyricsPlaybackClock(anchorElapsed: 80, anchorDate: start,
+                                          rate: 1, playing: true)
+        XCTAssertEqual(forward.elapsed(at: start.addingTimeInterval(0.25)), 80.25, accuracy: 0.0001)
+        let backward = LyricsPlaybackClock(anchorElapsed: 12, anchorDate: start,
+                                           rate: 1, playing: true)
+        XCTAssertEqual(backward.elapsed(at: start.addingTimeInterval(0.25)), 12.25, accuracy: 0.0001)
     }
 }

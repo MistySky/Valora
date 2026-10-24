@@ -44,3 +44,17 @@ final class NotchContourTests: XCTestCase {
         XCTAssertEqual(contour.bottomRadius, 10)
     }
 }
+
+final class NotchContourLyricPillTests: XCTestCase {
+    func testPillRadiusDoesNotGrowWithLyricHeight() {
+        let geometry = NotchGeometry.calculate(screenWidth: 1920, safeAreaTop: 0,
+            auxiliaryLeftWidth: nil, auxiliaryRightWidth: nil, menuBarHeight: 24, simulated: false)
+        let normal = NotchContour.stationary(geometry: geometry, simulated: false, expanded: false,
+            expandedCorners: false, active: true, visibleHeight: geometry.compact.height)
+        let lyric = NotchContour.stationary(geometry: geometry, simulated: false, expanded: false,
+            expandedCorners: false, active: true, visibleHeight: geometry.compact.height + 32)
+        XCTAssertEqual(normal.bottomRadius, geometry.compact.height / 2)
+        XCTAssertEqual(lyric.bottomRadius, normal.bottomRadius)
+        XCTAssertLessThan(lyric.bottomRadius, (geometry.compact.height + 32) / 2)
+    }
+}

@@ -1,0 +1,81 @@
+{
+  "task": "docs/pi-tasks/v0015-r1-controller-lifecycle-sound.md",
+  "supplement": "docs/pi-tasks/v0015-r1-supplement-alcove-baseline.md",
+  "auto_artwork_supplement": "docs/pi-tasks/v0015-r1-supplement-auto-artwork-permission.md",
+  "permission_hand_supplement": "docs/pi-tasks/v0015-r1-supplement-permission-hand-ui.md",
+  "task_sha256": "7bf40964bd8ddce31ec28361f5b8b73bc63911057fffbec07aa0e72f9d5ef71d",
+  "supplement_sha256": "05b83e061eba04dfaa905e5c0d0d8c0ed2ccbe8e5b24ff1ef725836960cf5e1a",
+  "auto_artwork_supplement_sha256": "39e94ab62a8c6bf5665ed95a80fe9d50fb10f4d4cd847a015049bb6238ed7c92",
+  "permission_hand_supplement_sha256": "e6565538c790ef4683252b2f6dddfe42676a472b8d3fd3cb4a48c49f68ac0878",
+  "tests": {
+    "valora": 84,
+    "reference_core": 114,
+    "total": 198
+  },
+  "qa": {
+    "connectivity": {
+      "passed": true,
+      "checks": 31
+    },
+    "lyrics": {
+      "passed": true,
+      "checks": 31
+    },
+    "music": {
+      "passed": true,
+      "checks": 74
+    },
+    "multidisplay": {
+      "passed": true,
+      "checks": 12
+    },
+    "settings": {
+      "pagesRendered": [
+        "General",
+        "Connectivity",
+        "Now Playing"
+      ],
+      "captures": [
+        "Connectivity",
+        "Connectivity-off",
+        "Connectivity-permission",
+        "General-login-approval",
+        "Now-Playing-permission"
+      ],
+      "appearanceSettingRemoved": true,
+      "permissionHandScreenshots": true
+    }
+  },
+  "artifact": {
+    "binary_sha256": "0d7bb22a7b6a4cac8602f10345224d019ef225de89cbe8a4c689a6f24121eb9e",
+    "file_count": 29,
+    "bytes": 6580919,
+    "codesign": "--prepared:/Users/wangqing/code/Valora/dist/Valora.app/Contents/Frameworks/MediaRemoteAdapter.framework\n--validated:/Users/wangqing/code/Valora/dist/Valora.app/Contents/Frameworks/MediaRemoteAdapter.framework\ndist/Valora.app: valid on disk\ndist/Valora.app: satisfies its Designated Requirement"
+  },
+  "permissions": {
+    "bluetoothStatus": "CBManager.authorization",
+    "audioStatus": "unknown until LiveAudioTap attempt",
+    "loginItemStatus": "SMAppService.status",
+    "hands": [
+      "Connectivity",
+      "Use live waveform",
+      "Launch at login"
+    ],
+    "noTCCWrites": true
+  },
+  "fixes": [
+    "Published commit ordering for false->true initial read",
+    "true stop/start lifecycle and subscription removal",
+    "single in-flight across stop/restart; stale generation rejection",
+    "sound stop lifecycle with retained NSSound",
+    "lazy-safe applicationWillTerminate stop",
+    "automatic artwork appearance; legacy connectivityModel ignored",
+    "Bluetooth usage description packaged",
+    "Alcove hand permission entry with injected status/actions"
+  ],
+  "limitations": [
+    "No real Bluetooth/audio/login permission prompt, AirPods, sound playback, physical dual-screen or 3D presentation verification."
+  ],
+  "r2_task": "docs/pi-tasks/v0015-r2-toggle-authorization-flow.md",
+  "r2_task_sha256": "fc0f24fc33ef780f1a790970e15e7ea27f45df0da067a7f33f8937830487b0bc"
+}

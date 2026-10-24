@@ -2,6 +2,8 @@
 #import <IOKit/ps/IOPSKeys.h>
 #import "NativeBridge.h"
 #import <CoreAudio/CoreAudio.h>
+#import <IOBluetooth/IOBluetooth.h>
+#import <objc/message.h>
 #import <math.h>
 
 static AudioDeviceID outputDevice(void) {
@@ -86,6 +88,69 @@ BOOL ARSetOutputMuted(NSString *expectedUID,BOOL muted) {
     AudioDeviceID device=outputDevice();
     if(!expectedUID.length || ![audioString(device,kAudioDevicePropertyDeviceUID) isEqual:expectedUID] || !audioWritable(device,kAudioDevicePropertyMute,0))return NO;
     UInt32 value=muted ? 1:0; return audioSet(device,kAudioDevicePropertyMute,0,&value,sizeof(value));
+}
+
+
+static int connectivityScalar(id object, NSString *name) {
+    SEL selector = NSSelectorFromString(name);
+    if (![object respondsToSelector:selector]) return -1;
+    return ((unsigned int(*)(id,SEL))objc_msgSend)(object, selector);
+}
+static NSString *normalAddress(NSString *s) {
+    return [[s.lowercaseString componentsSeparatedByCharactersInSet:
+             [NSCharacterSet characterSetWithCharactersInString:@"-: "]] componentsJoinedByString:@""];
+}
+NSString *ARDefaultAudioOutputName(void) {
+    return audioString(outputDevice(), kAudioObjectPropertyName);
+}
+NSArray<NSDictionary *> *ARConnectedAudioDevices(void) {
+    AudioDeviceID output = outputDevice();
+    NSString *uid = normalAddress(audioString(output, kAudioDevicePropertyDeviceUID));
+    NSString *modelUID = audioString(output, kAudioDevicePropertyModelUID);
+    NSString *outputName = audioString(output, kAudioObjectPropertyName);
+    NSMutableArray *result = [NSMutableArray array];
+    NSMutableArray<NSDictionary *> *audioModels = [NSMutableArray array];
+    AudioObjectPropertyAddress listAddress = {kAudioHardwarePropertyDevices, kAudioObjectPropertyScopeGlobal, 0};
+    UInt32 listSize = 0;
+    if (AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &listAddress, 0, NULL, &listSize) == noErr && listSize > 0) {
+        AudioDeviceID *ids = calloc(1, listSize);
+        if (ids && AudioObjectGetPropertyData(kAudioObjectSystemObject, &listAddress, 0, NULL, &listSize, ids) == noErr) {
+            for (UInt32 i = 0; i < listSize / sizeof(AudioDeviceID); i++) {
+                [audioModels addObject:@{@"uid": normalAddress(audioString(ids[i], kAudioDevicePropertyDeviceUID)),
+                                         @"model": audioString(ids[i], kAudioDevicePropertyModelUID)}];
+            }
+        }
+        free(ids);
+    }
+    for (IOBluetoothDevice *device in [IOBluetoothDevice pairedDevices]) {
+        if (!device.isConnected) continue;
+        int left = connectivityScalar(device, @"batteryPercentLeft");
+        int right = connectivityScalar(device, @"batteryPercentRight");
+        int single = connectivityScalar(device, @"batteryPercentSingle");
+        NSString *name = device.name ?: @"Bluetooth device";
+        NSString *address = device.addressString ?: @"";
+        BOOL active = address.length && [uid containsString:normalAddress(address)];
+        NSString *deviceModel = active ? modelUID : @"";
+        if (!deviceModel.length && address.length) {
+            for (NSDictionary *entry in audioModels) {
+                if ([entry[@"uid"] containsString:normalAddress(address)]) {
+                    deviceModel = entry[@"model"];
+                    break;
+                }
+            }
+        }
+        BOOL namedAirPods = [name.lowercaseString containsString:@"airpods"];
+        BOOL hasBattery = (left >= 0 && left <= 100) || (right >= 0 && right <= 100)
+            || (single >= 0 && single <= 100);
+        if (!namedAirPods && !active && !hasBattery) continue;
+        [result addObject:@{
+            @"id": address, @"name": active && outputName.length ? outputName : name,
+            @"left": @(left), @"right": @(right), @"single": @(single), @"active": @(active),
+            @"airpods": @(namedAirPods), @"modelUID": deviceModel,
+            @"colorID": @(connectivityScalar(device, @"colorID"))
+        }];
+    }
+    return result;
 }
 
 // An internal battery identifies a portable Mac even with its display closed.

@@ -19,6 +19,7 @@ let package = Package(
                 .linkedFramework("Foundation"),
                 .linkedFramework("CoreAudio"),
                 .linkedFramework("IOKit"),
+                .linkedFramework("IOBluetooth"),
                 .linkedFramework("AppKit")
             ]
         ),
@@ -29,7 +30,9 @@ let package = Package(
                 .linkedFramework("AppKit"),
                 .linkedFramework("SwiftUI"),
                 .linkedFramework("ServiceManagement"),
+                .linkedFramework("CoreBluetooth"),
                 .linkedFramework("CoreAudio"),
+                .linkedFramework("AVKit"),
                 .linkedFramework("Accelerate")
             ]
         ),

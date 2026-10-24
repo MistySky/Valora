@@ -24,11 +24,11 @@ final class ReferenceCoreTests: XCTestCase {
     }
 
     func testNonNotchAndSimulatedBranchesFromArm64Registers() {
-        // Reference constants: d0=74/140, d1=menu height-5.5/-1,
-        // d2=321/345, d3=175. No menu gap uses d1=19.5/24.
+        // Non-notch compact/expanded width is unified at 140/345; the
+        // simulated/plain height and contour remain distinct.
         for (simulated, menu, compact, expanded) in [
-            (false, CGFloat(25), CGSize(width: 74, height: 19.5), CGSize(width: 321, height: 175)),
-            (false, CGFloat(0), CGSize(width: 74, height: 19.5), CGSize(width: 321, height: 175)),
+            (false, CGFloat(25), CGSize(width: 140, height: 19.5), CGSize(width: 345, height: 175)),
+            (false, CGFloat(0), CGSize(width: 140, height: 19.5), CGSize(width: 345, height: 175)),
             (true, CGFloat(25), CGSize(width: 140, height: 24), CGSize(width: 345, height: 175)),
             (true, CGFloat(0), CGSize(width: 140, height: 24), CGSize(width: 345, height: 175)),
             (true, CGFloat(32), CGSize(width: 140, height: 31), CGSize(width: 345, height: 175))
@@ -47,7 +47,7 @@ final class ReferenceCoreTests: XCTestCase {
                                        auxiliaryLeftWidth: 771.5, auxiliaryRightWidth: nil,
                                        menuBarHeight: 32, simulated: false)
         XCTAssertFalse(g.hasPhysicalNotch)
-        XCTAssertEqual(g.compact, CGSize(width: 74, height: 26.5))
+        XCTAssertEqual(g.compact, CGSize(width: 140, height: 26.5))
     }
 
     func testObservedModelUIDAndAllReferenceProductAliases() {

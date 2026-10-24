@@ -16,7 +16,12 @@ public struct NotchContour: Sendable {
                                   active: Bool, quickPeek: Bool = false,
                                   visibleHeight: CGFloat) -> Self {
         guard geometry.hasPhysicalNotch || simulated else {
-            let radius: CGFloat = expanded ? 36 : max(0, visibleHeight) / 2
+            // The normal pill radius is half its base capsule height. When a
+            // lyric/peek row increases the visible height, do not grow the
+            // corner into a giant end cap: cap at the base capsule radius so
+            // the top artwork/waveform keep their original safe area.
+            let baseRadius = max(0, geometry.compact.height) / 2
+            let radius: CGFloat = expanded ? 36 : min(max(0, visibleHeight) / 2, baseRadius)
             return Self(style: .pill, topRadius: radius, bottomRadius: radius, topInset: 2.5)
         }
         let hasActivity = active || quickPeek

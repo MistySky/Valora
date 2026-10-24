@@ -12,6 +12,11 @@ BOOL ARComputerIsPortable(void);
 /// Current default CoreAudio output: uid/name/modelUID/kind/port/volume/mute.
 NSDictionary *ARAudioOutputSnapshot(void);
 
+/// Read-only connected Bluetooth audio snapshot. The synchronous IOBluetooth
+/// query must run off the main thread; callers bound in-flight queries.
+NSArray<NSDictionary *> *ARConnectedAudioDevices(void);
+NSString *ARDefaultAudioOutputName(void);
+
 /// Writes are only issued from explicit user gestures in the expanded player.
 BOOL ARSetOutputVolume(NSString *expectedUID, double volume);
 BOOL ARSetOutputMuted(NSString *expectedUID, BOOL muted);

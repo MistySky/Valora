@@ -1,0 +1,146 @@
+{
+  "cache_tests": {
+    "disk_limit": "disk byte limit and corrupt-file removal exercised",
+    "in_flight": "canceled old request and replacement same request exercised",
+    "memory_limits": "entry and payload eviction exercised with injected small limits",
+    "negative_results": "noLyrics/not-cached and same-version overwrite exercised"
+  },
+  "cancellation": {
+    "cache": "canceled/noncooperative result checks Task.isCancelled and in-flight id before cache.put",
+    "hidden_gate": "LyricsController refuses new requests while screenHidden/showNotch hides the surface",
+    "qrc": "CancellationError is rethrown; no LRC fallback after cancel",
+    "timeout": "3s group timeout hides; late results rejected by generation/identity"
+  },
+  "capsule": {
+    "non_notch_plain": "pill radius capped at base compact height/2 when lyric row increases visible height",
+    "physical": "hardware contour unchanged",
+    "screenshots": [
+      "lyrics-nonnotch-pill-compact.png",
+      "lyrics-nonnotch-simulated-compact.png"
+    ],
+    "simulated": "notch contour unchanged"
+  },
+  "centering": {
+    "expanded": "same centered/reading rule at bottom; volume above",
+    "icon": "artwork accent color; unplayed text gray",
+    "long": "real-word 30%-65% reading window with 0...overflow clamp",
+    "short": "music note + text centered in available lyric area"
+  },
+  "generated_at": "2026-10-24T06:49:42.284160+00:00",
+  "limitations": [
+    "Lyrics QA uses static injected playback/timeline; it does not claim real player/network frame alignment.",
+    "Real QRC was fetched and decoded from explicit public samples; no account/cookie/local library data was used.",
+    "Physical dual-screen and user real playback/seek remain pending; no real media/system writes were performed.",
+    "The disk/memory cache tests use small injected limits; production defaults are 50 entries/5MiB memory/50MiB disk."
+  ],
+  "lyrics_qa": {
+    "checks": 31,
+    "command": "./dist/Valora.app/Contents/MacOS/Valora --verify-lyrics docs/verification/v0012/qa",
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0012/qa/verification.json",
+    "log": "/Users/wangqing/code/Valora/docs/verification/v0012/qa.log",
+    "passed": true,
+    "provider": "static QA, no network/media/audio"
+  },
+  "matching": {
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0012/zhifou-match/summary.json",
+    "male_version": "rejected by versionMismatch",
+    "matched": "\u80e1\u590f / \u90c1\u53ef\u552f collaboration candidate",
+    "request": "\u77e5\u5426\u77e5\u5426 / \u80e1\u590f / \u540c\u4e13\u8f91 / 276s",
+    "rule": "request artist set subset of candidate artist set after version/album/duration gates; no contains/first-pick"
+  },
+  "multidisplay": {
+    "checks": 12,
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0012/multidisplay/verification.json",
+    "note": "injected/fake screens; not physical dual-screen",
+    "passed": true
+  },
+  "music_ui": {
+    "checks": 74,
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0012/ui/verification.json",
+    "passed": true
+  },
+  "non_notch_geometry": {
+    "base_width": 140,
+    "expanded_width": 345,
+    "forms": [
+      "simulated notch",
+      "ordinary pill"
+    ],
+    "music_compact_width": 214,
+    "physical_notch": "hardware geometry remains authoritative; built-in sample 185pt",
+    "screenshots": [
+      "lyrics-nonnotch-pill-compact.png",
+      "lyrics-nonnotch-simulated-compact.png",
+      "lyrics-nonnotch-simulated-expanded.png"
+    ]
+  },
+  "playback_clock": {
+    "measurement": "line word/prefix widths cached per view; no per-frame full-line measurement",
+    "refresh": "visible 30Hz TimelineView only while playing; paused/hidden view stops",
+    "source": "last player elapsed anchor + playbackRate"
+  },
+  "qrc_evidence_fields": {
+    "decoded": true,
+    "decryption": "mit_qqmusicdecoder_swift"
+  },
+  "qrc_real_network": {
+    "command": "./scripts/run_qq_lyrics_probe.sh docs/verification/v0012/qrc-network",
+    "generated_at": "2026-10-24T05:35:52Z",
+    "note": "Real public QRC decrypted; only timing/count summaries are recorded, no lyric text.",
+    "samples": [
+      {
+        "first_word_duration": 0.16,
+        "first_word_start": 0,
+        "label": "studio",
+        "qrc_decoded": true,
+        "qrc_lines": 63,
+        "qrc_words": 602,
+        "status": "success"
+      },
+      {
+        "first_word_duration": 0.5,
+        "first_word_start": 0,
+        "label": "live",
+        "qrc_decoded": true,
+        "qrc_lines": 36,
+        "qrc_words": 391,
+        "status": "success"
+      }
+    ],
+    "summary": "/Users/wangqing/code/Valora/docs/verification/v0012/qrc-network/network-summary.json"
+  },
+  "r2_local_timeline": {
+    "anchor": "last player elapsed + sample Date + playbackRate; rate<=0/paused holds",
+    "deadline": "unstructured race gate resumes at budget even with noncooperative continuation provider",
+    "line_and_word": "single 30Hz CompactLyricsView TimelineView; no 0.25s line selector",
+    "offset": "continuous word fraction; multi-character source word; 0...overflow, 30%-65%"
+  },
+  "r3_fixes": {
+    "continuous_offset": "word fraction through multi-character source words; 0...overflow; 30%-65%",
+    "deadline_latch": "cancel/complete/attach acyclic latch stores pending completion; exactly one resume",
+    "metrics_cache": "full song identity + line start/text + complete word segmentation; guarded indices; bounded 8 entries",
+    "sample_anchor": "model elapsedSampleDate + playbackRate; delayed mount/expand uses sample age"
+  },
+  "r4_line_only": {
+    "no_fake_word": "no colored word fill or average character timing for words-empty lines",
+    "pause_seek": "local Timeline clock freezes on pause; seek recomputes line/offset; new line resets",
+    "policy": "words-empty long LRC: gray text, short 15% prefix hold then continuous gray-line slide over line start...next line",
+    "short": "words-empty short stays centered/static"
+  },
+  "settings": {
+    "evidence": "/Users/wangqing/code/Valora/docs/verification/v0012/settings/verification.json",
+    "pages": [
+      "General",
+      "Now Playing"
+    ],
+    "preferencePersistenceVerified": true
+  },
+  "task_sha256": "fb4c8889cc664cafd1266053920f0e2820dbe832f6f8b0ef1dd2af8d9df3eb8d",
+  "xctest": {
+    "log": "/Users/wangqing/code/Valora/docs/verification/v0012/test.log",
+    "prior_v0011_baseline": 136,
+    "reference_core": 105,
+    "total": 168,
+    "valora": 63
+  }
+}

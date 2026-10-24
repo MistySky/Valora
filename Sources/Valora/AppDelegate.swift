@@ -11,13 +11,47 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     let runtimeSuiteName: String
     let startupMode: AppRuntimeDefaults.StartupMode
     let settings: RevivalSettings
-    lazy var model = AppModel(settings: settings)
+    private var modelWasLoaded = false
+    lazy var model: AppModel = {
+        let model = AppModel(settings: settings)
+        modelWasLoaded = true
+        return model
+    }()
     private var statusItem: NSStatusItem!
     private var coordinator: WindowCoordinator!
     private var settingsWindow: NSWindow?
     private let settingsNavigation = SettingsNavigation()
     lazy var settingsDraft = SettingsDraft(defaults: runtimeDefaults)
     private var subscriptions = Set<AnyCancellable>()
+    private lazy var appPermissions = AppPermissions(
+        bluetoothRequest: { [weak self] in self?.model.bluetooth?.requestAccessProbe() },
+        openBluetoothSettings: { AppPermissions.openBluetoothPrivacySettings() },
+        audioRequest: { [weak self] completion in
+            LiveAudioTap.shared.startAsync { status in
+                completion(status == noErr)
+                if self?.settings.musicPreferences.useLiveWaveform != true {
+                    LiveAudioTap.shared.stopAsync()
+                }
+            }
+        },
+        openAudioSettings: { AppPermissions.openAudioPrivacySettings() },
+        loginRegister: { completion in
+            do {
+                try LoginItem.set(true)
+                completion(AppPermissions.loginAccess(from: LoginItem.status))
+            } catch {
+                completion(.unknown)
+            }
+        },
+        loginUnregister: { completion in
+            do {
+                try LoginItem.set(false)
+                completion(AppPermissions.loginAccess(from: LoginItem.status))
+            } catch {
+                completion(.unknown)
+            }
+        },
+        openLoginSettings: { AppPermissions.openLoginItemSettings() })
 
     init(arguments: [String] = CommandLine.arguments) {
         let resolved = AppRuntimeDefaults.resolve(arguments: arguments)
@@ -39,6 +73,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // Construct the controllers for every mode; only production starts them.
         model.media = MediaController(model)
         model.audio = AudioOutputController(model)
+        model.bluetooth = ConnectivityController(model, authorizationGate: {
+            AppPermissions.currentBluetooth == .authorized
+        })
 
         if startupMode == .verifyMenuBar {
             guard let output = AppRuntimeDefaults.value(after: "--verify-menubar", arguments: CommandLine.arguments) else {
@@ -116,11 +153,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             model.album = "叶惠美"
             model.duration = 269
             model.source = "预览"
+            let art = NSImage(size: NSSize(width: 64, height: 64))
+            art.lockFocus()
+            NSColor(calibratedRed: 0.16, green: 0.62, blue: 0.55, alpha: 1).setFill()
+            NSBezierPath(rect: NSRect(x: 0, y: 0, width: 64, height: 64)).fill()
+            NSColor(calibratedRed: 0.86, green: 0.48, blue: 0.22, alpha: 1).setFill()
+            NSBezierPath(rect: NSRect(x: 0, y: 0, width: 32, height: 64)).fill()
+            art.unlockFocus()
+            model.artwork = art
             let lines = [
-                LyricLine(start: 1, text: "短句歌词"),
-                LyricLine(start: 5, text: "这是一句很长的歌词，需要在紧凑区域中慢速从右向左滚动显示，同时保持当前唱到的部分可见"),
+                LyricLine(start: 1, text: "短句歌词", words: [
+                    LyricWord(text: "短句", start: 1, duration: 0.5),
+                    LyricWord(text: "歌词", start: 1.5, duration: 0.5)
+                ]),
+                LyricLine(start: 5, text: "这是一句很长的歌词，需要在紧凑区域中慢速从左向右跟随当前字，同时保持当前唱到的部分可见", words: [
+                    LyricWord(text: "这是一句很长的歌词，", start: 5, duration: 0.5),
+                    LyricWord(text: "需要在紧凑区域中", start: 5.5, duration: 0.5),
+                    LyricWord(text: "慢速从左向右跟随当前字，", start: 6.0, duration: 0.5),
+                    LyricWord(text: "同时保持当前唱到的部分可见", start: 6.5, duration: 0.4)
+                ]),
                 LyricLine(start: 7, text: ""),
-                LyricLine(start: 9, text: "第二句")
+                LyricLine(start: 9, text: "第二句", words: [
+                    LyricWord(text: "第二句", start: 9, duration: 1)
+                ]),
+                LyricLine(start: 12, text: "这是一句没有逐字时间的长歌词，只有LRC整行时间，需要按行时间平滑滚动显示后半句，不能平均分字伪造成逐字同步"),
+                LyricLine(start: 20, text: "第三句")
             ]
             model.lyricsController = LyricsController(model: model,
                 provider: StaticLyricsProvider(result: .timed(LyricTimeline(lines: lines))))
@@ -134,6 +191,96 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             coordinator.start(trackPointer: false)
             model.lyricsController?.start()
             LyricsVerification.run(model: model, coordinator: coordinator, output: output)
+            return
+        }
+
+        if startupMode == .auditFluidity {
+            guard let output = AppRuntimeDefaults.value(after: "--audit-fluidity", arguments: CommandLine.arguments) else {
+                fputs("--audit-fluidity requires an output directory\n", stderr); NSApp.terminate(nil); return
+            }
+            settingsDraft.binding("showOnDisplay", "Main display").wrappedValue = "All displays"
+            settingsDraft.binding("showLyrics", false).wrappedValue = true
+            settings.reloadPreferences()
+            settings.showNotch = true
+            settings.forceSimulatedNotch = true
+            settings.hoverEnabled = false
+            settings.autoCollapse = false
+            settings.nowPlayingEnabled = true
+            settings.hideWhenIdle = false
+            model.playing = true
+            model.elapsed = 0.5
+            model.title = "audit-track"
+            model.artist = "audit-artist"
+            model.album = "audit-album"
+            model.duration = 120
+            model.source = "预览"
+            let provider = AuditLyricsProvider(result: .wordTimed(FluidityFixtures.timeline()))
+            model.lyricsController = LyricsController(model: model, provider: provider)
+            let builtIn = DisplayDescriptor(id: "builtin", name: "Built-in display",
+                frame: CGRect(x: 0, y: 0, width: 1728, height: 1117), safeAreaTop: 32,
+                auxiliaryLeftWidth: 771.5, auxiliaryRightWidth: 771.5, menuBarHeight: 32, isBuiltIn: true)
+            let external = DisplayDescriptor(id: "external", name: "External display",
+                frame: CGRect(x: -1920, y: -200, width: 1920, height: 1080), safeAreaTop: 0,
+                auxiliaryLeftWidth: nil, auxiliaryRightWidth: nil, menuBarHeight: 24)
+            coordinator = WindowCoordinator(model, displayProvider: { [builtIn, external] })
+            coordinator.start(trackPointer: false)
+            model.lyricsController?.start()
+            FluidityAudit.run(model: model, coordinator: coordinator, provider: provider,
+                              settings: settings, defaults: runtimeDefaults, output: output)
+            return
+        }
+
+        if startupMode == .verifyConnectivity {
+            guard let output = AppRuntimeDefaults.value(after: "--verify-connectivity", arguments: CommandLine.arguments) else {
+                fputs("--verify-connectivity requires an output directory\n", stderr); NSApp.terminate(nil); return
+            }
+            settingsDraft.binding("showOnDisplay", "Main display").wrappedValue = "All displays"
+            settingsDraft.binding("showLyrics", false).wrappedValue = true
+            settings.reloadPreferences()
+            settings.showNotch = true
+            settings.forceSimulatedNotch = true
+            settings.hoverEnabled = false
+            settings.autoCollapse = false
+            settings.nowPlayingEnabled = true
+            settings.hideWhenIdle = false
+            settings.bluetoothEnabled = true
+            model.playing = true
+            model.elapsed = 0.5
+            model.title = "晴天"
+            model.artist = "周杰伦"
+            model.album = "叶惠美"
+            model.duration = 269
+            model.source = "预览"
+            let art = NSImage(size: NSSize(width: 64, height: 64))
+            art.lockFocus()
+            NSColor(calibratedRed: 0.16, green: 0.62, blue: 0.55, alpha: 1).setFill()
+            NSBezierPath(rect: NSRect(x: 0, y: 0, width: 64, height: 64)).fill()
+            NSColor(calibratedRed: 0.86, green: 0.48, blue: 0.22, alpha: 1).setFill()
+            NSBezierPath(rect: NSRect(x: 0, y: 0, width: 32, height: 64)).fill()
+            art.unlockFocus()
+            model.artwork = art
+            model.lyrics = LyricsDisplayState(status: .ready,
+                timeline: LyricTimeline(lines: [
+                    LyricLine(start: 0, text: "连接提示结束后的歌词", words: [
+                        LyricWord(text: "连接提示", start: 0, duration: 1),
+                        LyricWord(text: "结束后的歌词", start: 1, duration: 1)
+                    ])
+                ]), identity: LyricsTrackIdentity(title: model.title, artist: model.artist,
+                                                  album: model.album, duration: model.duration))
+            let sound = ConnectivitySoundSpy()
+            let controller = ConnectivityController(model, source: EmptyConnectivitySource(),
+                                                    sound: sound)
+            model.bluetooth = controller
+            let builtIn = DisplayDescriptor(id: "builtin", name: "Built-in display",
+                frame: CGRect(x: 0, y: 0, width: 1728, height: 1117), safeAreaTop: 32,
+                auxiliaryLeftWidth: 771.5, auxiliaryRightWidth: 771.5, menuBarHeight: 32, isBuiltIn: true)
+            let external = DisplayDescriptor(id: "external", name: "External display",
+                frame: CGRect(x: -1920, y: -200, width: 1920, height: 1080), safeAreaTop: 0,
+                auxiliaryLeftWidth: nil, auxiliaryRightWidth: nil, menuBarHeight: 24)
+            coordinator = WindowCoordinator(model, displayProvider: { [builtIn, external] })
+            coordinator.start(trackPointer: false)
+            ConnectivityVerification.run(model: model, coordinator: coordinator,
+                                          controller: controller, sound: sound, output: output)
             return
         }
 
@@ -171,6 +318,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         setupMenu()
         model.media.start()
         model.audio.start()
+        model.bluetooth.start()
         if CommandLine.arguments.contains("--expand-media") {
             // QA-only: wait for the first system media snapshot, then expand.
             model.pinned = true
@@ -336,7 +484,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     @objc func showSettings() {
         if settingsWindow == nil {
-            let view = SettingsView(model:model,settings:settings,navigation:settingsNavigation,draft:settingsDraft)
+            let view = SettingsView(model:model,settings:settings,navigation:settingsNavigation,
+                                    draft:settingsDraft,permissions:appPermissions)
             let (window, _) = SettingsWindowFactory.make(rootView: view)
             window.center()
             settingsWindow = window
@@ -365,10 +514,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        model.lyricsController?.cancel()
+        // Do not touch the lazy model here when no controller was constructed;
+        // termination must not create an AppModel/ConnectivityController and
+        // accidentally start its lifecycle.
+        if modelWasLoaded {
+            model.lyricsController?.cancel()
+            model.media?.stop()
+            model.audio?.stop()
+            model.bluetooth?.stop()
+        }
         coordinator?.cancelPendingHover()
-        model.media?.stop()
-        model.audio?.stop()
         LiveAudioTap.shared.stop()
     }
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }

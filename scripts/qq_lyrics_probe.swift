@@ -278,6 +278,8 @@ struct QQMusicLyricsProbe {
                                           "response_bytes": fetched.data.count,
                                           "decoded": false,
                                           "decryption": "not_implemented"]
+            let body = String(data: fetched.data, encoding: .utf8) ?? ""
+            let encryptedContent = QQMusicQRC.contentHex(from: body)
             switch QQMusicQRCEvaluator.evaluate(status: fetched.status, data: fetched.data) {
             case .failure(let failure):
                 summary["request_ok"] = false
@@ -294,7 +296,23 @@ struct QQMusicLyricsProbe {
                 summary["content_present"] = true
                 summary["content_characters"] = characterCount
                 summary["looks_like_hex_cipher"] = looksLikeHex
-                summary["reason"] = "QRC payload is encrypted; no byte timing was claimed."
+                if let encryptedContent,
+                   let decrypted = QQMusicQRC.decrypt(hex: encryptedContent),
+                   let lines = QQMusicQRC.parseLyrics(decrypted: decrypted), !lines.isEmpty {
+                    summary["decoded"] = true
+                    summary["decryption"] = "mit_qqmusicdecoder_swift"
+                    summary["line_count"] = lines.count
+                    summary["word_count"] = lines.reduce(0) { $0 + $1.words.count }
+                    if let firstLine = lines.first, let firstWord = firstLine.words.first {
+                        summary["first_word_start"] = firstWord.start
+                        summary["first_word_duration"] = firstWord.duration
+                    }
+                    summary["reason"] = "Real QRC decrypted; timing fields summarized, text omitted."
+                } else {
+                    summary["decoded"] = false
+                    summary["decryption"] = "not_decoded"
+                    summary["decode_error"] = "decrypt_or_parse_failed"
+                }
             }
             return summary
         } catch {

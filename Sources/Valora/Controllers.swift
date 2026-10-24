@@ -60,7 +60,9 @@ final class MediaController {
             MainActor.assumeIsolated {
                 guard let self, !self.model.previewMode else { return }
                 if self.systemSnapshot != nil {
-                    self.model.elapsed = self.timeline.position(at: Date().timeIntervalSince1970)
+                    let now = Date()
+                    self.model.setElapsed(self.timeline.position(at: now.timeIntervalSince1970),
+                                          sampledAt: now)
                 }
                 self.tick += 1
                 if self.tick % 4 == 0 { self.refresh() }
@@ -98,7 +100,7 @@ final class MediaController {
         systemSnapshot = nil
         timeline = SystemMediaTimeline()
         model.title = "暂无播放"; model.artist = ""; model.album = ""; model.artwork = nil
-        model.duration = 0; model.elapsed = 0; model.playing = false
+        model.duration = 0; model.setElapsed(0, sampledAt: Date()); model.playing = false; model.playbackRate = 1
         model.source = "系统"; model.mediaBundleIdentifier = ""
         model.mediaCanSeek = false; model.mediaCanSkip = false; model.mediaCanControl = false
         model.mediaRevisionIdentity = ""
@@ -120,8 +122,10 @@ final class MediaController {
         }
         previousSystemArtwork = snapshot.artwork
         model.title = snapshot.title; model.artist = snapshot.artist; model.album = snapshot.album
-        model.playing = snapshot.playing; model.duration = snapshot.duration
-        model.elapsed = timeline.position(at: Date().timeIntervalSince1970)
+        model.playing = snapshot.playing; model.playbackRate = snapshot.rate
+        model.duration = snapshot.duration
+        let now = Date()
+        model.setElapsed(timeline.position(at: now.timeIntervalSince1970), sampledAt: now)
         model.source = "系统"; model.mediaBundleIdentifier = snapshot.bundleIdentifier
         model.mediaRevisionIdentity = snapshot.revisionIdentity
         model.mediaCanSeek = snapshot.duration > 0

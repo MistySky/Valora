@@ -1,0 +1,46 @@
+warning: 'valora': found 1 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /Users/wangqing/code/Valora/Tests/ReferenceCoreTests/Fixtures/qq-qrc-studio.hex
+Building for production...
+[4 / 13] ReferenceCore
+[6 / 13] ReferenceCore
+[9 / 15] ReferenceCore
+[12 / 14] Valora-product
+/Users/wangqing/code/Valora/Sources/Valora/CompactLyricsView.swift:81:38: [1;33mwarning: [1;39mcall to main actor-isolated static method 'measure(_:size:weight:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m79 |[0;0m         for word in line.words {
+ [0;36m80 |[0;0m             prefixes.append(prefix)
+ [0;36m81 |[0;0m             let width = MarqueeLabel.measure(word.text, size: 12, weight: .semibold).width
+    [0;36m|[0;0m                                      `- [1;33mwarning: [1;39mcall to main actor-isolated static method 'measure(_:size:weight:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m82 |[0;0m             widths.append(width)
+ [0;36m83 |[0;0m             prefix += width
+
+/Users/wangqing/code/Valora/Sources/Valora/MarqueeLabel.swift:18:17: [1;39mnote: [1;39mcalls to static method 'measure(_:size:weight:)' from outside of its actor context are implicitly asynchronous[0;0m
+ [0;36m16 |[0;0m     var cycleStart: CFTimeInterval = 0
+ [0;36m17 |[0;0m     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+ [0;36m18 |[0;0m     static func measure(_ text:String,size:CGFloat,weight:NSFont.Weight)->CGSize {
+    [0;36m|[0;0m                 |- [1;39mnote: [1;39mcalls to static method 'measure(_:size:weight:)' from outside of its actor context are implicitly asynchronous[0;0m
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mmain actor isolation inferred from conformance to protocol 'NSViewRepresentable'[0;0m
+ [0;36m19 |[0;0m         (text as NSString).size(withAttributes:[.font:NSFont.systemFont(ofSize:size,weight:weight),.kern:0.05])
+ [0;36m20 |[0;0m     }
+
+/Users/wangqing/code/Valora/Sources/Valora/CompactLyricsView.swift:87:35: [1;33mwarning: [1;39mcall to main actor-isolated static method 'measure(_:size:weight:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m85 |[0;0m         wordWidths = widths
+ [0;36m86 |[0;0m         self.prefixes = prefixes
+ [0;36m87 |[0;0m         totalWidth = MarqueeLabel.measure(line.text, size: 12, weight: .semibold).width
+    [0;36m|[0;0m                                   `- [1;33mwarning: [1;39mcall to main actor-isolated static method 'measure(_:size:weight:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m88 |[0;0m     }
+ [0;36m89 |[0;0m 
+
+/Users/wangqing/code/Valora/Sources/Valora/MarqueeLabel.swift:18:17: [1;39mnote: [1;39mcalls to static method 'measure(_:size:weight:)' from outside of its actor context are implicitly asynchronous[0;0m
+ [0;36m16 |[0;0m     var cycleStart: CFTimeInterval = 0
+ [0;36m17 |[0;0m     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+ [0;36m18 |[0;0m     static func measure(_ text:String,size:CGFloat,weight:NSFont.Weight)->CGSize {
+    [0;36m|[0;0m                 |- [1;39mnote: [1;39mcalls to static method 'measure(_:size:weight:)' from outside of its actor context are implicitly asynchronous[0;0m
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mmain actor isolation inferred from conformance to protocol 'NSViewRepresentable'[0;0m
+ [0;36m19 |[0;0m         (text as NSString).size(withAttributes:[.font:NSFont.systemFont(ofSize:size,weight:weight),.kern:0.05])
+ [0;36m20 |[0;0m     }
+
+[#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>
+[14 / 16] Valora-product
+[16 / 16] Valora-product
+[18 / 19] Valora-product
+Build complete! (22.18秒)

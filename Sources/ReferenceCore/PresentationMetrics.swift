@@ -31,9 +31,11 @@ public enum PresentationMetrics: Sendable {
         let notch = geometry.hasPhysicalNotch || simulated
         var width = geometry.compact.width + notification.widthAddition(notchOrSimulated: notch)
         if liveActivity != .none {
-            width += notch ? 74 : (liveActivity == .locked ? 46 : 62)
+            // Music activity uses the same 74pt increment on physical-notch and
+            // non-notch hardware: 140 + 74 = the confirmed 214pt compact width.
+            width += notch ? 74 : (liveActivity == .locked ? 46 : 74)
         } else if quickPeek == .calendar || quickPeek == .playing {
-            width += notch ? 74 : 62
+            width += quickPeek == .playing ? 74 : (notch ? 74 : 62)
         }
         let peekHeight: CGFloat = quickPeek == .none ? 0 : (quickPeek == .adjusting ? 36.8 : 32)
         return tuning.apply(toCompact: CGSize(width: width, height: geometry.compact.height + peekHeight),

@@ -109,6 +109,13 @@ final class SettingsReductionTests: XCTestCase {
         XCTAssertFalse(settingsView.contains("songTitleBadge"))
         XCTAssertFalse(settingsView.contains("Explicit"))
         XCTAssertFalse(settingsView.contains("Format"))
+        XCTAssertTrue(settingsView.contains("Connectivity"))
+        XCTAssertFalse(settingsView.contains("connectivityModel"))
+        XCTAssertFalse(settingsView.contains("connectivityDuration"))
+        XCTAssertFalse(settingsView.contains("warnOnLowConnectBattery"))
+        XCTAssertFalse(settingsView.contains("lowConnectBatteryThreshold"))
+        XCTAssertFalse(settingsView.contains("playSoundOnLowConnectBattery"))
+        XCTAssertTrue(SettingsPage.allCases.contains(.connectivity))
         XCTAssertTrue(coordinatorText.contains(".mouseMoved,.leftMouseDragged"))
 
     }

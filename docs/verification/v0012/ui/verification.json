@@ -1,0 +1,457 @@
+{
+  "checks" : [
+    {
+      "generation" : 1,
+      "name" : "expanding retains content but rejects player interaction",
+      "passed" : true,
+      "phase" : "expanding"
+    },
+    {
+      "generation" : 1,
+      "name" : "expansion settles with all lifecycle flags",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 1,
+      "name" : "expanded size follows display geometry",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 1,
+      "name" : "display selects the correct contour",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 2,
+      "name" : "collapsing retains content but rejects player interaction",
+      "passed" : true,
+      "phase" : "collapsing"
+    },
+    {
+      "generation" : 2,
+      "name" : "duplicate collapse completions drain once each",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "collapse cleans every visual flag",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "compact activity preserves native height",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "detached compact waveform does not run a timer",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "compact native waveform uses five centered two point bars",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "attached playing waveform starts one clock",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "waveform renders a filtered artwork texture",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "unchanged artwork does not repeat image filtering",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "missing artwork clears previous waveform texture",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "pause stops clock and settles each bar to two points",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "reduce motion renders bars without clock",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "expanded waveform restores recovered six bar envelope",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "retained inactive player suspends waveform clock",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "reopened expanded player resumes native clock",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "dismantled waveform releases animation clock",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "compact hover scales the full cutout",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "hover exit restores scale",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 4,
+      "name" : "pointer exit begins collapse during expansion",
+      "passed" : true,
+      "phase" : "collapsing"
+    },
+    {
+      "generation" : 5,
+      "name" : "reentry can interrupt pointer-exit collapse",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 5,
+      "name" : "explicit pinned preview does not auto collapse",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 6,
+      "name" : "audible volume shows small speaker and mute action",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 6,
+      "name" : "native mute shows slash even with retained volume",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 6,
+      "name" : "zero slider shows slash without native mute bit",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 7,
+      "name" : "output row adds 32 points",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 8,
+      "name" : "collapse clears output before its completion",
+      "passed" : true,
+      "phase" : "collapsing"
+    },
+    {
+      "generation" : 9,
+      "name" : "interrupted collapse reopens without output row",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 11,
+      "name" : "completed collapse also resets output for next expansion",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 37,
+      "name" : "24 interrupted transitions settle expanded",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 38,
+      "name" : "final collapse still completes after interruptions",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 38,
+      "name" : "fixed music policies ignore legacy values",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 38,
+      "name" : "compact waveform remains enabled",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 38,
+      "name" : "source foreground no longer hides the music activity",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 38,
+      "name" : "retained visible settings survive a new settings instance",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 38,
+      "name" : "initial track does not produce a change preview",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 38,
+      "name" : "subsequent track opens the fixed two second preview",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 0,
+      "name" : "fixed quick peek expires after two seconds",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 0,
+      "name" : "palette retains distinct fixture colors",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 0,
+      "name" : "identical artwork has stable revision",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 0,
+      "name" : "missing artwork has no previous palette",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 0,
+      "name" : "white filter uses relative luminance",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 0,
+      "name" : "first artwork is shown without flipping",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 0,
+      "name" : "rapid artwork revisions settle on newest image",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 0,
+      "name" : "disabled flip rejects obsolete completion",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 1,
+      "name" : "progress style reaches runtime: Monochrome",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 1,
+      "name" : "progress style reaches runtime: Colored",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 1,
+      "name" : "progress style reaches runtime: Gradient",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 1,
+      "name" : "artwork flip remains fixed enabled",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 1,
+      "name" : "missing artwork clears color palette",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 2,
+      "name" : "two native rows share exact animation epoch",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "marquee holds its readable prefix during initial delay",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "native presentation layer actually scrolls after delay",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "color update preserves animation clock",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "overflowing resize preserves animation clock",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "fitting text removes scrolling animation",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "overflow boundary starts a fresh cycle",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "collapse stops retained native text animation",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "reopening restarts native text animation",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "reduced motion has no scrolling layer",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "new short title has no old scrolling layer",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 2,
+      "name" : "detached native text stops animation",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 3,
+      "name" : "expanded SwiftUI player mounts both native marquee rows",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 3,
+      "name" : "pause does not reset title or artist scroll clock",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 3,
+      "name" : "rapid pause resume preserves marquee and latest playing state",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 4,
+      "name" : "collapsing player disables retained scrolling",
+      "passed" : true,
+      "phase" : "collapsing"
+    },
+    {
+      "generation" : 5,
+      "name" : "interrupted collapse shows only newest song text",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 6,
+      "name" : "completed collapse dismantles expanded marquee views",
+      "passed" : true,
+      "phase" : "collapsed"
+    },
+    {
+      "generation" : 7,
+      "name" : "playback output uses recovered Pro symbol",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 9,
+      "name" : "physical notch resolves confirmed dimensions and corners",
+      "passed" : true,
+      "phase" : "expanded"
+    },
+    {
+      "generation" : 10,
+      "name" : "physical compact uses confirmed notch width",
+      "passed" : true,
+      "phase" : "collapsed"
+    }
+  ],
+  "expandedSize" : "{345, 175}",
+  "nativeSize" : "{140, 25.5}",
+  "originalPixelParityVerified" : false,
+  "passed" : true,
+  "physicalScreenCount" : 1,
+  "playerCommandSent" : false,
+  "productionMediaStarted" : false,
+  "rendering" : "NSHostingView cacheDisplay; synthetic artwork\/title",
+  "secondaryCompactRendered" : false
+}

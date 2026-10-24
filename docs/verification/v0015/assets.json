@@ -1,0 +1,84 @@
+{
+  "payloads": [
+    {
+      "path": "Resources/AirPods/airpods-3.mp4",
+      "sha256": "4f6778333902cdabae3f7d65e0812b6cc3346e84b2bc1b39e4c42570602a515f",
+      "bytes": 28687
+    },
+    {
+      "path": "Resources/AirPods/airpods-4.mp4",
+      "sha256": "dfb7e9992acf3112e3e6073fb1bcd3ae0d09903c2203d41c2cbbd8dd7d063794",
+      "bytes": 27700
+    },
+    {
+      "path": "Resources/AirPods/airpods-max-blue.mp4",
+      "sha256": "87df00a431314ed0cbe76361b748222d7c7b38cf604ce53550b9135be218ab50",
+      "bytes": 34428
+    },
+    {
+      "path": "Resources/AirPods/airpods-max-green.mp4",
+      "sha256": "6f5e3eefc383c0004e0f0680e5a18a5743e5252e9011d8d0262dc9266f74f5df",
+      "bytes": 36411
+    },
+    {
+      "path": "Resources/AirPods/airpods-max-midnight.mp4",
+      "sha256": "36d53cf0e4f1551c6b6b212f0b1df5cf2c3eebac4e0ff67fd9e9dfb035f7341b",
+      "bytes": 30623
+    },
+    {
+      "path": "Resources/AirPods/airpods-max-orange.mp4",
+      "sha256": "ef9924aa4021909e5b1e93277259a82e11dfdefe8c4f757ff41f8ef16b5c43ba",
+      "bytes": 37559
+    },
+    {
+      "path": "Resources/AirPods/airpods-max-purple.mp4",
+      "sha256": "80b2eff064bd29276e702cddd2d973cee6d3a80c4ac060656a9c802f6f4b25dc",
+      "bytes": 36471
+    },
+    {
+      "path": "Resources/AirPods/airpods-max-red.mp4",
+      "sha256": "cf5800ad5ab7c30c020894731a548d955fab7b3d438114ff6ee01c51c0d87f46",
+      "bytes": 35647
+    },
+    {
+      "path": "Resources/AirPods/airpods-max-silver.mp4",
+      "sha256": "553ec169e0fffe19c8d8705f5814620610474df45af0773f17bcaa1f79835010",
+      "bytes": 36477
+    },
+    {
+      "path": "Resources/AirPods/airpods-max-sky-blue.mp4",
+      "sha256": "b1bbc518fb1dcd0bbe1676edc392c293463929b8e4b10cfbb9b69f290aa47956",
+      "bytes": 32047
+    },
+    {
+      "path": "Resources/AirPods/airpods-max-space-gray.mp4",
+      "sha256": "1fb8038107593f1d352454e4c10f8f199634b7d85e035fb380993d05dffae5eb",
+      "bytes": 28557
+    },
+    {
+      "path": "Resources/AirPods/airpods-max-starlight.mp4",
+      "sha256": "5033a6e122a1eee320d317ef40cd4609ea811767ac362ff5ce5148c3498503c3",
+      "bytes": 36591
+    },
+    {
+      "path": "Resources/AirPods/airpods-pro-2.mp4",
+      "sha256": "8ad04746d944f9a77d88ee86f3f215535e19733638fc6a23bec84afc0e4b56b7",
+      "bytes": 31696
+    },
+    {
+      "path": "Resources/AirPods/airpods-pro-3.mp4",
+      "sha256": "c1d1c5c5a94180211f714a22782cb87bb5f812d56f526de7ba4240d84cd0f393",
+      "bytes": 31921
+    },
+    {
+      "path": "Resources/AirPods/airpods-pro.mp4",
+      "sha256": "89c31466029063c4e23f953d9f19fb10682679ed9584dca26fb566f27cb10220",
+      "bytes": 31977
+    },
+    {
+      "path": "Resources/Sounds/low-battery.caf",
+      "sha256": "1c4182961a8a13b865f6e18cb4fec7bf36bd7b5772ff16daf30d0409812b3b86",
+      "bytes": 109300
+    }
+  ]
+}

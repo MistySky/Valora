@@ -31,7 +31,8 @@ final class MediaControllerRecoveryTests: XCTestCase {
         controller = MediaController(model, system: fake, retryInterval: retryInterval)
     }
 
-    private func snapshot(title: String = "Track", duration: Double = 236) -> SystemMediaSnapshot {
+    private func snapshot(title: String = "Track", duration: Double = 236,
+                          rate: Double = 1) -> SystemMediaSnapshot {
         SystemMediaSnapshot([
             "bundleIdentifier": "com.test.player",
             "title": title,
@@ -41,7 +42,7 @@ final class MediaControllerRecoveryTests: XCTestCase {
             "elapsedTimeMicros": 74_000_000,
             "timestampEpochMicros": Date().timeIntervalSince1970 * 1_000_000,
             "playing": true,
-            "playbackRate": 1,
+            "playbackRate": rate,
             "contentItemIdentifier": "track-" + title
         ])!
     }
@@ -131,6 +132,13 @@ final class MediaControllerRecoveryTests: XCTestCase {
         for _ in 0..<20 { controller.refresh() }
         XCTAssertEqual(fake.startCount, started)
         XCTAssertFalse(model.settings.nowPlayingEnabled)
+    }
+
+    func testPlayerRateReachesLyricsClock() {
+        makeController()
+        fake.snapshot = snapshot(rate: 2)
+        controller.start()
+        XCTAssertEqual(model.playbackRate, 2)
     }
 
     func testPlaybackCommandsUseSingleSharedFakePlayer() {

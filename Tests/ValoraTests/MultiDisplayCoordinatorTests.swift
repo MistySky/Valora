@@ -199,7 +199,7 @@ final class MultiDisplayCoordinatorTests: XCTestCase {
     }
 
 
-    func testLyricsMarqueeFollowsOnlyTheActiveScreen() async {
+    func testLyricsStayOnTheActiveScreenAfterSwitch() async {
         defaults.set(["showOnDisplay": "All displays", "showLyrics": true],
                      forKey: "referenceSettingsUI")
         settings.reloadPreferences()
@@ -210,22 +210,20 @@ final class MultiDisplayCoordinatorTests: XCTestCase {
         model.elapsed = 5
         model.lyrics = LyricsDisplayState(status: .ready,
             timeline: LyricTimeline(lines: [
-                LyricLine(start: 5, text: String(repeating: "这是一句需要在紧凑区域里滚动的长歌词，", count: 3))
+                LyricLine(start: 5, text: "这是一句需要在紧凑区域里跟随的长歌词", words: [
+                    LyricWord(text: "这是一句", start: 5, duration: 1),
+                    LyricWord(text: "需要在紧凑区域里跟随的长歌词", start: 6, duration: 1)
+                ])
             ]), identity: model.lyrics.identity)
-        try? await Task.sleep(nanoseconds: 350_000_000)
+        try? await Task.sleep(nanoseconds: 300_000_000)
         let ids = coordinator.verificationScreenIDs
-        XCTAssertTrue(hasMarquee(coordinator.panel.contentView))
-        XCTAssertFalse(hasMarquee(coordinator.verificationSecondaryPanels.first?.view))
+        XCTAssertTrue(model.showsCompactLyrics)
+        XCTAssertEqual(coordinator.verificationActiveScreenID, ids.first)
         coordinator.verificationActivateScreen(ids[1])
-        try? await Task.sleep(nanoseconds: 350_000_000)
-        XCTAssertTrue(hasMarquee(coordinator.panel.contentView))
-        XCTAssertFalse(hasMarquee(coordinator.verificationSecondaryPanels.first?.view))
-    }
-
-    private func hasMarquee(_ view: NSView?) -> Bool {
-        guard let view else { return false }
-        if view is MarqueeLabelView { return true }
-        return view.subviews.contains { hasMarquee($0) }
+        try? await Task.sleep(nanoseconds: 250_000_000)
+        XCTAssertEqual(coordinator.verificationActiveScreenID, ids[1])
+        XCTAssertTrue(model.showsCompactLyrics)
+        XCTAssertEqual(coordinator.verificationSecondaryPanels.count, 1)
     }
 
     func testOrdinaryDesktopMovementDoesNotMoveTheExpandedPanel() {

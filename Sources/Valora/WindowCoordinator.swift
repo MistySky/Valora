@@ -132,6 +132,11 @@ final class WindowCoordinator {
                 MainActor.assumeIsolated { self?.updateVisibility() }
             }
         }.store(in: &subscriptions)
+        model.$connectionToast.removeDuplicates().sink { [weak self] _ in
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated { self?.updateVisibility() }
+            }
+        }.store(in: &subscriptions)
         model.settings.$musicPreferences.removeDuplicates().sink { [weak self] _ in
             DispatchQueue.main.async {
                 MainActor.assumeIsolated { self?.musicVisibilityChanged() }
@@ -362,7 +367,8 @@ final class WindowCoordinator {
     private func updateVisibility() {
         guard !panels.isEmpty else { return }
         let visible = !model.screenHidden && model.settings.showNotch
-            && (!model.settings.hideWhenIdle || model.showsMusicActivity || model.expanded)
+            && (!model.settings.hideWhenIdle || model.showsMusicActivity
+                || model.expanded || model.connectionToast != nil)
         for record in panels {
             record.panel.sharingType = model.settings.hideFromScreenCapture ? .none : .readOnly
             if visible {
@@ -374,7 +380,7 @@ final class WindowCoordinator {
                 record.panel.ignoresMouseEvents = true
             }
         }
-        if !visible, let active {
+        if !visible {
             model.presenter.pointerEntered(false)
         }
     }
@@ -449,8 +455,9 @@ final class WindowCoordinator {
 
     private func scheduleHover(_ record: ScreenPanel) {
         cancelPendingHover(record)
+        // Keep the generation counter and increment on every scheduled hover;
+        // pending work is invalidated by cancelPendingHover above.
         record.hoverGeneration += 1
-        let generation = record.hoverGeneration
         let work = DispatchWorkItem { [weak self, weak record] in
             MainActor.assumeIsolated {
                 guard let self, let record, record === self.active,

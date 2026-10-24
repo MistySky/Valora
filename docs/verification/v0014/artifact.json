@@ -1,0 +1,6 @@
+{
+  "binary_sha256": "0a833f5f94c921c68ff98e9edacdb4f18b33e8fdd94355b919d7b19e42856149",
+  "file_count": 13,
+  "bytes": 5595550,
+  "codesign": "--prepared:/Users/wangqing/code/Valora/dist/Valora.app/Contents/Frameworks/MediaRemoteAdapter.framework\n--validated:/Users/wangqing/code/Valora/dist/Valora.app/Contents/Frameworks/MediaRemoteAdapter.framework\ndist/Valora.app: valid on disk\ndist/Valora.app: satisfies its Designated Requirement"
+}

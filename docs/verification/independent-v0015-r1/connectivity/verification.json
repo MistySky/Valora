@@ -1,0 +1,132 @@
+{
+  "checks" : [
+    {
+      "name" : "Bluetooth always-usage description is packaged",
+      "passed" : true
+    },
+    {
+      "name" : "appearance is automatic and ignores legacy selection",
+      "passed" : true
+    },
+    {
+      "name" : "connectivity switch is enabled for QA",
+      "passed" : true
+    },
+    {
+      "name" : "first snapshot learns baseline without a toast",
+      "passed" : true
+    },
+    {
+      "name" : "first snapshot does not play a low-battery sound",
+      "passed" : true
+    },
+    {
+      "name" : "new connected AirPods shows a toast",
+      "passed" : true
+    },
+    {
+      "name" : "new connection is not low-battery",
+      "passed" : true
+    },
+    {
+      "name" : "connection toast uses compact notification width",
+      "passed" : true
+    },
+    {
+      "name" : "connection toast suppresses the lyric row",
+      "passed" : true
+    },
+    {
+      "name" : "late model metadata updates the current toast",
+      "passed" : true
+    },
+    {
+      "name" : "late metadata does not replay arrival",
+      "passed" : true
+    },
+    {
+      "name" : "automatic appearance keeps 3D enabled",
+      "passed" : true
+    },
+    {
+      "name" : "known model resolves a bundled movie name",
+      "passed" : true
+    },
+    {
+      "name" : "unknown model falls back to a generic AirPods symbol",
+      "passed" : true
+    },
+    {
+      "name" : "unknown model has no movie asset",
+      "passed" : true
+    },
+    {
+      "name" : "crossing 20% shows the low-battery state",
+      "passed" : true
+    },
+    {
+      "name" : "crossing 20% plays the low-battery sound once",
+      "passed" : true
+    },
+    {
+      "name" : "low-battery toast uses the recovered red-ring width",
+      "passed" : true
+    },
+    {
+      "name" : "zero is distinct from missing battery",
+      "passed" : true
+    },
+    {
+      "name" : "switch off clears devices and toast",
+      "passed" : true
+    },
+    {
+      "name" : "switch off stops an active low-battery sound",
+      "passed" : true
+    },
+    {
+      "name" : "late snapshot after switch off stays ignored",
+      "passed" : true
+    },
+    {
+      "name" : "re-enable first snapshot is baseline only",
+      "passed" : true
+    },
+    {
+      "name" : "re-enable new connection is detected after baseline",
+      "passed" : true
+    },
+    {
+      "name" : "active screen owns the connection surface",
+      "passed" : true
+    },
+    {
+      "name" : "expanded music survives an active compact connection toast",
+      "passed" : true
+    },
+    {
+      "name" : "collapse restores compact connection surface",
+      "passed" : true
+    },
+    {
+      "name" : "final prompt is visible before expiry (final, known=[\"base\", \"final\", \"low\", \"pro\"])",
+      "passed" : true
+    },
+    {
+      "name" : "fixed five-second prompt expires",
+      "passed" : true
+    },
+    {
+      "name" : "lyrics return after connection prompt",
+      "passed" : true
+    },
+    {
+      "name" : "controller stop stops any active low-battery sound",
+      "passed" : true
+    }
+  ],
+  "originalPixelParityVerified" : false,
+  "passed" : true,
+  "realBluetoothOrSoundUsed" : false,
+  "rendering" : "NSHostingView cacheDisplay; AVPlayer video layers may not appear in bitmap"
+}

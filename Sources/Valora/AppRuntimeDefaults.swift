@@ -12,6 +12,8 @@ enum AppRuntimeDefaults {
         "--verify-music",
         "--verify-multidisplay",
         "--verify-lyrics",
+        "--verify-connectivity",
+        "--audit-fluidity",
         "--verify-menubar",
         "--verify-settings",
         "--verify-system-media",
@@ -30,6 +32,8 @@ enum AppRuntimeDefaults {
         case verifyMusic
         case verifyMultiDisplay
         case verifyLyrics
+        case verifyConnectivity
+        case auditFluidity
         case verifyMenuBar
         case verifySettings
         case verifySystemMedia
@@ -46,6 +50,8 @@ enum AppRuntimeDefaults {
         if arguments.contains("--verify-music") { return .verifyMusic }
         if arguments.contains("--verify-multidisplay") { return .verifyMultiDisplay }
         if arguments.contains("--verify-lyrics") { return .verifyLyrics }
+        if arguments.contains("--verify-connectivity") { return .verifyConnectivity }
+        if arguments.contains("--audit-fluidity") { return .auditFluidity }
         if arguments.contains("--verify-menubar") { return .verifyMenuBar }
         if arguments.contains("--verify-settings") { return .verifySettings }
         if arguments.contains("--verify-system-media") { return .verifySystemMedia }

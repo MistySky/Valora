@@ -5,22 +5,25 @@ import SwiftUI
 // not migrated.
 enum SettingsPage: String, CaseIterable, Identifiable {
     case general = "General"
+    case connectivity = "Connectivity"
     case nowPlaying = "Now Playing"
     var id: String { rawValue }
     var displayTitle: String { SettingsText.localized(rawValue) }
     var symbol: String {
         switch self {
         case .general: return "gearshape.fill"
+        case .connectivity: return "headphones"
         case .nowPlaying: return "play.fill"
         }
     }
     var color: Color {
         switch self {
         case .general: return .gray
+        case .connectivity: return Color(red: 0, green: 0.75, blue: 0.54)
         case .nowPlaying: return Color(red: 0.98, green: 0.22, blue: 0.40)
         }
     }
-    var scrolls: Bool { true }
+    var scrolls: Bool { self != .connectivity }
 }
 
 /// UI preferences are persisted in the same archived dictionary. A visible

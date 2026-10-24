@@ -126,3 +126,55 @@ V0010/R1获取探针已独立验收通过：119测试、独立构建和候选签
 用户最新纠正歌词UI：只用切歌时下方短暂伸出的歌曲信息小区域，不能铺成整个横条。Codex检查开发中QA发现短句裁切、歌词/切歌信息叠字，见docs/verification/independent-v0011-layout-review/findings.md；当前pi busy，未抢改源码/重复派工。正式交付需先按此纠正验收，同条件对照原切歌区域边界，只替换内容、长句内部滚动，不另造横栏。
 
 用户最新授权：派下一批歌词任务前先建立私有GitHub仓库并上传当前项目，作为可回退基线；授权Codex本次git初始化、初始提交、基线tag和push，覆盖此前本次操作所涉不Git提交限制。pi仍不得自行Git提交/推送或改来源。当前V0011并非全体验收通过版，必须如实标明。
+
+用户最新最终歌词规格见docs/LYRICS-NEXT.md及docs/pi-tasks/v0012-word-lyrics-final.md，覆盖此前居中/左右模式/跟随进度条配色等讨论：上下换句、逐字封面主色、长句按30%-65%阅读区跟随；开启歌词取消歌曲提示、无有效歌词3秒隐藏、展开底部歌词且音量在上；有界缓存。用户最后确认继续由pi实现。
+
+私有GitHub仓库git@github.com:MistySky/Valora.git已上传，main基线提交c4771fc，tag=baseline-2026-10-24-before-lyrics-v2。当前分支codex/lyrics-word-sync供V0012实施，未宣称V0011体验验收通过；pi不要操作Git提交/推送/切换分支或覆盖基线。现有邮箱已单次投递V0012，完成Codex独立验收，不恢复定时器。
+
+用户已确认V0012形态补充：实体/模拟刘海紧凑有歌词；非刘海未模拟的紧凑胶囊不显示歌词也不增高，展开后仍支持底部歌词、音量在上。详见docs/pi-tasks/v0012-supplement-nonnotch-lyrics.md；不修改已发送原任务哈希，本补充排入同一邮箱，pi空闲后接收，不重复V0012主体派工。
+
+用户最新授权重新开启定时，频率每10分钟，顺序收尾歌词→清理代码→流畅度测试；本轮完成后停止，不自动进入设备模块。Codex内置heartbeat automationId=valora已ACTIVE，当前主体V0012 busy且非刘海补充pending，不重复派工。用户另明确要求诊断当前《知否知否》为何无歌词，允许只读当前歌曲信息与相关歌词请求，不控制播放。
+
+Codex已只读诊断当前《知否知否》：MediaRemote歌手仅胡夏，QQ搜索原版为胡夏 / 郁可唯，标题/专辑/276秒一致；基线匹配器对真实候选复现artistMismatch，歌词接口本身HTTP200有payload。另有同专辑同长度男声版，不能盲目选合唱版。证据docs/verification/zhifou-lyrics-diagnosis/findings.md，须并入V0012匹配修复与版本防错回归。
+
+用户最新要求优先查各个成熟歌词获取/匹配方式，借鉴Lyrimuse/LyricsKit等可行实现，不引入Go；详见docs/pi-tasks/v0012-priority-lyrics-reference-review.md。优先核查并修知否知否署名不全导致拒绝，研究少量必要回退而非盲目加源，3秒总预算和版本防错不变。补充排入原邮箱，当前忙碌不谎称已实时送达。
+
+用户最新覆盖此前非刘海禁用规则：只针对无实体刘海屏，模拟刘海/胶囊音乐紧凑可见总宽统一214pt，展开345pt；保留外形和顶部间距差异。歌词与强制模拟开关解耦，两种形态都支持紧凑/展开歌词；实体刘海保持硬件几何。已原子改写尚未消费的同一补充任务并更新哈希，非重复派工。pi当前busy，需空闲后收到，不谎称已实时送达。
+
+最新用户确认（V0012-R1，同轮交付）：紧凑/最小及展开歌词短句均整体居中，覆盖旧左对齐；长句仍按真实逐字演唱位置跟随。胶囊圆弧及隐藏/取消缺陷与逐字时间同步优化一起修复、一起交付独立验收。见docs/pi-tasks/v0012-r1-centered-lyrics-contour-cancellation.md及docs/pi-tasks/v0012-r1-supplement-word-sync.md。不要修改已发送任务哈希，不重复派工，不先进入清理。
+
+最新阶段：V0012-R1同轮补充已正式交付，Codex独立161原测试/构建签名/歌词QA28通过，但新增非合作provider超时回归失败，局部选行与逐字时间源分离、长句横移仍按词跳变；限定R2见docs/pi-tasks/v0012-r2-local-timeline-deadline.md及docs/verification/independent-v0012-r1/decision.md。R2已排入现有邮箱，不重复派工，仍不进入清理。
+
+最新阶段：R2原163项独立测试/构建签名/歌词QA28通过，原deadline已修；新增立即取消回归仍会挂起controller，采样时刻未真实保留且分段缓存key存在越界路径。限定R3见docs/pi-tasks/v0012-r3-anchor-cache-cancel.md及docs/verification/independent-v0012-r2/decision.md，已单次投递原邮箱，不重复，不先清理。
+
+最新阶段：R3已独立166测试/构建签名/歌词QA28通过，三个返修项接受。整体仍有无逐字LRC长句offset固定0导致后文不可读的旧需求缺口，限定docs/pi-tasks/v0012-r4-line-only-overflow.md已单次排入邮箱。保留QRC逐字行为，不新增功能，完成复验后才V0013清理。
+
+最新阶段：V0012/R1—R4歌词实现自动范围独立接受，168测试、构建签名、歌词QA31/音乐74/注入多屏12通过，见docs/verification/independent-v0012-r4/decision.md。实际QQ人声同步和物理双屏待用户实机，通知一次，不冒称全部实机通过。已单次投递V0013限定残留清理，完成独立验收后才V0014流畅度；本轮不进入设备。保留用户资源/历史证据/基线，不Git提交推送或安装发布。
+
+最新阶段：V0013限定清理独立接受，168测试/构建签名通过，见docs/verification/independent-v0013/decision.md。已单次投递V0014隔离流畅度/资源测量，必须原始证据并区分回调与呈现FPS；不重复派工、不进入设备。歌词人声同步/物理双屏待实机已通知一次。V0014正式交付后独立复验，全部本轮范围完成才通知并移除接续。
+
+本轮最终完成：歌词V0012/R1—R4、限定清理V0013、隔离流畅度V0014均经Codex独立复核；V0014独立168测试/构建签名、资源audit39项、歌词31/音乐74/注入多屏12通过，见docs/verification/independent-v0014/decision.md及audit/audit.json。暂停/隐藏/歌词关闭/被动屏无持续歌词刷新，CPU/RSS证据已保存；回调调度不等同真实呈现FPS。实际QQ人声同步、物理双屏及长期体感仍如实待用户实机，已通知一次，不反复打扰。授权本轮范围完成，停止自动派工，不进入设备，不Git提交推送或安装发布。
+
+Codex内置接续automationId=valora已在本轮独立验收完成后删除，工具返回deleteStatus=deleted；不自动恢复。
+
+用户最新明确授权开始设备连接模块（原版Alcove证据＋只读成熟复刻代码迁移），覆盖此前本轮不进入设备的停止点；按docs/pi-tasks/v0015-device-connectivity-migration.md执行。设置仅总开关/3D或符号外观，低电量提醒固定开启/20%受总开关，时长和提示音核原版默认，证据不足采用已说明5秒/提示音开策略。V0015单次投递现有pi，完成Codex独立验收；不恢复旧全量队列/定时器，不真实设备连接或系统写、不Git提交推送/安装发布，保留已接受音乐歌词多屏体验。
+
+最新设备验收：V0015原185项独立测试/构建签名/设备QA29及精简设置视觉通过子集，新增设备开关即时读取/stop拒绝刷新两回归失败，声音无stop接口及退出漏收尾；见docs/verification/independent-v0015/decision.md。限定V0015-R1已单次投递现有pi，不重复；完成独立复验，不恢复定时器、不新增模块或真实设备/系统写。
+
+用户最新再次重申：“整体还是继续alcove 的，升级语言，只是加了个人的歌词”。整体以原版Alcove为体验基准、成熟复刻为直接代码底稿，主要做Swift6/macOS27迁移，不自创产品/布局/动画/公共架构；歌词是明确新增个人功能。此前逐项确认的设置精简和品牌/交互按明确记录保留，不借迁移扩需求。必要适配须列原代码位置、具体原因、最小修改和体验影响；原实现已有处理优先直接保留恢复。当前设备R1补充见docs/pi-tasks/v0015-r1-supplement-alcove-baseline.md，仍等独立验收。
+
+设备设置最新覆盖：用户同意移除3D/符号外观设置，仅留设备连接总开关。固定按型号自动3D，未知/无资源/Reduce Motion沿用既有符号回退；旧外观偏好不覆盖。补核蓝牙用途声明及授权处理，3D本身不需蓝牙授权，实际IOBluetooth权限弹窗未实测不冒称已授权；见docs/pi-tasks/v0015-r1-supplement-auto-artwork-permission.md，补充排同轮邮箱，不重复主体。
+
+用户最新要求当前需授权项目沿用Alcove手形权限附件hand.raised.slash.fill，基于真实状态、点击授权/系统设置引导、返回刷新，不能只是灰色占位。仅核当前设备检测/实时波形及确需批准的登录项，不给歌词或所有设置乱加；用现有SettingsToggleRow接口最小接线，不自创权限中心，QA不实改权限。见docs/pi-tasks/v0015-r1-supplement-permission-hand-ui.md，同轮补充已排邮箱，不重复R1。
+
+用户最新纠正权限交互：手形仅状态标志不可点击，真正操作仍是功能开关；点击尝试开启才处理授权，成功后标志消失且完成本次开启，拒绝/取消保持关闭；明确覆盖旧“点手/禁用开关”方案。Codex独立R1 194测试/构建签名/设备QA31及精简设置视图通过子集，但当前手形Button+disabled开关不符，限定docs/pi-tasks/v0015-r2-toggle-authorization-flow.md已投递。只做原样式最小接线，不新权限中心，不实际触发或接受授权，完成独立复验。
+
+最新验收：V0015-R2原198测试/独立构建签名/设备QA31通过子集，但两项新增权限回归失败，见docs/verification/independent-v0015-r2/decision.md。限定V0015-R3修取消状态可观察、音频授权返回完成及首次登录批准衔接；已投递同一pi邮箱，不重复，不恢复定时器或新增模块。
+
+最新独立验收：V0015-R3原201测试/构建签名/隔离设置视图及设备QA31通过子集，原两回归已修；新增登录旧回调完成新意图回归失败，另核生产音频激活异步被旧denied清pending、首次注册取消未撤销。限定V0015-R4已投递，见docs/verification/independent-v0015-r3/decision.md及docs/pi-tasks/v0015-r4-permission-async-cancellation.md；不重复，不恢复定时器，不开新模块。
+
+最新验收结论：V0015-R4设备/权限自动验证范围独立接受，205全量原测试＋两项新增独立边界测试通过，构建签名/设置视图/设备31/歌词31/音乐74/注入多屏12通过；见docs/verification/independent-v0015-r4/decision.md。真实OS授权、耳机连接与3D/提示音、物理双屏仍待实机，不冒称全部通过。不继续返修派工，不恢复定时器；菜单栏监控/Codex/日历目前仅讨论，未授权本轮实现。
+
+用户授权联动测试已完成：独立新增3项设备×音乐歌词×展开音量×多屏/暂停空闲交叉回归全通过；独立实际SwiftUI隔离设备QA31通过，未发现新增阻断，不改生产代码不派返修。见docs/verification/independent-v0015-interaction/decision.md。真实设备/授权/物理双屏等仍待实机；菜单栏新模块未接入，不算已测。
+
+用户最新明确授权Codex将当前验收成果提交并推送至既有私有Valora仓库，建立菜单栏开发前回退点；仅覆盖此次Git保存，不授权pi Git操作或强推/重置旧基线。详见docs/CHECKPOINT-2026-10-24-before-menubar.md。

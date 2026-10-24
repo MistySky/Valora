@@ -47,6 +47,20 @@ for name in ['MenuBarIcon.png', 'MenuBarIcon@2x.png', 'MenuBarIcon@3x.png']:
         raise SystemExit('Missing menu-bar PNG: ' + str(source))
     shutil.copy2(source, resources / name)
 
+# Connectivity movies and alert sound: copied as a narrow payload, not the
+# archived project's whole resource directory.
+airpods_source = ROOT / 'Resources/AirPods'
+if not airpods_source.is_dir():
+    raise SystemExit('Missing connectivity movie directory: ' + str(airpods_source))
+airpods_resources = resources / 'AirPods'
+shutil.copytree(airpods_source, airpods_resources)
+sound_source = ROOT / 'Resources/Sounds/low-battery.caf'
+if not sound_source.is_file():
+    raise SystemExit('Missing connectivity alert sound: ' + str(sound_source))
+sounds_resources = resources / 'Sounds'
+sounds_resources.mkdir()
+shutil.copy2(sound_source, sounds_resources / 'low-battery.caf')
+
 # SwiftPM resource bundle (format icons) and the MediaRemote adapter payload.
 bundle = binary.parent / 'Valora_Valora.bundle'
 if bundle.exists():
@@ -71,6 +85,9 @@ info = {
     'LSUIElement': True,
     'NSHighResolutionCapable': True,
     'NSAudioCaptureUsageDescription': 'Valora 需要读取系统音频以显示实时波形。',
+    # IOBluetooth reads connected accessories to show connection/battery
+    # notifications; the key is required by macOS Bluetooth access control.
+    'NSBluetoothAlwaysUsageDescription': 'Valora 需要访问蓝牙以检测已连接的 AirPods 并显示连接和电量提示。',
     'CFBundleIconFile': 'AppIcon',
 }
 (contents / 'Info.plist').write_bytes(plistlib.dumps(info))
@@ -93,6 +110,19 @@ if arch != 'arm64':
     'menubar_icon_source': str(menubar_icon_source),
     'menubar_icon_source_sha256': hashlib.sha256(menubar_icon_source.read_bytes()).hexdigest(),
     'menubar_icon_resource_sha256': hashlib.sha256((resources / 'MenuBarIcon.png').read_bytes()).hexdigest(),
+    'connectivity_resources': {
+        'airpods_movies': sorted(p.name for p in airpods_resources.glob('*.mp4')),
+        'airpods_source': str(airpods_source),
+        'airpods_source_sha256': {
+            p.name: hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in sorted(airpods_source.glob('*.mp4'))
+        },
+        'low_battery_sound': 'Sounds/low-battery.caf',
+        'low_battery_source': str(sound_source),
+        'low_battery_sha256': hashlib.sha256(sound_source.read_bytes()).hexdigest()
+    },
+    'bluetooth_usage_description_key': 'NSBluetoothAlwaysUsageDescription',
+    'bluetooth_usage_description_present': bool(info.get('NSBluetoothAlwaysUsageDescription')),
     'icon_info_key': info['CFBundleIconFile'],
     'bundle_id': info['CFBundleIdentifier'],
     'adhoc_signed': True,
