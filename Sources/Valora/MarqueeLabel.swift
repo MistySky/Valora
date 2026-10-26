@@ -14,23 +14,34 @@ struct MarqueeLabel: NSViewRepresentable {
     var active: Bool = true
     var paused: Bool = false
     var cycleStart: CFTimeInterval = 0
+    var onDoubleClick: (() -> Void)? = nil
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     static func measure(_ text:String,size:CGFloat,weight:NSFont.Weight)->CGSize {
         (text as NSString).size(withAttributes:[.font:NSFont.systemFont(ofSize:size,weight:weight),.kern:0.05])
     }
     func makeNSView(context:Context)->MarqueeLabelView { MarqueeLabelView(frame:.zero) }
     func updateNSView(_ view:MarqueeLabelView,context:Context) {
+        view.onDoubleClick = onDoubleClick
         view.configure(text:text,size:size,weight:weight,color:color,longestWidth:longestTextWidth,reduceMotion:reduceMotion,active:active,paused:paused,cycleStart:cycleStart)
     }
     func sizeThatFits(_ proposal:ProposedViewSize,nsView:MarqueeLabelView,context:Context)->CGSize? {
         let measured = Self.measure(text,size:size,weight:weight)
         return CGSize(width:proposal.width ?? measured.width+4.5,height:measured.height)
     }
-    static func dismantleNSView(_ view:MarqueeLabelView,coordinator:()) { view.stop() }
+    static func dismantleNSView(_ view:MarqueeLabelView,coordinator:()) {
+        view.onDoubleClick = nil
+        view.stop()
+    }
 }
 
 @MainActor
 final class MarqueeLabelView: NSView {
+    var onDoubleClick: (() -> Void)?
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { onDoubleClick != nil }
+    override func mouseDown(with event: NSEvent) {
+        guard let onDoubleClick else { super.mouseDown(with: event); return }
+        if event.clickCount == 2 { onDoubleClick() }
+    }
     private let content = CALayer()
     private let gradient = CAGradientLayer()
     private var text = ""
@@ -184,6 +195,7 @@ struct MusicMarqueePair: View {
     let artist:String
     let active:Bool
     var artistColor:NSColor = NSColor.gray.withAlphaComponent(0.85)
+    var onDoubleClick: (() -> Void)? = nil
     @State private var cycleStart = CACurrentMediaTime()
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private var longestWidth:CGFloat {
@@ -192,8 +204,8 @@ struct MusicMarqueePair: View {
     }
     var body:some View {
         VStack(alignment:.leading,spacing:0.5) {
-            MarqueeLabel(text:title,size:13.5,weight:.semibold,color:.white,longestTextWidth:longestWidth,active:active,cycleStart:cycleStart)
-            MarqueeLabel(text:artist,size:13,weight:.medium,color:artistColor,longestTextWidth:longestWidth,active:active,cycleStart:cycleStart)
+            MarqueeLabel(text:title,size:13.5,weight:.semibold,color:.white,longestTextWidth:longestWidth,active:active,cycleStart:cycleStart,onDoubleClick:onDoubleClick)
+            MarqueeLabel(text:artist,size:13,weight:.medium,color:artistColor,longestTextWidth:longestWidth,active:active,cycleStart:cycleStart,onDoubleClick:onDoubleClick)
         }.onChange(of:active) { _,value in
             if value { cycleStart=CACurrentMediaTime() }
         }.onChange(of:reduceMotion) { _,value in

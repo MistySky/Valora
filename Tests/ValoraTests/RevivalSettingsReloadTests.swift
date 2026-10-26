@@ -59,7 +59,8 @@ final class RevivalSettingsReloadTests: XCTestCase {
         XCTAssertEqual(settings.musicPreferences.peekDuration, 2)
         // Retained visible setting still reads its stored value.
         XCTAssertEqual(settings.musicPreferences.progressStyle, .gradient)
-        XCTAssertTrue(settings.musicPreferences.useLiveWaveform)
+        // The removed live-waveform key is tolerated in the old dictionary but
+        // has no consumer or runtime property anymore.
 
         // Old notch offsets are ignored by geometry consumers.
         let model = AppModel(settings: settings)

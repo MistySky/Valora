@@ -27,52 +27,51 @@ enum LoginItemAccess: Equatable, Sendable {
 @MainActor
 final class AppPermissions: ObservableObject {
     @Published private(set) var bluetooth: PermissionAccess
-    @Published private(set) var audioCapture: PermissionAccess
     @Published private(set) var loginItem: LoginItemAccess
+    @Published private(set) var calendar: CalendarAccess
     @Published private(set) var bluetoothEnablePending = false
-    @Published private(set) var audioEnablePending = false
     @Published private(set) var loginEnablePending = false
+    @Published private(set) var calendarEnablePending = false
     @Published var message: String?
 
     private var pendingBluetooth: (() -> Void)?
-    private var pendingAudio: (() -> Void)?
     private var pendingLogin: (() -> Void)?
-    private var audioIntentGeneration: UInt64 = 0
-    private var audioAttemptInFlight = false
-    private var audioNeedsReturnAttempt = false
+    private var pendingCalendar: (() -> Void)?
     private var loginIntentGeneration: UInt64 = 0
     private var loginRegistrationOwned = false
+    private var calendarIntentGeneration: UInt64 = 0
+    private var calendarAttemptInFlight = false
 
     private let injected: Bool
-    private let refreshStateProvider: (() -> (PermissionAccess, PermissionAccess, LoginItemAccess))?
+    private let refreshStateProvider: (() -> (PermissionAccess, LoginItemAccess))?
     private let bluetoothRequest: () -> Void
     private let openBluetoothSettings: () -> Void
-    private let audioRequest: (@MainActor @escaping (Bool) -> Void) -> Void
-    private let openAudioSettings: () -> Void
     private let loginRegister: (@MainActor @escaping (LoginItemAccess) -> Void) -> Void
     private let loginUnregister: (@MainActor @escaping (LoginItemAccess) -> Void) -> Void
     private let openLoginSettings: () -> Void
+    private let calendarProvider: any CalendarAuthorizationProviding
+    private let openCalendarSettings: () -> Void
 
     init(bluetooth: PermissionAccess? = nil,
-         audioCapture: PermissionAccess? = nil,
          loginItem: LoginItemAccess? = nil,
+         calendar: CalendarAccess? = nil,
          bluetoothRequest: @escaping () -> Void = {},
          openBluetoothSettings: @escaping () -> Void = {},
-         audioRequest: @escaping (@MainActor @escaping (Bool) -> Void) -> Void = { $0(false) },
-         openAudioSettings: @escaping () -> Void = {},
          loginRegister: @escaping (@MainActor @escaping (LoginItemAccess) -> Void) -> Void = { $0(.unknown) },
          loginUnregister: @escaping (@MainActor @escaping (LoginItemAccess) -> Void) -> Void = { $0(.unknown) },
          openLoginSettings: @escaping () -> Void = {},
-         refreshStateProvider: (() -> (PermissionAccess, PermissionAccess, LoginItemAccess))? = nil) {
-        self.injected = bluetooth != nil || audioCapture != nil || loginItem != nil
+         calendarProvider: (any CalendarAuthorizationProviding)? = nil,
+         openCalendarSettings: @escaping () -> Void = {},
+         refreshStateProvider: (() -> (PermissionAccess, LoginItemAccess))? = nil) {
+        self.injected = bluetooth != nil || loginItem != nil || calendar != nil
+        self.calendarProvider = calendarProvider ?? EventKitCalendarAuthorization()
+        self.openCalendarSettings = openCalendarSettings
         self.refreshStateProvider = refreshStateProvider
         self.bluetooth = bluetooth ?? Self.currentBluetooth
-        self.audioCapture = audioCapture ?? .unknown
         self.loginItem = loginItem ?? Self.currentLoginItem
+        self.calendar = calendar ?? (calendarProvider?.status ?? .unknown)
         self.bluetoothRequest = bluetoothRequest
         self.openBluetoothSettings = openBluetoothSettings
-        self.audioRequest = audioRequest
-        self.openAudioSettings = openAudioSettings
         self.loginRegister = loginRegister
         self.loginUnregister = loginUnregister
         self.openLoginSettings = openLoginSettings
@@ -101,32 +100,23 @@ final class AppPermissions: ObservableObject {
     }
 
     var bluetoothBlocked: Bool { bluetooth != .authorized }
-    var audioBlocked: Bool { audioCapture != .authorized }
     var loginBlocked: Bool { loginItem == .requiresApproval }
+    var calendarBlocked: Bool { calendar != .fullAccess }
     var canOpenBluetoothSettings: Bool { bluetooth == .denied || bluetooth == .restricted }
 
     func refresh() {
         let nextBluetooth: PermissionAccess
-        let nextAudio: PermissionAccess?
         let nextLogin: LoginItemAccess
+        let nextCalendar = calendarProvider.status
         if let refreshStateProvider {
-            (nextBluetooth, nextAudio, nextLogin) = refreshStateProvider()
+            (nextBluetooth, nextLogin) = refreshStateProvider()
         } else {
             guard !injected else { return }
-            (nextBluetooth, nextAudio, nextLogin) = (Self.currentBluetooth, nil, Self.currentLoginItem)
+            (nextBluetooth, nextLogin) = (Self.currentBluetooth, Self.currentLoginItem)
         }
         if bluetooth != nextBluetooth { bluetooth = nextBluetooth }
-        if let nextAudio, audioCapture != nextAudio { audioCapture = nextAudio }
         if loginItem != nextLogin { loginItem = nextLogin }
-
-        // A denied audio intent opened System Settings. On return, make one
-        // concrete attempt through the existing process-tap path, then resolve
-        // from its actual callback (never from a timeout or a guessed TCC
-        // status).
-        if pendingAudio != nil, audioNeedsReturnAttempt {
-            audioNeedsReturnAttempt = false
-            attemptAudioRequest()
-        }
+        if calendar != nextCalendar { calendar = nextCalendar }
         resolvePendingIntents()
     }
 
@@ -144,18 +134,16 @@ final class AppPermissions: ObservableObject {
                 break
             }
         }
-        if let completion = pendingAudio {
-            // A return attempt is asynchronous. Do not use the old denied/
-            // unknown snapshot to clear the intent while its callback is live.
-            if !audioAttemptInFlight {
-                switch audioCapture {
-            case .authorized:
-                finishAudio(completion)
-            case .denied, .restricted:
-                clearAudio()
-                message = "系统音频读取未获授权，功能保持关闭。"
-            case .notDetermined, .unknown:
-                break
+        if let completion = pendingCalendar {
+            if !calendarAttemptInFlight {
+                switch calendar {
+                case .fullAccess:
+                    finishCalendar(completion)
+                case .denied, .restricted, .writeOnly:
+                    clearCalendar()
+                    message = "日历读取权限不可用（需要完整访问）。功能保持关闭。"
+                case .notDetermined, .unknown:
+                    break
                 }
             }
         }
@@ -212,75 +200,13 @@ final class AppPermissions: ObservableObject {
         bluetoothEnablePending = false
     }
 
-    // MARK: Audio intent
-
-    func beginAudioEnable(completion: @escaping () -> Void) {
-        guard pendingAudio == nil else { return }
-        message = nil
-        switch audioCapture {
-        case .authorized:
-            completion()
-        case .denied, .restricted:
-            pendingAudio = completion
-            audioEnablePending = true
-            audioNeedsReturnAttempt = true
-            openAudioSettings()
-        case .notDetermined, .unknown:
-            pendingAudio = completion
-            audioEnablePending = true
-            audioNeedsReturnAttempt = false
-            attemptAudioRequest()
-        }
-    }
-
-    func cancelAudioEnable() {
-        clearAudio()
-        audioIntentGeneration &+= 1
-    }
-
-    func requestAudioCapture() {
-        beginAudioEnable(completion: {})
-    }
-
-    private func attemptAudioRequest() {
-        guard pendingAudio != nil, !audioAttemptInFlight else { return }
-        audioAttemptInFlight = true
-        audioIntentGeneration &+= 1
-        let generation = audioIntentGeneration
-        audioRequest { [weak self] granted in
-            guard let self, self.audioIntentGeneration == generation else { return }
-            self.audioAttemptInFlight = false
-            self.audioCapture = granted ? .authorized : .unknown
-            self.audioNeedsReturnAttempt = false
-            guard let completion = self.pendingAudio else { return }
-            if granted {
-                self.finishAudio(completion)
-            } else {
-                self.clearAudio()
-                self.message = "系统音频读取未获授权，功能保持关闭。请在系统设置 → 隐私与安全中检查音频/系统音频权限。"
-            }
-        }
-    }
-
-    private func finishAudio(_ completion: () -> Void) {
-        pendingAudio = nil
-        audioEnablePending = false
-        audioNeedsReturnAttempt = false
-        audioAttemptInFlight = false
-        completion()
-    }
-
-    private func clearAudio() {
-        pendingAudio = nil
-        audioEnablePending = false
-        audioNeedsReturnAttempt = false
-        audioAttemptInFlight = false
-    }
-
     // MARK: Login item intent
 
     func beginLoginEnable(completion: @escaping () -> Void) {
         guard pendingLogin == nil else { return }
+        // Invalidate an older unregister/registration callback when the user
+        // starts a new intent.
+        loginIntentGeneration &+= 1
         message = nil
         switch loginItem {
         case .enabled:
@@ -325,9 +251,31 @@ final class AppPermissions: ObservableObject {
         if owned { undoLoginRegistration() }
     }
 
-    private func undoLoginRegistration() {
+    /// Called only by an explicit user switch-off. A pending intent is
+    /// cancelled/owned registration undone; an already-enabled login item is
+    /// unregistered through the injected action. Programmatic normalization
+    /// must never call this.
+    func disableLoginItem() {
+        guard pendingLogin == nil else {
+            cancelLoginEnable()
+            return
+        }
+        guard loginItem == .enabled else { return }
+        loginIntentGeneration &+= 1
+        let generation = loginIntentGeneration
         loginUnregister { [weak self] result in
-            guard let self else { return }
+            guard let self, self.loginIntentGeneration == generation else { return }
+            self.loginItem = result
+            if result != .notRegistered {
+                self.message = "登录时启动的注册撤销未完成，请到系统设置 → 通用 → 登录项检查。"
+            }
+        }
+    }
+
+    private func undoLoginRegistration() {
+        let generation = loginIntentGeneration
+        loginUnregister { [weak self] result in
+            guard let self, self.loginIntentGeneration == generation else { return }
             self.loginItem = result
             if result != .notRegistered {
                 self.message = "登录时启动的注册撤销未完成，请到系统设置 → 通用 → 登录项检查。"
@@ -352,15 +300,74 @@ final class AppPermissions: ObservableObject {
         loginEnablePending = false
     }
 
+    // MARK: Calendar intent
+
+    func beginCalendarEnable(completion: @escaping () -> Void) {
+        guard pendingCalendar == nil else { return }
+        message = nil
+        switch calendar {
+        case .fullAccess:
+            completion()
+        case .denied, .restricted:
+            pendingCalendar = completion
+            calendarEnablePending = true
+            openCalendarSettings()
+        case .notDetermined, .writeOnly, .unknown:
+            pendingCalendar = completion
+            calendarEnablePending = true
+            calendarIntentGeneration &+= 1
+            let generation = calendarIntentGeneration
+            calendarAttemptInFlight = true
+            calendarProvider.requestFullAccessWithFailure { [weak self] result, failure in
+                guard let self, self.calendarIntentGeneration == generation else { return }
+                self.calendarAttemptInFlight = false
+                self.calendar = result
+                guard let completion = self.pendingCalendar else { return }
+                if result == .fullAccess {
+                    self.finishCalendar(completion)
+                } else {
+                    self.clearCalendar()
+                    if let failure {
+                        // Keep domains/codes only; never log or display event data.
+                        self.message = "日历授权请求失败（\(failure.domain) \(failure.code)），功能保持关闭。"
+                    } else {
+                        self.message = result == .writeOnly
+                            ? "系统只授予了写入权限；读取日程需要完整访问。"
+                            : "日历读取未获授权，功能保持关闭。"
+                    }
+                }
+            }
+        }
+    }
+
+    func cancelCalendarEnable() {
+        calendarIntentGeneration &+= 1
+        calendarAttemptInFlight = false
+        clearCalendar()
+    }
+
+    private func finishCalendar(_ completion: () -> Void) {
+        pendingCalendar = nil
+        calendarEnablePending = false
+        calendarAttemptInFlight = false
+        completion()
+    }
+
+    private func clearCalendar() {
+        pendingCalendar = nil
+        calendarEnablePending = false
+        calendarAttemptInFlight = false
+    }
+
     // MARK: QA seams
 
     /// QA-only state injection without mutating system permissions.
     func verificationSet(bluetooth: PermissionAccess? = nil,
-                         audioCapture: PermissionAccess? = nil,
-                         loginItem: LoginItemAccess? = nil) {
+                         loginItem: LoginItemAccess? = nil,
+                         calendar: CalendarAccess? = nil) {
         if let bluetooth { self.bluetooth = bluetooth }
-        if let audioCapture { self.audioCapture = audioCapture }
         if let loginItem { self.loginItem = loginItem }
+        if let calendar { self.calendar = calendar }
     }
 
     func verificationResolvePending() { resolvePendingIntents() }
@@ -370,11 +377,8 @@ final class AppPermissions: ObservableObject {
         NSWorkspace.shared.open(url)
     }
 
-    static func openAudioPrivacySettings() {
-        // The exact pane name for system-audio capture is not established
-        // publicly; open the privacy root instead of guessing a TCC pane.
-        guard let url = URL(string: "x-apple.systempreferences:com.apple.preference.security") else { return }
-        NSWorkspace.shared.open(url)
+    static func openCalendarPrivacySettings() {
+        EventKitCalendarAuthorization.openPrivacySettings()
     }
 
     static func openLoginItemSettings() {
@@ -391,10 +395,15 @@ enum PermissionToggleRouting {
                      begin: @escaping () -> Void,
                      cancel: @escaping () -> Void) -> Binding<Bool> {
         Binding(get: {
-            value.wrappedValue || pending
+            // A persisted "on" preference is not an authorization. Only a
+            // currently authorized feature or a live enable intent may render
+            // as on. This also keeps a stale preference from swallowing the
+            // next user click.
+            pending || (authorized && value.wrappedValue)
         }, set: { requested in
             if requested {
-                guard !value.wrappedValue else { return }
+                if pending { return }
+                if authorized && value.wrappedValue { return }
                 if authorized { value.wrappedValue = true }
                 else { begin() }
             } else {

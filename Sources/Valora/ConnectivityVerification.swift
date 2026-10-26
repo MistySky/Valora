@@ -58,6 +58,8 @@ enum ConnectivityVerification {
             }
             let usage = Bundle.main.object(forInfoDictionaryKey: "NSBluetoothAlwaysUsageDescription") as? String
             check("Bluetooth always-usage description is packaged", !(usage ?? "").isEmpty)
+            let calendarUsage = Bundle.main.object(forInfoDictionaryKey: "NSCalendarsFullAccessUsageDescription") as? String
+            check("Calendar full-access usage description is packaged", !(calendarUsage ?? "").isEmpty)
             check("appearance is automatic and ignores legacy selection",
                   model.settings.connectivityPreferences.uses3DModels)
 

@@ -9,6 +9,7 @@ parser.add_argument('--binary', required=True, type=Path, help='Binary produced 
 parser.add_argument('--version', default='0.1.0')
 parser.add_argument('--build', default='1')
 parser.add_argument('--output-dir', type=Path, default=ROOT / 'dist')
+parser.add_argument('--native-host', type=Path, default=None, help='ValoraNativeHost executable')
 args = parser.parse_args()
 
 binary = args.binary.resolve()
@@ -30,6 +31,11 @@ frameworks.mkdir()
 
 shutil.copy2(binary, exe / 'Valora')
 (exe / 'Valora').chmod(0o755)
+native_host = (args.native_host or (binary.parent / 'ValoraNativeHost')).resolve()
+if not native_host.is_file():
+    raise SystemExit('Missing ValoraNativeHost; run scripts/build.sh')
+shutil.copy2(native_host, exe / 'ValoraNativeHost')
+(exe / 'ValoraNativeHost').chmod(0o755)
 
 # Confirmed user-supplied icon set. The light .icns is the effective bundle
 # icon; the complete light/dark PNG/iconset/icns originals stay in
@@ -61,10 +67,29 @@ sounds_resources = resources / 'Sounds'
 sounds_resources.mkdir()
 shutil.copy2(sound_source, sounds_resources / 'low-battery.caf')
 
-# SwiftPM resource bundle (format icons) and the MediaRemote adapter payload.
-bundle = binary.parent / 'Valora_Valora.bundle'
-if bundle.exists():
-    shutil.copytree(bundle, resources / bundle.name)
+# Calmon solar-term data is a versioned static calendrical resource. It is
+# copied as a plain directory; the target still has no SwiftPM resource bundle.
+solar_terms_source = ROOT / 'Sources/Valora/Resources/SolarTerms'
+if not solar_terms_source.is_dir():
+    raise SystemExit('Missing SolarTerms resources: ' + str(solar_terms_source))
+shutil.copytree(solar_terms_source, resources / 'SolarTerms')
+
+# Chrome bridge: the extension directory and its native helper are real
+# bundle contents, not a source-only checkout. The helper is signed with the
+# rest of the app by codesign --deep below.
+extension_source = ROOT / 'Resources/ChromeExtension'
+if not extension_source.is_dir():
+    raise SystemExit('Missing Chrome extension directory: ' + str(extension_source))
+chrome_extension = resources / 'ChromeExtension'
+shutil.copytree(extension_source, chrome_extension)
+
+# Third-party notices retained outside the app UI.
+licenses_source = ROOT / 'Resources/Licenses'
+if licenses_source.is_dir():
+    shutil.copytree(licenses_source, resources / 'Licenses')
+
+# The target currently has no SwiftPM resources. Do not copy any stale
+# resource bundle left over from an earlier build.
 adapter = resources / 'MediaRemote'
 adapter.mkdir()
 shutil.copy2(ROOT / 'vendor/mediaremote-adapter/bin/mediaremote-adapter.pl', adapter / 'mediaremote-adapter.pl')
@@ -84,16 +109,34 @@ info = {
     'LSMinimumSystemVersion': '27.0',
     'LSUIElement': True,
     'NSHighResolutionCapable': True,
-    'NSAudioCaptureUsageDescription': 'Valora 需要读取系统音频以显示实时波形。',
     # IOBluetooth reads connected accessories to show connection/battery
     # notifications; the key is required by macOS Bluetooth access control.
     'NSBluetoothAlwaysUsageDescription': 'Valora 需要访问蓝牙以检测已连接的 AirPods 并显示连接和电量提示。',
+    'NSCalendarsFullAccessUsageDescription': '用于在日历中显示你的日程。',
     'CFBundleIconFile': 'AppIcon',
 }
 (contents / 'Info.plist').write_bytes(plistlib.dumps(info))
 
-subprocess.run(['codesign', '--force', '--sign', '-', '--options', 'runtime', str(app)], check=True)
+entitlements_source = ROOT / 'Resources/Valora.entitlements'
+if not entitlements_source.is_file():
+    raise SystemExit('Missing signing entitlements: ' + str(entitlements_source))
+subprocess.run(['codesign', '--force', '--sign', '-', '--options', 'runtime',
+                '--entitlements', str(entitlements_source), str(app)], check=True)
 subprocess.run(['codesign', '--verify', '--deep', '--strict', str(app)], check=True)
+# Read the real signature, not only the source plist.
+signed = subprocess.run(['codesign', '-d', '--entitlements', ':-', str(app)],
+                        capture_output=True, text=True)
+signed_output = (signed.stdout or '') + (signed.stderr or '')
+signed_plist = None
+start = signed_output.find('<?xml')
+end = signed_output.find('</plist>')
+if start >= 0 and end >= start:
+    signed_plist = plistlib.loads(signed_output[start:end + len('</plist>')].encode())
+if not isinstance(signed_plist, dict) or signed_plist.get('com.apple.security.personal-information.calendars') is not True:
+    raise SystemExit('Signed app is missing com.apple.security.personal-information.calendars')
+display = subprocess.run(['codesign', '-d', '--verbose=2', str(app)],
+                         capture_output=True, text=True)
+display_output = (display.stdout or '') + (display.stderr or '')
 arch = subprocess.check_output(['lipo', '-archs', str(exe / 'Valora')], text=True).strip()
 if arch != 'arm64':
     raise SystemExit('Expected ARM64 only, found ' + arch)
@@ -123,6 +166,32 @@ if arch != 'arm64':
     },
     'bluetooth_usage_description_key': 'NSBluetoothAlwaysUsageDescription',
     'bluetooth_usage_description_present': bool(info.get('NSBluetoothAlwaysUsageDescription')),
+    'audio_capture_usage_description_present': False,
+    'live_audio_tap_source_present': (ROOT / 'Sources/Valora/AudioTap.swift').exists(),
+    'unexpected_resource_dirs_in_app': sorted(
+        p.name for p in resources.iterdir() if p.is_dir() and p.name not in {'AirPods', 'ChromeExtension', 'Licenses', 'MediaRemote', 'SolarTerms', 'Sounds'}
+    ),
+    'swiftpm_resource_bundles_in_app': sorted(p.name for p in resources.glob('*.bundle')),
+    'solar_terms_source': str(solar_terms_source),
+    'solar_terms_source_sha256': {
+        p.name: hashlib.sha256(p.read_bytes()).hexdigest()
+        for p in sorted(solar_terms_source.glob('*.json'))
+    },
+    'calendars_usage_description_key': 'NSCalendarsFullAccessUsageDescription',
+    'calendars_usage_description_present': bool(info.get('NSCalendarsFullAccessUsageDescription')),
+    'entitlements_source': str(entitlements_source),
+    'entitlements_source_sha256': hashlib.sha256(entitlements_source.read_bytes()).hexdigest(),
+    'native_host_executable': 'Contents/MacOS/ValoraNativeHost',
+    'native_host_source': str(native_host),
+    'native_host_sha256': hashlib.sha256((exe / 'ValoraNativeHost').read_bytes()).hexdigest(),
+    'chrome_extension_directory': 'Contents/Resources/ChromeExtension',
+    'chrome_extension_manifest_sha256': hashlib.sha256((chrome_extension / 'manifest.json').read_bytes()).hexdigest(),
+    'chrome_extension_id': 'micfejmbldlgjepdfadhnoalmcbnpllb',
+    'chrome_native_host_name': 'com.wangqing.valora.chrome',
+    'calendars_entitlement_present_in_signed_app': signed_plist.get('com.apple.security.personal-information.calendars') is True,
+    'signed_entitlements_sha256': hashlib.sha256(
+        plistlib.dumps(signed_plist, sort_keys=True)).hexdigest(),
+    'codesign_runtime_flag_present': 'runtime' in display_output.lower(),
     'icon_info_key': info['CFBundleIconFile'],
     'bundle_id': info['CFBundleIdentifier'],
     'adhoc_signed': True,

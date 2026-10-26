@@ -38,7 +38,8 @@ struct AudioDevice: Identifiable, Equatable, Sendable {
 }
 
 /// Valora music slice. Settings are read through the same draft dictionary as
-/// the archived source, but only General and Now Playing pages remain visible.
+/// the archived source; the native nine-page settings surface reads these
+/// values, while only music/connection/calendar have real backends.
 @MainActor
 final class RevivalSettings: ObservableObject {
     let defaults: UserDefaults
@@ -210,6 +211,12 @@ final class AppModel: ObservableObject {
     /// settings window/controller instead of creating another UI.
     var showSettingsAction: (() -> Void)?
     var quitAction: (() -> Void)?
+    var openMediaSourceAction: ((String) -> Void)?
+    func openCurrentMediaSource() {
+        guard settings.nowPlayingEnabled, hasTrack, !previewMode,
+              !mediaBundleIdentifier.isEmpty else { return }
+        openMediaSourceAction?(mediaBundleIdentifier)
+    }
     /// Set by WindowCoordinator. The shared media controller reports a track
     /// change; the coordinator selects the interaction screen and forwards it.
     var trackChangedHandler: ((String?) -> Void)?

@@ -5,24 +5,18 @@ import XCTest
 @MainActor
 final class AppPermissionsTests: XCTestCase {
     private func permissions(bluetooth: PermissionAccess = .unknown,
-                             audio: PermissionAccess = .unknown,
                              login: LoginItemAccess = .notRegistered) -> (AppPermissions,
                                                                           Box, Box, Box, Box) {
         let requests = Box()
         let bluetoothSettings = Box()
-        let audioSettings = Box()
-        let audioCompletion = Box()
+        let unusedSettings = Box()
+        let unusedCompletion = Box()
         let permissions = AppPermissions(
-            bluetooth: bluetooth, audioCapture: audio, loginItem: login,
+            bluetooth: bluetooth, loginItem: login,
             bluetoothRequest: { requests.count += 1 },
             openBluetoothSettings: { bluetoothSettings.count += 1 },
-            audioRequest: { completion in
-                audioCompletion.count += 1
-                completion(audioCompletion.granted)
-            },
-            openAudioSettings: { audioSettings.count += 1 },
             openLoginSettings: { requests.count += 1 })
-        return (permissions, requests, bluetoothSettings, audioSettings, audioCompletion)
+        return (permissions, requests, bluetoothSettings, unusedSettings, unusedCompletion)
     }
 
     func testBluetoothStatesGateTheSwitchAndUseTheRightEntry() {
@@ -42,23 +36,6 @@ final class AppPermissionsTests: XCTestCase {
         authorized.requestBluetoothAccess()
         XCTAssertEqual(authorizedRequests.count, 0)
         XCTAssertEqual(authorizedSettings.count, 0)
-    }
-
-    func testAudioUnknownAttemptsAndDeniedOpensSettings() {
-        let (unknown, _, _, _, _) = permissions(audio: .unknown)
-        XCTAssertTrue(unknown.audioBlocked)
-        unknown.requestAudioCapture()
-        XCTAssertEqual(unknown.audioCapture, .unknown, "default injectable request reports no permission")
-
-        let (granted, _, _, _, completion) = permissions(audio: .unknown)
-        completion.granted = true
-        granted.requestAudioCapture()
-        XCTAssertEqual(granted.audioCapture, .authorized)
-        XCTAssertFalse(granted.audioBlocked)
-
-        let (denied, _, _, deniedSettings, _) = permissions(audio: .denied)
-        denied.requestAudioCapture()
-        XCTAssertEqual(deniedSettings.count, 1)
     }
 
     func testSwitchRoutingBeginsOnlyWhenPermissionIsNotAuthorized() {
@@ -111,23 +88,6 @@ final class AppPermissionsTests: XCTestCase {
         XCTAssertFalse(cancelledPermissions.bluetoothEnablePending)
     }
 
-    func testCancelledAudioIntentIgnoresLateCallback() {
-        var callbacks: [(Bool) -> Void] = []
-        let permissions = AppPermissions(
-            bluetooth: .authorized, audioCapture: .unknown, loginItem: .enabled,
-            audioRequest: { completion in callbacks.append(completion) })
-        var oldOpened = 0
-        permissions.beginAudioEnable { oldOpened += 1 }
-        let oldCallback = callbacks[0]
-        permissions.cancelAudioEnable()
-        var newOpened = 0
-        permissions.beginAudioEnable { newOpened += 1 }
-        oldCallback(true)
-        XCTAssertEqual(oldOpened, 0, "a callback from a cancelled intent must not complete it")
-        XCTAssertTrue(permissions.audioEnablePending, "the new intent remains pending")
-        XCTAssertEqual(newOpened, 0)
-    }
-
     func testLoginPendingIntentCompletesAfterApproval() {
         let (permissions, _, _, _, _) = permissions(login: .requiresApproval)
         var opened = 0
@@ -139,67 +99,11 @@ final class AppPermissionsTests: XCTestCase {
         XCTAssertFalse(permissions.loginEnablePending)
     }
 
-    func testAudioReturnUsesProductionRefreshAsyncAttempt() {
-        var currentAudio: PermissionAccess = .denied
-        var callbacks: [(Bool) -> Void] = []
-        var opened = 0
-        let permissions = AppPermissions(
-            bluetooth: .authorized, audioCapture: .denied, loginItem: .notRegistered,
-            audioRequest: { callbacks.append($0) },
-            openAudioSettings: { opened += 1 },
-            refreshStateProvider: { (.authorized, currentAudio, .notRegistered) })
-        var completed = 0
-        permissions.beginAudioEnable { completed += 1 }
-        XCTAssertEqual(opened, 1)
-        XCTAssertTrue(permissions.audioEnablePending)
-        currentAudio = .authorized
-        permissions.refresh()
-        XCTAssertEqual(callbacks.count, 1)
-        XCTAssertEqual(completed, 0, "async attempt must not complete from old/synchronous state")
-        permissions.refresh()
-        XCTAssertEqual(callbacks.count, 1, "repeated activation must not start a concurrent attempt")
-        callbacks[0](true)
-        XCTAssertEqual(completed, 1)
-        XCTAssertFalse(permissions.audioEnablePending)
-        permissions.refresh()
-        XCTAssertEqual(completed, 1)
-    }
-
-    func testAudioReturnFailureAndCancellationDoNotEnable() {
-        var callbacks: [(Bool) -> Void] = []
-        let permissions = AppPermissions(
-            bluetooth: .authorized, audioCapture: .denied, loginItem: .notRegistered,
-            audioRequest: { callbacks.append($0) },
-            openAudioSettings: {},
-            refreshStateProvider: { (.authorized, .authorized, .notRegistered) })
-        var completed = 0
-        permissions.beginAudioEnable { completed += 1 }
-        permissions.refresh()
-        callbacks[0](false)
-        XCTAssertEqual(completed, 0)
-        XCTAssertFalse(permissions.audioEnablePending)
-        XCTAssertEqual(permissions.audioCapture, .unknown)
-
-        var callbacks2: [(Bool) -> Void] = []
-        let cancelled = AppPermissions(
-            bluetooth: .authorized, audioCapture: .denied, loginItem: .notRegistered,
-            audioRequest: { callbacks2.append($0) },
-            openAudioSettings: {},
-            refreshStateProvider: { (.authorized, .authorized, .notRegistered) })
-        var cancelledCompletion = 0
-        cancelled.beginAudioEnable { cancelledCompletion += 1 }
-        cancelled.refresh()
-        cancelled.cancelAudioEnable()
-        callbacks2[0](true)
-        XCTAssertEqual(cancelledCompletion, 0)
-        XCTAssertFalse(cancelled.audioEnablePending)
-    }
-
     func testCancellingFirstRegistrationUnregistersOnlyOwnedIntent() {
         var registerCallbacks: [(LoginItemAccess) -> Void] = []
         var unregisters = 0
         let permissions = AppPermissions(
-            bluetooth: .authorized, audioCapture: .authorized, loginItem: .notRegistered,
+            bluetooth: .authorized, loginItem: .notRegistered,
             loginRegister: { registerCallbacks.append($0) },
             loginUnregister: { completion in
                 unregisters += 1
@@ -216,7 +120,7 @@ final class AppPermissionsTests: XCTestCase {
     func testFirstLoginRegistrationRequiresApprovalKeepsIntentAlive() {
         var callbacks: [(LoginItemAccess) -> Void] = []
         let permissions = AppPermissions(
-            bluetooth: .authorized, audioCapture: .authorized, loginItem: .notRegistered,
+            bluetooth: .authorized, loginItem: .notRegistered,
             loginRegister: { completion in callbacks.append(completion) })
         var completed = 0
         permissions.beginLoginEnable { completed += 1 }
@@ -245,4 +149,119 @@ final class AppPermissionsTests: XCTestCase {
 private final class Box {
     var count = 0
     var granted = false
+}
+
+@MainActor
+private final class FakeCalendarAuthorization: CalendarAuthorizationProviding {
+    var status: CalendarAccess
+    private(set) var requests = 0
+    private var completion: (@MainActor (CalendarAccess) -> Void)?
+    init(_ status: CalendarAccess) { self.status = status }
+    func requestFullAccess(_ completion: @escaping @MainActor (CalendarAccess) -> Void) {
+        requests += 1
+        self.completion = completion
+    }
+    func complete(_ status: CalendarAccess) {
+        self.status = status
+        completion?(status)
+        completion = nil
+    }
+}
+
+@MainActor
+private final class FailingCalendarAuthorization: CalendarAuthorizationProviding {
+    var status: CalendarAccess = .notDetermined
+    func requestFullAccess(_ completion: @escaping @MainActor (CalendarAccess) -> Void) {}
+    func requestFullAccessWithFailure(
+        _ completion: @escaping @MainActor (CalendarAccess, CalendarAuthorizationFailure?) -> Void
+    ) {
+        completion(.unknown, CalendarAuthorizationFailure(domain: "com.apple.EventKit", code: 42))
+    }
+}
+
+@MainActor
+final class CalendarPermissionTests: XCTestCase {
+    func testCalendarNotDeterminedRequestsOnceAndCompletesAfterFullAccess() {
+        let provider = FakeCalendarAuthorization(.notDetermined)
+        let permissions = AppPermissions(calendar: .notDetermined, calendarProvider: provider)
+        var completed = 0
+        permissions.beginCalendarEnable { completed += 1 }
+        XCTAssertTrue(permissions.calendarEnablePending)
+        XCTAssertEqual(provider.requests, 1)
+        permissions.beginCalendarEnable { completed += 1 }
+        XCTAssertEqual(provider.requests, 1, "pending intent must not request twice")
+        provider.complete(.fullAccess)
+        XCTAssertEqual(completed, 1)
+        XCTAssertFalse(permissions.calendarEnablePending)
+        XCTAssertTrue(permissions.calendar.canReadEvents)
+    }
+
+    func testCalendarDeniedGuidesSettingsAndCancelReturnsOff() {
+        var opened = 0
+        let provider = FakeCalendarAuthorization(.denied)
+        let permissions = AppPermissions(calendar: .denied, calendarProvider: provider,
+                                         openCalendarSettings: { opened += 1 })
+        var completed = 0
+        permissions.beginCalendarEnable { completed += 1 }
+        XCTAssertEqual(opened, 1)
+        XCTAssertEqual(provider.requests, 0)
+        XCTAssertTrue(permissions.calendarEnablePending)
+        permissions.cancelCalendarEnable()
+        XCTAssertFalse(permissions.calendarEnablePending)
+        XCTAssertEqual(completed, 0)
+    }
+
+    func testCalendarWriteOnlyIsNotReadableAndFailureStaysOff() {
+        let provider = FakeCalendarAuthorization(.writeOnly)
+        let permissions = AppPermissions(calendar: .writeOnly, calendarProvider: provider)
+        XCTAssertTrue(permissions.calendarBlocked)
+        XCTAssertFalse(permissions.calendar.canReadEvents)
+        var completed = 0
+        permissions.beginCalendarEnable { completed += 1 }
+        provider.complete(.writeOnly)
+        XCTAssertEqual(completed, 0)
+        XCTAssertFalse(permissions.calendarEnablePending)
+        XCTAssertFalse(permissions.calendar.canReadEvents)
+        XCTAssertNotNil(permissions.message)
+    }
+
+    func testCalendarRequestFailureIsDiagnosticNotDenied() {
+        let provider = FailingCalendarAuthorization()
+        let permissions = AppPermissions(calendar: .notDetermined, calendarProvider: provider)
+        var completed = 0
+        permissions.beginCalendarEnable { completed += 1 }
+        XCTAssertEqual(completed, 0)
+        XCTAssertFalse(permissions.calendarEnablePending)
+        XCTAssertEqual(permissions.calendar, .unknown)
+        XCTAssertTrue(permissions.message?.contains("com.apple.EventKit") == true)
+        XCTAssertTrue(permissions.message?.contains("42") == true)
+    }
+
+    func testCalendarExternalFullAccessWithoutPendingDoesNotEnableIntent() {
+        let provider = FakeCalendarAuthorization(.notDetermined)
+        let permissions = AppPermissions(calendar: .notDetermined, calendarProvider: provider)
+        permissions.verificationSet(calendar: .fullAccess)
+        XCTAssertTrue(permissions.calendar.canReadEvents)
+        XCTAssertFalse(permissions.calendarEnablePending)
+        // The actual switch remains off because only a user Binding click can
+        // create an enable intent; status alone does not do so.
+        var settingsValue = false
+        let binding = PermissionToggleRouting.make(
+            value: Binding(get: { settingsValue }, set: { settingsValue = $0 }),
+            authorized: permissions.calendar == .fullAccess,
+            pending: permissions.calendarEnablePending,
+            begin: { XCTFail("no pending intent should be synthesized from external status") },
+            cancel: {})
+        XCTAssertFalse(binding.wrappedValue)
+        XCTAssertFalse(settingsValue)
+    }
+
+    func testCalendarStatusMappingKeepsWriteOnlyDistinct() {
+        XCTAssertEqual(EventKitCalendarAuthorization.map(.fullAccess), .fullAccess)
+        XCTAssertEqual(EventKitCalendarAuthorization.map(.writeOnly), .writeOnly)
+        XCTAssertNotEqual(EventKitCalendarAuthorization.map(.writeOnly), .fullAccess)
+        XCTAssertEqual(EventKitCalendarAuthorization.map(.denied), .denied)
+        XCTAssertEqual(EventKitCalendarAuthorization.map(.restricted), .restricted)
+        XCTAssertEqual(EventKitCalendarAuthorization.map(.notDetermined), .notDetermined)
+    }
 }

@@ -22,10 +22,13 @@ struct MusicPlayerContent:View {
                         .animation(reducedMotion ? .easeOut(duration:0.12):.spring(duration:0.6,bounce:0.4),value:model.playing)
                     // MarqueeText records in 0x1000d8bb0: title 13.5 semibold,
                     // artist 13 medium, kerning .05, shared text cycle duration.
-                    MusicMarqueePair(title:model.displayTitle,artist:displayArtist,active:active,artistColor:translucent ? NSColor.white.withAlphaComponent(0.7):NSColor.gray.withAlphaComponent(0.85))
+                    MusicMarqueePair(title:model.displayTitle,artist:displayArtist,active:active,artistColor:translucent ? NSColor.white.withAlphaComponent(0.7):NSColor.gray.withAlphaComponent(0.85),onDoubleClick: { model.openCurrentMediaSource() })
                         .id(model.mediaBundleIdentifier+"\u{0}"+model.title+"\u{0}"+model.artist+"\u{0}"+model.album)
                         .frame(maxWidth:.infinity,alignment:.leading)
                         .padding(.top,compensatesForNotch ? 23:11)
+                        .contentShape(Rectangle())
+                        .accessibilityAction(named: "打开当前播放软件") { model.openCurrentMediaSource() }
+                        .help("双击打开当前播放软件")
                     PlayerWaveform(model:model, settings:settings, active:active, translucent:translucent).frame(width:24,height:24)
                         .padding(.top,compensatesForNotch ? 16:8)
                         .padding(.leading,4).padding(.trailing,6)

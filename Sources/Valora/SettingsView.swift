@@ -3,27 +3,30 @@ import AppKit
 import ReferenceCore
 
 /// Layout baseline: reference-ui/*.png at 2×; control order from settings-ax.json.
-/// This candidate keeps exactly the General and Now Playing pages. The visible
-/// controls are the user-confirmed subset; fixed policies live in
-/// RevivalSettings and have no gray placeholder rows.
+/// This candidate keeps the user-approved native settings surface: nine flat
+/// pages, with system/Codex/download/lock/about as honest placeholders. Fixed
+/// policies live in RevivalSettings and have no gray placeholder rows.
 struct SettingsView: View {
     @ObservedObject var model: AppModel
     @ObservedObject var settings: RevivalSettings
     @ObservedObject var navigation: SettingsNavigation
     @ObservedObject var draft: SettingsDraft
     @ObservedObject var permissions: AppPermissions
+    let chromeBridge: ChromeBridgeSettingsModel?
     @Environment(\.controlActiveState) private var active
     @Environment(\.colorScheme) private var colorScheme
     @State private var notice: String? = nil
     private var page: SettingsPage { navigation.page }
 
     init(model: AppModel, settings: RevivalSettings, navigation: SettingsNavigation,
-         draft: SettingsDraft, permissions: AppPermissions = AppPermissions()) {
+         draft: SettingsDraft, permissions: AppPermissions = AppPermissions(),
+         chromeBridge: ChromeBridgeSettingsModel? = nil) {
         self.model = model
         self.settings = settings
         self.navigation = navigation
         self.draft = draft
         self.permissions = permissions
+        self.chromeBridge = chromeBridge
     }
 
     var body: some View {
@@ -41,7 +44,7 @@ struct SettingsView: View {
                         .padding(.leading, 16).padding(.trailing, page.scrolls ? 18 : 16)
                         // The 1.7.9 scroll view runs under the title area and fades
                         // the last ~22 pt into the window background (S013).
-                        .padding(.top, 53).padding(.bottom, 16)
+                        .padding(.top, SettingsLayout.contentTopPadding).padding(.bottom, 16)
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                     }.background(SettingsScrollBackground())
                         .background(SettingsPalette.contentBackground(colorScheme))
@@ -53,7 +56,7 @@ struct SettingsView: View {
                                     .init(color: .clear, location: 0.53),
                                     .init(color: .black, location: 0.94),
                                     .init(color: .black, location: 1)
-                                ], startPoint: .top, endPoint: .bottom).frame(height: 53)
+                                ], startPoint: .top, endPoint: .bottom).frame(height: SettingsLayout.headerHeight)
                                 Color.black
                             }
                         }
@@ -62,46 +65,19 @@ struct SettingsView: View {
                         }
                 }
                 Color(SettingsPalette.windowBackground(colorScheme))
-                    .frame(height: 53).frame(maxWidth: .infinity, alignment: .top).allowsHitTesting(false)
+                    .frame(height: SettingsLayout.headerHeight).frame(maxWidth: .infinity, alignment: .top).allowsHitTesting(false)
                 HStack(spacing: 8) {
                     SettingsIcon(page: page).opacity(active == .inactive ? 0.5 : 1)
                     Text(page.displayTitle).font(.system(size: 16, weight: .bold))
                         .foregroundStyle(Color.primary.opacity(active == .inactive ? 0.47 : 1))
                     Spacer()
-                }.offset(y: -1.5).padding(.horizontal, 16).frame(height: 53).frame(maxWidth: .infinity, alignment: .leading)
+                }.offset(y: -1.5).padding(.horizontal, 16).frame(height: SettingsLayout.headerHeight).frame(maxWidth: .infinity, alignment: .leading)
                     .allowsHitTesting(false)
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(SettingsPalette.contentBackground(colorScheme))
         }.frame(width: 620, height: 687).background(SettingsPalette.windowBackground(colorScheme))
             .tint(SettingsPalette.accent).accentColor(SettingsPalette.accent)
             .onChange(of: draft.value("enableNowPlaying", true)) { _, enabled in settings.nowPlayingEnabled = enabled }
-            .onChange(of: settings.musicPreferences.useLiveWaveform) { _, enabled in
-                if enabled {
-                    LiveAudioTap.shared.startAsync { status in
-                        if status != noErr { draft.binding("useLiveWaveform", false).wrappedValue = false }
-                    }
-                } else {
-                    LiveAudioTap.shared.stopAsync()
-                }
-            }
-            .onChange(of: draft.value("launchAtLogin", false)) { _, enabled in
-                guard enabled != LoginItem.isEnabled else { return }
-                do {
-                    try LoginItem.set(enabled)
-                    let status = LoginItem.status
-                    permissions.refresh()
-                    FileHandle.standardError.write(Data("login-item set \(enabled) status=\(status.rawValue)\n".utf8))
-                    if status != .enabled {
-                        draft.binding("launchAtLogin", false).wrappedValue = false
-                        notice = "请在系统设置 → 通用 → 登录项中允许 Valora。"
-                    }
-                } catch {
-                    permissions.refresh()
-                    FileHandle.standardError.write(Data("login-item error \(error)\n".utf8))
-                    draft.binding("launchAtLogin", false).wrappedValue = false
-                    notice = "无法设置登录项：\(error.localizedDescription)"
-                }
-            }
             .alert("Valora", isPresented: Binding(get: { notice != nil }, set: { if !$0 { notice = nil } })) {
                 Button("好", role: .cancel) { notice = nil }
             } message: { Text(notice ?? "") }
@@ -111,20 +87,48 @@ struct SettingsView: View {
             .onChange(of: permissions.bluetooth) { _, state in
                 if state != .authorized, settings.bluetoothEnabled { settings.bluetoothEnabled = false }
             }
-            .onChange(of: permissions.audioCapture) { _, state in
-                if state == .denied || state == .restricted {
-                    if draft.value("useLiveWaveform", false) { draft.binding("useLiveWaveform", false).wrappedValue = false }
-                    LiveAudioTap.shared.stopAsync()
+            .onChange(of: permissions.loginItem) { _, state in
+                // Only an active enable intent may keep the old preference
+                // alive while approval is pending. An external status change
+                // with no intent must not resurrect a stale on value.
+                if state != .enabled, !permissions.loginEnablePending,
+                   draft.value("launchAtLogin", false) {
+                    draft.binding("launchAtLogin", false).wrappedValue = false
                 }
             }
-            .onChange(of: permissions.loginItem) { _, state in
-                if state == .requiresApproval, draft.value("launchAtLogin", false) {
-                    draft.binding("launchAtLogin", false).wrappedValue = false
+            .onChange(of: permissions.calendar) { _, state in
+                if state != .fullAccess, draft.value("enableCalendar", false) {
+                    draft.binding("enableCalendar", false).wrappedValue = false
                 }
             }
             .onChange(of: permissions.message) { _, message in
                 if let message { notice = message }
             }
+            .onAppear {
+                normalizePermissionPreferences()
+                chromeBridge?.refresh()
+            }
+    }
+
+    /// Correct only Valora's own persisted preferences when the corresponding
+    /// system authorization is absent and no user intent is pending. This does
+    /// not request authorization, alter TCC, or turn a feature on.
+    private func normalizePermissionPreferences() {
+        if !permissions.bluetoothEnablePending,
+           permissions.bluetooth != .authorized,
+           settings.bluetoothEnabled {
+            settings.bluetoothEnabled = false
+        }
+        if !permissions.calendarEnablePending,
+           permissions.calendar != .fullAccess,
+           draft.value("enableCalendar", false) {
+            draft.binding("enableCalendar", false).wrappedValue = false
+        }
+        if !permissions.loginEnablePending,
+           permissions.loginItem != .enabled,
+           draft.value("launchAtLogin", false) {
+            draft.binding("launchAtLogin", false).wrappedValue = false
+        }
     }
 
     private var bluetoothBinding: Binding<Bool> {
@@ -136,14 +140,14 @@ struct SettingsView: View {
             cancel: { permissions.cancelBluetoothEnable() })
     }
 
-    private var audioBinding: Binding<Bool> {
-        let value = draft.binding("useLiveWaveform", false)
+    private var calendarBinding: Binding<Bool> {
+        let value = draft.binding("enableCalendar", false)
         return PermissionToggleRouting.make(
             value: value,
-            authorized: permissions.audioCapture == .authorized,
-            pending: permissions.audioEnablePending,
-            begin: { permissions.beginAudioEnable { value.wrappedValue = true } },
-            cancel: { permissions.cancelAudioEnable() })
+            authorized: permissions.calendar == .fullAccess,
+            pending: permissions.calendarEnablePending,
+            begin: { permissions.beginCalendarEnable { value.wrappedValue = true } },
+            cancel: { permissions.cancelCalendarEnable() })
     }
 
     private var loginBinding: Binding<Bool> {
@@ -153,24 +157,33 @@ struct SettingsView: View {
             authorized: permissions.loginItem == .enabled,
             pending: permissions.loginEnablePending,
             begin: { permissions.beginLoginEnable { value.wrappedValue = true } },
-            cancel: { permissions.cancelLoginEnable() })
+            cancel: { permissions.disableLoginItem() })
     }
 
     private var sidebar: some View {
         VStack(alignment: .leading, spacing: 0) {
-            navigationRow(.general)
-            sectionTitle("Notifications")
-            navigationRow(.connectivity)
-            sectionTitle("Live Activities")
-            navigationRow(.nowPlaying)
+            ForEach(SettingsSidebar.groups) { group in
+                if let title = group.title {
+                    sectionTitle(title)
+                }
+                ForEach(group.pages) { item in
+                    navigationRow(item)
+                }
+            }
             Spacer(minLength: 0)
-        }.padding(.horizontal, 12).padding(.top, 53)
+        }.padding(.horizontal, 12).padding(.top, SettingsLayout.headerHeight)
             .foregroundStyle(Color.primary.opacity(active == .inactive ? 0.49 : 1))
     }
 
+    /// Archived Alcove section title: secondary 13 pt text with 16 pt top
+    /// padding and a 42 pt row. It is a label, not a navigation button.
     private func sectionTitle(_ text: String) -> some View {
-        Text(SettingsText.localized(text)).font(.system(size: 13, weight: .medium)).foregroundStyle(Color.primary.opacity(active == .inactive ? 0.28 : 0.45))
-            .padding(.horizontal, 8).padding(.top, 16).frame(height: 42, alignment: .center)
+        Text(SettingsText.localized(text))
+            .font(.system(size: 13, weight: .medium))
+            .foregroundStyle(Color.primary.opacity(active == .inactive ? 0.28 : 0.45))
+            .padding(.horizontal, 8)
+            .padding(.top, 16)
+            .frame(height: 42, alignment: .center)
     }
 
     private func navigationRow(_ item: SettingsPage) -> some View {
@@ -183,13 +196,6 @@ struct SettingsView: View {
                 .background(page == item ? SettingsPalette.selectedRow(colorScheme) : .clear, in: RoundedRectangle(cornerRadius: 15))
         }.buttonStyle(.plain)
             .accessibilityLabel(item.displayTitle).accessibilityAddTraits(page == item ? [.isSelected] : [])
-    }
-
-    private func heading(_ title: String, symbol: String? = nil) -> some View {
-        HStack {
-            Text(SettingsText.localized(title)).font(.system(size: 13, weight: .medium)); Spacer()
-            if let symbol { Image(systemName: symbol) }
-        }.foregroundStyle(.secondary).padding(.horizontal, 8).padding(.bottom, -8)
     }
 
     private func toggle(_ title: String, _ key: String, _ initial: Bool = false, symbol: String? = nil, info: String? = nil) -> some View {
@@ -210,33 +216,38 @@ struct SettingsView: View {
     @ViewBuilder private var pageContent: some View {
         switch page {
         case .general: general
-        case .connectivity: connectivity
         case .nowPlaying: music
+        case .calendar: calendar
+        case .lockScreen: placeholderPage(.lockScreen)
+        case .connectivity: connectivity
+        case .systemMonitor: systemMonitorPage
+        case .aiUsage: CodexUsageView(enabled: draft.binding("enableAIUsage", true))
+        case .downloadMonitor: downloadsPage
+        case .about: aboutPage
         }
     }
 
     private var general: some View {
-        Group {
-            SettingsCard {
-                SettingsToggleRow(title: "Launch at login",
-                                  value: loginBinding,
-                                  blocked: permissions.loginBlocked); SettingsRule()
-                SettingsToggleRow(title: "Force simulated notch", value: $settings.forceSimulatedNotch); SettingsRule()
-                HStack {
-                    Text(SettingsText.localized("Display on")); Spacer()
-                    Image(systemName: SettingsDisplayCatalog.symbol(for: draft.value("showOnDisplay", "Main display")))
-                        .contentTransition(.symbolEffect(.replace))
-                        .padding(.trailing, 4)
-                    SettingsNativeMenu(value: draft.binding("showOnDisplay", "Main display"), options: SettingsDisplayCatalog.options)
-                }.font(.system(size: 13.5)).padding(.horizontal, 12).frame(height: 41)
-            }
-            heading("Behaviour")
-            SettingsCard {
-                SettingsToggleRow(title: "Expand on hover", value: $settings.hoverEnabled, info: "Expand the current activity when the pointer rests on the notch.")
-                if settings.hoverEnabled {
-                    SettingsRule()
-                    slider("Hover delay", "hoverDelay", 0, 0...1, unit: "s", decimals: 2, step: 0.05, ticks: 5)
-                }
+        SettingsCard {
+            SettingsToggleRow(title: "Launch at login",
+                              value: loginBinding,
+                              blocked: permissions.loginBlocked); SettingsRule()
+            SettingsToggleRow(title: "Force simulated notch", value: $settings.forceSimulatedNotch); SettingsRule()
+            HStack {
+                Text(SettingsText.localized("Display on")); Spacer()
+                Image(systemName: SettingsDisplayCatalog.symbol(for: draft.value("showOnDisplay", "Main display")))
+                    .contentTransition(.symbolEffect(.replace))
+                    .padding(.trailing, 4)
+                SettingsNativeMenu(value: draft.binding("showOnDisplay", "Main display"), options: SettingsDisplayCatalog.options)
+            }.font(.system(size: 13.5)).padding(.horizontal, 12).frame(height: 41)
+            SettingsRule()
+            SettingsToggleRow(title: "显示菜单栏图标",
+                              value: draft.binding("showApplicationMenuBarIcon", true))
+            SettingsRule()
+            SettingsToggleRow(title: "Expand on hover", value: $settings.hoverEnabled, info: "Expand the current activity when the pointer rests on the notch.")
+            if settings.hoverEnabled {
+                SettingsRule()
+                slider("Hover delay", "hoverDelay", 0, 0...1, unit: "s", decimals: 2, step: 0.05, ticks: 5)
             }
         }
     }
@@ -249,14 +260,114 @@ struct SettingsView: View {
         }
     }
 
+    private var calendar: some View {
+        SettingsCard {
+            SettingsToggleRow(title: "Calendar", value: calendarBinding,
+                              symbol: "calendar.badge.clock",
+                              blocked: permissions.calendarBlocked,
+                              info: "允许后续在日历中显示系统日程；基础月份和日期不需要此授权。")
+        }
+    }
+
+    private var systemMonitorPage: some View {
+        SettingsCard {
+            SettingsToggleRow(title: "系统监控",
+                              value: draft.binding("enableSystemMonitor", true),
+                              symbol: "chart.bar.xaxis",
+                              info: "开启后采样 CPU、内存和进程；关闭会停止采样并移除入口。")
+            SettingsRule()
+            HStack(alignment: .top, spacing: 8) {
+                Image(systemName: "info.circle").font(.system(size: 12)).foregroundStyle(.secondary)
+                Text("关闭不会影响音乐、刘海、日历或其他菜单模块。")
+                    .font(.system(size: 12)).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
+            }.padding(.horizontal, 12).padding(.vertical, 10)
+        }
+    }
+
+    private var downloadsPage: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            SettingsCard {
+                SettingsToggleRow(title: "下载",
+                                  value: draft.binding("enableDownloads", true),
+                                  symbol: "arrow.down.circle.fill")
+            }
+            if let chromeBridge {
+                ChromeBridgeSettingsCard(model: chromeBridge)
+            }
+        }
+    }
+
     private var music: some View {
         SettingsCard {
             toggle("Now Playing", "enableNowPlaying", true, symbol: "play.fill"); SettingsRule()
             choices("progressStyle", "Monochrome", [("Monochrome", ""), ("Colored", ""), ("Gradient", "")], style: "progress", height: 36); SettingsRule()
-            SettingsToggleRow(title: "Use live waveform",
-                              value: audioBinding,
-                              blocked: permissions.audioBlocked); SettingsRule()
             toggle("Show lyrics", "showLyrics")
+        }
+    }
+
+    private func placeholderPage(_ page: SettingsPage) -> some View {
+        SettingsCard {
+            HStack(spacing: 9) {
+                Image(systemName: page.symbol)
+                    .font(.system(size: 14))
+                    .foregroundStyle(.secondary)
+                Text(SettingsText.localized("Feature in preparation"))
+                    .font(.system(size: 13.5))
+                    .foregroundStyle(.secondary)
+                Spacer(minLength: 0)
+            }.padding(.horizontal, 12).frame(height: 41)
+        }
+    }
+
+    private var aboutPage: some View {
+        SettingsCard {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Text("Valora").font(.system(size: 15, weight: .semibold))
+                    Spacer()
+                    Text(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.1.0")
+                        .font(.system(size: 12, design: .monospaced))
+                        .foregroundStyle(.secondary)
+                }
+                Text(SettingsText.localized("Feature in preparation"))
+                    .font(.system(size: 12.5))
+                    .foregroundStyle(.secondary)
+            }.padding(.horizontal, 12).padding(.vertical, 12)
+        }
+    }
+}
+
+/// The only Codex-specific content in this round: an honest AI Usage
+/// sub-entry. It has no provider, quota, account, or switch yet.
+struct CodexUsageView: View {
+    var enabled: Binding<Bool>
+
+    init(enabled: Binding<Bool> = .constant(true)) {
+        self.enabled = enabled
+    }
+
+    var body: some View {
+        SettingsCard {
+            SettingsToggleRow(title: "AI 用量",
+                              value: enabled,
+                              symbol: "sparkles",
+                              info: "开启 Codex 5H / WEEK 用量查询和菜单栏条目；关闭会停止查询和刷新。")
+            SettingsRule()
+            HStack(spacing: 9) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(SettingsText.localized("Codex Usage"))
+                        .font(.system(size: 13.5))
+                    Text("菜单栏显示 5H / WEEK 剩余额度；点击状态项查看明细。")
+                        .font(.system(size: 12.5))
+                        .foregroundStyle(.secondary)
+                }
+                Spacer(minLength: 0)
+            }.padding(.horizontal, 12).padding(.vertical, 10)
         }
     }
 }

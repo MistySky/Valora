@@ -3,7 +3,9 @@ import SwiftUI
 import Combine
 import CoreImage
 import NativeBridge
+import ChromeBridgeKit
 import ReferenceCore
+import OSLog
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
@@ -14,10 +16,36 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var modelWasLoaded = false
     lazy var model: AppModel = {
         let model = AppModel(settings: settings)
+        model.openMediaSourceAction = { bundleIdentifier in
+            let logger = Logger(subsystem: "com.wangqing.valora", category: "MediaSourceActivation")
+            guard let application = NSRunningApplication.runningApplications(withBundleIdentifier: bundleIdentifier)
+                .first(where: { !$0.isTerminated }), let url = application.bundleURL else { return }
+            let configuration = NSWorkspace.OpenConfiguration()
+            configuration.activates = true
+            configuration.createsNewApplicationInstance = false
+            logger.notice("Opening running media source: \(bundleIdentifier, privacy: .public)")
+            NSWorkspace.shared.openApplication(at: url, configuration: configuration) { _, error in
+                if let error {
+                    logger.error("Media source activation failed: \(error.localizedDescription, privacy: .public)")
+                } else {
+                    logger.notice("Media source open request completed")
+                }
+            }
+        }
         modelWasLoaded = true
         return model
     }()
-    private var statusItem: NSStatusItem!
+    private var statusItem: NSStatusItem?
+    private var statusMenu: NSMenu?
+    private var menuBarModules: MenuBarModuleController?
+    private var downloadMenuBar: DownloadMenuBarController?
+    private var chromeBridge: ChromeBridgeController?
+    private lazy var chromeBridgeSettings: ChromeBridgeSettingsModel = {
+        ChromeBridgeSettingsModel(
+            registration: ChromeBridgeRegistration.production(),
+            bridgeListening: { [weak self] in self?.chromeBridge?.isRunning ?? false },
+            lastHandshake: { [weak self] in self?.chromeBridge?.lastHandshakeAt })
+    }()
     private var coordinator: WindowCoordinator!
     private var settingsWindow: NSWindow?
     private let settingsNavigation = SettingsNavigation()
@@ -26,15 +54,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private lazy var appPermissions = AppPermissions(
         bluetoothRequest: { [weak self] in self?.model.bluetooth?.requestAccessProbe() },
         openBluetoothSettings: { AppPermissions.openBluetoothPrivacySettings() },
-        audioRequest: { [weak self] completion in
-            LiveAudioTap.shared.startAsync { status in
-                completion(status == noErr)
-                if self?.settings.musicPreferences.useLiveWaveform != true {
-                    LiveAudioTap.shared.stopAsync()
-                }
-            }
-        },
-        openAudioSettings: { AppPermissions.openAudioPrivacySettings() },
         loginRegister: { completion in
             do {
                 try LoginItem.set(true)
@@ -51,7 +70,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 completion(.unknown)
             }
         },
-        openLoginSettings: { AppPermissions.openLoginItemSettings() })
+        openLoginSettings: { AppPermissions.openLoginItemSettings() },
+        openCalendarSettings: { AppPermissions.openCalendarPrivacySettings() })
 
     init(arguments: [String] = CommandLine.arguments) {
         let resolved = AppRuntimeDefaults.resolve(arguments: arguments)
@@ -63,13 +83,112 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        if startupMode == .verifyAudioTap { AudioTapVerification.run(); return }
         settings.$hideFromScreenCapture.removeDuplicates().sink { [weak self] hidden in
             MainActor.assumeIsolated { self?.settingsWindow?.sharingType = hidden ? .none : .readOnly }
         }.store(in: &subscriptions)
         NSApp.setActivationPolicy(.accessory)
         model.showSettingsAction = { [weak self] in self?.showSettings() }
         model.quitAction = { [weak self] in self?.quit() }
+
+        if startupMode == .verifyDownloadLayout {
+            guard let output = AppRuntimeDefaults.value(after: "--verify-download-layout",
+                                                        arguments: CommandLine.arguments) else {
+                fputs("--verify-download-layout requires an output directory\n", stderr)
+                NSApp.terminate(nil); return
+            }
+            DownloadMenuVerification.run(output: output, stress: false)
+            return
+        }
+        if startupMode == .verifyDownloads {
+            guard let output = AppRuntimeDefaults.value(after: "--verify-downloads",
+                                                        arguments: CommandLine.arguments) else {
+                fputs("--verify-downloads requires an output directory\n", stderr)
+                NSApp.terminate(nil); return
+            }
+            DownloadMenuVerification.run(output: output)
+            return
+        }
+        if startupMode == .verifyCalendarParity {
+            guard let output = AppRuntimeDefaults.value(after: "--verify-calendar-parity",
+                                                        arguments: CommandLine.arguments) else {
+                fputs("--verify-calendar-parity requires an output directory\n", stderr)
+                NSApp.terminate(nil); return
+            }
+            CalendarParityVerification.run(output: output)
+            return
+        }
+        if startupMode == .auditDownloadMenu {
+            guard let output = AppRuntimeDefaults.value(after: "--audit-download-menu",
+                                                        arguments: CommandLine.arguments) else {
+                fputs("--audit-download-menu requires an output directory\n", stderr)
+                NSApp.terminate(nil); return
+            }
+            DownloadMenuMemoryAudit.run(output: output)
+            return
+        }
+        if startupMode == .previewMenuBarModules {
+            // Isolated native preview of the two Calmon modules. No media,
+            // Bluetooth, EventKit authorization or real calendar query.
+            setupMenu()
+            return
+        }
+        if startupMode == .verifyMenuLayout {
+            guard let output = AppRuntimeDefaults.value(after: "--verify-menu-layout",
+                                                        arguments: CommandLine.arguments) else {
+                fputs("--verify-menu-layout requires an output directory\n", stderr)
+                NSApp.terminate(nil); return
+            }
+            MenuBarModulesVerification.run(output: output, stress: false)
+            return
+        }
+        if startupMode == .verifyMenuBarModules {
+            guard let output = AppRuntimeDefaults.value(after: "--verify-menu-modules",
+                                                        arguments: CommandLine.arguments) else {
+                fputs("--verify-menu-modules requires an output directory\n", stderr)
+                NSApp.terminate(nil); return
+            }
+            MenuBarModulesVerification.run(output: output)
+            return
+        }
+        if startupMode == .auditMenuBarMemory {
+            guard let output = AppRuntimeDefaults.value(after: "--audit-menubar-memory",
+                                                        arguments: CommandLine.arguments) else {
+                fputs("--audit-menubar-memory requires an output directory\n", stderr)
+                NSApp.terminate(nil); return
+            }
+            MenuBarMemoryAudit.run(output: output)
+            return
+        }
+        if startupMode == .verifyCodexUsageLive {
+            guard let output = AppRuntimeDefaults.value(after: "--verify-codex-usage-live",
+                                                        arguments: CommandLine.arguments) else {
+                fputs("--verify-codex-usage-live requires an output directory\n", stderr)
+                NSApp.terminate(nil); return
+            }
+            CodexUsageLiveProbe.run(output: output)
+            return
+        }
+        if startupMode == .auditCalendarFixedWindow {
+            guard let output = AppRuntimeDefaults.value(after: "--audit-calendar-fixed-window",
+                                                        arguments: CommandLine.arguments) else {
+                fputs("--audit-calendar-fixed-window requires an output directory\n", stderr)
+                NSApp.terminate(nil); return
+            }
+            CalendarFixedWindowAudit.run(output: output)
+            return
+        }
+        if startupMode == .auditCalendarPopover || startupMode == .auditCalendarPopoverFixed {
+            let fixed = startupMode == .auditCalendarPopoverFixed
+            let flag = fixed ? "--audit-calendar-popover-fixed" : "--audit-calendar-popover"
+            guard let output = AppRuntimeDefaults.value(after: flag,
+                                                        arguments: CommandLine.arguments) else {
+                fputs("\(flag) requires an output directory\n", stderr)
+                NSApp.terminate(nil); return
+            }
+            CalendarPopoverAudit.run(output: output, fixedDisplay: fixed)
+            return
+        }
+
         // Construct the controllers for every mode; only production starts them.
         model.media = MediaController(model)
         model.audio = AudioOutputController(model)
@@ -82,6 +201,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 fputs("--verify-menubar requires an output directory\n", stderr); NSApp.terminate(nil); return
             }
             setupMenu()
+            guard let statusItem else {
+                fputs("--verify-menubar requires the application status item\n", stderr)
+                NSApp.terminate(nil); return
+            }
             MenuBarIconVerification.run(statusItem: statusItem, output: output)
             return
         }
@@ -296,6 +419,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             guard let output = AppRuntimeDefaults.value(after: "--verify-music", arguments: CommandLine.arguments) else {
                 fputs("--verify-music requires an output directory\n", stderr); NSApp.terminate(nil); return
             }
+            // Existing fake-media/coordinator verification exercises the
+            // independent Calmon status items alongside the notch coordinator.
+            // Calendar data is injected; no production media, Bluetooth,
+            // permission request or EventKit query is started by this QA mode.
+            setupMenu()
             MusicPresentationVerification.run(model: model, coordinator: coordinator, output: output)
             return
         }
@@ -312,7 +440,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             return
         }
 
-        if settings.musicPreferences.useLiveWaveform { LiveAudioTap.shared.startAsync() }
         let actualLogin = LoginItem.isEnabled
         settingsDraft.binding("launchAtLogin", actualLogin).wrappedValue = actualLogin
         setupMenu()
@@ -379,6 +506,82 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
     }
 
+    private func installApplicationStatusItemIfNeeded() {
+        if let statusItem {
+            statusItem.isVisible = true
+            return
+        }
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        item.button?.image = statusBarImage()
+        item.button?.imageScaling = .scaleProportionallyDown
+        item.button?.imagePosition = .imageOnly
+        item.button?.setAccessibilityLabel("Valora")
+        let menu = NSMenu()
+        menu.delegate = self
+        statusMenu = menu
+        rebuildStatusMenu(menu)
+        item.menu = menu
+        statusItem = item
+    }
+
+    /// The explicit General "show menu bar icon" switch controls only the
+    /// Outline-v7 application entry. Hiding it leaves the notch, music and
+    /// every module intact; showing it reuses the same item/menu route.
+    private func setApplicationStatusItemVisible(_ visible: Bool) {
+        if visible { installApplicationStatusItemIfNeeded() }
+        else { statusItem?.isVisible = false }
+    }
+
+    private func ensureDownloadFeatureStarted() {
+        let service: DownloadServicing
+        if let downloadMenuBar {
+            service = downloadMenuBar.model.service
+        } else {
+            let newService = DownloadEngineService(environment: ValoraDownloadEnvironment.production())
+            downloadMenuBar = DownloadMenuBarController(
+                service: newService,
+                onSettings: { [weak self] in self?.showSettings() },
+                onQuit: { [weak self] in self?.quit() })
+            service = newService
+        }
+        downloadMenuBar?.start()
+        if chromeBridge == nil {
+            let bridge = ChromeBridgeController(service: service)
+            bridge.onStateChange = { [weak self] in self?.chromeBridgeSettings.refresh() }
+            chromeBridge = bridge
+        }
+        if let chromeBridge, !chromeBridge.isRunning { chromeBridge.start() }
+        chromeBridgeSettings.refresh()
+    }
+
+    private var downloadFeatureTask: Task<Void, Never>?
+
+    private func applyFeatureSettings() {
+        guard menuBarModules != nil else { return }
+        menuBarModules?.setSystemMonitorVisible(settingsDraft.value("enableSystemMonitor", true))
+        menuBarModules?.setCodexVisible(settingsDraft.value("enableAIUsage", true))
+        setApplicationStatusItemVisible(settingsDraft.value("showApplicationMenuBarIcon", true))
+        guard startupMode == .production else { return }
+        let enabled = settingsDraft.value("enableDownloads", true)
+        let previous = downloadFeatureTask
+        downloadFeatureTask = Task { @MainActor [weak self] in
+            _ = await previous?.value
+            guard let self else { return }
+            if enabled {
+                self.ensureDownloadFeatureStarted()
+            } else {
+                self.chromeBridge?.stop()
+                self.chromeBridge = nil
+                self.chromeBridgeSettings.refresh()
+                await self.downloadMenuBar?.suspendAndStop()
+            }
+        }
+    }
+
+    private func refreshCalendarEventsAfterSettings() {
+        menuBarModules?.refreshCalendarEvents()
+    }
+
     /// Borderless ribbon V alpha mask; macOS supplies the menu-bar tint.
     private func statusBarImage() -> NSImage {
         let size = NSSize(width: 20, height: 20)
@@ -398,15 +601,78 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     private func setupMenu() {
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-        statusItem.button?.image = statusBarImage()
-        statusItem.button?.imageScaling = .scaleProportionallyDown
-        statusItem.button?.imagePosition = .imageOnly
-        statusItem.button?.setAccessibilityLabel("Valora")
-        let statusMenu = NSMenu()
-        statusMenu.delegate = self
-        statusItem.menu = statusMenu
-        rebuildStatusMenu(statusMenu)
+        guard menuBarModules == nil else { return }
+        if settingsDraft.value("showApplicationMenuBarIcon", true) {
+            installApplicationStatusItemIfNeeded()
+        }
+
+        let previewData = startupMode == .previewMenuBarModules
+            || startupMode == .previewMusic
+            || startupMode == .verifyMusic
+        let calendar: CalmonCalendarModel
+        if previewData || startupMode != .production {
+            calendar = CalmonCalendarModel(
+                provider: HolidayProvider(authorizationCheck: { false }),
+                eventProvider: PreviewCalendarEvents(),
+                readGate: { true }, preview: true)
+        } else {
+            let holidayProvider = HolidayProvider(
+                authorizationCheck: { [weak self] in
+                    guard let self else { return false }
+                    return self.settingsDraft.value("enableCalendar", false)
+                        && self.appPermissions.calendar == .fullAccess
+                },
+                transportFactory: { EventKitHolidayTransport() })
+            calendar = CalmonCalendarModel(
+                provider: holidayProvider,
+                eventProvider: EventKitCalendarEventProvider(),
+                readGate: { [weak self] in
+                    guard let self else { return false }
+                    return self.settingsDraft.value("enableCalendar", false)
+                        && self.appPermissions.calendar == .fullAccess
+                })
+        }
+        let monitor = SystemMonitor()
+        let codexUsage: CodexUsageProvider
+        if startupMode == .production {
+            codexUsage = CodexUsageProvider(readLimits: {
+                try await CodexAppServerFetch().fetch()
+            })
+        } else {
+            // QA/preview must never launch the Codex engine.
+            codexUsage = PreviewCodexUsage.provider()
+        }
+        menuBarModules = MenuBarModuleController(
+            monitor: monitor,
+            calendar: calendar,
+            codexUsage: codexUsage,
+            onSettings: { [weak self] in self?.showSettings() },
+            onQuit: { [weak self] in self?.quit() })
+        let systemMonitorEnabled = settingsDraft.value("enableSystemMonitor", true)
+        let aiUsageEnabled = settingsDraft.value("enableAIUsage", true)
+        let downloadsEnabled = settingsDraft.value("enableDownloads", true)
+        menuBarModules?.setSystemMonitorVisible(systemMonitorEnabled)
+        menuBarModules?.setCodexVisible(aiUsageEnabled)
+        menuBarModules?.start()
+        if startupMode == .production, downloadsEnabled {
+            ensureDownloadFeatureStarted()
+        }
+        setApplicationStatusItemVisible(settingsDraft.value("showApplicationMenuBarIcon", true))
+        if startupMode == .production {
+            CalendarAuthorizationRefresh.subscribe(appPermissions) { [weak self] in
+                self?.menuBarModules?.refreshCalendarEvents()
+            }.store(in: &subscriptions)
+            NotificationCenter.default.publisher(for: Notification.Name("ValoraSettingsDraftChanged"))
+                .sink { [weak self] _ in
+                    MainActor.assumeIsolated { self?.refreshCalendarEventsAfterSettings() }
+                }
+                .store(in: &subscriptions)
+            NotificationCenter.default.publisher(for: Notification.Name("ValoraSettingsDraftChanged"))
+                .sink { [weak self] _ in
+                    Task { @MainActor in self?.applyFeatureSettings() }
+                }
+                .store(in: &subscriptions)
+        }
 
         let main = NSMenu()
         let applicationItem = NSMenuItem(title: "Valora", action: nil, keyEquivalent: "")
@@ -423,8 +689,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         NSApp.mainMenu = main
     }
 
+    /// Native feature-switch QA entry. It reuses the real status-item/menu
+    /// construction but uses the injected preview providers and never starts
+    /// production download/media services.
+    func setupMenuForVerification() { setupMenu() }
+    func applyFeatureSettingsForVerification() { applyFeatureSettings() }
+    var applicationStatusItemForVerification: NSStatusItem? { statusItem }
+    var menuBarModulesForVerification: MenuBarModuleController? { menuBarModules }
+    var downloadMenuBarForVerification: DownloadMenuBarController? { downloadMenuBar }
+
+    func removeApplicationStatusItemForVerification() {
+        if let statusItem { NSStatusBar.system.removeStatusItem(statusItem) }
+        statusItem = nil
+        statusMenu = nil
+    }
+
     func menuNeedsUpdate(_ menu: NSMenu) {
-        if menu === statusItem?.menu { rebuildStatusMenu(menu) }
+        if menu === statusMenu { rebuildStatusMenu(menu) }
+    }
+
+    /// QA entry that reuses the exact production application-menu builder.
+    /// It does not start media, configure a status item, or dispatch any menu
+    /// action; the caller must supply the model fixture.
+    @MainActor
+    func applicationStatusMenuForVerification() -> NSMenu {
+        let menu = NSMenu()
+        rebuildStatusMenu(menu)
+        return menu
     }
 
     private func rebuildStatusMenu(_ menu: NSMenu) {
@@ -432,8 +723,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if model.hasTrack, settings.nowPlayingEnabled {
             let controls: [(String, String, Selector, Bool)] = [
                 (model.playing ? "暂停" : "播放", model.playing ? "pause.fill" : "play.fill", #selector(playPause), model.mediaCanControl),
-                ("下一首", "forward.end.fill", #selector(next), model.mediaCanSkip),
-                ("上一首", "backward.end.fill", #selector(previous), model.mediaCanSkip)
+                ("上一首", "backward.end.fill", #selector(previous), model.mediaCanSkip),
+                ("下一首", "forward.end.fill", #selector(next), model.mediaCanSkip)
             ]
             for (title, symbol, action, enabled) in controls {
                 let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
@@ -485,7 +776,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @objc func showSettings() {
         if settingsWindow == nil {
             let view = SettingsView(model:model,settings:settings,navigation:settingsNavigation,
-                                    draft:settingsDraft,permissions:appPermissions)
+                                    draft:settingsDraft,permissions:appPermissions,
+                                    chromeBridge: chromeBridgeSettings)
             let (window, _) = SettingsWindowFactory.make(rootView: view)
             window.center()
             settingsWindow = window
@@ -523,8 +815,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             model.audio?.stop()
             model.bluetooth?.stop()
         }
+        menuBarModules?.stop()
+        menuBarModules = nil
+        downloadFeatureTask?.cancel()
+        downloadFeatureTask = nil
+        chromeBridge?.stop()
+        chromeBridge = nil
+        downloadMenuBar?.stop()
+        downloadMenuBar = nil
         coordinator?.cancelPendingHover()
-        LiveAudioTap.shared.stop()
     }
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
 }

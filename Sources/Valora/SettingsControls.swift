@@ -6,10 +6,24 @@ struct SettingsIcon: View {
     var muted = false
     var size: CGFloat = 22
     var body: some View {
-        Image(systemName: page.symbol).font(.system(size: size * 0.60, weight: .semibold))
-            .foregroundStyle(.white).frame(width: size, height: size)
-            .background(LinearGradient(colors: [(muted ? .gray : page.color).opacity(0.65), muted ? .gray : page.color], startPoint: .top, endPoint: .bottom))
-            .clipShape(RoundedRectangle(cornerRadius: size * 0.29))
+        Group {
+            if page == .calendar {
+                // Directly recovered from the archived SettingsIcon calendar
+                // branch: colored header, paper surface and date "12".
+                VStack(spacing: 0) {
+                    Rectangle().fill(muted ? Color.gray : page.color)
+                        .frame(height: size * 0.27)
+                    Text("12")
+                        .font(.system(size: size * 0.48, weight: .medium))
+                        .foregroundStyle(muted ? .secondary : .primary)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }.background(Color(nsColor: .controlBackgroundColor))
+            } else {
+                Image(systemName: page.symbol).font(.system(size: size * 0.60, weight: .semibold))
+                    .foregroundStyle(.white).frame(width: size, height: size)
+                    .background(LinearGradient(colors: [(muted ? .gray : page.color).opacity(0.65), muted ? .gray : page.color], startPoint: .top, endPoint: .bottom))
+            }
+        }.frame(width: size, height: size).clipShape(RoundedRectangle(cornerRadius: size * 0.29))
             .overlay(RoundedRectangle(cornerRadius: size * 0.29).stroke(.black.opacity(0.06), lineWidth: 0.5)).accessibilityHidden(true)
     }
 }

@@ -7,5 +7,8 @@ project_root="$(cd "$(dirname "$0")/.." && pwd)"
 python3 "$project_root/scripts/build_media_adapter.py"
 swift build --package-path "$project_root" --scratch-path "$project_root/.build" -c release \
   --product Valora
+swift build --package-path "$project_root" --scratch-path "$project_root/.build" -c release \
+  --product ValoraNativeHost
 binary_directory="$(swift build --package-path "$project_root" --scratch-path "$project_root/.build" -c release --show-bin-path)"
-python3 "$project_root/scripts/package.py" --binary "$binary_directory/Valora" "$@"
+python3 "$project_root/scripts/package.py" --binary "$binary_directory/Valora" \
+  --native-host "$binary_directory/ValoraNativeHost" "$@"

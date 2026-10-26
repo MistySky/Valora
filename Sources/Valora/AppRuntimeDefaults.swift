@@ -17,9 +17,20 @@ enum AppRuntimeDefaults {
         "--verify-menubar",
         "--verify-settings",
         "--verify-system-media",
-        "--verify-audio-tap",
         "--preview-music",
-        "--preview-settings"
+        "--preview-settings",
+        "--preview-menu-modules",
+        "--verify-menu-modules",
+        "--verify-menu-layout",
+        "--audit-menubar-memory",
+        "--audit-calendar-popover",
+        "--audit-calendar-popover-fixed",
+        "--audit-calendar-fixed-window",
+        "--verify-codex-usage-live",
+        "--verify-downloads",
+        "--verify-download-layout",
+        "--audit-download-menu",
+        "--verify-calendar-parity"
     ]
 
     static func isQAMode(arguments: [String]) -> Bool {
@@ -28,7 +39,6 @@ enum AppRuntimeDefaults {
 
     enum StartupMode: Equatable {
         case production
-        case verifyAudioTap
         case verifyMusic
         case verifyMultiDisplay
         case verifyLyrics
@@ -39,14 +49,25 @@ enum AppRuntimeDefaults {
         case verifySystemMedia
         case previewMusic
         case previewSettings
+        case previewMenuBarModules
+        case verifyMenuBarModules
+        case verifyMenuLayout
+        case auditMenuBarMemory
+        case auditCalendarPopover
+        case auditCalendarPopoverFixed
+        case auditCalendarFixedWindow
+        case verifyCodexUsageLive
+        case verifyDownloads
+        case verifyDownloadLayout
+        case auditDownloadMenu
+        case verifyCalendarParity
 
         var isSyntheticPreview: Bool {
-            self == .previewMusic || self == .previewSettings
+            self == .previewMusic || self == .previewSettings || self == .previewMenuBarModules
         }
     }
 
     static func startupMode(arguments: [String]) -> StartupMode {
-        if arguments.contains("--verify-audio-tap") { return .verifyAudioTap }
         if arguments.contains("--verify-music") { return .verifyMusic }
         if arguments.contains("--verify-multidisplay") { return .verifyMultiDisplay }
         if arguments.contains("--verify-lyrics") { return .verifyLyrics }
@@ -55,6 +76,18 @@ enum AppRuntimeDefaults {
         if arguments.contains("--verify-menubar") { return .verifyMenuBar }
         if arguments.contains("--verify-settings") { return .verifySettings }
         if arguments.contains("--verify-system-media") { return .verifySystemMedia }
+        if arguments.contains("--verify-menu-modules") { return .verifyMenuBarModules }
+        if arguments.contains("--verify-menu-layout") { return .verifyMenuLayout }
+        if arguments.contains("--preview-menu-modules") { return .previewMenuBarModules }
+        if arguments.contains("--audit-menubar-memory") { return .auditMenuBarMemory }
+        if arguments.contains("--audit-calendar-fixed-window") { return .auditCalendarFixedWindow }
+        if arguments.contains("--verify-codex-usage-live") { return .verifyCodexUsageLive }
+        if arguments.contains("--verify-downloads") { return .verifyDownloads }
+        if arguments.contains("--verify-download-layout") { return .verifyDownloadLayout }
+        if arguments.contains("--audit-download-menu") { return .auditDownloadMenu }
+        if arguments.contains("--verify-calendar-parity") { return .verifyCalendarParity }
+        if arguments.contains("--audit-calendar-popover-fixed") { return .auditCalendarPopoverFixed }
+        if arguments.contains("--audit-calendar-popover") { return .auditCalendarPopover }
         if arguments.contains("--preview-settings") { return .previewSettings }
         if arguments.contains("--preview-music") { return .previewMusic }
         return .production

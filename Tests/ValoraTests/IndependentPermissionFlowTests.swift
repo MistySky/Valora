@@ -6,7 +6,6 @@ import Combine
 final class IndependentPermissionFlowTests: XCTestCase {
     func testCancellingBluetoothIntentPublishesVisiblePendingChange() {
         let permissions = AppPermissions(bluetooth: .notDetermined,
-                                         audioCapture: .unknown,
                                          loginItem: .notRegistered)
         var notifications = 0
         let token = permissions.objectWillChange.sink { notifications += 1 }
@@ -20,28 +19,9 @@ final class IndependentPermissionFlowTests: XCTestCase {
                              "Settings must redraw pending -> off even while no backend preference changed")
     }
 
-    func testAudioApprovalReturnedFromSettingsCompletesPendingIntent() {
-        var settingsOpened = 0
-        let permissions = AppPermissions(bluetooth: .authorized,
-                                         audioCapture: .denied,
-                                         loginItem: .notRegistered,
-                                         openAudioSettings: { settingsOpened += 1 })
-        var enabled = 0
-        permissions.beginAudioEnable { enabled += 1 }
-        XCTAssertEqual(settingsOpened, 1)
-        XCTAssertTrue(permissions.audioEnablePending)
-        permissions.verificationSet(audioCapture: .authorized)
-        permissions.verificationResolvePending()
-        XCTAssertEqual(enabled, 1,
-                       "Returning with audio authorized must complete the pending switch intent once")
-        XCTAssertFalse(permissions.audioEnablePending)
-        permissions.verificationResolvePending()
-        XCTAssertEqual(enabled, 1)
-    }
     func testCancelledLoginRegistrationCannotCompleteNewIntent() {
         var callbacks: [(LoginItemAccess) -> Void] = []
-        let permissions = AppPermissions(bluetooth: .authorized,
-            audioCapture: .authorized, loginItem: .notRegistered,
+        let permissions = AppPermissions(bluetooth: .authorized, loginItem: .notRegistered,
             loginRegister: { callbacks.append($0) })
         permissions.beginLoginEnable { XCTFail("cancelled intent completed") }
         permissions.cancelLoginEnable()
@@ -55,28 +35,9 @@ final class IndependentPermissionFlowTests: XCTestCase {
         XCTAssertEqual(newCompletions, 1)
     }
 
-    func testAudioReturnRetainsIntentWhileOldDeniedSnapshotWaitsForCallback() {
-        var callbacks: [(Bool) -> Void] = []
-        let permissions = AppPermissions(bluetooth: .authorized,
-            audioCapture: .denied, loginItem: .notRegistered,
-            audioRequest: { callbacks.append($0) },
-            refreshStateProvider: { (.authorized, .denied, .notRegistered) })
-        var completed = 0
-        permissions.beginAudioEnable { completed += 1 }
-        permissions.refresh()
-        permissions.refresh()
-        XCTAssertEqual(callbacks.count, 1)
-        XCTAssertTrue(permissions.audioEnablePending)
-        XCTAssertEqual(completed, 0)
-        callbacks[0](true)
-        XCTAssertEqual(completed, 1)
-        XCTAssertFalse(permissions.audioEnablePending)
-    }
-
     func testCancellingPreexistingLoginApprovalDoesNotUnregisterIt() {
         var unregisters = 0
-        let permissions = AppPermissions(bluetooth: .authorized,
-            audioCapture: .authorized, loginItem: .requiresApproval,
+        let permissions = AppPermissions(bluetooth: .authorized, loginItem: .requiresApproval,
             loginUnregister: { completion in
                 unregisters += 1
                 completion(.notRegistered)
