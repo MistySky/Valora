@@ -20,16 +20,10 @@ enum AppRuntimeDefaults {
         "--preview-music",
         "--preview-settings",
         "--preview-menu-modules",
-        "--verify-menu-modules",
-        "--verify-menu-layout",
         "--audit-menubar-memory",
         "--audit-calendar-popover",
         "--audit-calendar-popover-fixed",
         "--audit-calendar-fixed-window",
-        "--verify-codex-usage-live",
-        "--verify-downloads",
-        "--verify-download-layout",
-        "--audit-download-menu",
         "--verify-calendar-parity"
     ]
 
@@ -50,16 +44,10 @@ enum AppRuntimeDefaults {
         case previewMusic
         case previewSettings
         case previewMenuBarModules
-        case verifyMenuBarModules
-        case verifyMenuLayout
         case auditMenuBarMemory
         case auditCalendarPopover
         case auditCalendarPopoverFixed
         case auditCalendarFixedWindow
-        case verifyCodexUsageLive
-        case verifyDownloads
-        case verifyDownloadLayout
-        case auditDownloadMenu
         case verifyCalendarParity
 
         var isSyntheticPreview: Bool {
@@ -76,15 +64,9 @@ enum AppRuntimeDefaults {
         if arguments.contains("--verify-menubar") { return .verifyMenuBar }
         if arguments.contains("--verify-settings") { return .verifySettings }
         if arguments.contains("--verify-system-media") { return .verifySystemMedia }
-        if arguments.contains("--verify-menu-modules") { return .verifyMenuBarModules }
-        if arguments.contains("--verify-menu-layout") { return .verifyMenuLayout }
         if arguments.contains("--preview-menu-modules") { return .previewMenuBarModules }
         if arguments.contains("--audit-menubar-memory") { return .auditMenuBarMemory }
         if arguments.contains("--audit-calendar-fixed-window") { return .auditCalendarFixedWindow }
-        if arguments.contains("--verify-codex-usage-live") { return .verifyCodexUsageLive }
-        if arguments.contains("--verify-downloads") { return .verifyDownloads }
-        if arguments.contains("--verify-download-layout") { return .verifyDownloadLayout }
-        if arguments.contains("--audit-download-menu") { return .auditDownloadMenu }
         if arguments.contains("--verify-calendar-parity") { return .verifyCalendarParity }
         if arguments.contains("--audit-calendar-popover-fixed") { return .auditCalendarPopoverFixed }
         if arguments.contains("--audit-calendar-popover") { return .auditCalendarPopover }

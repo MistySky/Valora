@@ -1,0 +1,11 @@
+# V0030-R5-R1：自动功能范围独立接受
+
+独立23项定向功能全部通过：IndependentCombinedEntryTests3（初始off再开启、后续背景快照和off-on恢复、注入监控更新）、RemainingQuotaCache8、CodexUsageProvider8、IndependentCodexUsage3、MenuBarLayout1。原缺失订阅回归有效断言保留并通过，旧cooldown/剩余/后台缓存及单真实在途关闭代际仍通过。
+
+源码核enable时重连observe、每模块独立epoch、off与start/stop失效旧session callback，lastCombinedKey在重建项清空，startSampling:false不会被后续功能调用开启采样；另一模块不被误停。共享入口+400pt单外层滚动保持R5已审结构，日历/下载/软件V及既有UI不改。
+
+候选/private/tmp/valora-v0030-r5-r1-candidate binary3101792c3b683e64622ede4b1309f338663dd4f448eae89ea8513fd0f7e64b34与报告一致，独立deep/strict签名通过。用户dist仍19ba9a0f0cae669dcc32eb8f282750f9fd46a71a603d1bb2d01b9f872b0ffd9f未改，未退出/替换当前用户软件。
+
+本轮没有打开popover/点击菜单、压力/循环/批量截图/性能审计或全量，也未读取真实账户额度。功能测试仅临时状态项/注入fake与monitor snapshot，无弹出面板。真实共享面板视觉与鼠标、多屏体验仍待用户，不冒称全部实机通过。
+
+按既有用户授权串行进入Chrome-only V0031；插件加载/权限和真实native host安装最终由用户在可审查候选中执行，开发只隔离根与fake协议。定时器保持关闭。

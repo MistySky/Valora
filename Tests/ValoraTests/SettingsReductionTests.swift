@@ -128,12 +128,12 @@ final class SettingsReductionTests: XCTestCase {
         XCTAssertEqual(SettingsSidebar.groups.map { $0.pages.map(\.displayTitle) }, [
             ["通用"],
             ["音乐", "锁定屏幕", "设备连接"],
-            ["日历", "下载", "AI 用量", "系统监控"],
+            ["日历", "系统监控"],
             ["关于"]
         ])
         XCTAssertEqual(SettingsPage.allCases.map(\.displayTitle),
-                       ["通用", "音乐", "锁定屏幕", "设备连接", "日历",
-                        "下载", "AI 用量", "系统监控", "关于"])
+                       ["通用", "音乐", "锁定屏幕", "设备连接",
+                        "日历", "系统监控", "关于"])
         XCTAssertEqual(SettingsSidebar.orderedPages.count, Set(SettingsSidebar.orderedPages).count)
         XCTAssertFalse(SettingsPage.allCases.map(\.displayTitle).contains("刘海屏"))
         XCTAssertFalse(SettingsPage.allCases.map(\.displayTitle).contains("菜单栏"))
@@ -157,23 +157,6 @@ final class SettingsReductionTests: XCTestCase {
     }
 
 
-
-    func testAIUsageUsesNativeSparklesAndNoExternalBrandResource() throws {
-        XCTAssertEqual(SettingsPage.aiUsage.displayTitle, "AI 用量")
-        XCTAssertEqual(SettingsPage.aiUsage.symbol, "sparkles")
-        let root = URL(fileURLWithPath: #filePath)
-            .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        XCTAssertFalse(FileManager.default.fileExists(atPath: root.appendingPathComponent("Sources/Valora/Resources/CodexUsage").path))
-        XCTAssertFalse(FileManager.default.fileExists(atPath: root.appendingPathComponent("Sources/Valora/CodexUsageArtwork.swift").path))
-        let view = try String(contentsOf: root.appendingPathComponent("Sources/Valora/SettingsView.swift"), encoding: .utf8)
-        XCTAssertTrue(view.contains("CodexUsageView"))
-        XCTAssertTrue(view.contains("Codex Usage"))
-        XCTAssertFalse(view.contains("CodexUsageArtwork"))
-        XCTAssertFalse(view.contains("Codex Monitor"))
-        let package = try String(contentsOf: root.appendingPathComponent("Package.swift"), encoding: .utf8)
-        XCTAssertFalse(package.contains("Resources/CodexUsage"))
-        XCTAssertFalse(package.contains("resources:"))
-    }
 
     func testLiveWaveformSourceEntryAndPermissionAreRemoved() throws {
         let root = URL(fileURLWithPath: #filePath)

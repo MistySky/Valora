@@ -32,9 +32,10 @@ struct NotchShape: Shape {
     }
 }
 
-/// Compact/expanded music surface. The archived notification, lock, device and
-/// battery branches are not migrated; the music activity, artwork flip,
-/// compact waveform/play control, title marquee and Quick Peek are.
+/// Compact/expanded music surface. The selected locked/unlocking glyph is
+/// migrated; unrelated battery/focus notification branches remain excluded.
+/// Music activity, artwork flip, compact waveform/play control, title marquee
+/// and Quick Peek are retained.
 struct NotchView: View {
     @ObservedObject var model: AppModel
     @ObservedObject var settings: RevivalSettings
@@ -52,7 +53,7 @@ struct NotchView: View {
             return PresentationMetrics.stationarySize(geometry:geometry, simulated:settings.forceSimulatedNotch,
                 expanded:.none, hasOutput:false,
                 notification:.none,
-                liveActivity:model.showsMusicActivity ? .playing : .none,
+                liveActivity: model.showsLockActivity ? .locked : (model.showsMusicActivity ? .playing : .none),
                 quickPeek:.none,
                 tuning:.zero)
         }
@@ -64,7 +65,7 @@ struct NotchView: View {
         if compactOnly {
             return .stationary(geometry:geometry, simulated:settings.forceSimulatedNotch,
                 expanded:false, expandedCorners:false,
-                active:model.showsMusicActivity,
+                active:model.showsMusicActivity || model.showsLockActivity,
                 visibleHeight:localSize.height)
         }
         return model.contour
@@ -80,13 +81,18 @@ struct NotchView: View {
         VStack(spacing:0) {
             ZStack(alignment:.top) {
                 shape.fill(.black)
+                    .overlay {
+                        if NotchWindowDiagnostic.shared.isEnabled {
+                            NotchLayoutProbe(phase: String(describing: model.lockDisplayIndicator.phase))
+                        }
+                    }
                 if !expanded {
                     VStack(spacing:0) {
                         topStrip
                             // Keep artwork/glyph proportions while the black
                             // cutout stretches more vertically on hover.
                             .scaleEffect(x:1,y:localHoverScale.width/localHoverScale.height)
-                        if allowsDynamic, !expanded, model.showsMusicActivity,
+                        if allowsDynamic, !expanded, !model.isLockStage, model.showsMusicActivity,
                            model.showsCompactLyrics
                             || (!settings.musicPreferences.showLyrics && model.songPeek.visible) {
                             if model.showsCompactLyrics {
@@ -130,7 +136,7 @@ struct NotchView: View {
             // The waveform has its own Button. Even on systems where the parent
             // tap is also recognized, this region must not expand the panel.
             .onTapGesture(coordinateSpace:.local) { point in
-                guard !expanded else { return }
+                guard !expanded, !model.isSessionLocked, !model.isLockPreviewActive else { return }
                 let wing = max(0,(width-nativeNotchSize.width)/2)
                 if model.showsCompactWaveform, point.x >= width-wing { return }
                 expand()
@@ -146,7 +152,13 @@ struct NotchView: View {
     @ViewBuilder private var topStrip: some View {
         HStack(spacing:0) {
             Group {
-                if allowsDynamic, !expanded, let device = model.connectionToast {
+                if model.showsLockActivity {
+                    LockActivityGlyph(unlocking: model.lockIndicator.phase == .unlocking)
+                        .font(.system(size: 14, weight: .medium))
+                        .transition(.opacity)
+                        .accessibilityLabel(model.lockIndicator.phase == .unlocking ? "屏幕已解锁" : "屏幕已锁定")
+                } else if allowsDynamic, !expanded, !model.isLockStage,
+                          let device = model.connectionToast {
                     ConnectionArrivalArtwork(device: device,
                         uses3D: settings.connectivityPreferences.uses3DModels,
                         notch: hasNotch)
@@ -161,11 +173,15 @@ struct NotchView: View {
                             .animation(reducedMotion ? .easeOut(duration:0.12):.spring(duration:0.6,bounce:0.4),value:model.playing)
                         Spacer(minLength:0)
                     }.padding(.leading,CompactArtworkMetrics.leading(notch:hasNotch))
+                        .transition(.opacity)
                 } else { Color.clear }
             }.frame(width:max(0,(width-nativeNotchSize.width)/2))
             Color.clear.frame(width:nativeNotchSize.width)
             Group {
-                if allowsDynamic, !expanded, let device = model.connectionToast {
+                if model.showsLockActivity {
+                    Color.clear
+                } else if allowsDynamic, !expanded, !model.isLockStage,
+                          let device = model.connectionToast {
                     if let battery = device.battery {
                         ConnectionBatteryRing(percent: battery, notch: hasNotch)
                             .accessibilityLabel("耳机电量 \(battery)%")
@@ -203,6 +219,7 @@ struct NotchView: View {
     }
 
     private func expand() {
+        guard !model.isSessionLocked, !model.isLockPreviewActive else { return }
         onActivate?()
         model.presenter.expand()
     }
@@ -275,6 +292,34 @@ struct AirPodsMovie: NSViewRepresentable {
         view.player = nil
         coordinator.looper = nil
         coordinator.player = nil
+    }
+}
+
+/// Revival two-piece lock glyph: 14pt medium; the current revival values
+/// rotate the top half -24° and move it x+2/y-2 after unlock. Those constants
+/// are revival parameters; original evidence establishes the split glyph but
+/// does not prove these exact values. The whole-symbol fallback is only for
+/// systems without the private lock.top/lock.bottom symbols.
+private struct LockActivityGlyph: View {
+    var unlocking = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    private static let hasHalves =
+        NSImage(systemSymbolName: "lock.top", accessibilityDescription: nil) != nil &&
+        NSImage(systemSymbolName: "lock.bottom", accessibilityDescription: nil) != nil
+    var body: some View {
+        ZStack {
+            if Self.hasHalves {
+                Image(systemName: "lock.bottom")
+                Image(systemName: "lock.top")
+                    .rotationEffect(.degrees(unlocking ? -24 : 0), anchor: .bottomTrailing)
+                    .offset(x: unlocking ? 2 : 0, y: unlocking ? -2 : 0)
+            } else {
+                Image(systemName: unlocking ? "lock.open.fill" : "lock.fill")
+                    .contentTransition(.symbolEffect(.replace))
+            }
+        }
+        .animation(reduceMotion ? .easeOut(duration: 0.12) : .spring(duration: 0.45, bounce: 0.2),
+                   value: unlocking)
     }
 }
 

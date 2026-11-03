@@ -17,7 +17,12 @@ struct AudioDevice: Identifiable, Equatable, Sendable {
 
     /// 0 is a real measured battery value; nil means unavailable/invalid.
     var battery: Int? {
-        [left, right, single].compactMap { $0 }.min()
+        // AirPods earbuds provide left/right; the single field is for models
+        // such as Max and may be an inapplicable placeholder on earbuds. Never
+        // let that placeholder mask a valid earbud reading.
+        let earbuds = [left, right].compactMap { $0 }
+        if !earbuds.isEmpty { return earbuds.min() }
+        return single
     }
     var airPodsModel: AirPodsModel? { AirPodsModel.identify(modelUID: modelUID) }
     var symbol: String {
@@ -46,6 +51,7 @@ final class RevivalSettings: ObservableObject {
     private var preferenceObservers: [NSObjectProtocol] = []
     @Published private(set) var musicPreferences: MusicPreferences
     @Published private(set) var connectivityPreferences: ConnectivityPreferences
+    @Published private(set) var lockPreferences: LockMusicPreferences
     @Published private(set) var hideFromScreenCapture = false
     @Published private(set) var selectedDisplay: String
     @Published private(set) var hideWhileInFullscreen = true
@@ -69,6 +75,7 @@ final class RevivalSettings: ObservableObject {
         let values = defaults.dictionary(forKey: "referenceSettingsUI") ?? [:]
         musicPreferences = MusicPreferences(values: Self.sanitizedMusicValues(values))
         connectivityPreferences = ConnectivityPreferences(values: values)
+        lockPreferences = LockMusicPreferences(values: values)
         selectedDisplay = values["showOnDisplay"] as? String ?? "Main display"
         showNotch = defaults.object(forKey: "showNotch") as? Bool ?? true
         hoverEnabled = defaults.object(forKey: "hoverEnabled") as? Bool ?? false
@@ -99,6 +106,8 @@ final class RevivalSettings: ObservableObject {
         if next != musicPreferences { musicPreferences = next }
         let connection = ConnectivityPreferences(values: values)
         if connection != connectivityPreferences { connectivityPreferences = connection }
+        let lock = LockMusicPreferences(values: values)
+        if lock != lockPreferences { lockPreferences = lock }
         let display = values["showOnDisplay"] as? String ?? "Main display"
         if display != selectedDisplay { selectedDisplay = display }
         let rawHoverDelay = (values["hoverDelay"] as? NSNumber)?.doubleValue ?? 0
@@ -198,6 +207,18 @@ final class AppModel: ObservableObject {
     @Published var devices: [AudioDevice] = []
     @Published var connectionToast: AudioDevice?
     @Published var connectionLowBattery = false
+    @Published var isSessionLocked = false
+    @Published var lockIndicator = LockIndicatorState()
+    @Published var lockNotchMounted = false
+    /// True only after the dedicated lock overlay is successfully attached to
+    /// the owned presentation Space. Until then the primary notch stays visible
+    /// as the known fallback.
+    @Published var lockOverlayReady = false
+    /// Process-local desktop simulation. It never changes the real session or
+    /// starts the lock coordinator's Space/sound/window path.
+    @Published var previewLockScreenEnabled = false
+    @Published var previewLockPresentationActive = false
+    @Published var previewLockIndicator = LockIndicatorState()
     @Published var connectionArrivalGeneration = 0
     @Published var pinned = false
     @Published var previewMode = false
@@ -247,30 +268,47 @@ final class AppModel: ObservableObject {
 
     // Single source of geometry for rendering and input hit testing.
     var visibleSize: CGSize {
+        let neutral = isLockNeutralGeometry
+        let lockStage = isLockTransitioning || neutral || showsLockActivity
+        let expandedForMetrics = expanded && !neutral
         let size = PresentationMetrics.stationarySize(geometry: notchGeometry, simulated: settings.forceSimulatedNotch,
-            expanded: expanded ? .nowPlaying : .none, hasOutput: showsOutputVolume,
-            notification: connectionStatusNotification,
-            liveActivity: (connectionToast == nil && showsMusicActivity) ? .playing : .none,
-            quickPeek: (connectionToast == nil && ((!settings.musicPreferences.showLyrics && songPeek.visible) || showsCompactLyrics)) ? .playing : .none,
+            expanded: expandedForMetrics ? .nowPlaying : .none,
+            hasOutput: !lockStage && showsOutputVolume,
+            notification: lockStage ? .none : connectionStatusNotification,
+            liveActivity: showsLockActivity ? .locked
+                : (neutral ? .none : ((connectionToast == nil && showsMusicActivity) ? .playing : .none)),
+            quickPeek: (showsLockActivity || isLockTransitioning || neutral) ? .none
+                : ((connectionToast == nil && ((!settings.musicPreferences.showLyrics && songPeek.visible) || showsCompactLyrics)) ? .playing : .none),
             tuning: .zero)
-        if expanded, showsLyricsInExpanded {
+        if expandedForMetrics, showsLyricsInExpanded {
             // 32pt lyric row plus the existing 8pt player stack spacing.
             return CGSize(width: size.width, height: size.height + 40)
         }
         return size
     }
-    var hoverScale: CGSize { NotchHoverMetrics.scale(inside:isPointerInside, expanded:expanded) }
+    var hoverScale: CGSize {
+        guard !isSessionLocked, !isLockStage else { return CGSize(width: 1, height: 1) }
+        return NotchHoverMetrics.scale(inside:isPointerInside, expanded:expanded)
+    }
     var contour: NotchContour {
-        .stationary(geometry: notchGeometry, simulated: settings.forceSimulatedNotch,
-                    expanded: expanded, expandedCorners: presentation.usesExpandedCornerRadius,
-                    active: showsMusicActivity || connectionToast != nil, visibleHeight: visibleSize.height)
+        let neutral = isLockNeutralGeometry
+        return .stationary(geometry: notchGeometry, simulated: settings.forceSimulatedNotch,
+                    expanded: expanded && !neutral, expandedCorners: presentation.usesExpandedCornerRadius && !neutral,
+                    active: !neutral && (showsMusicActivity || showsLockActivity || connectionToast != nil),
+                    visibleHeight: visibleSize.height)
     }
     var sourceActivityHidden: Bool {
         settings.musicPreferences.hidesActivity(source:mediaBundleIdentifier,frontmost:frontmostBundleIdentifier)
     }
 
     var showsMusicActivity: Bool {
-        settings.nowPlayingEnabled && hasTrack && mediaIdle.visible && !sourceActivityHidden
+        // During the bounded lock-collapse stage the normal music surface stays
+        // visible while it shrinks; only after locking completes does the badge
+        // replace it.
+        (!isSessionLocked || isLockTransitioning)
+            && (!isLockPreviewActive || isLockTransitioning)
+            && !showsLockActivity
+            && settings.nowPlayingEnabled && hasTrack && mediaIdle.visible && !sourceActivityHidden
     }
     var showsCompactWaveform: Bool { showsMusicActivity && !settings.musicPreferences.disableWaveform }
     var lyricsAvailable: Bool {
@@ -278,8 +316,9 @@ final class AppModel: ObservableObject {
             && showsMusicActivity && lyrics.hasTimedLyrics
     }
     var showsCompactLyrics: Bool {
-        lyricsAvailable && !expanded && settings.showNotch && !screenHidden
-            && connectionToast == nil
+        lyricsAvailable && (!isSessionLocked || isLockTransitioning)
+            && (!isLockPreviewActive || isLockTransitioning) && !expanded
+            && settings.showNotch && !screenHidden && connectionToast == nil
     }
     var showsLyricsInExpanded: Bool { lyricsAvailable && settings.showNotch && !screenHidden }
     var currentLyricLine: LyricLine? {
@@ -296,6 +335,19 @@ final class AppModel: ObservableObject {
         }
         return color
     }
+    /// Real lock wins over the process-local simulation. The simulation has its
+    /// own indicator so it can never overwrite the real session/backend state.
+    var lockDisplayIndicator: LockIndicatorState {
+        isSessionLocked ? lockIndicator
+            : (previewLockPresentationActive ? previewLockIndicator : lockIndicator)
+    }
+    var showsLockActivity: Bool {
+        (lockNotchMounted || lockOverlayReady || previewLockPresentationActive) && lockDisplayIndicator.showsBadge
+    }
+    var isLockTransitioning: Bool { lockDisplayIndicator.isLocking }
+    var isLockNeutralGeometry: Bool { lockDisplayIndicator.isNeutralGeometry }
+    var isLockStage: Bool { lockDisplayIndicator.phase != .hidden }
+    var isLockPreviewActive: Bool { previewLockPresentationActive }
     var hasTrack: Bool { title != "暂无播放" && !title.isEmpty }
     var displayDevices: [AudioDevice] {
         devices.sorted { $0.active && !$1.active }

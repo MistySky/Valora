@@ -9,7 +9,7 @@ parser.add_argument('--binary', required=True, type=Path, help='Binary produced 
 parser.add_argument('--version', default='0.1.0')
 parser.add_argument('--build', default='1')
 parser.add_argument('--output-dir', type=Path, default=ROOT / 'dist')
-parser.add_argument('--native-host', type=Path, default=None, help='ValoraNativeHost executable')
+parser.add_argument('--lock-diagnostic-path', default=None, help='Optional LSEnvironment diagnostic path for a single test candidate')
 args = parser.parse_args()
 
 binary = args.binary.resolve()
@@ -31,12 +31,6 @@ frameworks.mkdir()
 
 shutil.copy2(binary, exe / 'Valora')
 (exe / 'Valora').chmod(0o755)
-native_host = (args.native_host or (binary.parent / 'ValoraNativeHost')).resolve()
-if not native_host.is_file():
-    raise SystemExit('Missing ValoraNativeHost; run scripts/build.sh')
-shutil.copy2(native_host, exe / 'ValoraNativeHost')
-(exe / 'ValoraNativeHost').chmod(0o755)
-
 # Confirmed user-supplied icon set. The light .icns is the effective bundle
 # icon; the complete light/dark PNG/iconset/icns originals stay in
 # Resources/AppIcons for traceability. No automatic appearance switching.
@@ -60,12 +54,11 @@ if not airpods_source.is_dir():
     raise SystemExit('Missing connectivity movie directory: ' + str(airpods_source))
 airpods_resources = resources / 'AirPods'
 shutil.copytree(airpods_source, airpods_resources)
-sound_source = ROOT / 'Resources/Sounds/low-battery.caf'
-if not sound_source.is_file():
-    raise SystemExit('Missing connectivity alert sound: ' + str(sound_source))
+sounds_source = ROOT / 'Resources/Sounds'
+if not sounds_source.is_dir():
+    raise SystemExit('Missing sound resources: ' + str(sounds_source))
 sounds_resources = resources / 'Sounds'
-sounds_resources.mkdir()
-shutil.copy2(sound_source, sounds_resources / 'low-battery.caf')
+shutil.copytree(sounds_source, sounds_resources)
 
 # Calmon solar-term data is a versioned static calendrical resource. It is
 # copied as a plain directory; the target still has no SwiftPM resource bundle.
@@ -73,15 +66,6 @@ solar_terms_source = ROOT / 'Sources/Valora/Resources/SolarTerms'
 if not solar_terms_source.is_dir():
     raise SystemExit('Missing SolarTerms resources: ' + str(solar_terms_source))
 shutil.copytree(solar_terms_source, resources / 'SolarTerms')
-
-# Chrome bridge: the extension directory and its native helper are real
-# bundle contents, not a source-only checkout. The helper is signed with the
-# rest of the app by codesign --deep below.
-extension_source = ROOT / 'Resources/ChromeExtension'
-if not extension_source.is_dir():
-    raise SystemExit('Missing Chrome extension directory: ' + str(extension_source))
-chrome_extension = resources / 'ChromeExtension'
-shutil.copytree(extension_source, chrome_extension)
 
 # Third-party notices retained outside the app UI.
 licenses_source = ROOT / 'Resources/Licenses'
@@ -115,6 +99,8 @@ info = {
     'NSCalendarsFullAccessUsageDescription': '用于在日历中显示你的日程。',
     'CFBundleIconFile': 'AppIcon',
 }
+if args.lock_diagnostic_path:
+    info['LSEnvironment'] = {'VALORA_NOTCH_DIAGNOSTIC': args.lock_diagnostic_path}
 (contents / 'Info.plist').write_bytes(plistlib.dumps(info))
 
 entitlements_source = ROOT / 'Resources/Valora.entitlements'
@@ -161,15 +147,21 @@ if arch != 'arm64':
             for p in sorted(airpods_source.glob('*.mp4'))
         },
         'low_battery_sound': 'Sounds/low-battery.caf',
-        'low_battery_source': str(sound_source),
-        'low_battery_sha256': hashlib.sha256(sound_source.read_bytes()).hexdigest()
+        'low_battery_source': str(sounds_source / 'low-battery.caf'),
+        'low_battery_sha256': hashlib.sha256((sounds_source / 'low-battery.caf').read_bytes()).hexdigest(),
+        'lock_sound': 'Sounds/lock.caf',
+        'lock_source': str(sounds_source / 'lock.caf'),
+        'lock_sha256': hashlib.sha256((sounds_source / 'lock.caf').read_bytes()).hexdigest(),
+        'unlock_sound': 'Sounds/unlock.caf',
+        'unlock_source': str(sounds_source / 'unlock.caf'),
+        'unlock_sha256': hashlib.sha256((sounds_source / 'unlock.caf').read_bytes()).hexdigest()
     },
     'bluetooth_usage_description_key': 'NSBluetoothAlwaysUsageDescription',
     'bluetooth_usage_description_present': bool(info.get('NSBluetoothAlwaysUsageDescription')),
     'audio_capture_usage_description_present': False,
     'live_audio_tap_source_present': (ROOT / 'Sources/Valora/AudioTap.swift').exists(),
     'unexpected_resource_dirs_in_app': sorted(
-        p.name for p in resources.iterdir() if p.is_dir() and p.name not in {'AirPods', 'ChromeExtension', 'Licenses', 'MediaRemote', 'SolarTerms', 'Sounds'}
+        p.name for p in resources.iterdir() if p.is_dir() and p.name not in {'AirPods', 'Licenses', 'MediaRemote', 'SolarTerms', 'Sounds'}
     ),
     'swiftpm_resource_bundles_in_app': sorted(p.name for p in resources.glob('*.bundle')),
     'solar_terms_source': str(solar_terms_source),
@@ -181,13 +173,6 @@ if arch != 'arm64':
     'calendars_usage_description_present': bool(info.get('NSCalendarsFullAccessUsageDescription')),
     'entitlements_source': str(entitlements_source),
     'entitlements_source_sha256': hashlib.sha256(entitlements_source.read_bytes()).hexdigest(),
-    'native_host_executable': 'Contents/MacOS/ValoraNativeHost',
-    'native_host_source': str(native_host),
-    'native_host_sha256': hashlib.sha256((exe / 'ValoraNativeHost').read_bytes()).hexdigest(),
-    'chrome_extension_directory': 'Contents/Resources/ChromeExtension',
-    'chrome_extension_manifest_sha256': hashlib.sha256((chrome_extension / 'manifest.json').read_bytes()).hexdigest(),
-    'chrome_extension_id': 'micfejmbldlgjepdfadhnoalmcbnpllb',
-    'chrome_native_host_name': 'com.wangqing.valora.chrome',
     'calendars_entitlement_present_in_signed_app': signed_plist.get('com.apple.security.personal-information.calendars') is True,
     'signed_entitlements_sha256': hashlib.sha256(
         plistlib.dumps(signed_plist, sort_keys=True)).hexdigest(),

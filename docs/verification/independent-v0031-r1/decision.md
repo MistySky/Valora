@@ -1,0 +1,7 @@
+# V0031-R1：协议/扩展功能返修独立子集通过
+
+独立运行Tests/BrowserExtensionTests/independent-handoff.mjs 8/8、independent-popup.mjs 5/5、实际打包host的independent-native-version.py隔离TMPDIR 4/4，共17个无界面情景通过。原漏suggest/仅ok却取消/取消失败仍erase，以及错误版本和origin处理已修；popup未运行可显示打开。未安装真实Chrome/修改注册/读取网页cookie或真实下载。
+
+候选app a757424b2424d0ef48bc4d58b9625d980262e961c8d324398774ff1f95c7a3c0，host d00e75265a9f2020be4486545ce90443b2fa944e62fcb6d01ca604799ce8c3f9，deep/strict签名独立通过。源码入口版本/origin校验与App peer保留。
+
+本轮用户同时授权V0032简洁设置/材质/展开瞬态整理，pi已busy且明确不改R1协议/JS；为避免与其编辑生产UI时编译交叠，本次未再跑Swift目标，也未开启任何原生窗口/测试循环。上一V0031独立12Swift功能基线通过；待V0032交付在最终同包补受影响无界面功能验证及资源/签名，不将目前子集冒称真实Chrome安装和peer全链路通过。

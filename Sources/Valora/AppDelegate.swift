@@ -3,7 +3,6 @@ import SwiftUI
 import Combine
 import CoreImage
 import NativeBridge
-import ChromeBridgeKit
 import ReferenceCore
 import OSLog
 
@@ -37,22 +36,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }()
     private var statusItem: NSStatusItem?
     private var statusMenu: NSMenu?
+    private var bluetoothAuthorizationRequester: BluetoothAuthorizationRequester?
     private var menuBarModules: MenuBarModuleController?
-    private var downloadMenuBar: DownloadMenuBarController?
-    private var chromeBridge: ChromeBridgeController?
-    private lazy var chromeBridgeSettings: ChromeBridgeSettingsModel = {
-        ChromeBridgeSettingsModel(
-            registration: ChromeBridgeRegistration.production(),
-            bridgeListening: { [weak self] in self?.chromeBridge?.isRunning ?? false },
-            lastHandshake: { [weak self] in self?.chromeBridge?.lastHandshakeAt })
-    }()
     private var coordinator: WindowCoordinator!
+    private var lockMusic: LockMusicCoordinator?
+    private var lockPreview: LockPreviewController?
     private var settingsWindow: NSWindow?
     private let settingsNavigation = SettingsNavigation()
     lazy var settingsDraft = SettingsDraft(defaults: runtimeDefaults)
     private var subscriptions = Set<AnyCancellable>()
     private lazy var appPermissions = AppPermissions(
-        bluetoothRequest: { [weak self] in self?.model.bluetooth?.requestAccessProbe() },
+        bluetoothRequest: { [weak self] in self?.requestBluetoothAuthorization() },
         openBluetoothSettings: { AppPermissions.openBluetoothPrivacySettings() },
         loginRegister: { completion in
             do {
@@ -90,24 +84,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         model.showSettingsAction = { [weak self] in self?.showSettings() }
         model.quitAction = { [weak self] in self?.quit() }
 
-        if startupMode == .verifyDownloadLayout {
-            guard let output = AppRuntimeDefaults.value(after: "--verify-download-layout",
-                                                        arguments: CommandLine.arguments) else {
-                fputs("--verify-download-layout requires an output directory\n", stderr)
-                NSApp.terminate(nil); return
-            }
-            DownloadMenuVerification.run(output: output, stress: false)
-            return
-        }
-        if startupMode == .verifyDownloads {
-            guard let output = AppRuntimeDefaults.value(after: "--verify-downloads",
-                                                        arguments: CommandLine.arguments) else {
-                fputs("--verify-downloads requires an output directory\n", stderr)
-                NSApp.terminate(nil); return
-            }
-            DownloadMenuVerification.run(output: output)
-            return
-        }
         if startupMode == .verifyCalendarParity {
             guard let output = AppRuntimeDefaults.value(after: "--verify-calendar-parity",
                                                         arguments: CommandLine.arguments) else {
@@ -117,37 +93,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             CalendarParityVerification.run(output: output)
             return
         }
-        if startupMode == .auditDownloadMenu {
-            guard let output = AppRuntimeDefaults.value(after: "--audit-download-menu",
-                                                        arguments: CommandLine.arguments) else {
-                fputs("--audit-download-menu requires an output directory\n", stderr)
-                NSApp.terminate(nil); return
-            }
-            DownloadMenuMemoryAudit.run(output: output)
-            return
-        }
         if startupMode == .previewMenuBarModules {
             // Isolated native preview of the two Calmon modules. No media,
             // Bluetooth, EventKit authorization or real calendar query.
             setupMenu()
-            return
-        }
-        if startupMode == .verifyMenuLayout {
-            guard let output = AppRuntimeDefaults.value(after: "--verify-menu-layout",
-                                                        arguments: CommandLine.arguments) else {
-                fputs("--verify-menu-layout requires an output directory\n", stderr)
-                NSApp.terminate(nil); return
-            }
-            MenuBarModulesVerification.run(output: output, stress: false)
-            return
-        }
-        if startupMode == .verifyMenuBarModules {
-            guard let output = AppRuntimeDefaults.value(after: "--verify-menu-modules",
-                                                        arguments: CommandLine.arguments) else {
-                fputs("--verify-menu-modules requires an output directory\n", stderr)
-                NSApp.terminate(nil); return
-            }
-            MenuBarModulesVerification.run(output: output)
             return
         }
         if startupMode == .auditMenuBarMemory {
@@ -157,15 +106,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 NSApp.terminate(nil); return
             }
             MenuBarMemoryAudit.run(output: output)
-            return
-        }
-        if startupMode == .verifyCodexUsageLive {
-            guard let output = AppRuntimeDefaults.value(after: "--verify-codex-usage-live",
-                                                        arguments: CommandLine.arguments) else {
-                fputs("--verify-codex-usage-live requires an output directory\n", stderr)
-                NSApp.terminate(nil); return
-            }
-            CodexUsageLiveProbe.run(output: output)
             return
         }
         if startupMode == .auditCalendarFixedWindow {
@@ -443,6 +383,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let actualLogin = LoginItem.isEnabled
         settingsDraft.binding("launchAtLogin", actualLogin).wrappedValue = actualLogin
         setupMenu()
+        lockMusic = LockMusicCoordinator(
+            model,
+            notchWindowProvider: { [weak coordinator] in coordinator?.panel },
+            notchWindowUpdates: coordinator.activeNotchWindowNumber.eraseToAnyPublisher(),
+            overlayFrameProvider: { [weak coordinator] in coordinator?.currentNotchDisplayFrame })
+        lockMusic?.setEnabled(settings.lockPreferences.enabled)
+        lockPreview = LockPreviewController(model)
+        lockPreview?.start()
+        model.settings.$lockPreferences.map(\.enabled).removeDuplicates().dropFirst().sink { [weak self] enabled in
+            DispatchQueue.main.async { self?.lockMusic?.setEnabled(enabled) }
+        }.store(in: &subscriptions)
         model.media.start()
         model.audio.start()
         model.bluetooth.start()
@@ -532,50 +483,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         else { statusItem?.isVisible = false }
     }
 
-    private func ensureDownloadFeatureStarted() {
-        let service: DownloadServicing
-        if let downloadMenuBar {
-            service = downloadMenuBar.model.service
-        } else {
-            let newService = DownloadEngineService(environment: ValoraDownloadEnvironment.production())
-            downloadMenuBar = DownloadMenuBarController(
-                service: newService,
-                onSettings: { [weak self] in self?.showSettings() },
-                onQuit: { [weak self] in self?.quit() })
-            service = newService
-        }
-        downloadMenuBar?.start()
-        if chromeBridge == nil {
-            let bridge = ChromeBridgeController(service: service)
-            bridge.onStateChange = { [weak self] in self?.chromeBridgeSettings.refresh() }
-            chromeBridge = bridge
-        }
-        if let chromeBridge, !chromeBridge.isRunning { chromeBridge.start() }
-        chromeBridgeSettings.refresh()
-    }
-
-    private var downloadFeatureTask: Task<Void, Never>?
-
     private func applyFeatureSettings() {
         guard menuBarModules != nil else { return }
         menuBarModules?.setSystemMonitorVisible(settingsDraft.value("enableSystemMonitor", true))
-        menuBarModules?.setCodexVisible(settingsDraft.value("enableAIUsage", true))
+        menuBarModules?.setCalendarVisible(true)
         setApplicationStatusItemVisible(settingsDraft.value("showApplicationMenuBarIcon", true))
-        guard startupMode == .production else { return }
-        let enabled = settingsDraft.value("enableDownloads", true)
-        let previous = downloadFeatureTask
-        downloadFeatureTask = Task { @MainActor [weak self] in
-            _ = await previous?.value
-            guard let self else { return }
-            if enabled {
-                self.ensureDownloadFeatureStarted()
-            } else {
-                self.chromeBridge?.stop()
-                self.chromeBridge = nil
-                self.chromeBridgeSettings.refresh()
-                await self.downloadMenuBar?.suspendAndStop()
-            }
-        }
     }
 
     private func refreshCalendarEventsAfterSettings() {
@@ -633,34 +545,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 })
         }
         let monitor = SystemMonitor()
-        let codexUsage: CodexUsageProvider
-        if startupMode == .production {
-            codexUsage = CodexUsageProvider(readLimits: {
-                try await CodexAppServerFetch().fetch()
-            })
-        } else {
-            // QA/preview must never launch the Codex engine.
-            codexUsage = PreviewCodexUsage.provider()
-        }
         menuBarModules = MenuBarModuleController(
-            monitor: monitor,
-            calendar: calendar,
-            codexUsage: codexUsage,
+            monitor: monitor, calendar: calendar,
             onSettings: { [weak self] in self?.showSettings() },
             onQuit: { [weak self] in self?.quit() })
-        let systemMonitorEnabled = settingsDraft.value("enableSystemMonitor", true)
-        let aiUsageEnabled = settingsDraft.value("enableAIUsage", true)
-        let downloadsEnabled = settingsDraft.value("enableDownloads", true)
-        menuBarModules?.setSystemMonitorVisible(systemMonitorEnabled)
-        menuBarModules?.setCodexVisible(aiUsageEnabled)
+        menuBarModules?.setSystemMonitorVisible(settingsDraft.value("enableSystemMonitor", true))
+        menuBarModules?.setCalendarVisible(true)
         menuBarModules?.start()
-        if startupMode == .production, downloadsEnabled {
-            ensureDownloadFeatureStarted()
-        }
         setApplicationStatusItemVisible(settingsDraft.value("showApplicationMenuBarIcon", true))
         if startupMode == .production {
             CalendarAuthorizationRefresh.subscribe(appPermissions) { [weak self] in
-                self?.menuBarModules?.refreshCalendarEvents()
+                self?.refreshCalendarEventsAfterSettings()
             }.store(in: &subscriptions)
             NotificationCenter.default.publisher(for: Notification.Name("ValoraSettingsDraftChanged"))
                 .sink { [weak self] _ in
@@ -690,13 +585,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     /// Native feature-switch QA entry. It reuses the real status-item/menu
-    /// construction but uses the injected preview providers and never starts
-    /// production download/media services.
+    /// construction but never starts production media services.
     func setupMenuForVerification() { setupMenu() }
     func applyFeatureSettingsForVerification() { applyFeatureSettings() }
     var applicationStatusItemForVerification: NSStatusItem? { statusItem }
     var menuBarModulesForVerification: MenuBarModuleController? { menuBarModules }
-    var downloadMenuBarForVerification: DownloadMenuBarController? { downloadMenuBar }
 
     func removeApplicationStatusItemForVerification() {
         if let statusItem { NSStatusBar.system.removeStatusItem(statusItem) }
@@ -773,11 +666,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @objc private func previous() { model.media.command(5) }
     @objc private func quit() { NSApp.terminate(nil) }
 
+
+    /// Explicit user gesture from the Connectivity switch. This is the only
+    /// path that asks CoreBluetooth for Bluetooth authorization. It never
+    /// scans or reads a device; AppPermissions refreshes on completion.
+    private func requestBluetoothAuthorization() {
+        guard bluetoothAuthorizationRequester == nil else { return }
+        let requester = BluetoothAuthorizationRequester()
+        bluetoothAuthorizationRequester = requester
+        requester.request { [weak self] in
+            guard let self else { return }
+            self.bluetoothAuthorizationRequester = nil
+            self.appPermissions.refresh()
+        }
+    }
+
     @objc func showSettings() {
         if settingsWindow == nil {
             let view = SettingsView(model:model,settings:settings,navigation:settingsNavigation,
-                                    draft:settingsDraft,permissions:appPermissions,
-                                    chromeBridge: chromeBridgeSettings)
+                                    draft:settingsDraft,permissions:appPermissions)
             let (window, _) = SettingsWindowFactory.make(rootView: view)
             window.center()
             settingsWindow = window
@@ -810,6 +717,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // termination must not create an AppModel/ConnectivityController and
         // accidentally start its lifecycle.
         if modelWasLoaded {
+            lockPreview?.stop()
+            lockPreview = nil
+            lockMusic?.stop()
+            lockMusic = nil
             model.lyricsController?.cancel()
             model.media?.stop()
             model.audio?.stop()
@@ -817,12 +728,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         menuBarModules?.stop()
         menuBarModules = nil
-        downloadFeatureTask?.cancel()
-        downloadFeatureTask = nil
-        chromeBridge?.stop()
-        chromeBridge = nil
-        downloadMenuBar?.stop()
-        downloadMenuBar = nil
         coordinator?.cancelPendingHover()
     }
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }

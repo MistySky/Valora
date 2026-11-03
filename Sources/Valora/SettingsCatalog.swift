@@ -11,9 +11,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
     case lockScreen = "Lock Screen"
     case connectivity = "Connectivity"
     case systemMonitor = "System Monitor"
-    case aiUsage = "AI Usage"
     case calendar = "Calendar"
-    case downloadMonitor = "Downloads"
     case about = "About"
     var id: String { rawValue }
     var displayTitle: String { SettingsText.localized(rawValue) }
@@ -24,9 +22,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         case .lockScreen: return "lock.fill"
         case .connectivity: return "headphones"
         case .systemMonitor: return "chart.bar.xaxis"
-        case .aiUsage: return "sparkles"
         case .calendar: return "calendar"
-        case .downloadMonitor: return "arrow.down.circle.fill"
         case .about: return "info.circle.fill"
         }
     }
@@ -37,8 +33,6 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         case .lockScreen: return Color(white: 0.16)
         case .connectivity: return Color(red: 0, green: 0.75, blue: 0.54)
         case .systemMonitor: return Color(red: 0.25, green: 0.55, blue: 1)
-        case .aiUsage: return Color(white: 0.22)
-        case .downloadMonitor: return Color(red: 0.20, green: 0.60, blue: 1)
         case .about: return .gray
         }
     }
@@ -60,7 +54,7 @@ enum SettingsSidebar {
     static let groups: [SettingsSidebarGroup] = [
         SettingsSidebarGroup(title: nil, pages: [.general]),
         SettingsSidebarGroup(title: "刘海屏", pages: [.nowPlaying, .lockScreen, .connectivity]),
-        SettingsSidebarGroup(title: "菜单栏", pages: [.calendar, .downloadMonitor, .aiUsage, .systemMonitor]),
+        SettingsSidebarGroup(title: "菜单栏", pages: [.calendar, .systemMonitor]),
         SettingsSidebarGroup(title: "Valora", pages: [.about])
     ]
     static var orderedPages: [SettingsPage] { groups.flatMap(\.pages) }

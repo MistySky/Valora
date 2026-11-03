@@ -1,4 +1,5 @@
 import Foundation
+import CoreBluetooth
 import NativeBridge
 import ReferenceCore
 
@@ -20,15 +21,20 @@ final class NativeConnectedAudioSource: ConnectedAudioSource, @unchecked Sendabl
     private let queue = DispatchQueue(label: "com.wangqing.valora.connectivity.devices",
                                       qos: .utility)
 
+    // Only an explicitly marked local acceptance bundle may write up to
+    // three sanitized readings. All state is confined to the utility queue.
+    private var acceptanceSamples: [[String: Int]] = []
+    private var acceptanceStartedAt: TimeInterval?
+
     func snapshot() async -> ConnectedAudioSnapshot {
         await withCheckedContinuation { continuation in
             queue.async {
-                continuation.resume(returning: Self.read())
+                continuation.resume(returning: self.read())
             }
         }
     }
 
-    private static func read() -> ConnectedAudioSnapshot {
+    private func read() -> ConnectedAudioSnapshot {
         let raw = ARConnectedAudioDevices() as? [[String: Any]] ?? []
         func validBattery(_ value: Any?) -> Int? {
             guard let number = value as? NSNumber else { return nil }
@@ -55,6 +61,35 @@ final class NativeConnectedAudioSource: ConnectedAudioSource, @unchecked Sendabl
                 isAirPods: isAirPods, modelUID: modelUID,
                 rawColorID: (row["colorID"] as? NSNumber)?.intValue))
         }
+        recordAcceptanceSample(devices)
         return ConnectedAudioSnapshot(devices: devices, output: ARDefaultAudioOutputName())
     }
+    private func recordAcceptanceSample(_ devices: [AudioDevice]) {
+        guard Bundle.main.object(forInfoDictionaryKey: "ValoraDeviceAcceptanceSample") as? Bool == true,
+              CBManager.authorization == .allowedAlways,
+              acceptanceSamples.count < 3 else { return }
+        guard let device = devices.first(where: { $0.active && $0.isAirPods }) else { return }
+        let now = ProcessInfo.processInfo.systemUptime
+        if acceptanceStartedAt == nil { acceptanceStartedAt = now }
+        guard now - (acceptanceStartedAt ?? now) < 10 else { return }
+        // Deliberately excludes name, address, persistent ID and other devices.
+        var sample = ["activeAirPods": 1,
+                      "elapsedMilliseconds": Int((now - (acceptanceStartedAt ?? now)) * 1000)]
+        sample["modelGeneration"] = device.airPodsModel?.rawValue
+        sample["left"] = device.left
+        sample["right"] = device.right
+        sample["single"] = device.single
+        sample["displayBattery"] = device.battery
+        acceptanceSamples.append(sample)
+        let directory = URL(fileURLWithPath: "/private/tmp/valora-v0035-device-acceptance", isDirectory: true)
+        do {
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true,
+                attributes: [.posixPermissions: 0o700])
+            let data = try JSONSerialization.data(withJSONObject: acceptanceSamples, options: [.prettyPrinted, .sortedKeys])
+            let file = directory.appendingPathComponent("readings.json")
+            try data.write(to: file, options: .atomic)
+            try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: file.path)
+        } catch { /* Diagnostics cannot affect normal recognition or playback. */ }
+    }
+
 }

@@ -7,21 +7,10 @@ let package = Package(
     name: "Valora",
     platforms: [.macOS("27.0")],
     products: [
-        .executable(name: "Valora", targets: ["Valora"]),
-        .executable(name: "ValoraNativeHost", targets: ["ValoraNativeHost"])
-    ],
-    dependencies: [
-        // Local compatibility package: upstream source + reviewed V0029-R1 patch.
-        .package(path: "Vendor/Convoy")
+        .executable(name: "Valora", targets: ["Valora"])
     ],
     targets: [
         .target(name: "ReferenceCore"),
-        .target(
-            name: "ChromeBridgeKit",
-            linkerSettings: [
-                .linkedFramework("Security")
-            ]
-        ),
         .target(
             name: "NativeBridge",
             publicHeadersPath: "include",
@@ -35,17 +24,9 @@ let package = Package(
             ]
         ),
         .executableTarget(
-            name: "ValoraNativeHost",
-            dependencies: ["ChromeBridgeKit"],
-            linkerSettings: [
-                .linkedFramework("AppKit")
-            ]
-        ),
-        .executableTarget(
             name: "Valora",
             dependencies: [
-                "NativeBridge", "ReferenceCore", "ChromeBridgeKit",
-                .product(name: "DownloadEngine", package: "Convoy")
+                "NativeBridge", "ReferenceCore"
             ],
             linkerSettings: [
                 .linkedFramework("AppKit"),
@@ -58,7 +39,7 @@ let package = Package(
             ]
         ),
         .testTarget(name: "ReferenceCoreTests", dependencies: ["ReferenceCore"]),
-        .testTarget(name: "ValoraTests", dependencies: ["Valora", "ReferenceCore", "ChromeBridgeKit"])
+        .testTarget(name: "ValoraTests", dependencies: ["Valora", "ReferenceCore"])
     ],
     swiftLanguageModes: [.v6]
 )

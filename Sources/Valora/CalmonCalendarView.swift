@@ -7,37 +7,47 @@ struct CalmonCalendarView: View {
     let model: CalmonCalendarModel
     let maxHeight: CGFloat
     var onClose: () -> Void
-
+    /// The shared monitor/calendar popover supplies one outer scroll view.
+    /// Keep false there so the calendar does not introduce a nested scroll.
+    var embedsScroll = true
     @Environment(\.colorScheme) private var colorScheme
 
     private var gridWidth: CGFloat { UIStyle.Metrics.calendarGridWidth }
     private var columnWidth: CGFloat { gridWidth / 7 }
 
     var body: some View {
-        ScrollView(.vertical) {
-            VStack(alignment: .leading, spacing: 0) {
-                header
-                    .padding(.bottom, UIStyle.Metrics.titleGap)
-                weekdayRow
-                    .padding(.bottom, 4)
-                monthGrid
-                Divider()
-                    .padding(.vertical, 12)
-                detailSection
+        Group {
+            if embedsScroll {
+                ScrollView(.vertical) { calendarContent }
+            } else {
+                calendarContent
             }
-            .padding(UIStyle.Metrics.contentMargin)
-            .frame(width: UIStyle.Metrics.calendarPanelWidth)
         }
+            .frame(width: UIStyle.Metrics.calendarPanelWidth)
+            .frame(maxHeight: embedsScroll ? maxHeight : nil)
+            .focusable()
+            .focusEffectDisabled()
+            .onKeyPress(.leftArrow) { model.moveSelection(byDays: -1); return .handled }
+            .onKeyPress(.rightArrow) { model.moveSelection(byDays: 1); return .handled }
+            .onKeyPress(.upArrow) { model.moveSelection(byDays: -7); return .handled }
+            .onKeyPress(.downArrow) { model.moveSelection(byDays: 7); return .handled }
+            .onKeyPress(.escape) { onClose(); return .handled }
+            .onKeyPress(.init("t")) { model.resetToToday(); return .handled }
+    }
+
+    private var calendarContent: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            header
+                .padding(.bottom, UIStyle.Metrics.titleGap)
+            weekdayRow
+                .padding(.bottom, 4)
+            monthGrid
+            Divider()
+                .padding(.vertical, 12)
+            detailSection
+        }
+        .padding(UIStyle.Metrics.contentMargin)
         .frame(width: UIStyle.Metrics.calendarPanelWidth)
-        .frame(maxHeight: maxHeight)
-        .focusable()
-        .focusEffectDisabled()
-        .onKeyPress(.leftArrow) { model.moveSelection(byDays: -1); return .handled }
-        .onKeyPress(.rightArrow) { model.moveSelection(byDays: 1); return .handled }
-        .onKeyPress(.upArrow) { model.moveSelection(byDays: -7); return .handled }
-        .onKeyPress(.downArrow) { model.moveSelection(byDays: 7); return .handled }
-        .onKeyPress(.escape) { onClose(); return .handled }
-        .onKeyPress(.init("t")) { model.resetToToday(); return .handled }
     }
 
     // MARK: - Header

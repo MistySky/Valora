@@ -597,38 +597,6 @@ enum SettingsVerification {
                     .environment(\.controlActiveState, .active).environment(\.colorScheme, .light)
                 try? await Task.sleep(nanoseconds: 200_000_000)
 
-                // AI Usage page state matrix: selected page in light/dark,
-                // active/inactive. General above also captures the unselected
-                // sidebar sparkles mark.
-                navigation.page = .aiUsage; navigation.revealBottom = false
-                host.appearance = NSAppearance(named: .aqua)
-                host.rootView = SettingsView(model:model,settings:settings,navigation:navigation,
-                                             draft:draft,permissions:permissions)
-                    .environment(\.controlActiveState, .active).environment(\.colorScheme, .light)
-                try? await Task.sleep(nanoseconds: 200_000_000)
-                try capture("AI-Usage-light")
-                host.rootView = SettingsView(model:model,settings:settings,navigation:navigation,
-                                             draft:draft,permissions:permissions)
-                    .environment(\.controlActiveState, .inactive).environment(\.colorScheme, .light)
-                try? await Task.sleep(nanoseconds: 200_000_000)
-                try capture("AI-Usage-light-inactive")
-                host.appearance = NSAppearance(named: .darkAqua)
-                host.rootView = SettingsView(model:model,settings:settings,navigation:navigation,
-                                             draft:draft,permissions:permissions)
-                    .environment(\.controlActiveState, .active).environment(\.colorScheme, .dark)
-                try? await Task.sleep(nanoseconds: 200_000_000)
-                try capture("AI-Usage-dark")
-                host.rootView = SettingsView(model:model,settings:settings,navigation:navigation,
-                                             draft:draft,permissions:permissions)
-                    .environment(\.controlActiveState, .inactive).environment(\.colorScheme, .dark)
-                try? await Task.sleep(nanoseconds: 200_000_000)
-                try capture("AI-Usage-dark-inactive")
-                host.appearance = NSAppearance(named: .aqua)
-                host.rootView = SettingsView(model:model,settings:settings,navigation:navigation,
-                                             draft:draft,permissions:permissions)
-                    .environment(\.controlActiveState, .active).environment(\.colorScheme, .light)
-                try? await Task.sleep(nanoseconds: 200_000_000)
-
                 // Same active light condition as the original reference.
                 navigation.page = .general; navigation.revealBottom = false
                 permissions.verificationSet(loginItem: .requiresApproval)
@@ -678,7 +646,6 @@ enum SettingsVerification {
                     "preferencePersistenceVerified": persisted,
                     "preferencesUseIsolatedDomain": isolated,
                     "permissionStateScreenshots": ["Connectivity-persisted-on-unauthorized", "Connectivity-permission-pending", "Connectivity-permission", "Connectivity-authorized-on", "General-login-approval", "Calendar-permission-pending", "Calendar-permission"],
-                    "aiUsageScreenshots": ["AI-Usage-light", "AI-Usage-light-inactive", "AI-Usage-dark", "AI-Usage-dark-inactive"],
                     "windowPoints": [620, 687],
                     "sidebarPoints": 225,
                     "headerHeightPoints": SettingsLayout.headerHeight,

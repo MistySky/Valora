@@ -74,6 +74,9 @@ final class SystemMonitor {
     private(set) var applicationState: ApplicationState = .idle
     /// Set only by injected QA/preview; production remains false.
     private(set) var previewInjected = false
+    /// True only for historical QA/audit monitors that inject a fake reader.
+    /// Production construction has no reader and cannot enumerate processes.
+    var hasInjectedApplicationReader: Bool { reader != nil }
 
     // MARK: - Control
 
@@ -92,10 +95,13 @@ final class SystemMonitor {
     /// in-flight sample can be discarded instead of written back.
     private var generation = 0
 
-    nonisolated(unsafe) private let reader: any AppMemoryReading
+    /// Optional injected reader is used only by historical QA/audit code. The
+    /// production app constructs SystemMonitor without a reader, so opening a
+    /// panel never enumerates running applications or reads process memory.
+    nonisolated(unsafe) private let reader: (any AppMemoryReading)?
     private let sampleQueue = DispatchQueue(label: "com.calmon.monitoring.sample", qos: .utility)
 
-    init(reader: any AppMemoryReading = AppMemoryReader()) {
+    init(reader: (any AppMemoryReading)? = nil) {
         self.reader = reader
     }
 
@@ -131,7 +137,7 @@ final class SystemMonitor {
         applications = []
         applicationState = .idle
         panelVisible = false
-        reader.purge()
+        reader?.purge()
     }
 
     /// Called by the menu bar controller when the monitoring popover opens/closes.
@@ -146,7 +152,7 @@ final class SystemMonitor {
         } else {
             applications = []
             applicationState = .idle
-            reader.trimCache()
+            reader?.trimCache()
         }
     }
 
@@ -173,14 +179,17 @@ final class SystemMonitor {
         isSampling = true
         sampleStartCount &+= 1
 
-        let wantApps = panelVisible
+        // Only an explicitly injected QA reader can request application rows.
+        // Production has no reader and therefore never touches NSWorkspace or
+        // libproc for application memory.
+        let wantApps = panelVisible && reader != nil
         let now = DispatchTime.now()
         let doDisk = panelVisible && (force || now >= nextDiskRead)
         if doDisk { nextDiskRead = now + 30_000_000_000 }
 
         let priorTicks = previousTicks
         let priorTicksAt = previousTicksAt
-        let runningApps = wantApps ? self.reader.runningApplications() : []
+        let runningApps = wantApps ? (self.reader?.runningApplications() ?? []) : []
         let taskGeneration = generation
 
         sampleQueue.async { [weak self] in
@@ -192,8 +201,8 @@ final class SystemMonitor {
             if doDisk { disk = Self.readDisk() }
             var apps: [AppMemoryReader.AppUsage] = []
             var appState: ApplicationState = .idle
-            if wantApps {
-                let result = self.reader.sample(applications: runningApps)
+            if wantApps, let reader = self.reader {
+                let result = reader.sample(applications: runningApps)
                 apps = result.rows
                 appState = result.state
             }
@@ -204,7 +213,7 @@ final class SystemMonitor {
                     self.staleSampleDiscardCount &+= 1
                     // Discard the result (and any icon cache the stale sample
                     // refilled) so a closed panel cannot be repopulated.
-                    if wantApps { self.reader.trimCache() }
+                    if wantApps { self.reader?.trimCache() }
                 } else {
                     self.sampleCompletionCount &+= 1
                     self.apply(ticks: ticks, prior: priorTicks, priorAt: priorTicksAt, sampleTime: sampleTime, vm: vm, disk: disk, diskAttempted: doDisk, apps: apps, appState: appState, wantApps: wantApps)

@@ -197,3 +197,97 @@ pi开发/返修按实际修改范围跑定向测试：改动模块、必要相�
 2026-10-26 用户要求设置保持Alcove简洁：“显示菜单栏图标”仅文字+开关，无左图标/额外说明；下载设置去长段解释，Chrome安装/桥接以简洁状态行和明确动作呈现，步骤由点击安装后展开，侧栏标题原图标保留。另反馈下载popover透明度与Calmon不一致、监控首次展开滚动条闪现，限定V0032最小材质/初始布局整理，400pt和功能不变；任务docs/pi-tasks/v0032-alcove-settings-popover-polish.md。严禁任何自动批量弹窗/截图/循环压力，用户单次看最终视觉，未复现瞬态不冒称通过。V0031-R1已报告待独立协议验收，V0032不改其JS/协议peer业务；定时器关闭。
 
 2026-10-26 Codex在pi执行V0032时仅只读复核V0031-R1：8 JS handoff+5 popup+4隔离host版本/origin共17情景通过及候选签名通过，记录independent-v0031-r1/decision.md；无浏览器真实操作或弹窗。为避免并行UI生产编译，本轮未重跑Swift，待V0032最终同包补无界面相关验证，真实Chrome加载/稳定路径安装仍待用户。
+
+2026-10-26 用户明确开始V0033组合图标/统一日历主面板及下载侧面板，覆盖旧独立模块入口；最终风格以当前Calmon日历为准且日历本身不改，日期01–31，功能off对应图标灰/展开隐藏且后台停止，任务见 docs/pi-tasks/v0033-composite-status-calendar-panel.md。已推送回退点de7a225；允许pi自绘新增组合图标但Outline-v7/应用图标不动，定时器关闭，禁全部弹窗循环/性能测试，候选仅临时目录。
+
+2026-10-26 用户否定V0033双小环视觉，最新限定R1必须直接以Status Trio实际单环绘制几何比例为底稿，中WiFi换下载箭头、日期01–31、同圆心CPU/内存半弧/底额度四点。最新用户再次授权参考图的展开改版（覆盖临时先不做下拉），日历本身和风格不改，下载最近创建任务点击全部侧面，Codex无二次点击，无名称齿轮；先图标再面板。见docs/pi-tasks/v0033-r1-faithful-single-ring-reference.md。不执行双环眼睛方案；禁测/不动用户运行包/定时器关闭继续。
+
+2026-10-27 用户明确不再交pi，本轮V0033图标/面板由本聊天Codex直接接手，不向pi投递新任务或返修。当前ready无邮箱在途；保留成果，先修实际图标渲染/原版top-gap与高分辨率缩放及Codex嵌套宽度溢出，日历不改；禁弹窗循环/压力测试和定时器关闭继续。
+
+2026-10-27 用户明确四额度点不得半填充，每点整体绿/黄/灰。Codex按每点50%桶，满桶绿、非零未满黄、空/未知/off灰，前后两点分别5H/周；覆盖旧fraction clipping视觉，比例函数仅供状态计算。
+
+2026-10-27 用户要求日期再上移、下载箭头加长；Codex直接调整顶部日期排版与中心箭头竖杆，四点整点绿黄灰规则保留。候选/private/tmp/valora-direct-single-ring-candidate，不自动替换运行版。
+
+2026-10-27 用户最终要求完整删除下载与Codex/AI用量，恢复现有Calmon独立日历/系统监控入口及简洁设置；不再组合圆环/统一大面板/眼睛/Codex刘海通知。用户明确“交给pi吧”，授权现有pi执行V0034（覆盖本轮此前仅Codex接手限制），见docs/pi-tasks/v0034-remove-download-codex-restore-calmon.md。旧历史/用户资源/真实下载数据/真实Chrome注册不得清理；只移除所属功能代码依赖和专属资源/测试，候选临时目录，不覆盖运行版。禁弹窗循环/性能测试，定时器关闭。
+
+2026-10-27 V0034技术验收接受，详见docs/verification/independent-v0034/decision.md；当前功能仅Calmon独立日历/监控及既有刘海音乐歌词设备，下载与Codex整块移除。候选/private/tmp/valora-independent-v0034-candidate待用户查看，不自动替换/新增功能/恢复定时器。
+
+2026-10-27 用户明确授权pi完善AirPods3实机识别/电量，并补音乐点击管理响应迟钝；任务docs/pi-tasks/v0035-airpods-live-correctness-music-responsiveness.md。授权当前已连接耳机最小有界只读样本，不真实媒体控制/设备连接/新权限系统写，不影响正在听歌。旧禁测仍有效，仅定向慢source/点击派发诊断，不恢复反复闪窗/压力性能审计。系统原生提示是否被Alcove抑制须证据核查，不盲承诺或改系统；保留V0034移除下载/Codex与Calmon，当前独立候选不替换，定时器关闭。
+
+2026-10-27 V0035独立验收未接受：原26相关通过，新增3case5断言失败（连接事件遇在途read丢补读、旧toggle失败覆盖新track状态、stop后旧callback仍写状态），见docs/verification/independent-v0035/decision.md。限定R1事件合并/旧快照与媒体回调生命周期返修，电量真实字段仍待验不能仅ABI推断通过；不真实耳机/音乐操作、不覆盖运行版、不跑弹窗用例，定时器关闭。
+
+2026-10-27 用户要求复核复刻源码与原版反编译，并明确耳机先完善、锁屏下一步。Codex找到0.6.35真实AirPods3 single0误入min的同类已修记录及connection-appearance反编译，补充docs/pi-tasks/v0035-supplement-original-evidence-earphones-first.md要求三方对照，不把历史实测说成从未实测、不无脑过滤真0；R1当前独立复验中，pi补充只读审计写文档，不并改生产/测试或构建。耳机完整通过前不展开锁屏，禁压力/弹窗循环，定时器关闭。
+
+2026-10-27 V0035真实验收发现pi新增蓝牙selector直接@MainActor在Bluetooth后台队列回调而SIGTRAP，已由Codex直接修为nonisolated入口→复制Sendable地址/token identity→Task MainActor并校验注册。新增真实ObjC后台入口fake回归1项通过，原29定向再过；真实候选成功运行约9分钟无新增crash。当前AirPods3在App内实读left67/right77/single0→显示67，证实占位0不再压过左右。见docs/verification/independent-v0035-live/decision.md。当前仅/private/tmp/valora-v0035-callback-fixed-candidate运行，用户明确允许换版/重启测试并自行授权；dist未动。该候选启用有界匿名采样max3/10s，普通包不启用，无真实媒体控制。普通设备电量/原生回调启动范围接受，低电/其他型号/真快速重连/音乐体感/系统提示抑制仍未全认证；别再说完全实机通过。耳机先，本轮未开发锁屏；下一步锁屏核查，不恢复定时器/下载Codex。
+
+2026-10-28 用户明确实测启动后断开重连仍无Valora提示，耳机到达实机路径未接受。Codex新增两回归均失败：明确connect被首次baseline吞掉、通用设备快照提前消耗fresh导致晚型号不弹。已限定修复为稳定ID保留10秒连接意图，识别后仅消费一次，off/stop清空、超时丢弃；21定向fake通过，见docs/verification/independent-v0035-reconnect/decision.md。不能断言已唯一确诊真实事件缺失原因；新候选实机待验，当前运行版不退出不覆盖。暂停推进锁屏实现，定时器仍关。
+
+2026-10-28 用户实测reconnect候选仍无耳机提示，同条件原版Alcove有提示；并纠正原版也同时显示macOS自带弹窗。因此系统弹窗无需抑制，本轮只查Valora到达漏报。已授权现有pi限定V0035-R2整链定位/修复，保留Codex native后台selector及10秒连接意图改动，不把fake通过等同实机。任务docs/pi-tasks/v0035-r2-real-reconnect-toast.md；当前运行reconnect-candidate不退出不覆盖，候选另打，耳机收尾前不做锁屏/不恢复定时器。
+
+2026-10-28 V0035-R2已交付，Codex独立48定向通过/8源快照哈希与当前匹配/候选签名及binary哈希通过。新增CoreBluetooth用户触发授权入口补齐旧IOBluetooth probe与CB gate不一致路径；源码/逻辑子集接受，但新授权适配器没有直接fake覆盖，真实授权on与重连toast仍待新候选实机，不能宣布漏报已实机修复。见docs/verification/independent-v0035-r2/decision.md。候选/private/tmp/valora-v0035-r2-real-reconnect-candidate，尚未退出替换当前运行版；不做锁屏或恢复定时器。
+
+2026-10-28 用户纠正并强调复刻：Alcove戴上耳机出现、摘下后短暂悬浮再消失；Valora却只在连接时出现、摘下误变其他耳机图标、再戴不触发。不是仅connect漏报，必须查原版佩戴/路由真实触发和时序，不能自创或以播放状态冒充佩戴。已授权pi V0035-R3，任务docs/pi-tasks/v0035-r3-faithful-airpods-wear-behavior.md；R2权限修复保留但未替换运行包。不屏蔽系统弹窗、不做锁屏/下载Codex/定时器，禁循环UI/压力及真实设备媒体控制。
+
+2026-10-28 用户要求启动最新候选查看：Codex核R3二进制736c7cff...及strict/deep签名通过，退出旧reconnect候选后启动/private/tmp/valora-v0035-r3-wear-candidate/Valora.app。实际设备页开关on且无需要授权标志。已向用户说明R3只按active默认输出变化做代理，未找到原版佩戴源，不能算佩戴复刻验收通过；当前仅供用户查看，未跑额外UI循环/压力。
+
+2026-10-28 用户反馈R3“看上去像了”后明确开始锁屏取舍并授权交pi（覆盖旧耳机阶段阻塞，不代表全佩戴传感器验收通过）。V0036按源码迁移：锁屏总开关、顶部锁解动画、锁解声音原默认off/on、音乐与耳机信息开关；固定玻璃/10分钟/偏移0/音量默认收起可点开/keepAwake0/屏保false。电脑电池专注日历天气等锁屏功能及后台整项不迁，保留现有菜单日历监控。必须先读当前复刻源码/原版证据，不猜；复刻已有LockIndicatorState与LockActivityGlyph锁片运动，旧文档说未实现不能当当前事实。任务docs/pi-tasks/v0036-lock-screen-selected-migration.md；仅隔离fake功能测试/构建签名、不真实锁屏声音媒体设备操作、不闪窗循环、当前R3运行包不动、定时器关闭。
+
+2026-10-28 V0036独立验收暂不接受：13归档/19迁入源hash、候选签名/资源及安全42定向子集通过，但发现stop/start未清state/sleeping丢deadline、旧queued通知跨周期、耳机信息未发布刷新、固定启动notchPanel失效及全局音乐开关缺订阅。原coordinator测试虽usePresentationSpace=false仍开真实窗口，Codex跳过未跑，要求R1先真隔离fake adapter再补回归，见docs/verification/independent-v0036/decision.md。限定任务docs/pi-tasks/v0036-r1-lifecycle-observation-isolated-tests.md；不重做UI/不跑闪窗/不替换运行R3/不真实锁屏，定时器仍关。
+
+2026-10-28 V0036-R1独立复验已确认上一轮六项修复及真fake隔离；新加解锁清理回归失败（组合55中仅此1失败），Codex按复刻setLocked(false)直接补回音乐窗口detach，顶部notch保留至unlock动画结束。补修后锁屏21通过，增强清理回归1复验通过，设备媒体34本轮补修前通过；独立release/签名/声音资源匹配。见docs/verification/independent-v0036-r1/decision.md。自动代码功能范围接受，真实锁屏可见/操作/材质动画声音/物理多屏待用户实机。最终候选/private/tmp/valora-independent-v0036-r1-candidate，未启动未替换R3/dist，不恢复定时器或新派工。
+
+2026-10-28 用户真实锁屏反馈：原版先收起当前刘海再展开锁定；解锁先开锁→收起→恢复音乐。Valora出现向下拉出再回顶部，过渡不符；控制卡底色也不对。V0036动态/材质体验尚未接受，明确限定R2按源码原版证据纠正顺序/几何与Glass容器，不只调时长猜测。任务docs/pi-tasks/v0036-r2-original-transition-order-glass.md；保留Codex解锁music detach补修及fake/epoch等修复，当前运行independent-v0036-r1不动，不真实锁屏/声音/媒体或UI循环压力，定时器关。
+
+2026-10-28 用户再次强调Alcove过渡动画是选择软件的核心，R2优先对齐完整动态动作链而非功能可用：原版源码/反编译与现有录屏证据优先，未知不猜，动画先于控制卡底色。补充docs/pi-tasks/v0036-r2-supplement-animation-is-core.md排同轮，不重派主体、不另并行改生产/恢复禁测。
+
+2026-10-28 V0036-R2独立未通过：原26用例通过，新增2回归4断言失败（真实compact collapse同步跳锁、不回收左右翼；解锁restoring已直接恢复音乐，缺neutral几何）。旧顶边测试测错锁屏音乐卡非notch，不能证动态一致；候选签名hash通过不代替动画。见docs/verification/independent-v0036-r2/decision.md，限定R3真实紧凑几何/完成回调返修docs/pi-tasks/v0036-r3-compact-geometry-transition-completions.md。当前运行版不动，禁测/不真实锁屏/不恢复定时器。
+
+2026-10-29 V0036-R3独立暂不接受：原31项过，新增2用例3断言失败（locking/neutral/restoring没有锁屏Space拥有权，只按showsBadge挂载）；几何目标正确但阶段可能在登录界面不可见。另源码仍用.45spring改geometry后固定.12抢跑下一段，无真实animation completion。证据independent-v0036-r3/decision.md；限定R4 docs/pi-tasks/v0036-r4-neutral-space-animation-completion.md。当前运行版不动、不真实锁屏/声音UI循环、定时器关，原几何和上轮已修成果保留。
+
+2026-10-29 用户提供19.233秒原版Alcove手持录屏并明确确认来源，已离线抽帧看锁扩展/开锁后回基础刘海，约13.5s/17.1–17.8s；无明确音乐恢复段/控制卡底色证据，笔记docs/research/original-lock-unlock-user-video.md。用户随后授权启动当前Valora以录对照，R4候选签名hash和独立34定向fake通过后已CUA启动/private/tmp/valora-v0036-r4-completion-candidate/Valora.app，AX刘海菜单出现；仅启动子集，不称完整动画已通过。当前录屏目标R4，不再旧R1；不主动锁屏/控制媒体或恢复定时器。
+
+2026-10-29 用户提供Valora R4实机录屏e3f0b00d...，与已确认原版b0f89d...离线抽帧对照：R4约5.3–5.8及15.8–16.3两次锁定均出现含锁glyph的独立黑条脱离硬件刘海下浮再回顶部，解锁约10.6也见短暂下浮；原版未见。真实动态验收失败，不能以34fake/签名或静态topInset=0覆盖。证据independent-v0036-r4/user-video-comparison.md。限定R5查真实窗口顶锚/约束/Space系统过渡，不盲加y补偿或调delay；当前运行R4不动，禁真实锁屏和UI循环/压力，定时器关。
+
+2026-10-29 V0036-R5独立34fake/21归档18生产源hash/候选89269c...签名均通过。代码已加NotchPanel取消frame约束及事件驱动顶边校正，无新timer/经验偏移；仅候选根因修复，未有实机frame，不能宣布下浮已修复。诊断当前只记录校正后值，若再失败需下一次前补before/after/内容坐标证据，不重复猜或让用户无限录。见docs/verification/independent-v0036-r5/decision.md；可交单次手动验证，R5未启动，当前R4不动，动画/材质总体仍待实机，定时器关。
+
+2026-10-29 用户最新授权先做V0037日历/基础监控合并展示，锁屏修复暂缓：共用展开面板、Calmon400pt/日历368网格保持，上方简洁内存总量剩余/磁盘总量剩余/已运行三行卡，下方原日历；移除复杂监控圆环应用列表搜索及所属进程采集。现有CPU/MEM和日期菜单文本保留、两个入口同一popover、开关独立停止后台及隐藏对应部分。任务docs/pi-tasks/v0037-calendar-simple-monitor-shared-panel.md；禁真实UI测试/压力循环/全量、当前用户软件和dist不动、候选临时目录、定时器关。
+
+2026-10-30 用户最新纠正V0037监控卡：系统版本/芯片不显示，须显示内存总量和剩余、磁盘总量和剩余及已运行。当前源码遗漏两剩余，V0037-R1已投现有pi，限定内容/明确标签/400pt可读排版；保留日历共享popover及后台开关，禁UI循环/全量压力、不替换用户App/dist。
+
+2026-10-30 用户重新要求查询锁屏仍露出完整刘海的原因。V0036-R6限定源码/原版证据因果核查及默认关闭诊断补齐已投现有pi；不得把共享geometry当实机正确，不把模拟开关当已确诊。现有120条日志全hidden且耗尽。先修去重/保留锁事件额度、挂载和anchor前后/实际内容转换坐标，再给一次取证方案；不猜偏移、不自动改偏好/换版/锁屏。V0037成果保留，禁测和定时器关继续。
+
+2026-10-30 用户实测archive同样下浮，不能将复刻此路径视为正确基线；Codex已读取BoringNotch固定SkyLightWindow及DynamicNotch实际源码，均用加入目标并移除旧空间接口，与当前只add不同但根因未确诊。R6独立4fake/签名接受限额子集，hostTop未判翻转/缺实际SwiftUI形状probe及空间真实成员，诊断不足限定R7已投。证据independent-v0036-r6/decision.md，禁止自动启动锁屏/猜偏移/改偏好，用户当前软件不动。
+
+2026-10-30 R7独立29定向fake/9源hash匹配，诊断代码子集接受，证据independent-v0036-r7/decision.md；并非修复下浮。临时R7候选现已不存在，留存Release哈希不同不能替代，取证前须重新构建核签名，不能套历史签名。实际形状probe为SwiftUI逻辑坐标，单屏有界参考非WindowServer像素，视觉仍待验。本轮未启动/锁屏/换版/新派工或恢复定时器。
+
+2026-10-30 用户要求Codex直接修复，R8已直接实现native空间迁移（加入并移除旧归属）及原空间快照/验证/失败恢复，不交pi。29Swift fake+6真实native代码fake回调场景、Release/签名通过，候选/private/tmp/valora-direct-r8-space-migration-candidate binary822a5302...。这是实际修复候选非实机下浮已通过；未启动/退出当前App/归档、未改偏好/dist，记录docs/reports/v0036-r8-direct-space-migration.md。后续用户自行锁解确认，定时器仍关。
+
+2026-10-30 用户实测R8锁屏消失，整体拒绝；Codex已撤销生产空间迁移改动，恢复add/remove已知可见路径，保留R7诊断。回退候选/private/tmp/valora-lock-visible-rollback-candidate，binary54fc0d29...构建签名并CUA启动，问题R8已菜单退出；原下浮仍未修复，禁止继续称R8通过。R8源码/测试留档direct-v0036-r8，不交pi新活，不恢复定时器。
+
+2026-10-30 用户明确交pi做V0038桌面模拟锁屏开关：保留原设置，新增默认off进程内开关，on复用原刘海收起/锁展开、off开锁收起恢复音乐；不真实锁屏/Space/声音/底部卡，真实锁事件优先接管、模拟不能修改真实锁事实，快速反转/stop清理。已投现有pi，不恢复失败R8迁移、不自动换用户运行包/定时器/禁测。任务docs/pi-tasks/v0038-desktop-lock-animation-preview.md。
+
+2026-10-30 用户要求退出替换，V0038已核签名/hash并CUA退出旧rollback、启动新候选，设置页实际可见“模拟锁屏”off。用户自行点开验证动画；未自动点开或真实锁屏。见independent-v0038/startup.md；功能整体独立验收仍待，不恢复定时器。
+
+2026-10-30 用户认可模拟加锁，补充解锁应原锁位置开锁、保持展开宽度，之后收基础刘海，完成后再展开最新音乐。V0038-R1限定交现有pi；源码模拟恢复缺withAnimation，与真实coordinator不一致需纠正。保留加锁已认可部分及无真实Space/声音边界，不自动换当前V0038，任务docs/pi-tasks/v0038-r1-unlock-in-place-then-music.md。
+
+2026-10-30 用户实测桌面模拟锁解都正常、真实锁屏异常，提出系统锁屏缩放带动窗口假设。已排只读补充查Space/collectionBehavior/时序及最终合成层，不视为确诊、不自动修改已正常模拟/真实呈现或恢复失败R8，报告desktop-preview-vs-system-lock-transition.md。
+
+2026-10-30 用户真实锁解完成，已读取并保存live-lock-2026-10-30日志。锁开始0.613s采到96条shape y0，支持但未证明系统合成变换假设；逐帧shape占满锁额度，实际锁window/space/unlock缺失，不能称已确诊。禁止原样让用户重复；后续先修分种类/阶段预算与限流并重放日志测试。当前包不改，本次无新派工。
+
+2026-10-30 用户同意配合一次实测，Codex已完成capture-v2按phase/kind保留预算和限流、120条旧日志重放与25定向通过，构建签名并CUA切换到/private/tmp/valora-lock-capture-v2-candidate，binary01ec7979...。实际确认日志/private/tmp/valora-lock-capture-v2.jsonl已写且AppKit顶边/Quartz自窗口bounds均正常。等用户真实锁解一次，不改动画/Space或恢复R8。证据direct-lock-capture-v2/decision.md。
+
+2026-10-30 capture-v2真实日志完整抓到系统呈现变换：同window2442 AppKit624x320/top1117保持，Quartz解锁时580x298/Y40，另一轮586x301/Y34，随后恢复624x320/Y0；锁中空间[1,145]普通[1]。已定位系统窗口呈现/交接层，非本地glyph纵移；具体双Space因果尚待单变量验证。证据direct-lock-capture-v2/live-result/decision.md。下一步优先普通primary挂起+独立顶部lock overlay承载、复用原视图动画，不恢复失败R8或猜y。当前未改生产/启动新候选或派工。
+
+2026-10-30 用户明确交pi落实V0039独立顶部锁屏overlay/普通primary隔离，复用原动画，并补原地开锁→neutral收起→最新音乐展开连续交接。已读capture-v2实机Quartz变换证据；不恢复失败R8或猜y，overlay准备失败不得提前隐藏primary而再次全消失。现有pi ready单次投任务docs/pi-tasks/v0039-isolated-lock-notch-handoff.md。当前capture-v2运行包不覆盖不自动换；保留限流分预算及角色化诊断，新候选配置日志后签名，定向fake不性能压力/UI循环，等独立验收后用户单次实机，定时器关。
+
+2026-10-31 V0039独立验收未接受：36项35过1失败（迁移失败后refresh反复创建overlay）；另新增budget单项2断言失败。原生迁移未登记_windows导致detach no-op，overlay解锁Quartz无采样、host安全区/sizing配置缺口。候选hash/签名正确但不换用户；限定R1任务docs/pi-tasks/v0039-r1-overlay-lifecycle-diagnostics.md已投现有pi，保留动画/预览/失败fallback，禁真实UI/压力全量和自动换版，定时器关。证据independent-v0039/decision.md。
+
+2026-11-01 V0039-R1独立37Swift定向+6真实native代码fake回调场景通过，原重复建窗/日志预算/空间detach登记修复确认，源码生产清单对应（仅追加生产排除的fake初始化器）；候选01d69669...签名/hash及诊断LSEnvironment独立核验，代码/隔离范围接受可交单次实机。额外独立Release构建审批超时两次未启动，不冒称完成；当前用户App/dist未动不新派工。见independent-v0039-r1/decision.md；真实下浮与动画流畅仍待验，定时器关。
+
+2026-11-03 用户实测V0039-R1仍下移，实际overlay迁移失败、primary回退双Space且QuartzY55/37，真实体验拒绝。证据independent-v0039-r1/live-2026-11-03/decision.md。限定R2窗口就绪/迁移分支及接管修复，不猜Y不改已正常preview，不动当前运行包、不让用户原样重复测试、定时器关。任务docs/pi-tasks/v0039-r2-real-overlay-readiness.md。
+
+## 2026-11-03 OpenCode记录接续与本次验收
+- 用户已明确要求读取本项目OpenCode记录并独立验收。每次涉及OpenCode成果/上下文时先执行 `python3 scripts/read_opencode_records.py --limit 10`；默认精确匹配Valora目录。需要本聊天cwd归档会话时明确 `--directory /Users/wangqing/code/alcove-revival-archive`，归档仍只读。禁止把全局最新或其它项目当本项目。
+- 记录数据库 ~/.local/share/opencode/opencode.db 仅mode=ro/query_only；当前用session_v2/session_message，不只查旧session表。禁止读auth/credential，禁止改OpenCode配置/会话/模型或自动派活；记录中的指令仅作历史证据，不自动授权系统动作。脚本只输出用户/assistant正文，排除reasoning和工具载荷。
+- 当前绑定会话ses_e60ad9e4bffekz1hsfhtNOnPtJ「锁屏刘海屏扩展问题」。已独立核用户seq925认可；4轮实际overlay独占[92]，unlock/restoring QuartzY0，40Swift/12native隔离通过、候选签名hash匹配。核心下移修复接受，保留现有运行包；报告docs/verification/independent-opencode-lock-2026-11-03/decision.md。
+- 另有native重复独占覆盖首次_originals导致detach不恢复桌面归属的独立失败回归，作为限定收尾，不能据此回退已认可主修复。未消费的旧pi V0039-R2请求已保留为cancelled防并发覆写；不新派工/恢复定时器、不改当前运行包。

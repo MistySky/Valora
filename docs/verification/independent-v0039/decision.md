@@ -1,0 +1,15 @@
+# V0039 独立验收：限定返修
+
+2026-10-31，未操作用户App/真实锁屏或窗口。
+候选8146e25f3122c0e46ede3464d573a2739a5eb1114a1dd70d579094cd4d1a7543匹配报告、strict/deep签名通过，LSEnvironment正确配置新日志路径。
+
+独立36项中35通过、1失败（原24coordinator+9preview+2capture通过，新增coordinator回归失败）。新增budget单项又2断言失败。没有UI测试/压力循环/全量。
+
+失败/缺陷：
+1. ensureOverlay无失败尝试边界，每个refresh只要ready=false就重新factory.makeWindow/migrate/close。fake单测已drain后count12，两次普通refresh变14；这不只是多试一次，媒体变化可持续制造窗口。需本锁定周期/屏幕epoch稳定fallback，可在明确换屏/重锁/wake等边界有限重新准备，不对每次媒体刷新重试。
+2. CapturePolicy新增overlay每phase8，未调整总120和其他lane额度，完整生命周期有限事件重放会耗尽总额度，使最终returned-to-desktop/window与unlock事件不能写；独立回归2断言失败。需重新配置预算/保留关键交接和归位，不简单放大成无界。
+3. 原生migrateWindowNumberToOwnedSpace成功未把number登记_windows，但detachWindowNumber仅处理_windows；实际releaseOverlay调用detach是no-op，fakeSpace无集合语义掩盖这一点。迁移失败可能已经移动窗口，失败关闭路径也未清Space；需明确自己窗口验证/成功与部分成功登记/失败清理，并fake native callbacks验证，不能只Swift FakeSpace返回true。
+4. Overlay诊断只在ready/failure/release调用。repositionOverlay/真实unlock阶段没有overlay frame/Quartz sampling，primary在overlayready时updateVisibility直接continue；下一次用户测试仍会缺关键overlay变换证据。应在真实阶段变化/交接事件为overlay采样，保留phase/kind限额，释放前实际读visible而非写死false。
+5. 独立overlay复用了普通LockMusicPanel+NSHostingView(AnyView)，没有普通notch的EdgeHostingView零safeArea/明确host sizing。需显式把notch承载的host frame/sizing/safeArea行为对齐，避免新的内部位移；这是源码配置缺口，不声称已实机证明该配置导致下浮。
+
+已保留有效成果：独立overlay/primaryready门控、失败primaryfallback、原地open glyph与neutral后withAnimation恢复音乐、预览不挂Space、现有epoch取消。不能因返修重做glyph/音乐UI或恢复R8。整体不接受，不启动候选；原系统下浮/流畅度仍待修复后实机。

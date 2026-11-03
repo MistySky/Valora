@@ -32,6 +32,7 @@ final class MediaController {
     private let retryInterval: TimeInterval
     private var subscriptions = Set<AnyCancellable>()
     private var tick = 0
+    private var commandGeneration: UInt64 = 0
 
     init(_ model: AppModel,
          system: any SystemMediaProviding = SystemMediaSource(),
@@ -43,6 +44,7 @@ final class MediaController {
 
     func start() {
         isActive = true
+        commandGeneration &+= 1
         system.onSnapshot = { [weak self] snapshot in self?.applySystem(snapshot) }
         system.onError = { [weak self] error in
             guard let self else { return }
@@ -72,11 +74,13 @@ final class MediaController {
 
     func stop() {
         isActive = false
+        commandGeneration &+= 1
         timer?.invalidate(); timer = nil
         invalidate()
     }
 
     func invalidate() {
+        commandGeneration &+= 1
         model.presenter.cancelPeek(reset: true)
         system.stop()
         systemStarted = false
@@ -96,6 +100,7 @@ final class MediaController {
     }
 
     private func clearMedia(error: String? = nil) {
+        commandGeneration &+= 1
         model.presenter.cancelPeek(reset: true)
         systemSnapshot = nil
         timeline = SystemMediaTimeline()
@@ -113,7 +118,15 @@ final class MediaController {
     private func applySystem(_ snapshot: SystemMediaSnapshot?) {
         guard !model.previewMode, systemStarted else { return }
         guard let snapshot else { clearMedia(); return }
-        let changed = snapshot.identity != systemSnapshot?.identity
+        let old = systemSnapshot
+        let changed = snapshot.identity != old?.identity
+        let authoritativeStateChanged = changed || snapshot.playing != old?.playing
+            || snapshot.rate != old?.rate || snapshot.duration != old?.duration
+        if authoritativeStateChanged {
+            // Any new source-authoritative state invalidates a previous
+            // pending command completion, even on the same track.
+            commandGeneration &+= 1
+        }
         timeline.update(snapshot, at: Date().timeIntervalSince1970)
         systemSnapshot = snapshot
         if changed && snapshot.artwork == nil { model.artwork = nil }
@@ -156,9 +169,19 @@ final class MediaController {
         guard model.hasTrack, model.mediaCanControl, [2,4,5].contains(command),
               command == 2 || model.mediaCanSkip else { return }
         guard let snapshot = systemSnapshot else { return }
-        // 1.7.9 playPause resolves the current state to explicit play/pause.
+        commandGeneration &+= 1
+        let generation = commandGeneration
+        let previousPlaying = model.playing
+        // Give the button immediate, reversible feedback; the real system
+        // command still runs on the bounded command queue and a failure
+        // restores the actual state.
+        if command == 2 { model.playing.toggle() }
         system.perform(["send", String(command)], expected: snapshot, requireSameTrack: false) { [weak self] ok in
-            if !ok { self?.model.mediaError = "播放来源已改变或未接受控制，请重试。" }
+            guard let self, generation == self.commandGeneration else { return }
+            if !ok {
+                if command == 2 { self.model.playing = previousPlaying }
+                self.model.mediaError = "播放来源已改变或未接受控制，请重试。"
+            }
         }
     }
 

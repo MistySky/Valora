@@ -3,8 +3,8 @@ import AppKit
 import ReferenceCore
 
 /// Layout baseline: reference-ui/*.png at 2×; control order from settings-ax.json.
-/// This candidate keeps the user-approved native settings surface: nine flat
-/// pages, with system/Codex/download/lock/about as honest placeholders. Fixed
+/// This candidate keeps the user-approved native settings surface: flat pages.
+/// The lock screen page now exposes only the selected five live controls; fixed
 /// policies live in RevivalSettings and have no gray placeholder rows.
 struct SettingsView: View {
     @ObservedObject var model: AppModel
@@ -12,21 +12,18 @@ struct SettingsView: View {
     @ObservedObject var navigation: SettingsNavigation
     @ObservedObject var draft: SettingsDraft
     @ObservedObject var permissions: AppPermissions
-    let chromeBridge: ChromeBridgeSettingsModel?
     @Environment(\.controlActiveState) private var active
     @Environment(\.colorScheme) private var colorScheme
     @State private var notice: String? = nil
     private var page: SettingsPage { navigation.page }
 
     init(model: AppModel, settings: RevivalSettings, navigation: SettingsNavigation,
-         draft: SettingsDraft, permissions: AppPermissions = AppPermissions(),
-         chromeBridge: ChromeBridgeSettingsModel? = nil) {
+         draft: SettingsDraft, permissions: AppPermissions = AppPermissions()) {
         self.model = model
         self.settings = settings
         self.navigation = navigation
         self.draft = draft
         self.permissions = permissions
-        self.chromeBridge = chromeBridge
     }
 
     var body: some View {
@@ -104,10 +101,7 @@ struct SettingsView: View {
             .onChange(of: permissions.message) { _, message in
                 if let message { notice = message }
             }
-            .onAppear {
-                normalizePermissionPreferences()
-                chromeBridge?.refresh()
-            }
+            .onAppear { normalizePermissionPreferences() }
     }
 
     /// Correct only Valora's own persisted preferences when the corresponding
@@ -218,11 +212,9 @@ struct SettingsView: View {
         case .general: general
         case .nowPlaying: music
         case .calendar: calendar
-        case .lockScreen: placeholderPage(.lockScreen)
+        case .lockScreen: lockScreen
         case .connectivity: connectivity
         case .systemMonitor: systemMonitorPage
-        case .aiUsage: CodexUsageView(enabled: draft.binding("enableAIUsage", true))
-        case .downloadMonitor: downloadsPage
         case .about: aboutPage
         }
     }
@@ -249,6 +241,18 @@ struct SettingsView: View {
                 SettingsRule()
                 slider("Hover delay", "hoverDelay", 0, 0...1, unit: "s", decimals: 2, step: 0.05, ticks: 5)
             }
+        }
+    }
+
+    private var lockScreen: some View {
+        SettingsCard {
+            toggle("Enable Lock Screen", "enableLockScreen", true); SettingsRule()
+            SettingsToggleRow(title: "模拟锁屏", value: $model.previewLockScreenEnabled)
+                .disabled(!settings.lockPreferences.enabled); SettingsRule()
+            toggle("Play sound on lock", "playSoundOnLock", false); SettingsRule()
+            toggle("Play sound on unlock", "playSoundOnUnlock", true); SettingsRule()
+            toggle("Now Playing", "allowNowPlayingWidgetWhenLocked", true); SettingsRule()
+            toggle("Connectivity", "allowConnectivityWidgetWhenLocked", true)
         }
     }
 
@@ -286,19 +290,6 @@ struct SettingsView: View {
         }
     }
 
-    private var downloadsPage: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            SettingsCard {
-                SettingsToggleRow(title: "下载",
-                                  value: draft.binding("enableDownloads", true),
-                                  symbol: "arrow.down.circle.fill")
-            }
-            if let chromeBridge {
-                ChromeBridgeSettingsCard(model: chromeBridge)
-            }
-        }
-    }
-
     private var music: some View {
         SettingsCard {
             toggle("Now Playing", "enableNowPlaying", true, symbol: "play.fill"); SettingsRule()
@@ -307,19 +298,6 @@ struct SettingsView: View {
         }
     }
 
-    private func placeholderPage(_ page: SettingsPage) -> some View {
-        SettingsCard {
-            HStack(spacing: 9) {
-                Image(systemName: page.symbol)
-                    .font(.system(size: 14))
-                    .foregroundStyle(.secondary)
-                Text(SettingsText.localized("Feature in preparation"))
-                    .font(.system(size: 13.5))
-                    .foregroundStyle(.secondary)
-                Spacer(minLength: 0)
-            }.padding(.horizontal, 12).frame(height: 41)
-        }
-    }
 
     private var aboutPage: some View {
         SettingsCard {
@@ -331,43 +309,10 @@ struct SettingsView: View {
                         .font(.system(size: 12, design: .monospaced))
                         .foregroundStyle(.secondary)
                 }
-                Text(SettingsText.localized("Feature in preparation"))
+                Text("本地构建")
                     .font(.system(size: 12.5))
                     .foregroundStyle(.secondary)
             }.padding(.horizontal, 12).padding(.vertical, 12)
-        }
-    }
-}
-
-/// The only Codex-specific content in this round: an honest AI Usage
-/// sub-entry. It has no provider, quota, account, or switch yet.
-struct CodexUsageView: View {
-    var enabled: Binding<Bool>
-
-    init(enabled: Binding<Bool> = .constant(true)) {
-        self.enabled = enabled
-    }
-
-    var body: some View {
-        SettingsCard {
-            SettingsToggleRow(title: "AI 用量",
-                              value: enabled,
-                              symbol: "sparkles",
-                              info: "开启 Codex 5H / WEEK 用量查询和菜单栏条目；关闭会停止查询和刷新。")
-            SettingsRule()
-            HStack(spacing: 9) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(SettingsText.localized("Codex Usage"))
-                        .font(.system(size: 13.5))
-                    Text("菜单栏显示 5H / WEEK 剩余额度；点击状态项查看明细。")
-                        .font(.system(size: 12.5))
-                        .foregroundStyle(.secondary)
-                }
-                Spacer(minLength: 0)
-            }.padding(.horizontal, 12).padding(.vertical, 10)
         }
     }
 }

@@ -31,44 +31,14 @@ final class MenuBarModuleControllerTests: XCTestCase {
         XCTAssertFalse(controller.monitorItem === controller.calendarItem)
         XCTAssertTrue(controller.monitorStatusButton?.target === controller)
         XCTAssertTrue(controller.calendarStatusButton?.target === controller)
-        XCTAssertEqual(controller.monitorStatusButton?.action, #selector(MenuBarModuleController.statusItemClicked(_:)))
-        XCTAssertEqual(controller.calendarStatusButton?.action, #selector(MenuBarModuleController.statusItemClicked(_:)))
         XCTAssertEqual(controller.calendarStatusText, "10月25日 周日")
-        let titles = controller.makeBasicMenu().items.map(\.title)
-        XCTAssertEqual(titles, [AppMenuCommands.versionText, AppMenuCommands.settingsTitle, "", AppMenuCommands.quitTitle])
-        XCTAssertFalse(titles.contains("显示器"))
-        XCTAssertFalse(titles.contains("播放"))
-        XCTAssertFalse(titles.contains("上一首"))
-        XCTAssertFalse(titles.contains("下一首"))
+        XCTAssertEqual(controller.makeBasicMenu().items.map(\.title),
+                       [AppMenuCommands.versionText, AppMenuCommands.settingsTitle, "", AppMenuCommands.quitTitle])
         XCTAssertFalse(monitor.isRunning)
         XCTAssertTrue(calendar.events.isEmpty)
     }
 
-
-    func testCodexModuleHasIndependentStatusItemAndBasicMenuNoMusic() async {
-        let monitor = SystemMonitor()
-        monitor.verificationApply(snapshot: SystemMonitor.Snapshot())
-        let calendar = CalmonCalendarModel(calendar: Calendar(identifier: .gregorian))
-        let codex = PreviewCodexUsage.provider()
-        let controller = MenuBarModuleController(monitor: monitor, calendar: calendar, codexUsage: codex,
-                                                 onSettings: {}, onQuit: {})
-        controller.start(startSampling: false)
-        defer { controller.stop() }
-        try? await Task.sleep(for: .milliseconds(100))
-        XCTAssertNotNil(controller.codexItem)
-        XCTAssertNotNil(controller.codexStatusButton?.image)
-        XCTAssertEqual(controller.codexStatusText, "Codex 5H 剩余 58%，WEEK 剩余 32%")
-        XCTAssertTrue(controller.monitorItem === controller.codexItem,
-                      "monitor and Codex share one status item")
-        XCTAssertFalse(controller.calendarItem === controller.codexItem)
-        XCTAssertEqual(controller.makeBasicMenu().items.map(\.title),
-                       [AppMenuCommands.versionText, AppMenuCommands.settingsTitle, "", AppMenuCommands.quitTitle])
-        controller.showCodexPanel()
-        XCTAssertEqual(controller.lastOpenedModule, .codexUsage)
-        controller.closeAllPopovers()
-    }
-
-    func testLeftPanelsAreIndependentAndSwitchingClosesTheOther() {
+    func testPanelsAreIndependentAndSwitchingClosesTheOther() {
         let (_, _, controller) = fixture()
         controller.start(startSampling: false)
         defer { controller.stop() }
@@ -77,60 +47,6 @@ final class MenuBarModuleControllerTests: XCTestCase {
         controller.showMonitorPanel()
         XCTAssertEqual(controller.lastOpenedModule, .systemMonitor)
         controller.closeAllPopovers()
-    }
-
-
-    func testCombinedMonitorCodexStatusItemAndSections() async {
-        let monitor = SystemMonitor()
-        monitor.verificationApply(snapshot: SystemMonitor.Snapshot())
-        let calendar = CalmonCalendarModel(calendar: Calendar(identifier: .gregorian))
-        let codex = PreviewCodexUsage.provider()
-        let controller = MenuBarModuleController(monitor: monitor, calendar: calendar, codexUsage: codex,
-                                                 onSettings: {}, onQuit: {})
-        controller.start(startSampling: false)
-        defer { controller.stop(); codex.stop() }
-        try? await Task.sleep(for: .milliseconds(80))
-        XCTAssertNotNil(controller.combinedItem)
-        XCTAssertTrue(controller.monitorItem === controller.codexItem)
-        XCTAssertFalse(controller.combinedItem === controller.calendarItem)
-        XCTAssertEqual(controller.combinedSections, MenuBarModuleController.CombinedSections(monitor: true, codex: true))
-        XCTAssertNotNil(controller.combinedItem?.button?.image)
-        XCTAssertEqual(controller.makeBasicMenu().items.map(\.title),
-                       [AppMenuCommands.versionText, AppMenuCommands.settingsTitle, "", AppMenuCommands.quitTitle])
-        controller.setCodexVisible(false)
-        XCTAssertFalse(controller.combinedSections.codex)
-        XCTAssertTrue(controller.combinedSections.monitor)
-        XCTAssertNil(controller.codexItem)
-        XCTAssertNotNil(controller.combinedItem)
-        controller.setSystemMonitorVisible(false)
-        XCTAssertTrue(controller.combinedSections.isEmpty)
-        XCTAssertNil(controller.combinedItem)
-        XCTAssertNotNil(controller.calendarItem, "calendar remains independent of the combined entry")
-    }
-
-    func testCombinedEntryProvidersDoNotStopEachOther() async {
-        let monitor = SystemMonitor()
-        monitor.verificationApply(snapshot: SystemMonitor.Snapshot())
-        let calendar = CalmonCalendarModel(calendar: Calendar(identifier: .gregorian))
-        let codex = PreviewCodexUsage.provider()
-        let controller = MenuBarModuleController(monitor: monitor, calendar: calendar, codexUsage: codex,
-                                                 onSettings: {}, onQuit: {})
-        controller.start(startSampling: true)
-        defer { controller.stop(); codex.stop() }
-        try? await Task.sleep(for: .milliseconds(80))
-        XCTAssertTrue(monitor.isRunning)
-        let codexRequests = codex.requestCount
-        controller.setCodexVisible(false)
-        XCTAssertFalse(codex.isRunningForTest)
-        XCTAssertTrue(monitor.isRunning)
-        XCTAssertEqual(codex.requestCount, codexRequests)
-        controller.setCodexVisible(true)
-        XCTAssertNotNil(controller.combinedItem)
-        controller.setSystemMonitorVisible(false)
-        XCTAssertFalse(monitor.isRunning)
-        XCTAssertNotNil(controller.combinedItem)
-        XCTAssertNotNil(controller.codexItem)
-        XCTAssertEqual(controller.combinedSections, MenuBarModuleController.CombinedSections(monitor: false, codex: true))
     }
 
     func testHidingModulesStopsTheirProvidersWithoutLosingTheApplicationEntry() {
@@ -144,7 +60,6 @@ final class MenuBarModuleControllerTests: XCTestCase {
         XCTAssertFalse(calendar.isStartedForTest)
         controller.stop()
     }
-
 
     func testStopThenStartRecreatesBothStatusItemsWithoutStaleImageGuard() {
         let (_, _, controller) = fixture()

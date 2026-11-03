@@ -1,0 +1,1 @@
+2026-10-30 用户明确“替换下吧”授权换版。启动前只读进程列表无Valora/Alcove实例，无需退出。候选strict/deep签名及binary822a530205741de30d4826ccf60cd285594ea7b03907976673db8f29fb32f19b复验通过。CUA getApp启动R8，AX显示Valora菜单；启动后只读确认PID79523，路径/private/tmp/valora-direct-r8-space-migration-candidate/Valora.app/Contents/MacOS/Valora，未见重叠Valora/Alcove进程。未锁屏/媒体设备/偏好写操作，未覆盖dist。仅启动验证，不称动画已实机通过。
