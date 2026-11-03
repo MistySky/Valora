@@ -4,7 +4,6 @@ import Foundation
 /// absent from this product slice.
 public struct LockMusicPreferences: Equatable, Sendable {
     public var enabled: Bool
-    public var connectivityEnabled: Bool
     public var musicEnabled: Bool
     public var glass: Bool
     public var showVolume: Bool
@@ -15,8 +14,12 @@ public struct LockMusicPreferences: Equatable, Sendable {
 
     public init(values: [String: Any] = [:]) {
         enabled = values["enableLockScreen"] as? Bool ?? true
-        connectivityEnabled = values["allowConnectivityWidgetWhenLocked"] as? Bool ?? true
-        musicEnabled = values["allowNowPlayingWidgetWhenLocked"] as? Bool ?? true
+        // The lock page exposes only the master switch and the two sounds. The
+        // music card follows the Now Playing module switch, which the lock
+        // coordinator supplies; the archived lock-only preference is no longer
+        // read, so a stale `allowNowPlayingWidgetWhenLocked=false` cannot
+        // silently veto the module's own switch.
+        musicEnabled = true
         // Selected fixed Glass branch; Clear is not exposed in this slice.
         glass = true
         // The output button controls the collapsed volume bar; no stored

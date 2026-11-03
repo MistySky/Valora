@@ -404,3 +404,15 @@ pi开发/返修按实际修改范围跑定向测试：改动模块、必要相�
 - 记录数据库 ~/.local/share/opencode/opencode.db 仅mode=ro/query_only；当前用session_v2/session_message，不只查旧session表。禁止读auth/credential，禁止改OpenCode配置/会话/模型或自动派活；记录中的指令仅作历史证据，不自动授权系统动作。脚本只输出用户/assistant正文，排除reasoning和工具载荷。
 - 当前绑定会话ses_e60ad9e4bffekz1hsfhtNOnPtJ「锁屏刘海屏扩展问题」。已独立核用户seq925认可；4轮实际overlay独占[92]，unlock/restoring QuartzY0，40Swift/12native隔离通过、候选签名hash匹配。核心下移修复接受，保留现有运行包；报告docs/verification/independent-opencode-lock-2026-11-03/decision.md。
 - 另有native重复独占覆盖首次_originals导致detach不恢复桌面归属的独立失败回归，作为限定收尾，不能据此回退已认可主修复。未消费的旧pi V0039-R2请求已保留为cancelled防并发覆写；不新派工/恢复定时器、不改当前运行包。
+
+2026-11-03 用户确认锁屏设置精简并要求先提交再安排；本地checkpoint 9b2953e已完成未推送。明确授权现有OpenCode会话执行docs/opencode-tasks/v0040-lock-settings-single-source.md，覆盖此前“不自动派活”对本次显式任务的限制。锁屏仅总开关+锁解声音；删除模拟锁屏及专用实现，音乐/设备锁屏卡跟随各模块唯一总开关，停止读取重复锁屏偏好，通用模拟刘海外形不变。当前已修好的overlay/动画保留，不改运行包/定时器或派pi。
+
+2026-11-03 V0040独立44无窗口定向通过、签名hash核验、CUA真实锁屏页三项接受；按用户要求启动/private/tmp/valora-v0040-lock-settings-candidate并停锁屏页，未改用户开关（锁on、锁声off、解锁声off）。本轮初次误带窗口测试已中止/告知用户，不计完整通过，不重跑；详见independent-v0040/decision.md。真实锁屏卡联动/动画待用户，当前NativeBridge与9b2953e一致，定时器仍关。
+
+2026-11-03 用户要求Codex指挥OpenCode修锁屏音乐玻璃，参考原版反编译及成熟复刻；V0042任务docs/opencode-tasks/v0042-lock-music-glass-source-parity.md。Codex已核100186a7c实际参数frosted=true→100131c1c VisualEffect分支，不能把工厂支持Glass当该调用用Glass；归档darkAqua/细边可作用户指定成熟底稿但原版精确值未全证。仅音乐卡玻璃/容器/固定345，停止LiquidGlass/壁纸亮度实验，保留顶部独占Space及锁解、V0040、用户已确认耳机/滑入。新候选不自动换用户软件，禁UI循环/真锁/多屏窗口测试/性能，定时器关。
+
+2026-11-03 重要覆盖：用户实测复刻品玻璃也乳白，不再作为正确视觉基线。Codex读完整反编译发现V0042遗漏OS分支：100186a7c的HUD/frosted=true在OS<26，OS26+调用100187f28，后者有variant2/5及0x200(frosted&1==0)的新Glass分支和壁纸明暗策略。撤销“原版锁屏不用LiquidGlass”的绝对结论，限定V0043 docs/opencode-tasks/v0043-modern-lock-glass-branch-correction.md先映射枚举/variant/appearance，再正确原生容器候选；不自绘壁纸不猜私有值，不改顶部独占与锁解，不自动换运行版。详见correction-modern-branch.md。
+
+2026-11-03 V0043独立44真fake/最终52aa9436...c84c签名hash通过，代码功能子集接受但视觉整体未放行。确定前景仍全white、缺原版modern背景light与前景明暗分离；私有variant无法公开实现的绝对推论无据，报告未启动与对话已启动矛盾，同路径覆写导致截图版本不明。限定R1见docs/opencode-tasks/v0043-r1-contrast-and-delivery-evidence.md，先核明暗策略/交付证据；不要求用户原样再测、不动当前包、不截图/壁纸读取/自动启动。当前只读未见Valora，本轮未启动，定时器关。
+
+2026-11-03 用户明确授权升级0.2.0并Git提交推送已有私有仓库，随后创建切换codex/lock-screen-music专用分支。仅本次Git保存覆盖旧禁提交推送；不force/改main/发布安装。0.2.0是当前代码快照，锁屏音乐玻璃及V0045整屏宿主（当前ignoresMouseEvents=true不可点击）仍待验，不宣布发布完成。锁屏音乐后续在新分支，OpenCode现有会话沿当前工作目录继续，不新建/自动恢复旧队列。用户媒体/数据库账号/生成产物不新增上传，当前运行包不动。见docs/CHECKPOINT-0.2.0.md。

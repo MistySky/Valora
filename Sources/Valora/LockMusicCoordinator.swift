@@ -196,9 +196,19 @@ final class LockMusicCoordinator: ObservableObject {
 
     private func createPanels() {
         let level = NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()))
-        panel = windowFactory.makeWindow(size: CGSize(width: 385, height: Self.canvasHeight),
-                                         level: level, ignoresMouseEvents: false)
-        panel.setRootView(AnyView(LockMusicView(model: model, settings: model.settings, coordinator: self)))
+        // EXPERIMENT (V0045): the original lock surface is a screen-sized
+        // LockPanel, not a small card window. A full-screen host is the only
+        // untested structural difference that could give the glass a backdrop
+        // above the login shield. Mouse is ignored for this run so a wrong
+        // hit-test can never block the login field.
+        let screenSize = NSScreen.screens.first?.frame.size ?? CGSize(width: 1728, height: 1117)
+        let screenHeight = NSScreen.screens.first?.frame.height ?? 1117
+        let cardBottomInset = screenHeight * 0.21 + model.settings.lockPreferences.offset
+        panel = windowFactory.makeWindow(size: screenSize,
+                                         level: level, ignoresMouseEvents: true)
+        panel.setRootView(AnyView(LockMusicView(model: model, settings: model.settings,
+                                               coordinator: self,
+                                               bottomInset: cardBottomInset)))
         informationPanel = windowFactory.makeWindow(size: CGSize(width: 360, height: 94),
                                                     level: level, ignoresMouseEvents: true)
         informationPanel.setRootView(AnyView(LockInformationView(model: model, coordinator: self)))
@@ -221,6 +231,7 @@ final class LockMusicCoordinator: ObservableObject {
             model.$devices.map { _ in () }.eraseToAnyPublisher(),
             model.$mediaBundleIdentifier.map { _ in () }.eraseToAnyPublisher(),
             model.settings.$nowPlayingEnabled.map { _ in () }.eraseToAnyPublisher(),
+            model.settings.$bluetoothEnabled.map { _ in () }.eraseToAnyPublisher(),
             model.settings.$lockPreferences.map { _ in () }.eraseToAnyPublisher()
         ).sink { [weak self] _ in
             Task { @MainActor [weak self] in self?.refresh(epoch: epoch) }
@@ -459,7 +470,7 @@ final class LockMusicCoordinator: ObservableObject {
         let now = clock()
         let previous = state.generation
         var musicPreferences = preferences
-        musicPreferences.musicEnabled = preferences.musicEnabled && model.settings.nowPlayingEnabled
+        musicPreferences.musicEnabled = model.settings.nowPlayingEnabled
         // The music card belongs to the settled locked stage only; during
         // locking/unlocking/restoring the normal or badge surface owns the
         // transition and must not be covered by a stale lock-only card.
@@ -742,7 +753,10 @@ final class LockMusicCoordinator: ObservableObject {
         let preferences = model.settings.lockPreferences
         let eligible = model.isSessionLocked && model.lockIndicator.phase == .locked
             && preferences.enabled
-        let next = (eligible && preferences.connectivityEnabled)
+        // The device module's own switch is the only source. When it is off the
+        // cached device list is not consulted at all, so the lock card cannot
+        // keep showing a stale AirPods entry.
+        let next = (eligible && model.settings.bluetoothEnabled)
             ? model.displayDevices.first(where: { $0.isAirPods }) : nil
         if next != informationAirPods { informationAirPods = next }
         let wanted = eligible && !sleeping && next != nil
@@ -768,9 +782,9 @@ final class LockMusicCoordinator: ObservableObject {
         guard let screen = NSScreen.screens.first, panel != nil else { return }
         informationPanel?.setFrameOrigin(NSPoint(x: screen.frame.midX - 180,
                                                  y: screen.frame.maxY - screen.frame.height * 0.265 - 94))
-        panel.setFrameOrigin(NSPoint(x: screen.frame.midX - 192.5,
-                                     y: screen.frame.minY + screen.frame.height * 0.21
-                                         + model.settings.lockPreferences.offset - Self.animationMargin))
+        // Full-screen host for the glass experiment; the card is positioned
+        // inside it by `LockMusicView.bottomInset`.
+        panel.setFrameOrigin(NSPoint(x: screen.frame.minX, y: screen.frame.minY))
     }
 
     private func applyVisibility(epoch: UInt64) {
@@ -874,6 +888,7 @@ final class LockMusicCoordinator: ObservableObject {
     isolated deinit {
         deadlineTask?.cancel(); hideTask?.cancel(); appearanceTask?.cancel()
         unlockTask?.cancel(); neutralTask?.cancel()
+        overlayCheckTask?.cancel(); notchCheckTask?.cancel()
         eventSource.stop()
     }
 }

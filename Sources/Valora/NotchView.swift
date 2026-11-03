@@ -83,7 +83,7 @@ struct NotchView: View {
                 shape.fill(.black)
                     .overlay {
                         if NotchWindowDiagnostic.shared.isEnabled {
-                            NotchLayoutProbe(phase: String(describing: model.lockDisplayIndicator.phase))
+                            NotchLayoutProbe(phase: String(describing: model.lockIndicator.phase))
                         }
                     }
                 if !expanded {
@@ -136,7 +136,7 @@ struct NotchView: View {
             // The waveform has its own Button. Even on systems where the parent
             // tap is also recognized, this region must not expand the panel.
             .onTapGesture(coordinateSpace:.local) { point in
-                guard !expanded, !model.isSessionLocked, !model.isLockPreviewActive else { return }
+                guard !expanded, !model.isSessionLocked else { return }
                 let wing = max(0,(width-nativeNotchSize.width)/2)
                 if model.showsCompactWaveform, point.x >= width-wing { return }
                 expand()
@@ -219,7 +219,7 @@ struct NotchView: View {
     }
 
     private func expand() {
-        guard !model.isSessionLocked, !model.isLockPreviewActive else { return }
+        guard !model.isSessionLocked else { return }
         onActivate?()
         model.presenter.expand()
     }

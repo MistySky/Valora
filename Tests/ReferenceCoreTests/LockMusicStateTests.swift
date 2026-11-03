@@ -3,21 +3,30 @@ import ReferenceCore
 
 final class LockMusicStateTests: XCTestCase {
     private var preferences: LockMusicPreferences {
-        LockMusicPreferences(values: ["enableLockScreen": true,
-            "allowNowPlayingWidgetWhenLocked": true,
-            "allowConnectivityWidgetWhenLocked": true])
+        LockMusicPreferences(values: ["enableLockScreen": true])
     }
 
     func testDefaultsPreserveSelectedLockPolicy() {
         let p = LockMusicPreferences()
         XCTAssertTrue(p.enabled)
         XCTAssertTrue(p.musicEnabled)
-        XCTAssertTrue(p.connectivityEnabled)
         XCTAssertFalse(p.soundOnLock)
         XCTAssertTrue(p.soundOnUnlock)
         XCTAssertEqual(p.idleSeconds, 600)
         XCTAssertFalse(p.showVolume)
         XCTAssertTrue(p.glass)
+    }
+
+    /// The lock page no longer owns a music switch: an archived lock-only
+    /// preference must not veto the Now Playing module switch.
+    func testArchivedLockOnlyPreferencesDoNotVetoModuleSwitches() {
+        let archived = LockMusicPreferences(values: [
+            "enableLockScreen": true,
+            "allowNowPlayingWidgetWhenLocked": false,
+            "allowConnectivityWidgetWhenLocked": false])
+        XCTAssertTrue(archived.enabled)
+        XCTAssertTrue(archived.musicEnabled,
+                      "the lock-only music preference is no longer read")
     }
 
     func testPhysicalLockActivityUsesSameCompactGeometryAsPlayingMusic() {

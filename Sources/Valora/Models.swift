@@ -214,11 +214,6 @@ final class AppModel: ObservableObject {
     /// the owned presentation Space. Until then the primary notch stays visible
     /// as the known fallback.
     @Published var lockOverlayReady = false
-    /// Process-local desktop simulation. It never changes the real session or
-    /// starts the lock coordinator's Space/sound/window path.
-    @Published var previewLockScreenEnabled = false
-    @Published var previewLockPresentationActive = false
-    @Published var previewLockIndicator = LockIndicatorState()
     @Published var connectionArrivalGeneration = 0
     @Published var pinned = false
     @Published var previewMode = false
@@ -306,7 +301,6 @@ final class AppModel: ObservableObject {
         // visible while it shrinks; only after locking completes does the badge
         // replace it.
         (!isSessionLocked || isLockTransitioning)
-            && (!isLockPreviewActive || isLockTransitioning)
             && !showsLockActivity
             && settings.nowPlayingEnabled && hasTrack && mediaIdle.visible && !sourceActivityHidden
     }
@@ -317,7 +311,7 @@ final class AppModel: ObservableObject {
     }
     var showsCompactLyrics: Bool {
         lyricsAvailable && (!isSessionLocked || isLockTransitioning)
-            && (!isLockPreviewActive || isLockTransitioning) && !expanded
+            && !expanded
             && settings.showNotch && !screenHidden && connectionToast == nil
     }
     var showsLyricsInExpanded: Bool { lyricsAvailable && settings.showNotch && !screenHidden }
@@ -335,19 +329,12 @@ final class AppModel: ObservableObject {
         }
         return color
     }
-    /// Real lock wins over the process-local simulation. The simulation has its
-    /// own indicator so it can never overwrite the real session/backend state.
-    var lockDisplayIndicator: LockIndicatorState {
-        isSessionLocked ? lockIndicator
-            : (previewLockPresentationActive ? previewLockIndicator : lockIndicator)
-    }
     var showsLockActivity: Bool {
-        (lockNotchMounted || lockOverlayReady || previewLockPresentationActive) && lockDisplayIndicator.showsBadge
+        (lockNotchMounted || lockOverlayReady) && lockIndicator.showsBadge
     }
-    var isLockTransitioning: Bool { lockDisplayIndicator.isLocking }
-    var isLockNeutralGeometry: Bool { lockDisplayIndicator.isNeutralGeometry }
-    var isLockStage: Bool { lockDisplayIndicator.phase != .hidden }
-    var isLockPreviewActive: Bool { previewLockPresentationActive }
+    var isLockTransitioning: Bool { lockIndicator.isLocking }
+    var isLockNeutralGeometry: Bool { lockIndicator.isNeutralGeometry }
+    var isLockStage: Bool { lockIndicator.phase != .hidden }
     var hasTrack: Bool { title != "暂无播放" && !title.isEmpty }
     var displayDevices: [AudioDevice] {
         devices.sorted { $0.active && !$1.active }

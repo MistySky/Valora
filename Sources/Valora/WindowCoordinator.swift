@@ -229,9 +229,7 @@ final class WindowCoordinator {
             model.$isSessionLocked.map { _ in () }.eraseToAnyPublisher(),
             model.$lockIndicator.map { _ in () }.eraseToAnyPublisher(),
             model.$lockNotchMounted.map { _ in () }.eraseToAnyPublisher(),
-            model.$lockOverlayReady.map { _ in () }.eraseToAnyPublisher(),
-            model.$previewLockPresentationActive.map { _ in () }.eraseToAnyPublisher(),
-            model.$previewLockIndicator.map { _ in () }.eraseToAnyPublisher()
+            model.$lockOverlayReady.map { _ in () }.eraseToAnyPublisher()
         ).sink { [weak self] _ in
             DispatchQueue.main.async {
                 MainActor.assumeIsolated { self?.updateVisibility() }
@@ -493,7 +491,7 @@ final class WindowCoordinator {
                 continue
             }
             if visible {
-                record.panel.ignoresMouseEvents = model.isSessionLocked || model.isLockPreviewActive
+                record.panel.ignoresMouseEvents = model.isSessionLocked
                 record.panel.orderFrontRegardless()
                 anchorPanelTop(record)
                 if record === active { recordDiagnostic(record, reason: "visibility") }
@@ -504,7 +502,7 @@ final class WindowCoordinator {
                 record.panel.ignoresMouseEvents = true
             }
         }
-        if !visible || model.isSessionLocked || model.isLockPreviewActive {
+        if !visible || model.isSessionLocked {
             model.presenter.pointerEntered(false)
         }
     }
@@ -553,7 +551,7 @@ final class WindowCoordinator {
 
     private func trackMouse(at point: NSPoint) {
         guard !model.pointerInteractionActive else { return }
-        if model.isSessionLocked || model.isLockPreviewActive {
+        if model.isSessionLocked {
             for record in panels {
                 record.panel.ignoresMouseEvents = true
                 record.pointerInside = false
@@ -596,7 +594,7 @@ final class WindowCoordinator {
                 guard let self, let record, record === self.active,
                       record.pointerInside, self.model.settings.hoverEnabled,
                       !self.model.expanded, !self.model.pointerInteractionActive,
-                      !self.model.isSessionLocked, !self.model.isLockPreviewActive else { return }
+                      !self.model.isSessionLocked else { return }
                 record.pendingHover = nil
                 self.model.presenter.expand()
                 self.updateVisibility()
@@ -617,7 +615,7 @@ final class WindowCoordinator {
 
     /// Test/verification entry for the active interaction screen.
     func pointerChanged(_ inside: Bool) {
-        guard let active, !model.isSessionLocked, !model.isLockPreviewActive else { return }
+        guard let active, !model.isSessionLocked else { return }
         if inside == active.pointerInside { return }
         active.pointerInside = inside
         if inside {

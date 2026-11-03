@@ -56,10 +56,12 @@ struct PlayerWaveform:View {
     @ObservedObject var settings:RevivalSettings
     let active:Bool
     let translucent:Bool
+    /// Lock-card ink palette; only consulted when `translucent` is set.
+    var palette:LockCardPalette? = nil
     @Environment(\.accessibilityReduceMotion) private var reducedMotion
     var body:some View {
         CompactWaveform(image:translucent ? nil : model.artwork,
-            color:translucent ? .gray.withAlphaComponent(0.65) : (model.artworkColors.first ?? .gray.withAlphaComponent(0.8)),
+            color:translucent ? (NSColor(palette?.waveform ?? Color.gray.opacity(0.65))) : (model.artworkColors.first ?? .gray.withAlphaComponent(0.8)),
             playing:model.playing,reducedMotion:reducedMotion,
             identity:(model.mediaRevisionIdentity.isEmpty ? model.mediaBundleIdentifier+"\u{1f}"+model.title+"\u{1f}"+model.artist : model.mediaRevisionIdentity),
             profile:.expanded,suspended:!active)

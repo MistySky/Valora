@@ -178,6 +178,9 @@ final class LockMusicCoordinatorTests: XCTestCase {
                       "playSoundOnUnlock": true],
                      forKey: "referenceSettingsUI")
         settings = RevivalSettings(defaults: defaults)
+        // The device module's own switch is now the only source for the lock
+        // device card, so the fixture starts with that module enabled.
+        settings.bluetoothEnabled = true
         model = AppModel(settings: settings)
         model.title = "Fixture"
         model.artist = "Fixture artist"
@@ -533,14 +536,53 @@ final class LockMusicCoordinatorTests: XCTestCase {
         model.devices = [device]
         await drain()
         XCTAssertEqual(coordinator.informationAirPods?.id, "fixture")
-        var preferenceValues = defaults.dictionary(forKey: "referenceSettingsUI") ?? [:]
-        preferenceValues["allowConnectivityWidgetWhenLocked"] = false
-        defaults.set(preferenceValues, forKey: "referenceSettingsUI")
-        settings.reloadPreferences()
+        settings.bluetoothEnabled = false
         await drain()
-        XCTAssertNil(coordinator.informationAirPods, "device sub-switch off must publish nil")
+        XCTAssertNil(coordinator.informationAirPods,
+                     "device module off must clear the cached card immediately")
+        settings.bluetoothEnabled = true
+        await drain()
+        XCTAssertEqual(coordinator.informationAirPods?.id, "fixture",
+                       "re-enabling the device module restores the card")
         coordinator.stop()
-        XCTAssertFalse(preferenceValues.isEmpty)
+    }
+
+    /// An archived lock-only preference must no longer veto the module switch.
+    func testArchivedLockOnlyPreferencesNoLongerGateTheCards() async {
+        defaults.set(["enableLockScreen": true,
+                      "allowNowPlayingWidgetWhenLocked": false,
+                      "allowConnectivityWidgetWhenLocked": false], forKey: "referenceSettingsUI")
+        settings.reloadPreferences()
+        sessionLocked = true
+        model.devices = [AudioDevice(id: "fixture", name: "AirPods", left: 60, right: 61,
+                                     single: nil, active: true, isAirPods: true, modelUID: "2013 4c")]
+        let coordinator = makeCoordinator()
+        coordinator.setEnabled(true)
+        await drain()
+        XCTAssertTrue(coordinator.visible,
+                      "Now Playing on must still show the lock card despite the stale lock-only false")
+        XCTAssertEqual(coordinator.informationAirPods?.id, "fixture",
+                       "device module on still shows the device card")
+        coordinator.stop()
+    }
+
+    func testTurningOffNowPlayingHidesOnlyTheLockMusicCard() async {
+        sessionLocked = true
+        model.devices = [AudioDevice(id: "fixture", name: "AirPods", left: 60, right: 61,
+                                     single: nil, active: true, isAirPods: true, modelUID: "2013 4c")]
+        let coordinator = makeCoordinator()
+        coordinator.setEnabled(true)
+        await drain()
+        XCTAssertTrue(coordinator.visible)
+        model.settings.nowPlayingEnabled = false
+        await drain()
+        XCTAssertFalse(coordinator.visible, "music module off hides the lock music card")
+        XCTAssertEqual(coordinator.informationAirPods?.id, "fixture",
+                       "the device card follows its own module, not the music switch")
+        coordinator.refresh()
+        coordinator.refresh()
+        XCTAssertFalse(coordinator.visible, "off keeps the lock music card hidden")
+        coordinator.stop()
     }
 
     func testInformationDeviceToNilAndGlobalOff() async {
@@ -558,9 +600,7 @@ final class LockMusicCoordinatorTests: XCTestCase {
         XCTAssertNil(coordinator.informationAirPods)
         model.devices = [device]
         await drain()
-        defaults.set(["enableLockScreen": false,
-                      "allowNowPlayingWidgetWhenLocked": true,
-                      "allowConnectivityWidgetWhenLocked": true], forKey: "referenceSettingsUI")
+        defaults.set(["enableLockScreen": false], forKey: "referenceSettingsUI")
         settings.reloadPreferences()
         await drain()
         XCTAssertNil(coordinator.informationAirPods)
@@ -767,6 +807,29 @@ final class LockMusicCoordinatorTests: XCTestCase {
         XCTAssertTrue(space.exclusiveCalls.contains(724),
                       "the overlay attempts the owned-Space-only mount, including empty membership")
         XCTAssertTrue(model.lockNotchMounted, "primary stays visible when the overlay is refused")
+        coordinator.stop()
+    }
+
+    func testMasterSwitchToggledWhileLockedHidesAndRestores() async {
+        sessionLocked = true
+        let coordinator = makeCoordinator()
+        coordinator.setEnabled(true)
+        events.deliverLocked(true)
+        await drain()
+        XCTAssertTrue(model.lockOverlayReady || model.lockNotchMounted)
+        let panelBeforeStop = coordinator.panel
+        coordinator.setEnabled(false)
+        await drain()
+        XCTAssertFalse(coordinator.enabled)
+        XCTAssertFalse(panelBeforeStop?.isVisible ?? false)
+        XCTAssertFalse(model.lockOverlayReady)
+        XCTAssertFalse(model.lockNotchMounted)
+        XCTAssertTrue(space.detached.contains(724),
+                      "the isolated lock surface is released when the master switch goes off")
+        coordinator.setEnabled(true)
+        events.deliverLocked(true)
+        await drain()
+        XCTAssertTrue(coordinator.visible)
         coordinator.stop()
     }
 

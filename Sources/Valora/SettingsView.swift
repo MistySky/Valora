@@ -247,12 +247,8 @@ struct SettingsView: View {
     private var lockScreen: some View {
         SettingsCard {
             toggle("Enable Lock Screen", "enableLockScreen", true); SettingsRule()
-            SettingsToggleRow(title: "模拟锁屏", value: $model.previewLockScreenEnabled)
-                .disabled(!settings.lockPreferences.enabled); SettingsRule()
             toggle("Play sound on lock", "playSoundOnLock", false); SettingsRule()
-            toggle("Play sound on unlock", "playSoundOnUnlock", true); SettingsRule()
-            toggle("Now Playing", "allowNowPlayingWidgetWhenLocked", true); SettingsRule()
-            toggle("Connectivity", "allowConnectivityWidgetWhenLocked", true)
+            toggle("Play sound on unlock", "playSoundOnUnlock", true)
         }
     }
 
@@ -279,14 +275,6 @@ struct SettingsView: View {
                               value: draft.binding("enableSystemMonitor", true),
                               symbol: "chart.bar.xaxis",
                               info: "开启后采样 CPU、内存和进程；关闭会停止采样并移除入口。")
-            SettingsRule()
-            HStack(alignment: .top, spacing: 8) {
-                Image(systemName: "info.circle").font(.system(size: 12)).foregroundStyle(.secondary)
-                Text("关闭不会影响音乐、刘海、日历或其他菜单模块。")
-                    .font(.system(size: 12)).foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: 0)
-            }.padding(.horizontal, 12).padding(.vertical, 10)
         }
     }
 
@@ -305,7 +293,7 @@ struct SettingsView: View {
                 HStack {
                     Text("Valora").font(.system(size: 15, weight: .semibold))
                     Spacer()
-                    Text(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.1.0")
+                    Text(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.2.0")
                         .font(.system(size: 12, design: .monospaced))
                         .foregroundStyle(.secondary)
                 }

@@ -8,13 +8,27 @@ struct MediaProgressView: View {
     @ObservedObject var settings: RevivalSettings
     var trackWidth:CGFloat? = nil
     var translucent=false
+    /// Lock-card ink palette; only consulted in the translucent branch.
+    var palette: LockCardPalette? = nil
     @State private var progress = MediaProgressState()
     @GestureState private var isDragging = false
     @Environment(\.accessibilityReduceMotion) private var reducedMotion
     private var durationIsValid: Bool { MediaProgressState.validDuration(model.duration) }
     private var elapsed: Double { progress.dragValue ?? MediaProgressState.clamp(model.elapsed,duration:model.duration) }
     private var fraction: Double { durationIsValid ? elapsed / model.duration : 0 }
-    private var textColor: Color { isDragging ? .white : (translucent ? .white.opacity(0.7):.gray.opacity(0.8)) }
+    private var textColor: Color {
+        if isDragging { return .white }
+        if translucent { return palette?.secondary ?? .white.opacity(0.7) }
+        return .gray.opacity(0.8)
+    }
+    /// On the lock card the track sits on translucent glass, so `.gray` at 25%
+    /// disappears into the material and the remaining part of the song cannot
+    /// be read. The original keeps the remainder clearly above the card but well
+    /// below the fill (≈1.14× the card versus ≈1.8× for the fill); the
+    /// non-translucent player keeps the existing grey track.
+    private var trackColor: Color {
+        translucent ? (palette?.track ?? .white.opacity(0.16)) : .gray.opacity(0.25)
+    }
     private var fillColors: [Color] {
         if translucent { return [textColor] } // Original hasTranslucency branch is monochrome.
         // 1000f35bc filters every palette color by luminance < .98 before
@@ -34,7 +48,7 @@ struct MediaProgressView: View {
                 .foregroundStyle(textColor).fixedSize()
             GeometryReader { geometry in
                 ZStack(alignment:.leading) {
-                    Capsule().fill(.gray.opacity(0.25))
+                    Capsule().fill(trackColor)
                     Capsule().fill(LinearGradient(colors:fillColors,startPoint:.leading,endPoint:.trailing))
                         .mask(alignment:.leading) {
                             Capsule().frame(width:max(0,geometry.size.width * fraction))

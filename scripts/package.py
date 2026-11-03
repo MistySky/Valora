@@ -6,7 +6,7 @@ import plistlib, shutil, subprocess, datetime, json, hashlib, argparse
 ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser()
 parser.add_argument('--binary', required=True, type=Path, help='Binary produced by the current build')
-parser.add_argument('--version', default='0.1.0')
+parser.add_argument('--version', default='0.2.0')
 parser.add_argument('--build', default='1')
 parser.add_argument('--output-dir', type=Path, default=ROOT / 'dist')
 parser.add_argument('--lock-diagnostic-path', default=None, help='Optional LSEnvironment diagnostic path for a single test candidate')

@@ -40,7 +40,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var menuBarModules: MenuBarModuleController?
     private var coordinator: WindowCoordinator!
     private var lockMusic: LockMusicCoordinator?
-    private var lockPreview: LockPreviewController?
+    private var lockCardPreview: LockCardPreviewController?
     private var settingsWindow: NSWindow?
     private let settingsNavigation = SettingsNavigation()
     lazy var settingsDraft = SettingsDraft(defaults: runtimeDefaults)
@@ -389,14 +389,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             notchWindowUpdates: coordinator.activeNotchWindowNumber.eraseToAnyPublisher(),
             overlayFrameProvider: { [weak coordinator] in coordinator?.currentNotchDisplayFrame })
         lockMusic?.setEnabled(settings.lockPreferences.enabled)
-        lockPreview = LockPreviewController(model)
-        lockPreview?.start()
         model.settings.$lockPreferences.map(\.enabled).removeDuplicates().dropFirst().sink { [weak self] enabled in
             DispatchQueue.main.async { self?.lockMusic?.setEnabled(enabled) }
         }.store(in: &subscriptions)
         model.media.start()
         model.audio.start()
         model.bluetooth.start()
+        if CommandLine.arguments.contains("--lock-card-preview") {
+            lockCardPreview = LockCardPreviewController(model)
+            lockCardPreview?.start()
+        }
         if CommandLine.arguments.contains("--expand-media") {
             // QA-only: wait for the first system media snapshot, then expand.
             model.pinned = true
@@ -657,7 +659,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @objc private func showAbout() {
         NSApp.orderFrontStandardAboutPanel(options: [
             .applicationName: "Valora",
-            .applicationVersion: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.1",
+            .applicationVersion: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.2.0",
             .version: Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "1"
         ])
     }
@@ -717,10 +719,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // termination must not create an AppModel/ConnectivityController and
         // accidentally start its lifecycle.
         if modelWasLoaded {
-            lockPreview?.stop()
-            lockPreview = nil
             lockMusic?.stop()
             lockMusic = nil
+            lockCardPreview?.stop()
+            lockCardPreview = nil
             model.lyricsController?.cancel()
             model.media?.stop()
             model.audio?.stop()
