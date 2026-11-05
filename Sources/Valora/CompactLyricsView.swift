@@ -31,9 +31,7 @@ struct CompactLyricsView: View {
         LyricsFrameProbe.record(role: auditRole, elapsed: elapsed,
                                 lineStart: line?.start, wordIndex: wordIndex)
         return HStack(spacing: 5) {
-            Image(systemName: "music.note")
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundStyle(Color(nsColor: model.lyricsAccentColor))
+            noteIcon
             if let line, let metrics {
                 LyricsLineContent(line: line, metrics: metrics, availableWidth: availableWidth,
                                   accent: model.lyricsAccentColor, elapsed: elapsed,
@@ -55,6 +53,12 @@ struct CompactLyricsView: View {
         .accessibilityLabel(line.map { "歌词，\($0.text)" } ?? "歌词")
         .accessibilityIdentifier("compact.lyrics")
         .animation(.easeInOut(duration: 0.2), value: line.map { "\($0.start)-\($0.text)" })
+    }
+
+    private var noteIcon: some View {
+        Image(systemName: "music.note")
+            .font(.system(size: 11, weight: .semibold))
+            .foregroundStyle(Color(nsColor: model.lyricsAccentColor))
     }
 
     var body: some View {

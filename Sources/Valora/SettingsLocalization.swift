@@ -39,6 +39,7 @@ enum SettingsText {
         "Keep awake": "保持唤醒", "Show on screen saver": "屏幕保护时显示",
         "Play sound on lock": "锁定时播放提示音", "Play sound on unlock": "解锁时播放提示音",
         "Widgets": "小组件", "Appear on your Lock Screen": "显示在锁定屏幕上", "Glass": "玻璃", "Clear": "透明",
+        "Simulate lock music": "模拟锁屏音乐",
         "Show volume control": "显示音量控制", "Offset tuning": "位置偏移", "Weather": "天气",
         "Show percentage": "显示百分比", "Show symbol": "显示图标", "Show device": "显示设备",
         "White": "白色", "Accent": "强调色", "Decibel": "分贝", "Glow": "发光",

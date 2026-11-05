@@ -61,8 +61,9 @@ extension ARLockPresentationSpace: LockPresentationSpace {
 /// a Space, play a sound or wait ten minutes.
 @MainActor
 final class LockMusicCoordinator: ObservableObject {
-    static let animationMargin: CGFloat = 80
-    static let canvasHeight: CGFloat = 245 + animationMargin
+    /// Host window height: the card's tallest state plus transition room. The
+    /// window keeps this size in every state so its top edge cannot move.
+    static let canvasHeight: CGFloat = CGFloat(LockCardLayout.canvasHeight)
 
     unowned let model: AppModel
     private let windowFactory: any LockPresentationWindowFactory
@@ -88,6 +89,10 @@ final class LockMusicCoordinator: ObservableObject {
     @Published private(set) var visible = false
     @Published private(set) var appeared = false
     @Published var showsVolume = false
+    /// Whether the lock card currently holds the regular activation policy so
+    /// the glass renders in its active (refractive) state instead of the flat
+    /// inactive fallback.
+    private var glassActivated = false
 
     private var state = LockMusicState()
     private var lockSpace: (any LockPresentationSpace)?
@@ -196,19 +201,9 @@ final class LockMusicCoordinator: ObservableObject {
 
     private func createPanels() {
         let level = NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()))
-        // EXPERIMENT (V0045): the original lock surface is a screen-sized
-        // LockPanel, not a small card window. A full-screen host is the only
-        // untested structural difference that could give the glass a backdrop
-        // above the login shield. Mouse is ignored for this run so a wrong
-        // hit-test can never block the login field.
-        let screenSize = NSScreen.screens.first?.frame.size ?? CGSize(width: 1728, height: 1117)
-        let screenHeight = NSScreen.screens.first?.frame.height ?? 1117
-        let cardBottomInset = screenHeight * 0.21 + model.settings.lockPreferences.offset
-        panel = windowFactory.makeWindow(size: screenSize,
-                                         level: level, ignoresMouseEvents: true)
-        panel.setRootView(AnyView(LockMusicView(model: model, settings: model.settings,
-                                               coordinator: self,
-                                               bottomInset: cardBottomInset)))
+        panel = windowFactory.makeWindow(size: CGSize(width: 385, height: Self.canvasHeight),
+                                         level: level, ignoresMouseEvents: false)
+        panel.setRootView(AnyView(LockMusicView(model: model, settings: model.settings, coordinator: self)))
         informationPanel = windowFactory.makeWindow(size: CGSize(width: 360, height: 94),
                                                     level: level, ignoresMouseEvents: true)
         informationPanel.setRootView(AnyView(LockInformationView(model: model, coordinator: self)))
@@ -359,6 +354,7 @@ final class LockMusicCoordinator: ObservableObject {
                 panel.orderOut()
                 lockSpace?.detachWindowNumber(panel.windowNumber)
             }
+            deactivateGlassSurface()
             refresh(epoch: epoch)
         case .neutralizing:
             neutralTask?.cancel(); neutralTask = nil
@@ -381,6 +377,7 @@ final class LockMusicCoordinator: ObservableObject {
                 panel.orderOut()
                 lockSpace?.detachWindowNumber(panel.windowNumber)
             }
+            deactivateGlassSurface()
             refresh(epoch: epoch)
             unlockTask?.cancel()
             unlockTask = scheduler.schedule(after: 0.8) { [weak self] in
@@ -782,9 +779,14 @@ final class LockMusicCoordinator: ObservableObject {
         guard let screen = NSScreen.screens.first, panel != nil else { return }
         informationPanel?.setFrameOrigin(NSPoint(x: screen.frame.midX - 180,
                                                  y: screen.frame.maxY - screen.frame.height * 0.265 - 94))
-        // Full-screen host for the glass experiment; the card is positioned
-        // inside it by `LockMusicView.bottomInset`.
-        panel.setFrameOrigin(NSPoint(x: screen.frame.minX, y: screen.frame.minY))
+        // Fixed top edge from the shared layout model: the host window keeps its
+        // size, so the card's top and all existing content stay put while the
+        // optional volume/lyrics blocks extend it downwards.
+        let layout = LockCardLayout(screenMinY: screen.frame.minY,
+                                    screenHeight: screen.frame.height,
+                                    verticalOffset: model.settings.lockPreferences.offset)
+        panel.setFrameOrigin(NSPoint(x: screen.frame.midX - 192.5,
+                                     y: CGFloat(layout.panelOriginY)))
     }
 
     private func applyVisibility(epoch: UInt64) {
@@ -816,6 +818,7 @@ final class LockMusicCoordinator: ObservableObject {
                 self.panel.orderOut()
                 self.lockSpace?.detachWindowNumber(self.panel.windowNumber)
                 self.showsVolume = false
+                self.deactivateGlassSurface()
             }
         }
     }
@@ -827,6 +830,25 @@ final class LockMusicCoordinator: ObservableObject {
             return
         }
         panel.orderFrontRegardless()
+        // Liquid Glass only renders its refractive (active) material on a key
+        // window; the lock card is the one surface that needs it. The app is an
+        // accessory agent, so it takes the regular policy while the card is up
+        // and gives it back as soon as the card is gone.
+        activateGlassSurface()
+    }
+
+    private func activateGlassSurface() {
+        guard usePresentationSpace, !glassActivated, NSApp != nil else { return }
+        glassActivated = true
+        NSApp.setActivationPolicy(.regular)
+        NSApp.activate(ignoringOtherApps: true)
+        panel?.makeKey()
+    }
+
+    private func deactivateGlassSurface() {
+        guard glassActivated else { return }
+        glassActivated = false
+        NSApp?.setActivationPolicy(.accessory)
     }
 
     private func cancelHideAndAppearance() {
@@ -868,6 +890,7 @@ final class LockMusicCoordinator: ObservableObject {
         releaseOverlay()
         detachNotchIfNeeded()
         panel?.orderOut()
+        deactivateGlassSurface()
         if let panel {
             lockSpace?.detachWindowNumber(panel.windowNumber)
             panel.clearRootView()

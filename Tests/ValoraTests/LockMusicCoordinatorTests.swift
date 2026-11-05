@@ -239,7 +239,11 @@ final class LockMusicCoordinatorTests: XCTestCase {
     func testPanelBoundsUseInjectedWindowFactory() {
         let coordinator = makeCoordinator()
         coordinator.setEnabled(true)
-        XCTAssertEqual(coordinator.panel.frame.size, CGSize(width: 385, height: 325))
+        // The lock card lives in a small transparent panel; the card itself is
+        // 345pt wide inside the 385pt host. The host is exactly the tallest
+        // visible card, never a taller invisible click-catching region.
+        XCTAssertEqual(coordinator.panel.frame.size,
+                       CGSize(width: 385, height: LockMusicCoordinator.canvasHeight))
         XCTAssertEqual(coordinator.informationPanel.frame.size, CGSize(width: 360, height: 94))
         XCTAssertEqual(factory.windows.count, 2)
         coordinator.stop()

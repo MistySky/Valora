@@ -1,11 +1,11 @@
 import Foundation
 
 /// Selected lock-screen policy. Battery/focus/keep-awake are intentionally
-/// absent from this product slice.
+/// absent from this product slice, and so is the card's material choice: the
+/// card has a single fixed material now.
 public struct LockMusicPreferences: Equatable, Sendable {
     public var enabled: Bool
     public var musicEnabled: Bool
-    public var glass: Bool
     public var showVolume: Bool
     public var soundOnLock: Bool
     public var soundOnUnlock: Bool
@@ -20,15 +20,13 @@ public struct LockMusicPreferences: Equatable, Sendable {
         // read, so a stale `allowNowPlayingWidgetWhenLocked=false` cannot
         // silently veto the module's own switch.
         musicEnabled = true
-        // Selected fixed Glass branch; Clear is not exposed in this slice.
-        glass = true
         // The output button controls the collapsed volume bar; no stored
         // "show volume control" switch is exposed.
         showVolume = false
         soundOnLock = values["playSoundOnLock"] as? Bool ?? false
         soundOnUnlock = values["playSoundOnUnlock"] as? Bool ?? true
-        // Selected policy is fixed: no idle-duration or offset control is
-        // exposed, and stale archived preferences must not change it.
+        // The card sits at the reference's fixed 21% of the screen height; no
+        // offset control is exposed.
         idleSeconds = 10 * 60
         offset = 0
     }
@@ -70,4 +68,84 @@ public struct LockMusicState: Equatable, Sendable {
         generation &+= 1
         input = nil
     }
+}
+
+/// Geometry of the lock music card, mirroring the notch player's expansion
+/// rules: the card's *top* is fixed and the optional blocks (volume, lyrics)
+/// extend it downwards.
+///
+/// Blocks include the vertical spacing that precedes them, so the four possible
+/// states are exactly `H`, `H+V`, `H+L` and `H+V+L` with an unchanged top.
+public struct LockCardLayout: Equatable, Sendable {
+    /// Player block (padding included). Measured from the real lock card.
+    public static let playerHeight: Double = 164
+    /// Volume row (24pt) plus the 8pt spacing above it.
+    public static let volumeBlock: Double = 24 + 8
+    /// Lyric row (32pt), its 8pt spacing and the 4pt bottom padding.
+    public static let lyricBlock: Double = 32 + 8 + 4
+    /// Tallest visible card: player + volume + lyrics. The host window is
+    /// exactly this tall, so there is no invisible click-catching area below
+    /// the reserved card region.
+    public static let maxCardHeight: Double = playerHeight + volumeBlock + lyricBlock
+    public static let canvasHeight: Double = maxCardHeight
+    /// Preserve the old collapsed card's bottom clearance for the *largest*
+    /// state instead. This is a placement policy, not measured login-window
+    /// geometry: macOS does not supply the avatar bounds through this API.
+    public static let loginSafeFraction: Double = 0.21
+
+    public var screenMinY: Double
+    public var screenHeight: Double
+    public var verticalOffset: Double
+
+    public init(screenMinY: Double = 0, screenHeight: Double, verticalOffset: Double = 0) {
+        self.screenMinY = screenMinY
+        self.screenHeight = screenHeight
+        self.verticalOffset = verticalOffset
+    }
+
+    /// The original 21% clearance line. V0091 note: this is **not** a measured
+    /// login-window safe area — macOS does not expose the avatar bounds here.
+    /// It is kept as the collapsed card's bottom line, which is where the
+    /// accepted pre-V0088 card sat.
+    public var loginSafeBottom: Double {
+        screenMinY + screenHeight * Self.loginSafeFraction + verticalOffset
+    }
+
+    /// Extra clearance above the reference line so that opening the **volume**
+    /// row still keeps the card's bottom on that line instead of covering the
+    /// login avatar. It is exactly the volume block, i.e. the smallest lift that
+    /// fixes the reported case; the lyric block below it remains a reported
+    /// trade-off rather than something compensated with a guessed offset.
+    public static let volumeClearance: Double = volumeBlock
+
+    /// Fixed top edge of the card (screen coordinates, origin bottom-left).
+    /// Anchored from the **collapsed** card plus `volumeClearance`.
+    ///
+    /// Consequences, reported and not silently compensated:
+    /// - collapsed card sits `volumeClearance` (32pt) above the old 21% line;
+    /// - volume-expanded card's bottom sits on that line;
+    /// - adding the lyric row still publishes 44pt below it.
+    public var cardTop: Double {
+        loginSafeBottom + Self.playerHeight + Self.volumeClearance
+    }
+
+    /// Height of the visible card for a given set of expanded blocks.
+    public func cardHeight(volume: Bool, lyrics: Bool) -> Double {
+        Self.playerHeight
+            + (volume ? Self.volumeBlock : 0)
+            + (lyrics ? Self.lyricBlock : 0)
+    }
+
+    /// Bottom edge of the fully expanded card. With the fixed anchor above it
+    /// is equal to the login-safe line.
+    public var fullyExpandedBottom: Double { cardTop - Self.maxCardHeight }
+
+    /// Origin of the fixed-height host window. The host spans exactly the
+    /// reserved card region: its bottom is the login-safe line, never below it.
+    public var panelOriginY: Double { fullyExpandedBottom }
+
+    /// On extremely short displays the reserved region cannot fit above the
+    /// login-safe line without going off-screen. Callers must not shrink the
+    /// card silently; this flag exists to report the conflict.
+    public var fitsScreen: Bool { cardTop <= screenMinY + screenHeight }
 }

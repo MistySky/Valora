@@ -38,8 +38,11 @@ struct LockCardAppearance: Equatable {
     /// `LockManager._isWallpaperNearlyWhite` equivalent.
     var wallpaperIsNearlyWhite: Bool
 
+    /// Only set by the preview override; production leaves it nil.
+    var glassOverride: ColorScheme? = nil
+
     /// Background appearance of the glass, fixed to light by the original.
-    var glassScheme: ColorScheme { .light }
+    var glassScheme: ColorScheme { glassOverride ?? .light }
 
     /// Foreground appearance: dark scheme (white ink) unless the wallpaper is
     /// nearly white.
@@ -50,5 +53,12 @@ struct LockCardAppearance: Equatable {
     }
 
     /// Current default: an ordinary (non nearly-white) wallpaper.
-    static let standard = LockCardAppearance(wallpaperIsNearlyWhite: false)
+    static let standard: LockCardAppearance = {
+        // Preview-only override so both glass appearances can be compared on
+        // screen without rebuilding: VALORA_LOCK_CARD_GLASS=light|dark.
+        if ProcessInfo.processInfo.environment["VALORA_LOCK_CARD_GLASS"] == "dark" {
+            return LockCardAppearance(wallpaperIsNearlyWhite: false, glassOverride: .dark)
+        }
+        return LockCardAppearance(wallpaperIsNearlyWhite: false)
+    }()
 }

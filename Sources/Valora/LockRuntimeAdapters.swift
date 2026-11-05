@@ -19,6 +19,14 @@ protocol LockPresentationWindow: AnyObject {
     func orderFrontRegardless()
     func orderOut()
     func close()
+    /// Bring the surface up as the key window so the system renders the
+    /// *active* glass material (Liquid Glass degrades to a flat frosted panel on
+    /// an inactive window).
+    func makeKey()
+}
+
+extension LockPresentationWindow {
+    func makeKey() {}
 }
 
 extension LockPresentationWindow {
@@ -31,8 +39,17 @@ protocol LockPresentationWindowFactory {
     func makeWindow(size: CGSize, level: NSWindow.Level, ignoresMouseEvents: Bool) -> any LockPresentationWindow
 }
 
+/// Hosting view that delivers the very first click, even while the app is not
+/// the active one — required for the lock card's buttons and volume slider.
+final class LockFirstMouseHostingView<Content: View>: NSHostingView<Content> {
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
+}
+
 final class LockMusicPanel: NSPanel {
-    override var canBecomeKey: Bool { false }
+    /// The music card is the only lock surface that needs to be key: the active
+    /// window state is what makes Liquid Glass render its refractive material
+    /// instead of the inactive frosted fallback.
+    override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
 }
 
@@ -44,12 +61,24 @@ final class LockAppKitPresentationWindow: LockPresentationWindow {
     var isVisible: Bool { panel.isVisible }
     var frame: CGRect { panel.frame }
     var diagnosticHostFrame: CGRect { panel.contentView?.frame ?? .zero }
-    func setRootView(_ view: AnyView) { panel.contentView = NSHostingView(rootView: view) }
+    func setRootView(_ view: AnyView) {
+        // The lock surface is not the active app, so a plain hosting view would
+        // swallow the first click (the click that activates the window). The
+        // card's buttons and volume slider must react on that first click.
+        let host = LockFirstMouseHostingView(rootView: view)
+        // Without this, NSHostingView resizes the window to the SwiftUI content;
+        // the window's origin is its bottom-left, so a taller card would push the
+        // whole surface upwards instead of growing downwards.
+        host.sizingOptions = []
+        panel.contentView = host
+        panel.setContentSize(NSSize(width: panel.frame.width, height: panel.frame.height))
+    }
     func clearRootView() { panel.contentView = nil }
     func setFrameOrigin(_ origin: CGPoint) { panel.setFrameOrigin(origin) }
     func setSharingType(_ type: NSWindow.SharingType) { panel.sharingType = type }
     func setAlphaValue(_ value: CGFloat) { panel.alphaValue = value }
     func orderFrontRegardless() { panel.orderFrontRegardless() }
+    func makeKey() { panel.makeKey() }
     func orderOut() { panel.orderOut(nil) }
     func close() { panel.close() }
 }
@@ -229,6 +258,7 @@ final class LockNotchOverlayWindow: LockPresentationWindow {
     func setSharingType(_ type: NSWindow.SharingType) { panel.sharingType = type }
     func setAlphaValue(_ value: CGFloat) { panel.alphaValue = value }
     func orderFrontRegardless() { panel.orderFrontRegardless() }
+    func makeKey() { panel.makeKey() }
     func orderOut() { panel.orderOut(nil) }
     func close() { panel.close() }
 }

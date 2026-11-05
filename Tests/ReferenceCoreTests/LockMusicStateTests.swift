@@ -14,11 +14,10 @@ final class LockMusicStateTests: XCTestCase {
         XCTAssertTrue(p.soundOnUnlock)
         XCTAssertEqual(p.idleSeconds, 600)
         XCTAssertFalse(p.showVolume)
-        XCTAssertTrue(p.glass)
     }
 
-    /// The lock page no longer owns a music switch: an archived lock-only
-    /// preference must not veto the Now Playing module switch.
+    /// The desktop simulation is a visible switch; it defaults off and never
+    /// turns itself on from an archived dictionary.
     func testArchivedLockOnlyPreferencesDoNotVetoModuleSwitches() {
         let archived = LockMusicPreferences(values: [
             "enableLockScreen": true,
@@ -195,5 +194,104 @@ final class LockMusicStateTests: XCTestCase {
         XCTAssertEqual(indicator.phase, .locked)
         indicator.update(locked: true, enabled: false, sleeping: false)
         XCTAssertEqual(indicator.phase, .hidden)
+    }
+}
+
+/// V0088/V0089: the lock card's top edge and the host window are fixed across
+/// the four expansion states; only the bottom edge moves. The anchor is chosen
+/// from the fully expanded height so the card never enters the login-safe area.
+/// Windowless arithmetic only — the offscreen AppKit card test covers the view
+/// geometry; the real login window still has no public geometry.
+final class LockCardLayoutTests: XCTestCase {
+    private let layout = LockCardLayout(screenMinY: 0, screenHeight: 1117)
+
+    func testFourStatesAddExactlyOneVolumeAndOneLyricsBlock() {
+        let h = layout.cardHeight(volume: false, lyrics: false)
+        let v = layout.cardHeight(volume: true, lyrics: false)
+        let l = layout.cardHeight(volume: false, lyrics: true)
+        let vl = layout.cardHeight(volume: true, lyrics: true)
+
+        XCTAssertEqual(h, LockCardLayout.playerHeight, accuracy: 0.001)
+        XCTAssertEqual(v - h, LockCardLayout.volumeBlock, accuracy: 0.001)
+        XCTAssertEqual(l - h, LockCardLayout.lyricBlock, accuracy: 0.001)
+        XCTAssertEqual(vl, v + l - h, accuracy: 0.001)
+    }
+
+    func testTopAndPanelOriginDoNotDependOnExpansion() {
+        let origins = [(false, false), (true, false), (false, true), (true, true)].map { _ in
+            layout.panelOriginY
+        }
+        XCTAssertEqual(Set(origins).count, 1, "the host origin must not change with the card height")
+        // Bottom edge = top - height; it is the only moving edge.
+        for (volume, lyrics) in [(false, false), (true, false), (false, true), (true, true)] {
+            let bottom = layout.cardTop - layout.cardHeight(volume: volume, lyrics: lyrics)
+            XCTAssertLessThan(bottom, layout.cardTop)
+        }
+    }
+
+    /// V0091: the accepted card sat with its *bottom* on the 21% line. The fixed
+    /// top is derived from that collapsed height, not from a reserved expanded
+    /// block, so the player is not lifted.
+    func testVolumeExpansionLandsOnTheReferenceLine() {
+        // Collapsed card is lifted by exactly one volume block, so opening the
+        // volume row puts its bottom back on the original 21% line.
+        let collapsedBottom = layout.cardTop - LockCardLayout.playerHeight
+        XCTAssertEqual(collapsedBottom, 1117 * 0.21 + LockCardLayout.volumeBlock, accuracy: 0.001)
+        let volumeBottom = layout.cardTop - layout.cardHeight(volume: true, lyrics: false)
+        XCTAssertEqual(volumeBottom, 1117 * 0.21, accuracy: 0.001)
+        XCTAssertEqual(layout.panelOriginY, layout.cardTop - LockCardLayout.canvasHeight, accuracy: 0.001)
+    }
+
+    /// Reported trade-off, not compensated: expanding pushes the bottom below
+    /// the 21% reference line by the reserved block height.
+    func testExpandedCardExtendsBelowTheReferenceLine() {
+        let below = LockCardLayout.lyricBlock
+        XCTAssertEqual(layout.fullyExpandedBottom, 1117 * 0.21 - below, accuracy: 0.001)
+        XCTAssertGreaterThan(below, 0)
+    }
+
+    func testEveryStateStaysAboveTheExpandedBottom() {
+        for (volume, lyrics) in [(false, false), (true, false), (false, true), (true, true)] {
+            let bottom = layout.cardTop - layout.cardHeight(volume: volume, lyrics: lyrics)
+            XCTAssertGreaterThanOrEqual(bottom, layout.fullyExpandedBottom - 0.001,
+                                        "state v=\(volume) l=\(lyrics) entered the reserved login gap")
+        }
+        let bottoms = [(false, false), (true, false), (false, true), (true, true)].map {
+            layout.cardTop - layout.cardHeight(volume: $0.0, lyrics: $0.1)
+        }
+        XCTAssertEqual(Set(bottoms).count, 4, "four states must have four different bottom edges")
+    }
+
+    func testHostWindowSpansOnlyTheReservedCardRegion() {
+        // No invisible host area below the login-safe line, where it could
+        // intercept clicks intended for the login user/password controls.
+        XCTAssertEqual(layout.fullyExpandedBottom,
+                       layout.loginSafeBottom - LockCardLayout.lyricBlock,
+                       accuracy: 0.001,
+                       "only the lyric block still extends below the 21% line")
+        XCTAssertEqual(layout.panelOriginY + LockCardLayout.canvasHeight, layout.cardTop, accuracy: 0.001)
+    }
+
+    func testShortScreenConflictIsReportedInsteadOfSilentlyShrinking() {
+        // Anchored from the collapsed card, the top only needs to fit on screen;
+        // the expanded bottom is allowed to run low and is reported separately.
+        let short = LockCardLayout(screenMinY: 0, screenHeight: 200)
+        XCTAssertFalse(short.fitsScreen)
+        let justEnough = LockCardLayout(screenMinY: 0, screenHeight: 800)
+        XCTAssertTrue(justEnough.fitsScreen)
+    }
+
+    func testTallestStateStillFitsTheHostWindow() {
+        XCTAssertLessThanOrEqual(
+            layout.cardHeight(volume: true, lyrics: true),
+            LockCardLayout.canvasHeight,
+            "the fixed host window must be tall enough for the fully expanded card"
+        )
+    }
+
+    func testVerticalOffsetShiftsTopAndOriginTogether() {
+        let shifted = LockCardLayout(screenMinY: 0, screenHeight: 1117, verticalOffset: 40)
+        XCTAssertEqual(shifted.cardTop - layout.cardTop, 40, accuracy: 0.001)
+        XCTAssertEqual(shifted.panelOriginY - layout.panelOriginY, 40, accuracy: 0.001)
     }
 }

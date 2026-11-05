@@ -395,9 +395,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         model.media.start()
         model.audio.start()
         model.bluetooth.start()
+        // `--lock-card-preview` is a QA-only launch flag: it shows the real lock
+        // card on the desktop for inspection. There is no user-facing switch.
         if CommandLine.arguments.contains("--lock-card-preview") {
             lockCardPreview = LockCardPreviewController(model)
-            lockCardPreview?.start()
+            lockCardPreview?.setVisible(true)
         }
         if CommandLine.arguments.contains("--expand-media") {
             // QA-only: wait for the first system media snapshot, then expand.
@@ -410,6 +412,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if !CommandLine.arguments.contains("--no-settings"),
            runtimeDefaults.object(forKey: "didLaunchValora") == nil || CommandLine.arguments.contains("--settings") {
             runtimeDefaults.set(true, forKey: "didLaunchValora")
+            // QA-only: open Settings on a specific page, e.g.
+            // `--settings --settings-page "Lock Screen"`.
+            if let title = AppRuntimeDefaults.value(after: "--settings-page", arguments: CommandLine.arguments),
+               let page = SettingsPage.allCases.first(where: { $0.rawValue == title }) {
+                settingsNavigation.page = page
+            }
             showSettings()
         }
         if let output = AppRuntimeDefaults.value(after: "--diagnostic", arguments: CommandLine.arguments) {
