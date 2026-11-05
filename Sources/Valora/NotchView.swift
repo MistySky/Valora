@@ -44,35 +44,57 @@ struct NotchView: View {
     /// False for passive screens: they keep compact content, but do not show
     /// peek/expand/flip animations owned by the active interaction screen.
     var allowsDynamic = true
+    /// A dedicated lock surface uses its own hardware geometry and ignores
+    /// the music-only simulation and target-display preferences.
+    var lockSurface = false
     var onActivate: (() -> Void)? = nil
     @Environment(\.accessibilityReduceMotion) var reducedMotion
-    private var geometry: NotchGeometry { geometryOverride ?? model.notchGeometry }
+    private var usesLockGeometry: Bool {
+        lockSurface || (model.isSessionLocked && model.lockNotchMounted
+                        && model.lockIndicator.phase != .locking)
+    }
+    private var geometry: NotchGeometry {
+        if usesLockGeometry, let lockGeometry = model.lockNotchGeometry { return lockGeometry }
+        return geometryOverride ?? model.notchGeometry
+    }
+    private var simulated: Bool {
+        // Lock surfaces follow the same switch, but only where there is no real
+        // notch: a physical notch keeps its hardware shape.
+        if usesLockGeometry {
+            return settings.forceSimulatedNotch && geometry.hasPhysicalNotch == false
+        }
+        return settings.forceSimulatedNotch
+    }
     private var expanded: Bool { compactOnly ? false : model.expanded }
     private var localSize: CGSize {
         if compactOnly {
-            return PresentationMetrics.stationarySize(geometry:geometry, simulated:settings.forceSimulatedNotch,
+            return PresentationMetrics.stationarySize(geometry:geometry, simulated:simulated,
                 expanded:.none, hasOutput:false,
                 notification:.none,
                 liveActivity: model.showsLockActivity ? .locked : (model.showsMusicActivity ? .playing : .none),
                 quickPeek:.none,
                 tuning:.zero)
         }
-        return model.visibleSize
+        return usesLockGeometry ? model.presentationSize(geometry: geometry, simulated: simulated) : model.visibleSize
     }
     var width: CGFloat { localSize.width }
     var height: CGFloat { localSize.height }
     private var localContour: NotchContour {
-        if compactOnly {
-            return .stationary(geometry:geometry, simulated:settings.forceSimulatedNotch,
-                expanded:false, expandedCorners:false,
-                active:model.showsMusicActivity || model.showsLockActivity,
+        if compactOnly || usesLockGeometry {
+            return .stationary(geometry:geometry, simulated:simulated,
+                expanded:expanded && !model.isLockNeutralGeometry,
+                expandedCorners:!compactOnly && model.presentation.usesExpandedCornerRadius && !model.isLockNeutralGeometry,
+                active:!model.isLockNeutralGeometry && (model.showsMusicActivity || model.showsLockActivity),
                 visibleHeight:localSize.height)
         }
         return model.contour
     }
     var shape: NotchShape { NotchShape(topRadius:localContour.topRadius,bottomRadius:localContour.bottomRadius,style:localContour.style) }
-    private var hasNotch: Bool { geometry.hasPhysicalNotch || settings.forceSimulatedNotch }
-    private var nativeNotchSize: CGSize { geometry.compact }
+    private var hasNotch: Bool { geometry.hasPhysicalNotch || simulated }
+    private var nativeNotchSize: CGSize {
+        let addition = !usesLockGeometry && !compactOnly && allowsDynamic ? model.inlineLyricsWidthAddition : 0
+        return CGSize(width: geometry.compact.width + addition, height: geometry.compact.height)
+    }
     private var localHoverScale: CGSize { compactOnly ? CGSize(width:1,height:1) : model.hoverScale }
     private var expandedCanvasWidth: CGFloat { compactOnly ? width : model.expandedSize.width }
     private var displayArtist: String { model.artist.replacingOccurrences(of:" - Topic",with:"").trimmingCharacters(in:.whitespacesAndNewlines) }
@@ -176,7 +198,14 @@ struct NotchView: View {
                         .transition(.opacity)
                 } else { Color.clear }
             }.frame(width:max(0,(width-nativeNotchSize.width)/2))
-            Color.clear.frame(width:nativeNotchSize.width)
+            Group {
+                if !lockSurface, allowsDynamic, model.showsInlineLyrics {
+                    CompactLyricsView(model: model, width: max(1, nativeNotchSize.width - 20),
+                                      rowHeight: nativeNotchSize.height, showsNote: false, horizontalInset: 10)
+                } else {
+                    Color.clear
+                }
+            }.frame(width:nativeNotchSize.width)
             Group {
                 if model.showsLockActivity {
                     Color.clear

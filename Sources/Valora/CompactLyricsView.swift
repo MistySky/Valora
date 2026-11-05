@@ -9,11 +9,15 @@ import ReferenceCore
 struct CompactLyricsView: View {
     @ObservedObject var model: AppModel
     let width: CGFloat
+    /// Embedded compact lyrics share the top strip rather than a 32pt peek.
+    var rowHeight: CGFloat = 32
+    var showsNote: Bool = true
+    var horizontalInset: CGFloat = 18
     /// QA-only role tag; production views use the default active role.
     var auditRole: String = "active"
     @State private var metricsCache = LyricMetricsCache()
 
-    private var availableWidth: CGFloat { max(1, width - 22) }
+    private var availableWidth: CGFloat { max(1, width - (showsNote ? 22 : 0)) }
 
     private func lineEnd(for line: LyricLine) -> TimeInterval {
         let timeline = model.lyrics.timeline
@@ -31,7 +35,7 @@ struct CompactLyricsView: View {
         LyricsFrameProbe.record(role: auditRole, elapsed: elapsed,
                                 lineStart: line?.start, wordIndex: wordIndex)
         return HStack(spacing: 5) {
-            noteIcon
+            if showsNote { noteIcon }
             if let line, let metrics {
                 LyricsLineContent(line: line, metrics: metrics, availableWidth: availableWidth,
                                   accent: model.lyricsAccentColor, elapsed: elapsed,
@@ -46,8 +50,8 @@ struct CompactLyricsView: View {
             }
         }
         .foregroundStyle(.gray)
-        .frame(width: max(1, width), height: 32, alignment: isLong ? .leading : .center)
-        .padding(.horizontal, 18)
+        .frame(width: max(1, width), height: rowHeight, alignment: isLong ? .leading : .center)
+        .padding(.horizontal, horizontalInset)
         .clipped()
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(line.map { "歌词，\($0.text)" } ?? "歌词")

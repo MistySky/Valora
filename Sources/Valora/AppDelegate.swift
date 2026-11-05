@@ -38,6 +38,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var statusMenu: NSMenu?
     private var bluetoothAuthorizationRequester: BluetoothAuthorizationRequester?
     private var menuBarModules: MenuBarModuleController?
+    /// Owns the single read-only Codex quota refresh for this process.
+    private var codexUsage: CodexUsageProvider?
     private var coordinator: WindowCoordinator!
     private var lockMusic: LockMusicCoordinator?
     private var lockCardPreview: LockCardPreviewController?
@@ -385,9 +387,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         setupMenu()
         lockMusic = LockMusicCoordinator(
             model,
-            notchWindowProvider: { [weak coordinator] in coordinator?.panel },
-            notchWindowUpdates: coordinator.activeNotchWindowNumber.eraseToAnyPublisher(),
-            overlayFrameProvider: { [weak coordinator] in coordinator?.currentNotchDisplayFrame })
+            notchWindowProvider: { [weak coordinator] in coordinator?.lockFallbackPanel },
+            notchWindowUpdates: coordinator.activeNotchWindowNumber.eraseToAnyPublisher())
         lockMusic?.setEnabled(settings.lockPreferences.enabled)
         model.settings.$lockPreferences.map(\.enabled).removeDuplicates().dropFirst().sink { [weak self] enabled in
             DispatchQueue.main.async { self?.lockMusic?.setEnabled(enabled) }
@@ -488,6 +489,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     /// The explicit General "show menu bar icon" switch controls only the
     /// Outline-v7 application entry. Hiding it leaves the notch, music and
     /// every module intact; showing it reuses the same item/menu route.
+    /// Lazily builds the provider once. Without a local engine the provider still
+    /// exists, reports `missingEngine`, and never spawns anything.
+    private func codexUsageProvider() -> CodexUsageProvider {
+        if let codexUsage { return codexUsage }
+        let client = CodexAppServerClient.locate().map { CodexAppServerClient(executable: $0) }
+        let provider = CodexUsageProvider(readLimits: {
+            guard let client else { throw CodexUsageError.missingEngine }
+            return try await client.readRateLimits()
+        })
+        codexUsage = provider
+        return provider
+    }
+
     private func setApplicationStatusItemVisible(_ visible: Bool) {
         if visible { installApplicationStatusItemIfNeeded() }
         else { statusItem?.isVisible = false }
@@ -497,6 +511,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         guard menuBarModules != nil else { return }
         menuBarModules?.setSystemMonitorVisible(settingsDraft.value("enableSystemMonitor", true))
         menuBarModules?.setCalendarVisible(true)
+        menuBarModules?.setCodexUsage(codexUsageProvider(),
+                                      visible: settingsDraft.value("enableCodexUsage", false))
         setApplicationStatusItemVisible(settingsDraft.value("showApplicationMenuBarIcon", true))
     }
 
@@ -506,7 +522,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     /// Borderless ribbon V alpha mask; macOS supplies the menu-bar tint.
     private func statusBarImage() -> NSImage {
-        let size = NSSize(width: 20, height: 20)
+        let size = NSSize(width: 22, height: 18)
         let image = NSImage(size: size)
         guard let resources = Bundle.main.resourceURL else { return image }
         for name in ["MenuBarIcon.png", "MenuBarIcon@2x.png", "MenuBarIcon@3x.png"] {
@@ -561,6 +577,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             onQuit: { [weak self] in self?.quit() })
         menuBarModules?.setSystemMonitorVisible(settingsDraft.value("enableSystemMonitor", true))
         menuBarModules?.setCalendarVisible(true)
+        menuBarModules?.setCodexUsage(codexUsageProvider(),
+                                      visible: settingsDraft.value("enableCodexUsage", false))
         menuBarModules?.start()
         setApplicationStatusItemVisible(settingsDraft.value("showApplicationMenuBarIcon", true))
         if startupMode == .production {
@@ -726,6 +744,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // Do not touch the lazy model here when no controller was constructed;
         // termination must not create an AppModel/ConnectivityController and
         // accidentally start its lifecycle.
+        codexUsage?.stop()
+        codexUsage = nil
         if modelWasLoaded {
             lockMusic?.stop()
             lockMusic = nil

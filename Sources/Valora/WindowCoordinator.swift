@@ -14,16 +14,18 @@ struct DisplayDescriptor: Equatable, Sendable {
     let auxiliaryRightWidth: CGFloat?
     let menuBarHeight: CGFloat
     let isBuiltIn: Bool
+    let isActive: Bool
 
     init(id: String, name: String, frame: CGRect, safeAreaTop: CGFloat,
          auxiliaryLeftWidth: CGFloat?, auxiliaryRightWidth: CGFloat?,
-         menuBarHeight: CGFloat, isBuiltIn: Bool = false) {
+         menuBarHeight: CGFloat, isBuiltIn: Bool = false, isActive: Bool = true) {
         self.id = id; self.name = name; self.frame = frame
         self.safeAreaTop = safeAreaTop
         self.auxiliaryLeftWidth = auxiliaryLeftWidth
         self.auxiliaryRightWidth = auxiliaryRightWidth
         self.menuBarHeight = menuBarHeight
         self.isBuiltIn = isBuiltIn
+        self.isActive = isActive
     }
 
     init(screen: NSScreen) {
@@ -36,6 +38,7 @@ struct DisplayDescriptor: Equatable, Sendable {
         auxiliaryRightWidth = screen.auxiliaryTopRightArea?.width
         menuBarHeight = screen.frame.maxY - screen.visibleFrame.maxY
         isBuiltIn = number.map { CGDisplayIsBuiltin($0) != 0 } ?? false
+        isActive = number.map { CGDisplayIsOnline($0) != 0 && CGDisplayIsActive($0) != 0 } ?? true
     }
 }
 
@@ -360,7 +363,7 @@ final class WindowCoordinator {
     }
 
     private func selectedDisplays() -> [DisplayDescriptor] {
-        let all = displayProvider()
+        let all = displayProvider().filter(\.isActive)
         guard !all.isEmpty else { return [] }
         switch model.settings.selectedDisplay {
         case "All displays": return all
@@ -374,7 +377,7 @@ final class WindowCoordinator {
 
     private func place() {
         let selectedRaw = selectedDisplays()
-        let selected = selectedRaw.isEmpty ? Array(displayProvider().prefix(1)) : selectedRaw
+        let selected = selectedRaw.isEmpty ? Array(displayProvider().filter(\.isActive).prefix(1)) : selectedRaw
         let wanted = Set(selected.map(\.id))
         var kept: [ScreenPanel] = []
         for record in panels {
@@ -405,6 +408,8 @@ final class WindowCoordinator {
             }
         }
         model.allowsMultiDisplayDynamic = model.settings.selectedDisplay == "All displays" && panels.count > 1
+        model.inlineLyricsDisplayEligible = panels.count == 1
+            && panels.first?.geometry.hasPhysicalNotch == false
         if panels.isEmpty {
             active = nil
             panel = nil
@@ -480,6 +485,13 @@ final class WindowCoordinator {
                 || model.isLockTransitioning || model.isLockNeutralGeometry)
         for record in panels {
             record.panel.sharingType = model.settings.hideFromScreenCapture ? .none : .readOnly
+            if model.isSessionLocked, model.lockNotchMounted,
+               model.lockIndicator.phase != .locking,
+               record.id != LockDisplayPolicy.select(from: displayProvider())?.id {
+                record.panel.orderOut(nil)
+                record.panel.ignoresMouseEvents = true
+                continue
+            }
             // The dedicated lock overlay owns the top surface while the real
             // session is locked. The ordinary desktop panel stays ordered out
             // until the overlay's neutral completion hands back.
@@ -638,6 +650,11 @@ final class WindowCoordinator {
     var verificationPanelCount: Int { panels.count }
     var verificationActiveScreenID: String? { active?.id }
     var currentNotchDisplayFrame: CGRect? { active?.display.frame }
+    /// Never mount a music panel from an unrelated screen as lock fallback.
+    var lockFallbackPanel: NotchPanel? {
+        guard let target = LockDisplayPolicy.select(from: displayProvider()) else { return nil }
+        return panels.first(where: { $0.id == target.id })?.panel
+    }
     var verificationScreenIDs: [String] { panels.map(\.id) }
     func verificationActivateScreen(_ id: String) {
         guard let record = panels.first(where: { $0.id == id }) else { return }

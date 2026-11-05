@@ -9,6 +9,9 @@ import SwiftUI
 final class MenuBarModuleController: NSObject, NSPopoverDelegate {
     let monitor: SystemMonitor
     let calendar: CalmonCalendarModel
+    /// Read-only Codex quota line in the shared panel. Started/stopped by its
+    /// own settings switch; never affects the monitor or calendar samples.
+    private(set) var codex: CodexUsageProvider?
     private let onSettings: () -> Void
     private let onQuit: () -> Void
 
@@ -24,6 +27,7 @@ final class MenuBarModuleController: NSObject, NSPopoverDelegate {
     private var samplingEnabled = true
     private var systemMonitorVisible = true
     private var calendarVisible = true
+    private var codexUsageVisible = false
     private var monitorObservationActive = false
     private var calendarObservationActive = false
     private var monitorObservationEpoch: UInt64 = 0
@@ -257,6 +261,31 @@ final class MenuBarModuleController: NSObject, NSPopoverDelegate {
         }
     }
 
+    /// Own switch for the Codex usage line. Enabling starts the read-only
+    /// refresh; disabling stops its task/timer and removes the row.
+    func setCodexUsage(_ provider: CodexUsageProvider?, visible: Bool) {
+        codex = provider
+        guard codexUsageVisible != visible else {
+            visibility.codexUsageVisible = visible
+            return
+        }
+        codexUsageVisible = visible
+        visibility.codexUsageVisible = visible
+        if visible {
+            provider?.start()
+        } else {
+            provider?.stop()
+        }
+        if sharedPopover.isShown { sharedPopover.performClose(nil) }
+    }
+
+    /// Stops the background read without touching the monitor or calendar.
+    func stopCodexUsage() {
+        codex?.stop()
+        codexUsageVisible = false
+        visibility.codexUsageVisible = false
+    }
+
     // MARK: - Shared panel
 
     func showMonitorPanel() { showSharedPanel(.systemMonitor) }
@@ -276,11 +305,14 @@ final class MenuBarModuleController: NSObject, NSPopoverDelegate {
             break
         }
         lastOpenedModule = module
+        // Opening the panel may refresh an expired Codex snapshot; the provider
+        // throttles and coalesces, so repeated opens cannot stack requests.
+        if codexUsageVisible { codex?.refreshOnOpen() }
         guard let item = sharedItem(for: module) else { return }
         let screen = item.button?.window?.screen ?? NSScreen.main
         let maxHeight = (screen?.visibleFrame.height ?? 800) * 0.8
         let host = NSHostingController(rootView: CalendarMonitorSharedView(
-            monitor: monitor, calendar: calendar, visibility: visibility,
+            monitor: monitor, calendar: calendar, codex: codex, visibility: visibility,
             maxHeight: maxHeight,
             onClose: { [weak self] in self?.sharedPopover.performClose(nil) }))
         host.sizingOptions = [.preferredContentSize]

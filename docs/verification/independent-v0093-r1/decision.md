@@ -1,0 +1,9 @@
+# V0093-R1 独立复验：原两项通过，启动前取消仍失败
+
+原IndependentCodexTransportTests两失败已通过；CodexUsageSummaryTests13通过。新增testAlreadyCancelledReadFinishesWithoutLaunchingAnEngine失败，合计16项中1失败。
+
+不调用真实Codex：在Task进入readRateLimits前标记取消，传入不存在的临时引擎路径（应从不启动）。350ms后完成标志仍false，continuation挂起。
+
+代码原因：Run.finish在continuation尚未注册时设置finished=true但不保存pendingError；start仅检查pendingError（该字段从未赋值），仍进入启动逻辑。之后的finish因finished早退，continuation永不resume。另需审启动/取消之间交错与子进程实际退出：当前finish发TERM后立即resume、500ms再kill，对忽略TERM进程不能证明provider重启无两个实际child。需边界验证，不只测调用方快速返回。
+
+本轮只新增独立回归测试，不修改生产实现，不读真实账号/真实额度，不操作用户App。R1整体尚不接受。用户最新已确认新布局，下一任务V0094须先修此边界并复测，再落地布局；本记录不授权旧队列或新权限。

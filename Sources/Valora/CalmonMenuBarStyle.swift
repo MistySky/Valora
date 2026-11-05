@@ -120,6 +120,13 @@ enum UIStyle {
         return value == value.rounded() ? String(format: "%.0f GB", value) : String(format: "%.1f GB", value)
     }
 
+    /// Remaining memory: always one decimal (9.0 GB / 9.2 GB / 10.0 GB) so the
+    /// value does not jump width between samples. Total capacity keeps the
+    /// whole-number form above and is never routed through this helper.
+    static func memoryRemainingString(_ bytes: UInt64) -> String {
+        String(format: "%.1f GB", Double(bytes) / gib)
+    }
+
     /// Disk capacity uses decimal GB, matching Finder. Per docs/MONITORING.md §6.
     static func diskCapacityString(_ bytes: UInt64) -> String {
         let value = (Double(bytes) / 1_000_000_000 * 10).rounded() / 10

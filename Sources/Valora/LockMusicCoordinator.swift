@@ -68,7 +68,9 @@ final class LockMusicCoordinator: ObservableObject {
     unowned let model: AppModel
     private let windowFactory: any LockPresentationWindowFactory
     private let overlayWindowFactory: any LockPresentationWindowFactory
-    private let overlayFrameProvider: @MainActor () -> CGRect?
+    private let overlayFrameProvider: (@MainActor () -> CGRect?)?
+    private let displayProvider: @MainActor () -> [DisplayDescriptor]
+    private var targetDisplay: DisplayDescriptor?
     private let spaceFactory: () -> (any LockPresentationSpace)?
     private let eventSource: any LockSystemEventSource
     private let scheduler: any LockScheduling
@@ -121,7 +123,8 @@ final class LockMusicCoordinator: ObservableObject {
          notchWindowUpdates: AnyPublisher<Int?, Never> = Empty<Int?, Never>(completeImmediately: false).eraseToAnyPublisher(),
          windowFactory: any LockPresentationWindowFactory = LockAppKitWindowFactory(),
          overlayWindowFactory: any LockPresentationWindowFactory = LockNotchOverlayWindowFactory(),
-         overlayFrameProvider: @escaping @MainActor () -> CGRect? = { NSScreen.screens.first?.frame },
+         overlayFrameProvider: (@MainActor () -> CGRect?)? = nil,
+         displayProvider: @escaping @MainActor () -> [DisplayDescriptor] = { LockDisplayPolicy.availableDisplays() },
          usePresentationSpace: Bool = true,
          spaceFactory: @escaping () -> (any LockPresentationSpace)? = {
              ARLockPresentationSpace.create()
@@ -141,6 +144,7 @@ final class LockMusicCoordinator: ObservableObject {
         self.windowFactory = windowFactory
         self.overlayWindowFactory = overlayWindowFactory
         self.overlayFrameProvider = overlayFrameProvider
+        self.displayProvider = displayProvider
         self.usePresentationSpace = usePresentationSpace
         self.spaceFactory = spaceFactory
         self.eventSource = eventSource
@@ -533,7 +537,7 @@ final class LockMusicCoordinator: ObservableObject {
     private func ensureOverlay() -> Bool {
         guard model.isSessionLocked, started else { return false }
         if model.lockOverlayReady, overlayWindow != nil { return true }
-        guard let lockSpace, let screenFrame = overlayFrameProvider() else {
+        guard let lockSpace, let screenFrame = lockDisplayFrame else {
             overlayFailureReason = "missing-space-or-screen"
             return false
         }
@@ -546,7 +550,7 @@ final class LockMusicCoordinator: ObservableObject {
             level: NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()) + 1),
             ignoresMouseEvents: true)
         window.setRootView(AnyView(NotchView(model: model, settings: model.settings,
-                                             compactOnly: false, allowsDynamic: false)))
+                                             compactOnly: false, allowsDynamic: false, lockSurface: true)))
         window.setFrameOrigin(NSPoint(x: screenFrame.midX - 312,
                                       y: screenFrame.maxY - 320))
         // A not-yet-ordered NSWindow has no Space membership for the conservative
@@ -600,7 +604,7 @@ final class LockMusicCoordinator: ObservableObject {
     }
 
     private func repositionOverlay() {
-        guard let overlayWindow, let frame = overlayFrameProvider() else { return }
+        guard let overlayWindow, let frame = lockDisplayFrame else { return }
         overlayWindow.setFrameOrigin(NSPoint(x: frame.midX - 312,
                                              y: frame.maxY - 320))
         recordOverlayState(reason: "reposition")
@@ -748,7 +752,7 @@ final class LockMusicCoordinator: ObservableObject {
     private func refreshInformation() {
         guard started else { return }
         let preferences = model.settings.lockPreferences
-        let eligible = model.isSessionLocked && model.lockIndicator.phase == .locked
+        let eligible = lockDisplayFrame != nil && model.isSessionLocked && model.lockIndicator.phase == .locked
             && preferences.enabled
         // The device module's own switch is the only source. When it is off the
         // cached device list is not consulted at all, so the lock card cannot
@@ -776,22 +780,43 @@ final class LockMusicCoordinator: ObservableObject {
     }
 
     private func place() {
-        guard let screen = NSScreen.screens.first, panel != nil else { return }
-        informationPanel?.setFrameOrigin(NSPoint(x: screen.frame.midX - 180,
-                                                 y: screen.frame.maxY - screen.frame.height * 0.265 - 94))
+        let target = LockDisplayPolicy.select(from: displayProvider())
+        targetDisplay = target
+        model.lockNotchGeometry = target.map {
+            LockDisplayPolicy.geometry(for: $0, simulated: model.settings.forceSimulatedNotch)
+        }
+        guard let frame = lockDisplayFrame, panel != nil else {
+            panel?.orderOut()
+            informationPanel?.orderOut()
+            releaseOverlay()
+            return
+        }
+        informationPanel?.setFrameOrigin(NSPoint(x: frame.midX - 180,
+                                                 y: frame.maxY - frame.height * 0.265 - 94))
         // Fixed top edge from the shared layout model: the host window keeps its
         // size, so the card's top and all existing content stay put while the
         // optional volume/lyrics blocks extend it downwards.
-        let layout = LockCardLayout(screenMinY: screen.frame.minY,
-                                    screenHeight: screen.frame.height,
-                                    verticalOffset: model.settings.lockPreferences.offset)
-        panel.setFrameOrigin(NSPoint(x: screen.frame.midX - 192.5,
+        //
+        // The external/clamshell reserve must be decided here, from the real
+        // selected target: an unknown target reserves too (safer than silently
+        // using the built-in anchor on a screen we could not identify).
+        let layout = LockCardLayout(screenMinY: frame.minY,
+                                    screenHeight: frame.height,
+                                    verticalOffset: model.settings.lockPreferences.offset,
+                                    reserveFullExpansion: !(target?.isBuiltIn ?? false))
+        panel.setFrameOrigin(NSPoint(x: frame.midX - 192.5,
                                      y: CGFloat(layout.panelOriginY)))
+    }
+
+    private var lockDisplayFrame: CGRect? {
+        if let overlayFrameProvider { return overlayFrameProvider() }
+        return targetDisplay?.frame
     }
 
     private func applyVisibility(epoch: UInt64) {
         guard isCurrent(epoch) else { return }
         let next = state.visible
+        if model.lockMusicCardVisible != next { model.lockMusicCardVisible = next }
         guard next != visible else {
             if next, !panel.isVisible { present() }
             return
@@ -824,7 +849,7 @@ final class LockMusicCoordinator: ObservableObject {
     }
 
     private func present() {
-        guard state.visible, model.isSessionLocked, !sleeping else { return }
+        guard state.visible, model.isSessionLocked, !sleeping, lockDisplayFrame != nil else { return }
         guard !usePresentationSpace || lockSpace?.attachWindowNumber(panel.windowNumber) == true else {
             panel.orderOut()
             return
@@ -900,6 +925,7 @@ final class LockMusicCoordinator: ObservableObject {
         visible = false
         appeared = false
         showsVolume = false
+        model.lockMusicCardVisible = false
         model.isSessionLocked = false
         var indicator = model.lockIndicator
         indicator.forceHidden()

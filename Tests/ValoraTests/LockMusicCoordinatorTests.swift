@@ -201,13 +201,18 @@ final class LockMusicCoordinatorTests: XCTestCase {
         super.tearDown()
     }
 
-    private func makeCoordinator(useProductionCollapse: Bool = false) -> LockMusicCoordinator {
-        LockMusicCoordinator(model,
+    private func makeCoordinator(useProductionCollapse: Bool = false,
+                                 displays: (@MainActor () -> [DisplayDescriptor])? = nil) -> LockMusicCoordinator {
+        let frameProvider: (@MainActor () -> CGRect?)?
+        if displays == nil { frameProvider = { CGRect(x: 0, y: 0, width: 1728, height: 1117) } }
+        else { frameProvider = nil }
+        return LockMusicCoordinator(model,
             notchWindowProvider: { [weak self] in self?.notch },
             notchWindowUpdates: notchUpdates.eraseToAnyPublisher(),
             windowFactory: factory,
             overlayWindowFactory: factory,
-            overlayFrameProvider: { [weak self] in self?.model.notchGeometry.hasPhysicalNotch == true ? CGRect(x: 0, y: 0, width: 1728, height: 1117) : CGRect(x: 0, y: 0, width: 1728, height: 1117) },
+            overlayFrameProvider: frameProvider,
+            displayProvider: displays ?? { LockDisplayPolicy.availableDisplays() },
             spaceFactory: { [weak self] in self?.space },
             eventSource: events,
             scheduler: scheduler,
@@ -234,6 +239,57 @@ final class LockMusicCoordinatorTests: XCTestCase {
         collapse.runNext()
         fireDelay(0)
         geometry.completeNext()
+    }
+
+    func testLockTargetOwnsOverlayMusicAndDeviceFramesAcrossClamshellChange() {
+        let builtIn = DisplayDescriptor(id: "internal", name: "Internal",
+            frame: CGRect(x: 0, y: 0, width: 1728, height: 1117), safeAreaTop: 32,
+            auxiliaryLeftWidth: 771.5, auxiliaryRightWidth: 771.5,
+            menuBarHeight: 32, isBuiltIn: true)
+        let external = DisplayDescriptor(id: "external", name: "External",
+            frame: CGRect(x: -1920, y: 300, width: 1920, height: 1080), safeAreaTop: 0,
+            auxiliaryLeftWidth: nil, auxiliaryRightWidth: nil, menuBarHeight: 25)
+        var screens = [external, builtIn] // External is main, music is external.
+        settings.forceSimulatedNotch = true
+        var preferences = defaults.dictionary(forKey: "referenceSettingsUI") ?? [:]
+        preferences["showOnDisplay"] = "External"
+        defaults.set(preferences, forKey: "referenceSettingsUI")
+        settings.reloadPreferences()
+        let coordinator = makeCoordinator(displays: { screens })
+        coordinator.setEnabled(true)
+        coordinator.setLocked(true)
+        completeLockStages()
+        let overlay = factory.windows.last!
+        XCTAssertEqual(factory.windows.count, 3)
+        XCTAssertEqual(overlay.frame.maxY, builtIn.frame.maxY)
+        XCTAssertEqual(coordinator.panel.frame.midX, builtIn.frame.midX)
+        XCTAssertEqual(coordinator.panel.frame.minY, 190.57, accuracy: 0.001,
+                       "built-in window must retain its accepted placement")
+        XCTAssertEqual(coordinator.informationPanel.frame.midX, builtIn.frame.midX)
+        XCTAssertTrue(model.lockNotchGeometry?.hasPhysicalNotch == true)
+
+        screens = [external] // Built-in disappears on lid close.
+        events.onScreensChanged?()
+        XCTAssertEqual(factory.windows.count, 3, "display changes must reuse one overlay")
+        XCTAssertEqual(overlay.frame.maxY, external.frame.maxY)
+        XCTAssertEqual(coordinator.panel.frame.midX, external.frame.midX)
+        // V0096-R3: user confirmed 30% was too high; the external branch is kept
+        // and the reference fraction is back to 21% (300 + 0.21*1080 = 526.8).
+        XCTAssertEqual(coordinator.panel.frame.minY, 526.8, accuracy: 0.001,
+                       "production placement must pass external policy: minY300 + height1080 * 0.30")
+        XCTAssertEqual(coordinator.informationPanel.frame.midX, external.frame.midX)
+        XCTAssertFalse(model.lockNotchGeometry?.hasPhysicalNotch == true)
+        // User decision 2026-11-05: lock display selection stays independent of
+        // the music target, but on a screen without a physical notch the lock
+        // shape follows the existing "force simulated notch" switch.
+        XCTAssertEqual(settings.forceSimulatedNotch, true)
+        XCTAssertEqual(model.lockNotchGeometry?.compact.height, 24,
+                       "simulated lock geometry must use the simulated shape, not the capsule")
+        settings.forceSimulatedNotch = false
+        events.onScreensChanged?()
+        XCTAssertEqual(model.lockNotchGeometry?.compact.height, 19.5,
+                       "switch off keeps the capsule shape")
+        coordinator.stop()
     }
 
     func testPanelBoundsUseInjectedWindowFactory() {

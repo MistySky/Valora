@@ -11,6 +11,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
     case lockScreen = "Lock Screen"
     case connectivity = "Connectivity"
     case systemMonitor = "System Monitor"
+    case codexUsage = "Codex Usage"
     case calendar = "Calendar"
     case about = "About"
     var id: String { rawValue }
@@ -22,6 +23,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         case .lockScreen: return "lock.fill"
         case .connectivity: return "headphones"
         case .systemMonitor: return "chart.bar.xaxis"
+        case .codexUsage: return "sparkles"
         case .calendar: return "calendar"
         case .about: return "info.circle.fill"
         }
@@ -33,6 +35,7 @@ enum SettingsPage: String, CaseIterable, Identifiable {
         case .lockScreen: return Color(white: 0.16)
         case .connectivity: return Color(red: 0, green: 0.75, blue: 0.54)
         case .systemMonitor: return Color(red: 0.25, green: 0.55, blue: 1)
+        case .codexUsage: return Color(white: 0.28)
         case .about: return .gray
         }
     }
@@ -54,7 +57,7 @@ enum SettingsSidebar {
     static let groups: [SettingsSidebarGroup] = [
         SettingsSidebarGroup(title: nil, pages: [.general]),
         SettingsSidebarGroup(title: "刘海屏", pages: [.nowPlaying, .lockScreen, .connectivity]),
-        SettingsSidebarGroup(title: "菜单栏", pages: [.calendar, .systemMonitor]),
+        SettingsSidebarGroup(title: "菜单栏", pages: [.calendar, .systemMonitor, .codexUsage]),
         SettingsSidebarGroup(title: "Valora", pages: [.about])
     ]
     static var orderedPages: [SettingsPage] { groups.flatMap(\.pages) }

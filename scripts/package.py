@@ -40,7 +40,7 @@ if not icon_source.exists():
 shutil.copy2(icon_source, resources / 'AppIcon.icns')
 
 # Borderless template ribbon V; app icon remains the color .icns.
-menubar_icon_source = ROOT / 'Resources/MenuBarIcon-Outline-v7/MenuBarIcon.png'
+menubar_icon_source = ROOT / 'Resources/MenuBarIcon-User-v11/MenuBarIcon.png'
 for name in ['MenuBarIcon.png', 'MenuBarIcon@2x.png', 'MenuBarIcon@3x.png']:
     source = menubar_icon_source.parent / name
     if not source.is_file():

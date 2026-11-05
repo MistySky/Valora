@@ -88,19 +88,31 @@ public struct LockCardLayout: Equatable, Sendable {
     /// the reserved card region.
     public static let maxCardHeight: Double = playerHeight + volumeBlock + lyricBlock
     public static let canvasHeight: Double = maxCardHeight
-    /// Preserve the old collapsed card's bottom clearance for the *largest*
-    /// state instead. This is a placement policy, not measured login-window
-    /// geometry: macOS does not supply the avatar bounds through this API.
+    /// Built-in screen: the accepted collapsed-card clearance (a product value,
+    /// not measured login-window geometry — macOS does not expose the avatar
+    /// bounds through this API).
     public static let loginSafeFraction: Double = 0.21
+    /// External/clamshell screens keep the same 21% reference but still reserve
+    /// room for the **fully expanded** card above it. The user confirmed 30% was
+    /// too high (R2) and asked to restore this value while keeping the wiring;
+    /// 21% is a product placement value, **not** a system-provided avatar bound.
+    public static let externalReserveFraction: Double = 0.21
 
     public var screenMinY: Double
     public var screenHeight: Double
     public var verticalOffset: Double
+    /// External/clamshell targets reserve room for the **fully expanded** card
+    /// above the login line, so opening the volume and the lyric row can never
+    /// cover the avatar. The built-in screen keeps the accepted anchor, where
+    /// the volume-expanded state sits exactly on that line.
+    public var reserveFullExpansion: Bool
 
-    public init(screenMinY: Double = 0, screenHeight: Double, verticalOffset: Double = 0) {
+    public init(screenMinY: Double = 0, screenHeight: Double,
+                verticalOffset: Double = 0, reserveFullExpansion: Bool = false) {
         self.screenMinY = screenMinY
         self.screenHeight = screenHeight
         self.verticalOffset = verticalOffset
+        self.reserveFullExpansion = reserveFullExpansion
     }
 
     /// The original 21% clearance line. V0091 note: this is **not** a measured
@@ -109,6 +121,14 @@ public struct LockCardLayout: Equatable, Sendable {
     /// accepted pre-V0088 card sat.
     public var loginSafeBottom: Double {
         screenMinY + screenHeight * Self.loginSafeFraction + verticalOffset
+    }
+
+    /// Base line the card is laid out against: the built-in 21% line, or the
+    /// higher external reserve when the target screen needs the full expansion.
+    public var reservedBottom: Double {
+        screenMinY + screenHeight * (reserveFullExpansion ? Self.externalReserveFraction
+                                                         : Self.loginSafeFraction)
+            + verticalOffset
     }
 
     /// Extra clearance above the reference line so that opening the **volume**
@@ -126,7 +146,8 @@ public struct LockCardLayout: Equatable, Sendable {
     /// - volume-expanded card's bottom sits on that line;
     /// - adding the lyric row still publishes 44pt below it.
     public var cardTop: Double {
-        loginSafeBottom + Self.playerHeight + Self.volumeClearance
+        reservedBottom + (reserveFullExpansion ? Self.maxCardHeight
+                                               : Self.playerHeight + Self.volumeClearance)
     }
 
     /// Height of the visible card for a given set of expanded blocks.

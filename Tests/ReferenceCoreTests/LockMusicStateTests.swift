@@ -294,4 +294,60 @@ final class LockCardLayoutTests: XCTestCase {
         XCTAssertEqual(shifted.cardTop - layout.cardTop, 40, accuracy: 0.001)
         XCTAssertEqual(shifted.panelOriginY - layout.panelOriginY, 40, accuracy: 0.001)
     }
+
+    /// V0096: on an external/clamshell target the fully expanded card must stay
+    /// above the login line, so opening volume + lyrics cannot cover the avatar.
+    func testExternalScreenReservesTheFullyExpandedCard() {
+        let external = LockCardLayout(screenMinY: 0, screenHeight: 1080,
+                                      reserveFullExpansion: true)
+        // V0096-R3: external keeps the wiring but restores the 21% reference.
+        XCTAssertEqual(external.reservedBottom, 1080 * 0.21, accuracy: 0.001)
+        XCTAssertEqual(external.cardTop, 226.8 + LockCardLayout.maxCardHeight, accuracy: 0.001)
+        XCTAssertEqual(external.cardTop - external.cardHeight(volume: false, lyrics: true),
+                       258.8, accuracy: 0.001, "normal lyric state bottom")
+        XCTAssertEqual(external.cardTop - LockCardLayout.maxCardHeight, 226.8, accuracy: 0.001)
+        let expandedBottom = external.cardTop - LockCardLayout.maxCardHeight
+        XCTAssertGreaterThanOrEqual(expandedBottom, external.loginSafeBottom - 0.001,
+                                    "expanded card must not cross the login line")
+        for (volume, lyrics) in [(false, false), (true, false), (false, true), (true, true)] {
+            let bottom = external.cardTop - external.cardHeight(volume: volume, lyrics: lyrics)
+            XCTAssertGreaterThanOrEqual(bottom, external.loginSafeBottom - 0.001)
+        }
+        // Still a fixed top: the host origin does not depend on the state.
+        XCTAssertEqual(external.panelOriginY, external.cardTop - LockCardLayout.canvasHeight,
+                       accuracy: 0.001)
+    }
+
+    /// Negative origins and short displays: the anchor is computed from the
+    /// target screen's own frame, never from a fixed pixel offset.
+    func testNegativeOriginExternalScreenKeepsTheAnchorRelativeToItsOwnFrame() {
+        let screenMinY: Double = 300
+        let external = LockCardLayout(screenMinY: screenMinY, screenHeight: 1080,
+                                      verticalOffset: 0, reserveFullExpansion: true)
+        XCTAssertEqual(external.cardTop - screenMinY,
+                       1080 * LockCardLayout.externalReserveFraction + LockCardLayout.maxCardHeight,
+                       accuracy: 0.001)
+        XCTAssertEqual(external.cardTop - screenMinY, 466.8, accuracy: 0.001)
+        XCTAssertGreaterThanOrEqual(external.panelOriginY, screenMinY,
+                                    "the host stays inside the target screen")
+    }
+
+    /// The built-in screen keeps its accepted 21% + volume-clearance anchor.
+    func testBuiltInScreenKeepsTheAcceptedAnchor() {
+        let builtIn = LockCardLayout(screenMinY: 0, screenHeight: 1117)
+        XCTAssertEqual(builtIn.reservedBottom, 1117 * 0.21, accuracy: 0.001)
+        XCTAssertEqual(builtIn.cardTop,
+                       1117 * 0.21 + LockCardLayout.playerHeight + LockCardLayout.volumeClearance,
+                       accuracy: 0.001)
+    }
+
+    /// Same rule with a negative-origin external display: every coordinate is
+    /// relative to that screen's own frame, never a fixed pixel offset.
+    func testExternalAnchorTranslatesWithANegativeOriginScreen() {
+        let screenMinY: Double = 300
+        let external = LockCardLayout(screenMinY: screenMinY, screenHeight: 1080,
+                                      reserveFullExpansion: true)
+        XCTAssertEqual(external.reservedBottom - screenMinY, 226.8, accuracy: 0.001)
+        XCTAssertEqual(external.cardTop - screenMinY, 466.8, accuracy: 0.001)
+    }
 }

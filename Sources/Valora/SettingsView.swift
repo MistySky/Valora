@@ -215,6 +215,7 @@ struct SettingsView: View {
         case .lockScreen: lockScreen
         case .connectivity: connectivity
         case .systemMonitor: systemMonitorPage
+        case .codexUsage: codexUsagePage
         case .about: aboutPage
         }
     }
@@ -224,6 +225,13 @@ struct SettingsView: View {
             SettingsToggleRow(title: "Launch at login",
                               value: loginBinding,
                               blocked: permissions.loginBlocked); SettingsRule()
+            SettingsToggleRow(title: "显示菜单栏图标",
+                              value: draft.binding("showApplicationMenuBarIcon", true))
+        }
+    }
+
+    private var musicDisplaySettings: some View {
+        SettingsCard {
             SettingsToggleRow(title: "Force simulated notch", value: $settings.forceSimulatedNotch); SettingsRule()
             HStack {
                 Text(SettingsText.localized("Display on")); Spacer()
@@ -232,9 +240,6 @@ struct SettingsView: View {
                     .padding(.trailing, 4)
                 SettingsNativeMenu(value: draft.binding("showOnDisplay", "Main display"), options: SettingsDisplayCatalog.options)
             }.font(.system(size: 13.5)).padding(.horizontal, 12).frame(height: 41)
-            SettingsRule()
-            SettingsToggleRow(title: "显示菜单栏图标",
-                              value: draft.binding("showApplicationMenuBarIcon", true))
             SettingsRule()
             SettingsToggleRow(title: "Expand on hover", value: $settings.hoverEnabled, info: "Expand the current activity when the pointer rests on the notch.")
             if settings.hoverEnabled {
@@ -278,12 +283,22 @@ struct SettingsView: View {
         }
     }
 
-    private var music: some View {
+    /// One switch only: it starts/stops the read-only quota refresh. No brand
+    /// asset, no explanation block, no extra options.
+    private var codexUsagePage: some View {
+        SettingsCard {
+            toggle("Codex Usage", "enableCodexUsage")
+        }
+    }
+
+    @ViewBuilder private var music: some View {
         SettingsCard {
             toggle("Now Playing", "enableNowPlaying", true, symbol: "play.fill"); SettingsRule()
             choices("progressStyle", "Monochrome", [("Monochrome", ""), ("Colored", ""), ("Gradient", "")], style: "progress", height: 36); SettingsRule()
-            toggle("Show lyrics", "showLyrics")
+            toggle("Show lyrics", "showLyrics"); SettingsRule()
+            toggle("Inline lyrics", "inlineLyrics")
         }
+        musicDisplaySettings
     }
 
 

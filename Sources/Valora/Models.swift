@@ -208,12 +208,17 @@ final class AppModel: ObservableObject {
     @Published var connectionToast: AudioDevice?
     @Published var connectionLowBattery = false
     @Published var isSessionLocked = false
+    /// True while the real lock music card is on screen and would show lyrics.
+    /// Lyrics demand is the notch OR this card, so a locked track change keeps
+    /// requesting even though the desktop music surface is hidden.
+    @Published var lockMusicCardVisible = false
     @Published var lockIndicator = LockIndicatorState()
     @Published var lockNotchMounted = false
     /// True only after the dedicated lock overlay is successfully attached to
     /// the owned presentation Space. Until then the primary notch stays visible
     /// as the known fallback.
     @Published var lockOverlayReady = false
+    @Published var lockNotchGeometry: NotchGeometry?
     @Published var connectionArrivalGeneration = 0
     @Published var pinned = false
     @Published var previewMode = false
@@ -260,13 +265,20 @@ final class AppModel: ObservableObject {
     /// lets an external pill use the same peek path without changing the
     /// single-display/simulated-notch policy.
     var allowsMultiDisplayDynamic = false
+    /// Set from actual reconciled music targets, never from the preference
+    /// label alone (a named/absent screen can fall back to physical hardware).
+    var inlineLyricsDisplayEligible = false
 
     // Single source of geometry for rendering and input hit testing.
     var visibleSize: CGSize {
+        presentationSize(geometry: notchGeometry, simulated: settings.forceSimulatedNotch)
+    }
+
+    func presentationSize(geometry: NotchGeometry, simulated: Bool) -> CGSize {
         let neutral = isLockNeutralGeometry
         let lockStage = isLockTransitioning || neutral || showsLockActivity
         let expandedForMetrics = expanded && !neutral
-        let size = PresentationMetrics.stationarySize(geometry: notchGeometry, simulated: settings.forceSimulatedNotch,
+        let size = PresentationMetrics.stationarySize(geometry: geometry, simulated: simulated,
             expanded: expandedForMetrics ? .nowPlaying : .none,
             hasOutput: !lockStage && showsOutputVolume,
             notification: lockStage ? .none : connectionStatusNotification,
@@ -278,6 +290,9 @@ final class AppModel: ObservableObject {
         if expandedForMetrics, showsLyricsInExpanded {
             // 32pt lyric row plus the existing 8pt player stack spacing.
             return CGSize(width: size.width, height: size.height + 40)
+        }
+        if !lockStage, !expandedForMetrics, showsInlineLyrics {
+            return CGSize(width: size.width + inlineLyricsWidthAddition, height: size.height)
         }
         return size
     }
@@ -309,11 +324,17 @@ final class AppModel: ObservableObject {
         settings.nowPlayingEnabled && settings.musicPreferences.showLyrics
             && showsMusicActivity && lyrics.hasTimedLyrics
     }
-    var showsCompactLyrics: Bool {
+    private var compactLyricsVisible: Bool {
         lyricsAvailable && (!isSessionLocked || isLockTransitioning)
             && !expanded
             && settings.showNotch && !screenHidden && connectionToast == nil
     }
+    var usesInlineLyrics: Bool {
+        settings.musicPreferences.inlineLyrics && inlineLyricsDisplayEligible && !notchGeometry.hasPhysicalNotch
+    }
+    var showsInlineLyrics: Bool { compactLyricsVisible && usesInlineLyrics }
+    var inlineLyricsWidthAddition: CGFloat { showsInlineLyrics ? 16 : 0 }
+    var showsCompactLyrics: Bool { compactLyricsVisible && !usesInlineLyrics }
     var showsLyricsInExpanded: Bool { lyricsAvailable && settings.showNotch && !screenHidden }
     var currentLyricLine: LyricLine? {
         guard lyricsAvailable, let timeline = lyrics.timeline else { return nil }
