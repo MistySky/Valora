@@ -65,7 +65,8 @@ final class ConnectivityController {
     /// Last known metadata is keyed by the stable native id. A transient
     /// missing modelUID/name must not turn the existing AirPods toast into a
     /// generic headphone icon, while a different id never inherits it.
-    private var metadataCache: [String: (modelUID: String, name: String, isAirPods: Bool)] = [:]
+    private var metadataCache: [String: (modelUID: String, name: String, isAirPods: Bool,
+                                         productID: UInt16?, vendorID: UInt16?)] = [:]
     private var lastActiveAirPodsIDs = Set<String>()
     private var lastActiveAudioID: String?
     private let clock: () -> TimeInterval
@@ -297,9 +298,14 @@ final class ConnectivityController {
                     device.name = cached.name
                 }
                 if !device.isAirPods && cached.isAirPods { device.isAirPods = true }
+                // Model identity only. Battery is never cached: a later snapshot
+                // with missing percentages must show "--%" rather than stale data.
+                if device.productID == nil { device.productID = cached.productID }
+                if device.vendorID == nil { device.vendorID = cached.vendorID }
             }
-            if !device.modelUID.isEmpty || device.isAirPods {
-                metadataCache[device.id] = (device.modelUID, device.name, device.isAirPods)
+            if !device.modelUID.isEmpty || device.isAirPods || device.productID != nil {
+                metadataCache[device.id] = (device.modelUID, device.name, device.isAirPods,
+                                            device.productID, device.vendorID)
             }
             merged.append(device)
         }

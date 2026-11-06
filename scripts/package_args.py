@@ -21,7 +21,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Package the Valora release candidate")
     parser.add_argument("--binary", required=True, type=Path,
                         help="Binary produced by the current release build")
-    parser.add_argument("--version", default="1.0.2")
+    parser.add_argument("--version", default="1.0.3")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "dist")
     parser.add_argument("--lock-diagnostic-path", default=None,
                         help="Optional LSEnvironment diagnostic path for a QA candidate")

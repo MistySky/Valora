@@ -14,6 +14,12 @@ struct AudioDevice: Identifiable, Equatable, Sendable {
     var isAirPods: Bool
     var modelUID = ""
     var rawColorID: Int? = nil
+    /// Charging-case percentage reported by the system; nil when unavailable.
+    /// Max has no case and leaves this nil.
+    var caseBattery: Int? = nil
+    /// Bluetooth PnP identifiers; preferred over the CoreAudio model UID.
+    var productID: UInt16? = nil
+    var vendorID: UInt16? = nil
 
     /// 0 is a real measured battery value; nil means unavailable/invalid.
     var battery: Int? {
@@ -24,7 +30,16 @@ struct AudioDevice: Identifiable, Equatable, Sendable {
         if !earbuds.isEmpty { return earbuds.min() }
         return single
     }
-    var airPodsModel: AirPodsModel? { AirPodsModel.identify(modelUID: modelUID) }
+    var airPodsModel: AirPodsModel? {
+        // The current CoreAudio default output may be a speaker; the Bluetooth
+        // PnP product ID still identifies the connected AirPods. Prefer it over
+        // a generic CoreAudio model token (e.g. 2002) when both exist.
+        if let productID, vendorID == nil || vendorID == 0x004C,
+           let model = AirPodsModel.identify(productID: productID) {
+            return model
+        }
+        return AirPodsModel.identify(modelUID: modelUID)
+    }
     var symbol: String {
         if let model = airPodsModel {
             if NSImage(systemSymbolName: model.symbol, accessibilityDescription: nil) != nil {

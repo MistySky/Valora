@@ -106,6 +106,21 @@ static int connectivityScalar(id object, NSString *name) {
     unsigned char value = ((unsigned char (*)(id, SEL))objc_msgSend)(object, selector);
     return value <= 100 ? (int)value : -1;
 }
+// Private PnP identifiers are 16-bit. Check the ABI (unsigned short, not the
+// unsigned char used for battery percentages) before calling.
+static int connectivityUShort(id object, NSString *name) {
+    SEL selector = NSSelectorFromString(name);
+    if (![object respondsToSelector:selector]) return -1;
+    Method method = class_getInstanceMethod([object class], selector);
+    if (!method) return -1;
+    char *returnType = method_copyReturnType(method);
+    if (!returnType) return -1;
+    BOOL isUnsignedShort = returnType[0] == 'S' && returnType[1] == '\0';
+    free(returnType);
+    if (!isUnsignedShort) return -1;
+    unsigned short value = ((unsigned short (*)(id, SEL))objc_msgSend)(object, selector);
+    return (int)value;
+}
 static NSString *normalAddress(NSString *s) {
     return [[s.lowercaseString componentsSeparatedByCharactersInSet:
              [NSCharacterSet characterSetWithCharactersInString:@"-: "]] componentsJoinedByString:@""];
@@ -137,6 +152,11 @@ NSArray<NSDictionary *> *ARConnectedAudioDevices(void) {
         int left = connectivityScalar(device, @"batteryPercentLeft");
         int right = connectivityScalar(device, @"batteryPercentRight");
         int single = connectivityScalar(device, @"batteryPercentSingle");
+        int caseBattery = connectivityScalar(device, @"batteryPercentCase");
+        int productID = connectivityUShort(device, @"pnpProductID");
+        if (productID < 0) productID = connectivityUShort(device, @"PnPProductID");
+        int vendorID = connectivityUShort(device, @"pnpVendorID");
+        if (vendorID < 0) vendorID = connectivityUShort(device, @"PnPVendorID");
         NSString *name = device.name ?: @"Bluetooth device";
         NSString *address = device.addressString ?: @"";
         BOOL active = address.length && [uid containsString:normalAddress(address)];
@@ -155,7 +175,9 @@ NSArray<NSDictionary *> *ARConnectedAudioDevices(void) {
         if (!namedAirPods && !active && !hasBattery) continue;
         [result addObject:@{
             @"id": normalAddress(address), @"name": active && outputName.length ? outputName : name,
-            @"left": @(left), @"right": @(right), @"single": @(single), @"active": @(active),
+            @"left": @(left), @"right": @(right), @"single": @(single), @"case": @(caseBattery),
+            @"productID": @(productID), @"vendorID": @(vendorID),
+            @"active": @(active),
             @"airpods": @(namedAirPods), @"modelUID": deviceModel,
             @"colorID": @(connectivityScalar(device, @"colorID"))
         }];

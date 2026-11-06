@@ -5,6 +5,11 @@ import Foundation
 public enum AirPodsModel: Int, CaseIterable, Sendable {
     case airPods = 0, airPods2, airPods3, airPods4, pro, pro2, pro3, max, max2
 
+    /// Bluetooth PnP product ID (16-bit), e.g. 0x2013 for AirPods 3.
+    public static func identify(productID: UInt16) -> Self? {
+        identify(modelUID: String(format: "%04x", productID))
+    }
+
     public static func identify(modelUID: String) -> Self? {
         guard let token = modelUID.split(whereSeparator: { $0.isWhitespace }).first else { return nil }
         switch token.lowercased() {
@@ -18,6 +23,22 @@ public enum AirPodsModel: Int, CaseIterable, Sendable {
         case "200a": return .max
         case "201f", "202d": return .max2
         default: return nil
+        }
+    }
+
+    /// User-facing product name for the device row. Only this row uses it; the
+    /// native device name and existing toast/asset strings stay unchanged.
+    public var displayName: String {
+        switch self {
+        case .airPods: return "AirPods"
+        case .airPods2: return "AirPods 2"
+        case .airPods3: return "AirPods 3"
+        case .airPods4: return "AirPods 4"
+        case .pro: return "AirPods Pro"
+        case .pro2: return "AirPods Pro 2"
+        case .pro3: return "AirPods Pro 3"
+        case .max: return "AirPods Max"
+        case .max2: return "AirPods Max 2"
         }
     }
 

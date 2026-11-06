@@ -1,0 +1,89 @@
+warning: 'valora': found 1 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /Users/wangqing/code/Valora/Tests/ValoraTests/Fixtures/range_http_server.py
+warning: 'valora': found 1 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /Users/wangqing/code/Valora/Tests/ReferenceCoreTests/Fixtures/qq-qrc-studio.hex
+warning: 'valora': found 3 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /Users/wangqing/code/Valora/Sources/Valora/Resources/SolarTerms/2025.json
+    /Users/wangqing/code/Valora/Sources/Valora/Resources/SolarTerms/2026.json
+    /Users/wangqing/code/Valora/Sources/Valora/Resources/SolarTerms/2027.json
+Building for debugging...
+Build complete! (0.32秒)
+Test Suite 'Selected tests' started at 2026-11-06 17:33:22.253.
+Test Suite 'ValoraTests.xctest' started at 2026-11-06 17:33:22.254.
+Test Suite 'CalendarMonitorSharedTests' started at 2026-11-06 17:33:22.254.
+Test Case '-[ValoraTests.CalendarMonitorSharedTests testMonitorSummaryMissingValuesUseDashesAndDoNotInventZero]' started.
+Test Case '-[ValoraTests.CalendarMonitorSharedTests testMonitorSummaryMissingValuesUseDashesAndDoNotInventZero]' passed (0.000 seconds).
+Test Case '-[ValoraTests.CalendarMonitorSharedTests testProductionMonitorHasNoInjectedApplicationReader]' started.
+Test Case '-[ValoraTests.CalendarMonitorSharedTests testProductionMonitorHasNoInjectedApplicationReader]' passed (0.000 seconds).
+Test Case '-[ValoraTests.CalendarMonitorSharedTests testSharedPanelRoutingNeverAllowsTwoAnchors]' started.
+Test Case '-[ValoraTests.CalendarMonitorSharedTests testSharedPanelRoutingNeverAllowsTwoAnchors]' passed (0.000 seconds).
+Test Case '-[ValoraTests.CalendarMonitorSharedTests testVisibilitySwitchesRemainIndependentForAllFourCombinations]' started.
+Test Case '-[ValoraTests.CalendarMonitorSharedTests testVisibilitySwitchesRemainIndependentForAllFourCombinations]' passed (0.000 seconds).
+Test Suite 'CalendarMonitorSharedTests' passed at 2026-11-06 17:33:22.256.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.001 (0.002) seconds
+Test Suite 'DeviceBatteryRowCombinationLayoutTests' started at 2026-11-06 17:33:22.256.
+Test Case '-[ValoraTests.DeviceBatteryRowCombinationLayoutTests testStatsAndCodexCombinationsKeepDeviceRowInside400Points]' started.
+Test Case '-[ValoraTests.DeviceBatteryRowCombinationLayoutTests testStatsAndCodexCombinationsKeepDeviceRowInside400Points]' passed (0.097 seconds).
+Test Suite 'DeviceBatteryRowCombinationLayoutTests' passed at 2026-11-06 17:33:22.353.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.097 (0.097) seconds
+Test Suite 'DeviceBatteryRowLayoutTests' started at 2026-11-06 17:33:22.353.
+Test Case '-[ValoraTests.DeviceBatteryRowLayoutTests testDeviceLineHiddenWhenConnectivitySwitchIsOff]' started.
+Test Case '-[ValoraTests.DeviceBatteryRowLayoutTests testDeviceLineHiddenWhenConnectivitySwitchIsOff]' passed (0.084 seconds).
+Test Case '-[ValoraTests.DeviceBatteryRowLayoutTests testSharedPanelWidthAndDeviceRowHeight]' started.
+Test Case '-[ValoraTests.DeviceBatteryRowLayoutTests testSharedPanelWidthAndDeviceRowHeight]' passed (0.058 seconds).
+Test Suite 'DeviceBatteryRowLayoutTests' passed at 2026-11-06 17:33:22.495.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.142 (0.142) seconds
+Test Suite 'DeviceBatteryRowTests' started at 2026-11-06 17:33:22.495.
+Test Case '-[ValoraTests.DeviceBatteryRowTests testAccessibilityIncludesModelAndValues]' started.
+Test Case '-[ValoraTests.DeviceBatteryRowTests testAccessibilityIncludesModelAndValues]' passed (0.000 seconds).
+Test Case '-[ValoraTests.DeviceBatteryRowTests testAirPodsMaxUsesSharedSingleReadingInBothColumns]' started.
+Test Case '-[ValoraTests.DeviceBatteryRowTests testAirPodsMaxUsesSharedSingleReadingInBothColumns]' passed (0.000 seconds).
+Test Case '-[ValoraTests.DeviceBatteryRowTests testDifferentSidesAreShownSeparately]' started.
+Test Case '-[ValoraTests.DeviceBatteryRowTests testDifferentSidesAreShownSeparately]' passed (0.000 seconds).
+Test Case '-[ValoraTests.DeviceBatteryRowTests testDisabledSwitchOrEmptyDevicesHidesRow]' started.
+Test Case '-[ValoraTests.DeviceBatteryRowTests testDisabledSwitchOrEmptyDevicesHidesRow]' passed (0.000 seconds).
+Test Case '-[ValoraTests.DeviceBatteryRowTests testEqualEarbudsCollapseToOneValue]' started.
+Test Case '-[ValoraTests.DeviceBatteryRowTests testEqualEarbudsCollapseToOneValue]' passed (0.000 seconds).
+Test Case '-[ValoraTests.DeviceBatteryRowTests testLateSnapshotWithoutDeviceRemovesRow]' started.
+Test Case '-[ValoraTests.DeviceBatteryRowTests testLateSnapshotWithoutDeviceRemovesRow]' passed (0.005 seconds).
+Test Case '-[ValoraTests.DeviceBatteryRowTests testOnlyRecognizedAirPodsQualify]' started.
+Test Case '-[ValoraTests.DeviceBatteryRowTests testOnlyRecognizedAirPodsQualify]' passed (0.000 seconds).
+Test Case '-[ValoraTests.DeviceBatteryRowTests testSelectionPrefersActiveAirPods]' started.
+Test Case '-[ValoraTests.DeviceBatteryRowTests testSelectionPrefersActiveAirPods]' passed (0.000 seconds).
+Test Case '-[ValoraTests.DeviceBatteryRowTests testZeroIsValidAndMissingOrOutOfRangeIsDash]' started.
+Test Case '-[ValoraTests.DeviceBatteryRowTests testZeroIsValidAndMissingOrOutOfRangeIsDash]' passed (0.000 seconds).
+Test Suite 'DeviceBatteryRowTests' passed at 2026-11-06 17:33:22.502.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.006 (0.007) seconds
+Test Suite 'IndependentConnectivityLifecycleTests' started at 2026-11-06 17:33:22.502.
+Test Case '-[ValoraTests.IndependentConnectivityLifecycleTests testEnablingStartsInitialReadWithoutWaitingForPoll]' started.
+Test Case '-[ValoraTests.IndependentConnectivityLifecycleTests testEnablingStartsInitialReadWithoutWaitingForPoll]' passed (0.166 seconds).
+Test Case '-[ValoraTests.IndependentConnectivityLifecycleTests testStoppedControllerRejectsRefresh]' started.
+Test Case '-[ValoraTests.IndependentConnectivityLifecycleTests testStoppedControllerRejectsRefresh]' passed (0.161 seconds).
+Test Suite 'IndependentConnectivityLifecycleTests' passed at 2026-11-06 17:33:22.829.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.327 (0.327) seconds
+Test Suite 'IndependentDeviceBatteryPreviewTests' started at 2026-11-06 17:33:22.830.
+Test Case '-[ValoraTests.IndependentDeviceBatteryPreviewTests testRenderSummaryWithDevice]' started.
+Test Case '-[ValoraTests.IndependentDeviceBatteryPreviewTests testRenderSummaryWithDevice]' passed (0.373 seconds).
+Test Suite 'IndependentDeviceBatteryPreviewTests' passed at 2026-11-06 17:33:23.203.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.373 (0.373) seconds
+Test Suite 'MonitorSummaryAccessibilityTests' started at 2026-11-06 17:33:23.203.
+Test Case '-[ValoraTests.MonitorSummaryAccessibilityTests testBothRows]' started.
+Test Case '-[ValoraTests.MonitorSummaryAccessibilityTests testBothRows]' passed (0.002 seconds).
+Test Case '-[ValoraTests.MonitorSummaryAccessibilityTests testCodexOnly]' started.
+Test Case '-[ValoraTests.MonitorSummaryAccessibilityTests testCodexOnly]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MonitorSummaryAccessibilityTests testMonitorOnly]' started.
+Test Case '-[ValoraTests.MonitorSummaryAccessibilityTests testMonitorOnly]' passed (0.000 seconds).
+Test Case '-[ValoraTests.MonitorSummaryAccessibilityTests testNeitherRowProducesNoText]' started.
+Test Case '-[ValoraTests.MonitorSummaryAccessibilityTests testNeitherRowProducesNoText]' passed (0.000 seconds).
+Test Suite 'MonitorSummaryAccessibilityTests' passed at 2026-11-06 17:33:23.207.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.003 (0.004) seconds
+Test Suite 'ValoraTests.xctest' passed at 2026-11-06 17:33:23.207.
+	 Executed 23 tests, with 0 failures (0 unexpected) in 0.949 (0.952) seconds
+Test Suite 'Selected tests' passed at 2026-11-06 17:33:23.207.
+	 Executed 23 tests, with 0 failures (0 unexpected) in 0.949 (0.953) seconds
+Test Suite 'Selected tests' started at 2026-11-06 17:33:23.313.
+Test Suite 'ReferenceCoreTests.xctest' started at 2026-11-06 17:33:23.314.
+Test Suite 'ReferenceCoreTests.xctest' passed at 2026-11-06 17:33:23.314.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-11-06 17:33:23.314.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds

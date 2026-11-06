@@ -1,0 +1,18 @@
+{
+  "accepted": "limited-fixture-and-install",
+  "version": "1.0.3",
+  "build": 24,
+  "branch": "codex/device-battery-panel",
+  "independent_tests": 23,
+  "failures": 0,
+  "fixture_render": "summary-fixture.png: visually inspected real SwiftUI ImageRenderer, name/ears/case align with monitor columns",
+  "signing_verified": true,
+  "installed": "/Applications/Valora.app",
+  "running_instances": 1,
+  "verified_pid": 76889,
+  "installed_hash_matches_candidate": true,
+  "previous_install_backup": "/private/tmp/valora-before-1.0.3-build24.app",
+  "real_case_battery_supported": false,
+  "real_device_connection_and_permissions_verified": false,
+  "committed_or_published": false
+}

@@ -15,6 +15,8 @@ final class MenuBarModuleController: NSObject, NSPopoverDelegate {
     private let onSettings: () -> Void
     private let onQuit: () -> Void
 
+    private let appModel: AppModel?
+    private let settings: RevivalSettings?
     private(set) var monitorItem: NSStatusItem?
     private(set) var calendarItem: NSStatusItem?
 
@@ -66,10 +68,13 @@ final class MenuBarModuleController: NSObject, NSPopoverDelegate {
     }
 
     init(monitor: SystemMonitor, calendar: CalmonCalendarModel,
+         appModel: AppModel? = nil, settings: RevivalSettings? = nil,
          onSettings: @escaping () -> Void, onQuit: @escaping () -> Void,
          calendarPopoverBehavior: NSPopover.Behavior = .transient) {
         self.monitor = monitor
         self.calendar = calendar
+        self.appModel = appModel
+        self.settings = settings
         self.onSettings = onSettings
         self.onQuit = onQuit
         super.init()
@@ -312,7 +317,9 @@ final class MenuBarModuleController: NSObject, NSPopoverDelegate {
         let screen = item.button?.window?.screen ?? NSScreen.main
         let maxHeight = (screen?.visibleFrame.height ?? 800) * 0.8
         let host = NSHostingController(rootView: CalendarMonitorSharedView(
-            monitor: monitor, calendar: calendar, codex: codex, visibility: visibility,
+            monitor: monitor, calendar: calendar, codex: codex,
+            appModel: appModel, settings: settings,
+            visibility: visibility,
             maxHeight: maxHeight,
             onClose: { [weak self] in self?.sharedPopover.performClose(nil) }))
         host.sizingOptions = [.preferredContentSize]

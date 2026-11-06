@@ -36,6 +36,14 @@ final class NativeConnectedAudioSource: ConnectedAudioSource, @unchecked Sendabl
 
     private func read() -> ConnectedAudioSnapshot {
         let raw = ARConnectedAudioDevices() as? [[String: Any]] ?? []
+        let devices = raw.compactMap(Self.device(from:))
+        recordAcceptanceSample(devices)
+        return ConnectedAudioSnapshot(devices: devices, output: ARDefaultAudioOutputName())
+    }
+
+    /// Pure row -> AudioDevice mapping (kept separate so the `case` field
+    /// wiring can be tested without touching IOBluetooth).
+    static func device(from row: [String: Any]) -> AudioDevice? {
         func validBattery(_ value: Any?) -> Int? {
             guard let number = value as? NSNumber else { return nil }
             let battery = number.intValue
@@ -44,25 +52,36 @@ final class NativeConnectedAudioSource: ConnectedAudioSource, @unchecked Sendabl
         func validString(_ value: Any?) -> String {
             (value as? String)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         }
-        var devices: [AudioDevice] = []
-        for row in raw {
-            let name = validString(row["name"])
-            let modelUID = validString(row["modelUID"])
-            let id = validString(row["id"]).isEmpty
-                ? "\(name)\u{0}\(modelUID)" : validString(row["id"])
-            guard !id.isEmpty else { continue }
-            let isAirPods = (row["airpods"] as? Bool ?? false)
-                || AirPodsModel.identify(modelUID: modelUID) != nil
-            devices.append(AudioDevice(
-                id: id, name: name.isEmpty ? "Bluetooth device" : name,
-                left: validBattery(row["left"]), right: validBattery(row["right"]),
-                single: validBattery(row["single"]),
-                active: row["active"] as? Bool ?? false,
-                isAirPods: isAirPods, modelUID: modelUID,
-                rawColorID: (row["colorID"] as? NSNumber)?.intValue))
+        func validID(_ value: Any?) -> UInt16? {
+            guard let number = value as? NSNumber else { return nil }
+            let raw = number.intValue
+            guard raw > 0, raw <= 0xFFFF else { return nil }
+            return UInt16(raw)
         }
-        recordAcceptanceSample(devices)
-        return ConnectedAudioSnapshot(devices: devices, output: ARDefaultAudioOutputName())
+        let name = validString(row["name"])
+        let modelUID = validString(row["modelUID"])
+        let id = validString(row["id"]).isEmpty
+            ? "\(name)\u{0}\(modelUID)" : validString(row["id"])
+        guard !id.isEmpty else { return nil }
+        let productID = validID(row["productID"])
+        let vendorID = validID(row["vendorID"])
+        let pnpModel = productID.flatMap { product -> AirPodsModel? in
+            guard vendorID == nil || vendorID == 0x004C else { return nil }
+            return AirPodsModel.identify(productID: product)
+        }
+        let isAirPods = (row["airpods"] as? Bool ?? false)
+            || AirPodsModel.identify(modelUID: modelUID) != nil
+            || pnpModel != nil
+        return AudioDevice(
+            id: id, name: name.isEmpty ? "Bluetooth device" : name,
+            left: validBattery(row["left"]), right: validBattery(row["right"]),
+            single: validBattery(row["single"]),
+            active: row["active"] as? Bool ?? false,
+            isAirPods: isAirPods, modelUID: modelUID,
+            rawColorID: (row["colorID"] as? NSNumber)?.intValue,
+            caseBattery: validBattery(row["case"]),
+            productID: productID,
+            vendorID: vendorID)
     }
     private func recordAcceptanceSample(_ devices: [AudioDevice]) {
         guard Bundle.main.object(forInfoDictionaryKey: "ValoraDeviceAcceptanceSample") as? Bool == true,
