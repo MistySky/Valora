@@ -1,12 +1,65 @@
 #!/usr/bin/env python3
 """Package the locally built ARM64 Valora binary; no third-party downloads."""
 from pathlib import Path
-import plistlib, shutil, subprocess, datetime, json, hashlib, argparse, sys
+import plistlib, shutil, subprocess, datetime, json, hashlib, argparse, re, sys
 
 ROOT = Path(__file__).resolve().parents[1]
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import package_args  # noqa: E402  (local helper, no third-party code)
+
+# Fixed local identity (Calmon SIGNING.md model). The private key lives only in
+# this Mac's login keychain; the repository never receives it. Missing identity
+# is a hard failure: a silent ad-hoc fallback would bring back the cdhash-based
+# TCC identity and re-prompt on every upgrade.
+SIGNING_IDENTITY = "Valora Self-Signed"
+
+
+def _codesign(args: list[str]) -> str:
+    result = subprocess.run(["codesign"] + args, capture_output=True, text=True)
+    return (result.stdout or "") + (result.stderr or "")
+
+
+def require_signing_identity() -> tuple[str, str, str]:
+    valid = subprocess.run(["security", "find-identity", "-v", "-p", "codesigning"],
+                           capture_output=True, text=True)
+    valid_text = (valid.stdout or "") + (valid.stderr or "")
+    match = re.search(r'\b([0-9A-F]{40})\b\s+"' + re.escape(SIGNING_IDENTITY) + r'"', valid_text)
+    if not match:
+        every = subprocess.run(["security", "find-identity", "-p", "codesigning"],
+                               capture_output=True, text=True)
+        every_text = (every.stdout or "") + (every.stderr or "")
+        if f'"{SIGNING_IDENTITY}"' in every_text:
+            raise SystemExit(
+                f"Signing identity {SIGNING_IDENTITY!r} exists but is not valid: "
+                "the certificate is untrusted or its private key is missing. "
+                "Do not fall back to ad-hoc; repair the local identity first.")
+        raise SystemExit(
+            f"Missing code-signing identity {SIGNING_IDENTITY!r}. Create/import the "
+            "fixed local certificate and private key (see docs/reports/v0109). "
+            "Refusing to package with an ad-hoc signature.")
+    sha1 = match.group(1).upper()
+    cert = subprocess.run(["security", "find-certificate", "-c", SIGNING_IDENTITY, "-Z",
+                           str(Path.home() / "Library/Keychains/login.keychain-db")],
+                          capture_output=True, text=True)
+    cert_text = (cert.stdout or "") + (cert.stderr or "")
+    sha256_match = re.search(r"SHA-256 hash:\s*([0-9A-F]{64})", cert_text)
+    return SIGNING_IDENTITY, sha1, (sha256_match.group(1) if sha256_match else "")
+
+
+def designated_requirement(path: Path) -> str:
+    output = _codesign(["-d", "-r-", str(path)])
+    marker = "designated =>"
+    index = output.find(marker)
+    if index < 0:
+        return ""
+    return output[index + len(marker):].strip().splitlines()[0].strip()
+
+
+def signing_authorities(path: Path) -> list[str]:
+    output = _codesign(["-dv", "--verbose=4", str(path)])
+    return [line.split("=", 1)[1].strip()
+            for line in output.splitlines() if line.startswith("Authority=")]
 
 # The real packaging entry: arguments plus exactly one monotonic build number.
 args, build_number = package_args.resolve(sys.argv[1:])
@@ -105,9 +158,27 @@ if args.lock_diagnostic_path:
 entitlements_source = ROOT / 'Resources/Valora.entitlements'
 if not entitlements_source.is_file():
     raise SystemExit('Missing signing entitlements: ' + str(entitlements_source))
-subprocess.run(['codesign', '--force', '--sign', '-', '--options', 'runtime',
+signing_identity, signing_sha1, signing_cert_sha256 = require_signing_identity()
+framework = frameworks / 'MediaRemoteAdapter.framework'
+# Nested code first, then the app. Both use the same fixed certificate; signing
+# the framework ad-hoc would leave a different identity inside the bundle.
+subprocess.run(['codesign', '--force', '--sign', signing_identity,
+                '--options', 'runtime', '--timestamp=none', str(framework)], check=True)
+subprocess.run(['codesign', '--verify', '--deep', '--strict', str(framework)], check=True)
+subprocess.run(['codesign', '--force', '--sign', signing_identity,
+                '--options', 'runtime', '--timestamp=none',
                 '--entitlements', str(entitlements_source), str(app)], check=True)
 subprocess.run(['codesign', '--verify', '--deep', '--strict', str(app)], check=True)
+app_requirement = designated_requirement(app)
+framework_requirement = designated_requirement(framework)
+if 'certificate leaf = H"' not in app_requirement or 'cdhash' in app_requirement.lower():
+    raise SystemExit(f'App signature is not certificate-based: {app_requirement!r}')
+if 'certificate leaf = H"' not in framework_requirement:
+    raise SystemExit(f'Nested framework signature is not certificate-based: {framework_requirement!r}')
+if SIGNING_IDENTITY not in signing_authorities(app):
+    raise SystemExit('App Authority does not list ' + SIGNING_IDENTITY)
+if SIGNING_IDENTITY not in signing_authorities(framework):
+    raise SystemExit('Framework Authority does not list ' + SIGNING_IDENTITY)
 # Read the real signature, not only the source plist.
 signed = subprocess.run(['codesign', '-d', '--entitlements', ':-', str(app)],
                         capture_output=True, text=True)
@@ -176,9 +247,18 @@ if arch != 'arm64':
     'signed_entitlements_sha256': hashlib.sha256(
         plistlib.dumps(signed_plist, sort_keys=True)).hexdigest(),
     'codesign_runtime_flag_present': 'runtime' in display_output.lower(),
+    'signing_identity': signing_identity,
+    'signing_certificate_sha1': signing_sha1,
+    'signing_certificate_sha256': signing_cert_sha256,
+    'designated_requirement': app_requirement,
+    'framework_signing_identity': (signing_authorities(framework) or [''])[0],
+    'framework_designated_requirement': framework_requirement,
+    'framework_binary_sha256': hashlib.sha256(
+        (framework / 'MediaRemoteAdapter').read_bytes()).hexdigest(),
+    'framework_adhoc_signed': 'Signature=adhoc' in _codesign(['-dv', str(framework)]),
     'icon_info_key': info['CFBundleIconFile'],
     'bundle_id': info['CFBundleIdentifier'],
-    'adhoc_signed': True,
+    'adhoc_signed': 'Signature=adhoc' in display_output,
     'notarized': False,
     'source_rebuilt': True,
 }, indent=2, sort_keys=True))

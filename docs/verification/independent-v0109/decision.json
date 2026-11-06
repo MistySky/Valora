@@ -1,0 +1,18 @@
+{
+  "decision": "accepted-limited-signing",
+  "candidate": "/private/tmp/valora-v0109-self-signed-candidate/Valora.app",
+  "version": "1.0.1",
+  "build": "21",
+  "bundle_id": "com.wangqing.valora",
+  "independent_checks": [
+    "codesign --verify --deep --strict passed outside sandbox",
+    "binary SHA256 equals build-verification.json",
+    "app and framework not adhoc",
+    "test_package_entry.py passed",
+    "test_build_number.py passed",
+    "test_signing.py passed outside sandbox: different cdhash, matching certificate DR, cross-version validation",
+    "temporary plaintext private key directory removed"
+  ],
+  "real_calendar_bluetooth_upgrade_verified": false,
+  "installed_or_started": false
+}
