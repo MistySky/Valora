@@ -1,0 +1,29 @@
+# Pixel statistics from screencapture (compositor output), not cacheDisplay
+# h2: gradient background window; cards = SwiftUI regular / regular+appearsActive / NSGlassEffectView darkAqua variant5 / NSVisualEffectView active
+# region mean RGB over 60x60 px at card center
+h2-nonkey.png
+  card1 regular            mean=(233.0,235.5,237.6) varR=0.3
+  card2 regular+active     mean=(138.3,203.3,197.3) varR=5.2   (different background region)
+  card3 NSGlass dark v5    mean=(173.7,140.7,69.0)  varR=49.5
+  card4 vibrancy active    mean=(229.8,226.8,221.7) varR=0.2
+h2-key.png
+  card1 regular            mean=(241.3,249.9,255.0) varR=4.1
+  card2 regular+active     mean=(154.1,218.5,211.8) varR=21.1  (different background region)
+  card3 NSGlass dark v5    mean=(79.9,49.7,0.2)     varR=19.0  (key state much darker)
+  card4 vibrancy active    mean=(229.8,227.0,221.7) varR=0.3
+
+# h5: uniform black/white checkerboard behind a transparent card window (same background for all cards)
+h5-nonkey.png (SwiftUI regular / regular+active / clear / clear+active / clear2 / NSGlassEffectView)
+  card1 regular            mean=(188.7,188.8,188.8) varR=0.4
+  card2 regular+active     mean=(188.7,188.7,188.8) varR=0.4  -> identical to card1
+  card3 clear              mean=(157.4,157.6,157.4) varR=0.3
+  card4 clear+active       mean=(157.4,157.5,157.4) varR=0.2  -> identical to card3
+  card5 clear duplicate    mean=(157.4,157.5,157.4) varR=0.3
+  card6 NSGlass dark v5    mean=(116.0,116.0,116.0) varR=0.0
+# h6: same checker, replaces duplicate with .environment(\.controlActiveState, .key)
+  regular / regular+appearsActive / clear / clear+appearsActive / regular+controlActiveState
+  means: 188.7 / 188.7 / 157.4 / 157.4 / 188.7  -> no effect from either environment key
+
+# h7: custom CABackdropLayer + CAFilter(glassBackground/glassForeground) attempts (A/B/C) + NSGlass control
+  A/B/C regions show raw checker (var ~16k, mean ~122) => filter produced no fill; only faint edge outline
+  NSGlass control uniform 116, var 0

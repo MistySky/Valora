@@ -1,0 +1,24 @@
+# macOS 27.2 (26B123) private CAFilter probe (read-only)
+CAFilter class: CAFilter (exists)
+CABackdropLayer class: CABackdropLayer (exists)
+
+filterWithName: glassBackground -> instance "glassBackground"
+filterWithName: glassForeground -> instance "glassForeground"
+filterWithName: keyFill          -> instance "keyFill"
+
+glassBackground inputKeys (all value=nil, defaultValueForKey: not supported):
+  inputSourceSublayerName, inputInnerRefractionAmount, inputInnerRefractionHeight,
+  inputOuterRefractionAmount, inputOuterRefractionHeight, inputRefractionDistance0/1,
+  inputRefractionOpacity, inputBlurRadius, inputBlurOpacity0..4, inputBlurDistance0..4,
+  inputFaceOpacity, inputFaceColorMatrixWhite/Black/Saturation/FillColor/MaxLuma/MaxLumaSDR,
+  inputBleedAmount/Height/BlurRadius/Distance0/Distance1/Opacity/DarkenBlend/ColorMatrix...,
+  inputShadowOffset/Amount/Height/Opacity/ColorMatrix.../DistanceOffset/BlurRadius/Radius,
+  inputRingShadowOffset/StrokeWidth/BlurRadius/Opacity/Mask,
+  inputKeyFillHighlightHeight/Angle/Spread/SpreadSDR/Amount/EffectOffset/ColorBias,
+  inputBlurFillBlurRadius/LightenOpacity/DarkenOpacity/NormalOpacity,
+  inputSDRHoldingToneEnabled/White, inputSDRGradientDistance0/1, inputSDRShadowOpacity,
+  inputMaxHeadroom, inputShadowVibrancyContribution, inputClamp, inputClampPreserveHue,
+  inputAberrationAmount/Height/Offset/Angle
+
+Observation: filter has no usable defaults; a layer that sets only a few keys (or none)
+renders no visible glass fill in the isolated harness (only a faint edge outline).

@@ -94,8 +94,6 @@ final class LockMusicCoordinator: ObservableObject {
     /// Owns the temporary activation taken while the card is on screen. The
     /// previous policy (and the previous frontmost app) are restored conservatively
     /// on release; see `LockActivationOwner`.
-    private let activationOwner = LockActivationOwner(registry: .shared)
-    private var glassActivated = false
 
     private var state = LockMusicState()
     private var lockSpace: (any LockPresentationSpace)?
@@ -359,7 +357,6 @@ final class LockMusicCoordinator: ObservableObject {
                 panel.orderOut()
                 lockSpace?.detachWindowNumber(panel.windowNumber)
             }
-            deactivateGlassSurface()
             refresh(epoch: epoch)
         case .neutralizing:
             neutralTask?.cancel(); neutralTask = nil
@@ -367,6 +364,16 @@ final class LockMusicCoordinator: ObservableObject {
             indicator.forceHidden()
             model.lockIndicator = indicator
             model.isSessionLocked = false
+            // Match the other unlock phases: there is no "locked settled" card
+            // to keep, so cancel any appearance/hide schedule and remove it now.
+            cancelHideAndAppearance()
+            visible = false
+            appeared = false
+            showsVolume = false
+            if let panel {
+                panel.orderOut()
+                lockSpace?.detachWindowNumber(panel.windowNumber)
+            }
             refresh(epoch: epoch)
         case .locked:
             var indicator = model.lockIndicator
@@ -382,7 +389,6 @@ final class LockMusicCoordinator: ObservableObject {
                 panel.orderOut()
                 lockSpace?.detachWindowNumber(panel.windowNumber)
             }
-            deactivateGlassSurface()
             refresh(epoch: epoch)
             unlockTask?.cancel()
             unlockTask = scheduler.schedule(after: 0.8) { [weak self] in
@@ -844,7 +850,6 @@ final class LockMusicCoordinator: ObservableObject {
                 self.panel.orderOut()
                 self.lockSpace?.detachWindowNumber(self.panel.windowNumber)
                 self.showsVolume = false
-                self.deactivateGlassSurface()
             }
         }
     }
@@ -856,25 +861,10 @@ final class LockMusicCoordinator: ObservableObject {
             return
         }
         panel.orderFrontRegardless()
-        // In this implementation the material looked refractive only while the
-        // surface was key; that is an observation of this app, not a proven
-        // system rule, and the real lock remains to be verified on device. The
-        // card therefore takes the regular activation policy while it is up and
-        // gives it back through the shared activation lifetime when it leaves.
-        activateGlassSurface()
-    }
-
-    private func activateGlassSurface() {
-        guard usePresentationSpace, !glassActivated, NSApp != nil else { return }
-        glassActivated = true
-        activationOwner.acquire()
-        panel?.makeKey()
-    }
-
-    private func deactivateGlassSurface() {
-        guard glassActivated else { return }
-        glassActivated = false
-        activationOwner.release()
+        // Deliberately no makeKey/activation here. The accepted dark material is
+        // the unfocused rendering (the login window keeps focus on the real lock);
+        // forcing a regular activation policy only made the desktop preview
+        // darker than the card users actually approved.
     }
 
     private func cancelHideAndAppearance() {
@@ -916,7 +906,6 @@ final class LockMusicCoordinator: ObservableObject {
         releaseOverlay()
         detachNotchIfNeeded()
         panel?.orderOut()
-        deactivateGlassSurface()
         if let panel {
             lockSpace?.detachWindowNumber(panel.windowNumber)
             panel.clearRootView()

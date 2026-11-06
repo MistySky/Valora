@@ -12,6 +12,11 @@ struct LockMusicCard: View {
     @Binding var showsVolume: Bool
     /// Lock ink palette (white ink on the dark glass surface).
     var palette: LockCardPalette = .standard
+    @Environment(\.accessibilityReduceMotion) private var reducedMotion
+
+    /// The row stays mounted while paused (user-confirmed: keep it expanded).
+    /// It only disappears when the lyrics switch is off.
+    private var showsLyricRow: Bool { settings.musicPreferences.showLyrics }
 
     var body: some View {
         // Player first, then the optional lyric row, both inside one stack: the
@@ -22,14 +27,24 @@ struct LockMusicCard: View {
                                compensatesForNotch: false, active: active,
                                translucent: true, palette: palette,
                                showsVolume: $showsVolume)
-            if settings.musicPreferences.showLyrics, model.lyrics.timeline != nil {
-                CompactLyricsView(model: model, width: max(1, 345 - 36))
+            // Paused keeps this row expanded. With no lyric timeline, or a gap
+            // between lines, CompactLyricsView renders only the note, centered
+            // (centersNoteWhenEmpty) instead of the left-aligned blank row.
+            if showsLyricRow {
+                CompactLyricsView(model: model, width: max(1, 345 - 36),
+                                  centersNoteWhenEmpty: true)
                     .padding(.bottom, 4)
                     .transition(.opacity.combined(with: .offset(y: -6)))
             }
         }
         .padding(.horizontal, 18).padding(.top, 16).padding(.bottom, 14)
         .frame(width: 345)
+        // ExpansionTiming.duration / a restrained bounce: the notch's compact
+        // row grows and shrinks with this spring; a bare layout change looked
+        // abrupt by comparison.
+        .animation(reducedMotion ? .easeOut(duration: 0.12)
+                   : .spring(duration: ExpansionTiming.duration, bounce: 0.2),
+                   value: showsLyricRow)
         .foregroundStyle(palette.primary)
         .background {
             LockGlassSurface(cornerRadius: LockGlassCorner.radius)

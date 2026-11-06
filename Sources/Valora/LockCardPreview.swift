@@ -12,7 +12,6 @@ import ReferenceCore
 final class LockCardPreviewController {
     private let model: AppModel
     private var panel: NSPanel?
-    private let activationOwner = LockActivationOwner(registry: .shared)
 
 
     init(_ model: AppModel) { self.model = model }
@@ -61,18 +60,14 @@ final class LockCardPreviewController {
             origin = defaultOrigin
         }
         panel.setFrameOrigin(origin)
-        // The desktop simulation is deliberately a focused window: with the
-        // current material, the refractive look appeared while the surface was
-        // key (an observation, not a proven system rule). The preview takes the
-        // regular policy through the shared activation lifetime and gives it
-        // back on `stop()`; the real lock behaviour still needs on-device checks.
-        activationOwner.acquire()
-        panel.makeKeyAndOrderFront(nil)
+        // Match the real lock card, which stays unfocused: the accepted dark
+        // material is the non-key rendering. The preview must not make itself
+        // key or it would show a different (darker) surface than the lock.
+        panel.orderFrontRegardless()
         self.panel = panel
     }
 
     func stop() {
-        if panel != nil { activationOwner.release() }
         panel?.orderOut(nil)
         panel?.contentView = nil
         panel?.close()

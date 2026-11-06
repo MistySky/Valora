@@ -13,6 +13,9 @@ struct CompactLyricsView: View {
     var rowHeight: CGFloat = 32
     var showsNote: Bool = true
     var horizontalInset: CGFloat = 18
+    /// Lock-card empty-line layout: show the note alone in the middle instead
+    /// of the left-aligned note + blank text area used by the notch strip.
+    var centersNoteWhenEmpty: Bool = false
     /// QA-only role tag; production views use the default active role.
     var auditRole: String = "active"
     @State private var metricsCache = LyricMetricsCache()
@@ -48,7 +51,7 @@ struct CompactLyricsView: View {
                     .transition(.asymmetric(
                         insertion: .offset(y: 26).combined(with: .opacity),
                         removal: .offset(y: -26).combined(with: .opacity)))
-            } else {
+            } else if !centersNoteWhenEmpty {
                 Color.clear.frame(width: availableWidth, height: 17)
             }
         }
