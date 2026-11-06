@@ -1,0 +1,18 @@
+{
+  "version": "1.0.3",
+  "build": 26,
+  "independent_tests": 41,
+  "failures": 0,
+  "real_model_evidence": {
+    "productID": "0x2013",
+    "PnPProductID": "0x2013",
+    "vendorID": "0x004c",
+    "PnPVendorID": "0x004c",
+    "return_type": "unsigned short S",
+    "prior_default_output_modelUID": "Speaker"
+  },
+  "signature_verified": true,
+  "installed": "/Applications/Valora.app",
+  "live_wear_unwear_visual_verification": false,
+  "committed_or_published": false
+}

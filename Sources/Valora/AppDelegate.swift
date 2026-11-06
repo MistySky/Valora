@@ -116,7 +116,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         if startupMode == .previewMenuBarModules {
             // Isolated native preview of the two Calmon modules. No media,
-            // Bluetooth, EventKit authorization or real calendar query.
+            // Bluetooth, EventKit authorization or real calendar query. The
+            // device row uses this local fixture instead of a real read.
+            settings.bluetoothEnabled = true
+            model.devices = [AudioDevice(id: "preview-airpods", name: "AirPods Pro",
+                                         left: 85, right: 78, single: nil, active: true,
+                                         isAirPods: true, modelUID: "2014 4c")]
             setupMenu()
             return
         }
@@ -656,6 +661,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let monitor = SystemMonitor()
         menuBarModules = MenuBarModuleController(
             monitor: monitor, calendar: calendar,
+            appModel: model, settings: settings,
             onSettings: { [weak self] in self?.showSettings() },
             onQuit: { [weak self] in self?.quit() })
         menuBarModules?.setSystemMonitorVisible(settingsDraft.value("enableSystemMonitor", true))

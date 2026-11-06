@@ -1,0 +1,23 @@
+{
+  "version": "1.0.3",
+  "build": 25,
+  "independent_tests": 28,
+  "failures": 0,
+  "case_interface_verified": "batteryPercentCase returning unsigned char C on current system",
+  "system_reported_current_battery": {
+    "left": 96,
+    "right": 96,
+    "case": 77
+  },
+  "data_pipeline_reviewed": [
+    "NativeBridge case",
+    "snapshot caseBattery optional",
+    "model name mapping",
+    "caseText real value with unknown fallback"
+  ],
+  "signature_verified": true,
+  "installed": "/Applications/Valora.app",
+  "previous_backup": "/private/tmp/valora-before-1.0.3-build25.app",
+  "live_panel_visual_verification": false,
+  "committed_or_published": false
+}

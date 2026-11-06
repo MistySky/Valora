@@ -23,6 +23,10 @@ struct CalendarMonitorSharedView: View {
     let calendar: CalmonCalendarModel
     /// Owned by the app; nil when the feature was never enabled.
     var codex: CodexUsageProvider?
+    /// Connectivity snapshot for the optional device row. Nil in previews/QA
+    /// that do not own the production controller.
+    var appModel: AppModel? = nil
+    var settings: RevivalSettings? = nil
     @ObservedObject var visibility: MenuBarPanelVisibility
     let maxHeight: CGFloat
     var onClose: () -> Void
@@ -32,7 +36,11 @@ struct CalendarMonitorSharedView: View {
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 0) {
-                if visibility.monitorVisible {
+                if let appModel, let settings {
+                    MonitorSummarySection(monitor: monitor, codex: codex,
+                                          visibility: visibility,
+                                          appModel: appModel, settings: settings)
+                } else if visibility.monitorVisible {
                     MonitorSummaryCard(
                         snapshot: snapshot,
                         codex: visibility.codexUsageVisible ? codex?.snapshot : nil)
@@ -59,6 +67,28 @@ struct CalendarMonitorSharedView: View {
     }
 }
 
+/// Observes the connectivity snapshot so the device line can appear/disappear
+/// without turning the card into a second owner of the model. The card is shown
+/// when stats, Codex or a recognized connected headphone needs a row; the
+/// calendar route itself is unchanged.
+struct MonitorSummarySection: View {
+    @Bindable var monitor: SystemMonitor
+    var codex: CodexUsageProvider?
+    @ObservedObject var visibility: MenuBarPanelVisibility
+    @ObservedObject var appModel: AppModel
+    @ObservedObject var settings: RevivalSettings
+
+    var body: some View {
+        let device = DeviceBatteryRow.data(devices: appModel.devices,
+                                           enabled: settings.bluetoothEnabled)
+        let codexSnapshot = visibility.codexUsageVisible ? codex?.snapshot : nil
+        if visibility.monitorVisible || codexSnapshot != nil || device != nil {
+            MonitorSummaryCard(snapshot: monitor.snapshot, codex: codexSnapshot,
+                               device: device, showsStats: visibility.monitorVisible)
+        }
+    }
+}
+
 /// Deliberately small: three aligned rows, no rings, process list, search,
 /// CPU split, device model or system-version blocks.
 struct MonitorSummaryCard: View {
@@ -66,7 +96,9 @@ struct MonitorSummaryCard: View {
     /// Optional Codex usage line inside the same card, separated by a hairline so
     /// the two summaries sit close together instead of as two stacked cards.
     var codex: CodexUsageSnapshot? = nil
-    /// `false` renders only the Codex line (monitor switch off).
+    /// Optional device line inside the same Grid, after the monitor/Codex rows.
+    var device: DeviceBatteryRowData? = nil
+    /// `false` renders only the Codex/device lines (monitor switch off).
     var showsStats: Bool = true
 
     private var memoryTotal: String { snapshot.memory.map { UIStyle.memoryCapacityString($0.total) } ?? "--" }
@@ -98,6 +130,7 @@ struct MonitorSummaryCard: View {
         MonitorSummaryAccessibility.label(
             showsStats: showsStats,
             codex: codex,
+            device: device,
             stats: MonitorSummaryAccessibility.Stats(
                 memoryTotal: memoryTotal, memoryRemaining: memoryRemaining,
                 diskTotal: diskTotal, diskRemaining: diskRemaining, uptime: uptime),
@@ -121,6 +154,27 @@ struct MonitorSummaryCard: View {
                     }
                 }
                 codexRow
+            }
+            if let device {
+                if showsStats || codex != nil {
+                    GridRow {
+                        Rectangle()
+                            .fill(Color.primary.opacity(0.12))
+                            .frame(height: 1)
+                            .gridCellColumns(3)
+                    }
+                }
+                // Three real Grid cells aligned with 内存/5H, 磁盘/WEEK and
+                // 已运行/重置卡: name | left+right | case.
+                GridRow {
+                    Text(device.name)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                    Text(device.ears)
+                        .lineLimit(1)
+                    Text(device.caseText)
+                        .lineLimit(1)
+                }
             }
         }
         .font(UIStyle.Fonts.caption)
@@ -151,7 +205,9 @@ enum MonitorSummaryAccessibility {
         var uptime: String
     }
 
-    static func label(showsStats: Bool, codex: CodexUsageSnapshot?, stats: Stats, now: Date) -> String {
+    static func label(showsStats: Bool, codex: CodexUsageSnapshot?,
+                      device: DeviceBatteryRowData? = nil,
+                      stats: Stats, now: Date) -> String {
         var parts: [String] = []
         if showsStats {
             parts.append("内存 \(stats.memoryTotal)，剩余 \(stats.memoryRemaining)")
@@ -162,6 +218,9 @@ enum MonitorSummaryAccessibility {
             parts.append(CodexUsageSummaryFormatter.fiveHour(codex, now: now))
             parts.append(CodexUsageSummaryFormatter.week(codex, now: now))
             parts.append(CodexUsageSummaryFormatter.resetCredits(codex))
+        }
+        if let device {
+            parts.append(device.accessibility)
         }
         return parts.joined(separator: "，")
     }
