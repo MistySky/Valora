@@ -97,9 +97,11 @@ final class SettingsReductionTests: XCTestCase {
             XCTAssertFalse(settingsView.contains(removedRow), "removed setting row remains: \(removedRow)")
         }
         for keptRow in ["Launch at login", "Force simulated notch", "Display on",
-                        "Expand on hover", "Hover delay", "Now Playing", "Use live waveform", "Show lyrics"] {
+                        "Expand on hover", "Hover delay", "Now Playing", "Show lyrics"] {
             XCTAssertTrue(settingsView.contains(keptRow), "retained setting row missing: \(keptRow)")
         }
+        XCTAssertFalse(settingsView.contains("Use live waveform"), "removed live-waveform row remains")
+        XCTAssertFalse(settingsView.contains("Behaviour"), "separate behaviour section remains")
         // Ordinary input capabilities must not be collateral damage.
         XCTAssertTrue(notch.contains("onTapGesture"))
         XCTAssertTrue(compact.contains("command(2)"))
@@ -109,8 +111,73 @@ final class SettingsReductionTests: XCTestCase {
         XCTAssertFalse(settingsView.contains("songTitleBadge"))
         XCTAssertFalse(settingsView.contains("Explicit"))
         XCTAssertFalse(settingsView.contains("Format"))
+        XCTAssertTrue(settingsView.contains("Connectivity"))
+        XCTAssertFalse(settingsView.contains("connectivityModel"))
+        XCTAssertFalse(settingsView.contains("connectivityDuration"))
+        XCTAssertFalse(settingsView.contains("warnOnLowConnectBattery"))
+        XCTAssertFalse(settingsView.contains("lowConnectBatteryThreshold"))
+        XCTAssertFalse(settingsView.contains("playSoundOnLowConnectBattery"))
+        XCTAssertTrue(SettingsPage.allCases.contains(.connectivity))
         XCTAssertTrue(coordinatorText.contains(".mouseMoved,.leftMouseDragged"))
 
+    }
+
+
+    func testSidebarGroupsFollowTheUserApprovedStructure() {
+        XCTAssertEqual(SettingsSidebar.groups.map(\.title), [nil, "刘海屏", "菜单栏", "Valora"])
+        XCTAssertEqual(SettingsSidebar.groups.map { $0.pages.map(\.displayTitle) }, [
+            ["通用"],
+            ["音乐", "锁定屏幕", "设备连接"],
+            ["日历", "系统监控", "Codex 用量"],
+            ["关于"]
+        ])
+        XCTAssertEqual(SettingsPage.allCases.map(\.displayTitle),
+                       ["通用", "音乐", "锁定屏幕", "设备连接",
+                        "日历", "系统监控", "Codex 用量", "关于"])
+        XCTAssertEqual(SettingsSidebar.orderedPages.count, Set(SettingsSidebar.orderedPages).count)
+        XCTAssertFalse(SettingsPage.allCases.map(\.displayTitle).contains("刘海屏"))
+        XCTAssertFalse(SettingsPage.allCases.map(\.displayTitle).contains("菜单栏"))
+        XCTAssertFalse(SettingsPage.allCases.map(\.displayTitle).contains("Valora"))
+        XCTAssertEqual(SettingsPage.nowPlaying.symbol, "play.fill")
+        XCTAssertEqual(SettingsLayout.titleContentGap, 13, accuracy: 0.001)
+        XCTAssertTrue((12...16).contains(SettingsLayout.titleContentGap))
+    }
+
+    func testHoverControlsAreInsideGeneralCardAfterDisplayRow() throws {
+        let root = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        let text = try String(contentsOf: root.appendingPathComponent("Sources/Valora/SettingsView.swift"), encoding: .utf8)
+        let display = try XCTUnwrap(text.range(of: "Display on"))
+        let hover = try XCTUnwrap(text.range(of: "Expand on hover"))
+        XCTAssertLessThan(display.lowerBound, hover.lowerBound)
+        XCTAssertFalse(text.contains("heading(\"Behaviour\")"))
+        XCTAssertFalse(text.contains("sectionTitle(\"Notifications\")"))
+        XCTAssertFalse(text.contains("sectionTitle(\"Live Activities\")"))
+        XCTAssertFalse(text.contains("Use live waveform"))
+    }
+
+
+
+    func testLiveWaveformSourceEntryAndPermissionAreRemoved() throws {
+        let root = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+        XCTAssertFalse(FileManager.default.fileExists(atPath: root.appendingPathComponent("Sources/Valora/AudioTap.swift").path))
+        let sourceText = try ["Sources/Valora", "Sources/ReferenceCore"].flatMap { directory in
+            try FileManager.default.contentsOfDirectory(at: root.appendingPathComponent(directory),
+                                                        includingPropertiesForKeys: nil)
+                .filter { $0.pathExtension == "swift" }
+                .map { try String(contentsOf: $0, encoding: .utf8) }
+        }.joined(separator: "\n")
+        for removed in ["LiveAudioTap", "AudioTapVerification", "useLiveWaveform"] {
+            XCTAssertFalse(sourceText.contains(removed), "removed live-waveform symbol remains: \(removed)")
+        }
+        let package = try String(contentsOf: root.appendingPathComponent("Package.swift"), encoding: .utf8)
+        XCTAssertFalse(package.contains("Accelerate"), "live-waveform-only Accelerate link remains")
+        let packageScript = try String(contentsOf: root.appendingPathComponent("scripts/package.py"), encoding: .utf8)
+        XCTAssertFalse(packageScript.contains("NSAudioCaptureUsageDescription"),
+                       "system-audio usage declaration remains")
+        let runtime = try String(contentsOf: root.appendingPathComponent("Sources/Valora/AppRuntimeDefaults.swift"), encoding: .utf8)
+        XCTAssertFalse(runtime.contains("verify-audio-tap"), "audio-tap QA command remains")
     }
 
     func testExistingSettingsWindowIsReused() {

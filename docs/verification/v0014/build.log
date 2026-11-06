@@ -1,0 +1,8 @@
+/Users/wangqing/code/Valora/.build/media-adapter/MediaRemoteAdapter.framework: replacing existing signature
+/Users/wangqing/code/Valora/.build/media-adapter/MediaRemoteAdapter.framework
+warning: 'valora': found 1 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /Users/wangqing/code/Valora/Tests/ReferenceCoreTests/Fixtures/qq-qrc-studio.hex
+Building for production...
+Build complete! (0.26秒)
+/Users/wangqing/code/Valora/dist/Valora.app: replacing existing signature
+/Users/wangqing/code/Valora/dist/Valora.app

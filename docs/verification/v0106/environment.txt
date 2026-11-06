@@ -1,0 +1,16 @@
+ProductName:		macOS
+ProductVersion:		27.2
+BuildVersion:		26B123
+---
+Apple M1 Pro
+MacBookPro18,1
+34359738368
+--- displays
+          Display Type: Built-in Liquid Retina XDR Display
+          Resolution: 3456 x 2234 Retina
+          Main Display: Yes
+          Resolution: 3840 x 2160 (2160p/4K UHD 1 - Ultra High Definition)
+--- binary
+37c96d03f83a52ed67e01362255631c7ac78cd2cb39d5ce9d42447af1735fc7d  .build/out/Products/Debug/Valora
+--- running build15
+69159 /private/tmp/valora-v0105-calendar-holidays-only-candidate/Valora.app/Contents/MacOS/Valora

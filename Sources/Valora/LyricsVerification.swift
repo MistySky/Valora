@@ -1,8 +1,9 @@
+#if VALORA_DEVELOPMENT
 import AppKit
 import SwiftUI
 import ReferenceCore
 
-/// Isolated QA renderer for the compact line-lyrics row. It uses injected
+/// Isolated QA renderer for the compact/expanded lyric row. It uses injected
 /// displays, a static provider and synthetic playback state; it never starts
 /// the media source, audio tap or network.
 enum LyricsVerification {
@@ -37,15 +38,15 @@ enum LyricsVerification {
                     try composite.write(to: directory.appendingPathComponent(name + "-review.png"))
                 }
             }
-            @MainActor func marqueeViews(_ view: NSView) -> [MarqueeLabelView] {
-                var result: [MarqueeLabelView] = []
-                if let marquee = view as? MarqueeLabelView { result.append(marquee) }
-                for child in view.subviews { result.append(contentsOf: marqueeViews(child)) }
-                return result
-            }
-            @MainActor func flushCompactLayout() {
-                coordinator.panel.contentView?.layoutSubtreeIfNeeded()
-                CATransaction.flush()
+            @MainActor func artworkFixture() -> NSImage {
+                let image = NSImage(size: NSSize(width: 64, height: 64))
+                image.lockFocus()
+                NSColor(calibratedRed: 0.16, green: 0.62, blue: 0.55, alpha: 1).setFill()
+                NSBezierPath(rect: NSRect(x: 0, y: 0, width: 64, height: 64)).fill()
+                NSColor(calibratedRed: 0.86, green: 0.48, blue: 0.22, alpha: 1).setFill()
+                NSBezierPath(rect: NSRect(x: 0, y: 0, width: 32, height: 64)).fill()
+                image.unlockFocus()
+                return image
             }
 
             await settle(0.45)
@@ -53,50 +54,63 @@ enum LyricsVerification {
             check("compact lyric row stays visible", model.showsCompactLyrics)
             check("compact lyric row uses the 32pt auxiliary area",
                   model.visibleSize.height > model.notchGeometry.compact.height)
+            check("artwork color is available for lyric fill", !model.artworkColors.isEmpty)
 
-            model.elapsed = 1
+            model.elapsed = 1.2
             await settle(0.2)
             check("short lyric resolves from playback time",
                   model.currentLyricLine?.text == "短句歌词")
+            check("short lyric has real word timing",
+                  model.currentLyricLine?.words.count == 2)
             try? capture("lyrics-short", view: coordinator.panel.contentView)
-            check("short lyric does not create a marquee", marqueeViews(coordinator.panel.contentView ?? NSView()).isEmpty)
 
-            model.elapsed = 5
+            model.elapsed = 5.0
             await settle(0.2)
             check("long lyric resolves from playback time",
                   (model.currentLyricLine?.text ?? "").hasPrefix("这是一句很长的歌词"))
+            check("long lyric carries word timing",
+                  (model.currentLyricLine?.words.count ?? 0) > 2)
             try? capture("lyrics-long", view: coordinator.panel.contentView)
-            let marquee = marqueeViews(coordinator.panel.contentView ?? NSView()).first
-            check("long lyric uses the existing marquee view", marquee != nil)
-            flushCompactLayout()
-            let movingStart = marquee?.presentedOrigin
-            try? await Task.sleep(nanoseconds: 1_500_000_000)
-            flushCompactLayout()
-            let movingEnd = marquee?.presentedOrigin
-            check("long lyric moves while playing", movingStart != nil && movingEnd != nil && movingStart != movingEnd)
 
             model.playing = false
-            await settle(0.2)
-            flushCompactLayout()
-            let pausedStart = marquee?.presentedOrigin
-            try? await Task.sleep(nanoseconds: 400_000_000)
-            flushCompactLayout()
-            let pausedEnd = marquee?.presentedOrigin
-            check("pause stops the long lyric marquee in place",
-                  pausedStart != nil && pausedEnd != nil && abs((pausedEnd ?? 0) - (pausedStart ?? 0)) < 0.5)
+            await settle(0.25)
+            check("pause keeps the current lyric line", model.currentLyricLine?.text == "这是一句很长的歌词，需要在紧凑区域中慢速从左向右跟随当前字，同时保持当前唱到的部分可见")
             try? capture("lyrics-paused", view: coordinator.panel.contentView)
-
             model.playing = true
-            await settle(0.7)
-            flushCompactLayout()
-            let resumed = marquee?.presentedOrigin
-            check("resume continues the marquee", resumed != nil && resumed != pausedEnd)
+            await settle(0.2)
             try? capture("lyrics-resumed", view: coordinator.panel.contentView)
 
-            model.elapsed = 9
+            model.elapsed = 6.8
             await settle(0.2)
+            check("long lyric follows the current word", model.currentLyricLine?.words.count == 4)
+            try? capture("lyrics-reading-window", view: coordinator.panel.contentView)
+
+            model.elapsed = 9.2
+            await settle(0.02)
+            try? capture("lyrics-transition-frame", view: coordinator.panel.contentView)
+            await settle(0.25)
             check("seek moves to the new lyric line", model.currentLyricLine?.text == "第二句")
             try? capture("lyrics-seek", view: coordinator.panel.contentView)
+            model.elapsed = 1.2
+            await settle(0.2)
+            check("backward seek returns to the correct lyric line", model.currentLyricLine?.text == "短句歌词")
+            try? capture("lyrics-seek-back", view: coordinator.panel.contentView)
+
+            model.elapsed = 12.2
+            await settle(0.2)
+            check("line-only long LRC uses its line text", (model.currentLyricLine?.text ?? "").hasPrefix("这是一句没有逐字时间"))
+            check("line-only long LRC has no word timing", model.currentLyricLine?.words.isEmpty == true)
+            try? capture("lyrics-line-only-before", view: coordinator.panel.contentView)
+            model.elapsed = 18.5
+            await settle(0.2)
+            try? capture("lyrics-line-only-after", view: coordinator.panel.contentView)
+            model.elapsed = 12.2
+            await settle(0.2)
+            try? capture("lyrics-line-only-reset", view: coordinator.panel.contentView)
+            model.elapsed = 20.2
+            await settle(0.2)
+            check("line-only short LRC stays static", model.currentLyricLine?.text == "第三句")
+            try? capture("lyrics-line-only-short", view: coordinator.panel.contentView)
 
             model.elapsed = 7
             await settle(0.2)
@@ -104,48 +118,72 @@ enum LyricsVerification {
                   model.currentLyricLine?.text == "" && model.currentLyricLine != nil)
             try? capture("lyrics-interstitial", view: coordinator.panel.contentView)
 
-            model.elapsed = 5
+            model.elapsed = 1.2
+            let expandedLine = model.currentLyricLine?.text
+            model.showsOutputVolume = true
             coordinator.expand()
             await settle(0.6)
-            check("expanded player hides the compact lyric row", model.expanded && !model.showsCompactLyrics)
-            try? capture("lyrics-expanded-no-row", view: coordinator.panel.contentView)
+            check("expanded player keeps lyrics at the bottom", model.expanded && model.showsLyricsInExpanded)
+            check("expanded lyric is below the original player and volume",
+                  model.visibleSize.height >= model.expandedSize.height + 64)
+            try? capture("lyrics-expanded-bottom", view: coordinator.panel.contentView)
+            model.showsOutputVolume = false
             coordinator.collapse()
             await settle(0.6)
-            check("collapse restores the lyric row at current progress",
-                  !model.expanded && model.showsCompactLyrics && model.currentLyricLine != nil)
+            check("collapse restores the compact lyric row",
+                  !model.expanded && model.showsCompactLyrics && model.currentLyricLine?.text == expandedLine)
             try? capture("lyrics-collapsed-restored", view: coordinator.panel.contentView)
 
             model.lyrics = LyricsDisplayState(status: .noLyrics, identity: model.lyrics.identity)
             model.elapsed = 1
             await settle(0.2)
-            check("no-lyrics falls back to title and artist",
-                  model.currentLyricLine == nil && model.lyricFallbackText.contains("晴天"))
-            try? capture("lyrics-fallback", view: coordinator.panel.contentView)
+            check("no-lyrics does not leave a song-title placeholder",
+                  model.currentLyricLine == nil && !model.showsCompactLyrics)
+            try? capture("lyrics-no-row", view: coordinator.panel.contentView)
 
             model.lyrics = LyricsDisplayState(status: .ready,
                 timeline: LyricTimeline(lines: [
-                    LyricLine(start: 1, text: "短句歌词"),
-                    LyricLine(start: 5, text: "这是一句很长的歌词，需要在紧凑区域中慢速从右向左滚动显示，同时保持当前唱到的部分可见"),
+                    LyricLine(start: 1, text: "短句歌词", words: [
+                        LyricWord(text: "短句", start: 1, duration: 0.5),
+                        LyricWord(text: "歌词", start: 1.5, duration: 0.5)
+                    ]),
+                    LyricLine(start: 5, text: "这是一句很长的歌词，需要在紧凑区域中慢速从左向右跟随当前字，同时保持当前唱到的部分可见", words: [
+                        LyricWord(text: "这是一句很长的歌词，", start: 5, duration: 1.2),
+                        LyricWord(text: "需要在紧凑区域中", start: 6.2, duration: 1.2),
+                        LyricWord(text: "慢速从左向右跟随当前字，", start: 7.4, duration: 1.4),
+                        LyricWord(text: "同时保持当前唱到的部分可见", start: 8.8, duration: 1.2)
+                    ]),
                     LyricLine(start: 7, text: ""),
-                    LyricLine(start: 9, text: "第二句")
+                    LyricLine(start: 9, text: "第二句", words: [
+                        LyricWord(text: "第二句", start: 9, duration: 1)
+                    ])
                 ]),
                 identity: model.lyrics.identity)
-            model.elapsed = 5
+            model.elapsed = 5.5
             model.presenter.cancelPeek(reset: true)
-            model.presenter.trackChanged(identity: "v0011-a")
-            model.presenter.trackChanged(identity: "v0011-b")
+            model.presenter.trackChanged(identity: "v0012-a")
+            model.presenter.trackChanged(identity: "v0012-b")
             await settle(0.15)
-            check("song-change prompt wins over a ready lyric",
-                  model.songPeek.visible && model.currentLyricLine != nil)
-            let peekMarqueeCount = marqueeViews(coordinator.panel.contentView ?? NSView()).count
-            check("song-change prompt removes the lyric marquee", peekMarqueeCount == 0)
-            try? capture("lyrics-song-peek-priority", view: coordinator.panel.contentView)
-            await settle(0.8)
-            try? capture("lyrics-song-peek-settled", view: coordinator.panel.contentView)
+            check("lyrics-on suppresses the song-change title prompt", !model.songPeek.visible)
+            try? capture("lyrics-on-no-song-info", view: coordinator.panel.contentView)
+
+            // Same-geometry baseline: with lyrics off the original centered
+            // song-change prompt must return and still expire normally.
+            let qaDefaults = UserDefaults(suiteName: AppRuntimeDefaults.qaSuiteName)!
+            qaDefaults.set(["showOnDisplay": "All displays", "showLyrics": false],
+                           forKey: "referenceSettingsUI")
+            model.settings.reloadPreferences()
             model.presenter.cancelPeek(reset: true)
-            await settle(0.2)
-            check("lyric returns after the song-change prompt", model.currentLyricLine != nil)
-            try? capture("lyrics-after-peek", view: coordinator.panel.contentView)
+            model.presenter.trackChanged(identity: "off-a")
+            model.presenter.trackChanged(identity: "off-b")
+            await settle(0.35)
+            check("lyrics-off restores the original song-change prompt", model.songPeek.visible)
+            try? capture("lyrics-off-song-peek", view: coordinator.panel.contentView)
+            qaDefaults.set(["showOnDisplay": "All displays", "showLyrics": true],
+                           forKey: "referenceSettingsUI")
+            model.settings.reloadPreferences()
+            await settle(0.4)
+            check("re-enabling lyrics restores the lyric row", model.lyrics.status == .ready)
 
             let ids = coordinator.verificationScreenIDs
             if ids.count > 1 {
@@ -156,6 +194,41 @@ enum LyricsVerification {
                 try? capture("lyrics-passive-builtin", view: coordinator.verificationSecondaryPanels.first?.view)
                 coordinator.verificationActivateScreen(ids[0])
                 await settle(0.2)
+            }
+
+            // Same non-notch screen, simulated on/off: compact music width must
+            // stay 214pt and expanded width 345pt while lyrics remain valid.
+            if ids.count > 1 {
+                coordinator.verificationActivateScreen(ids[1])
+                await settle(0.25)
+                model.elapsed = 1.2
+                model.settings.forceSimulatedNotch = false
+                await settle(0.5)
+                check("non-notch pill compact width is 214pt",
+                      !model.notchGeometry.hasPhysicalNotch && model.visibleSize.width == 214)
+                check("non-notch pill keeps lyrics without force-simulated",
+                      model.showsCompactLyrics && model.lyrics.status == .ready)
+                check("non-notch pill keeps pill contour", model.contour.style == .pill)
+                try? capture("lyrics-nonnotch-pill-compact", view: coordinator.panel.contentView)
+
+                model.settings.forceSimulatedNotch = true
+                await settle(0.5)
+                check("non-notch simulated compact width is also 214pt",
+                      model.visibleSize.width == 214)
+                check("force-simulated shape switch does not clear lyrics",
+                      model.showsCompactLyrics && model.lyrics.status == .ready)
+                check("non-notch simulated keeps notch contour", model.contour.style == .notch)
+                try? capture("lyrics-nonnotch-simulated-compact", view: coordinator.panel.contentView)
+
+                model.showsOutputVolume = true
+                coordinator.expand()
+                await settle(0.6)
+                check("non-notch simulated expanded width is 345pt",
+                      model.expanded && model.visibleSize.width == 345)
+                try? capture("lyrics-nonnotch-simulated-expanded", view: coordinator.panel.contentView)
+                model.showsOutputVolume = false
+                coordinator.collapse()
+                await settle(0.4)
             }
 
             let result: [String: Any] = ["passed": checks.allSatisfy { $0["passed"] as? Bool == true },
@@ -170,3 +243,4 @@ enum LyricsVerification {
         }
     }
 }
+#endif

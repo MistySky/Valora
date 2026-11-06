@@ -1,3 +1,4 @@
+#if VALORA_DEVELOPMENT
 import AppKit
 import SwiftUI
 import QuartzCore
@@ -270,8 +271,18 @@ enum MusicPresentationVerification {
                 try capture("artwork-incoming")
                 await settle()
                 try capture("artwork-settled")
+                // Reproduce the system stream's metadata-before-artwork gap.
+                // Do not keep the prior song's cover visible while waiting.
+                model.artwork = nil
+                await settle(0.05)
+                try capture("artwork-gap-placeholder")
                 model.artwork = thirdArt
-                await settle()
+                await settle(0.08)
+                try capture("artwork-late-outgoing")
+                await settle(0.22)
+                try capture("artwork-late-incoming")
+                await settle(0.65)
+                try capture("artwork-late-settled")
                 check("artwork flip remains fixed enabled", !model.settings.musicPreferences.disableArtworkFlip)
                 model.artwork = nil
                 await settle()
@@ -466,7 +477,17 @@ enum SettingsVerification {
                 settings.forceSimulatedNotch = false
                 settings.hoverEnabled = false
                 let navigation = SettingsNavigation()
-                let root = SettingsView(model:model,settings:settings,navigation:navigation,draft:draft)
+                let permissions = AppPermissions(
+                    bluetooth: .authorized,
+                    loginItem: .enabled,
+                    calendar: .fullAccess,
+                    // Rendering verification must not open System Settings or
+                    // trigger provider authorization as a side effect.
+                    openBluetoothSettings: {},
+                    openLoginSettings: {},
+                    openCalendarSettings: {})
+                let root = SettingsView(model:model,settings:settings,navigation:navigation,
+                                        draft:draft,permissions:permissions)
                     .environment(\.controlActiveState, .active).environment(\.colorScheme, .light)
                 let (window, host) = SettingsWindowFactory.make(rootView: root)
                 host.appearance = NSAppearance(named: .aqua)
@@ -504,8 +525,85 @@ enum SettingsVerification {
                     try? await Task.sleep(nanoseconds: 200_000_000)
                     try capture(name + "-bottom")
                 }
+                // Connectivity page: only the total switch. A denied fake state
+                // exercises the original hand accessory without touching TCC.
+                navigation.page = .connectivity
+                navigation.revealBottom = false
+                settings.bluetoothEnabled = true
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Connectivity")
+                // Persisted on + denied + no pending must render off; the old
+                // value is not an authorization or an enable intent.
+                permissions.verificationSet(bluetooth: .denied)
+                settings.bluetoothEnabled = true
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Connectivity-persisted-on-unauthorized")
+                permissions.beginBluetoothEnable {}
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Connectivity-permission-pending")
+                permissions.cancelBluetoothEnable()
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Connectivity-permission")
+                permissions.verificationSet(bluetooth: .authorized)
+                settings.bluetoothEnabled = false
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Connectivity-off")
+                settings.bluetoothEnabled = true
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Connectivity-authorized-on")
+
+                // Calendar: one authorization switch only; pending/off are
+                // injected, never a real EventKit request.
+                navigation.page = .calendar
+                navigation.revealBottom = false
+                draft.binding("enableCalendar", false).wrappedValue = false
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Calendar-off")
+                permissions.verificationSet(calendar: .denied)
+                permissions.beginCalendarEnable {}
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Calendar-permission-pending")
+                permissions.cancelCalendarEnable()
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Calendar-permission")
+                permissions.verificationSet(calendar: .fullAccess)
+                draft.binding("enableCalendar", false).wrappedValue = true
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Calendar-on")
+                draft.binding("enableCalendar", false).wrappedValue = false
+                try? await Task.sleep(nanoseconds: 200_000_000)
+
+                // Calendar icon state matrix. The title and sidebar both use
+                // SettingsIcon, so these captures exercise the recovered
+                // calendar branch rather than the card's badge clock.
+                host.appearance = NSAppearance(named: .darkAqua)
+                host.rootView = SettingsView(model:model,settings:settings,navigation:navigation,
+                                             draft:draft,permissions:permissions)
+                    .environment(\.controlActiveState, .active).environment(\.colorScheme, .dark)
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Calendar-dark")
+                host.rootView = SettingsView(model:model,settings:settings,navigation:navigation,
+                                             draft:draft,permissions:permissions)
+                    .environment(\.controlActiveState, .inactive).environment(\.colorScheme, .dark)
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Calendar-inactive-dark")
+                host.appearance = NSAppearance(named: .aqua)
+                host.rootView = SettingsView(model:model,settings:settings,navigation:navigation,
+                                             draft:draft,permissions:permissions)
+                    .environment(\.controlActiveState, .inactive).environment(\.colorScheme, .light)
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("Calendar-inactive")
+                host.rootView = SettingsView(model:model,settings:settings,navigation:navigation,
+                                             draft:draft,permissions:permissions)
+                    .environment(\.controlActiveState, .active).environment(\.colorScheme, .light)
+                try? await Task.sleep(nanoseconds: 200_000_000)
+
                 // Same active light condition as the original reference.
                 navigation.page = .general; navigation.revealBottom = false
+                permissions.verificationSet(loginItem: .requiresApproval)
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                try capture("General-login-approval")
+                permissions.verificationSet(loginItem: .enabled)
                 settings.hoverEnabled = true
                 try? await Task.sleep(nanoseconds: 200_000_000)
                 try capture("General-hover-on")
@@ -516,7 +614,8 @@ enum SettingsVerification {
                 draft.binding("showOnDisplay", "All displays").wrappedValue = "Main display"
                 navigation.page = .nowPlaying; navigation.revealBottom = false
                 host.appearance = NSAppearance(named: .darkAqua)
-                host.rootView = SettingsView(model:model,settings:settings,navigation:navigation,draft:draft)
+                host.rootView = SettingsView(model:model,settings:settings,navigation:navigation,
+                                             draft:draft,permissions:permissions)
                     .environment(\.controlActiveState, .active).environment(\.colorScheme, .dark)
                 try? await Task.sleep(nanoseconds: 200_000_000)
                 try capture("Now-Playing-dark")
@@ -547,8 +646,17 @@ enum SettingsVerification {
                     "pagesRendered": rendered,
                     "preferencePersistenceVerified": persisted,
                     "preferencesUseIsolatedDomain": isolated,
+                    "permissionStateScreenshots": ["Connectivity-persisted-on-unauthorized", "Connectivity-permission-pending", "Connectivity-permission", "Connectivity-authorized-on", "General-login-approval", "Calendar-permission-pending", "Calendar-permission"],
                     "windowPoints": [620, 687],
                     "sidebarPoints": 225,
+                    "headerHeightPoints": SettingsLayout.headerHeight,
+                    "contentTopPaddingPoints": SettingsLayout.contentTopPadding,
+                    "titleContentGapPoints": SettingsLayout.titleContentGap,
+                    "flatNavigation": false,
+                    "sidebarGrouped": true,
+                    "sidebarGroupTitles": SettingsSidebar.groups.compactMap(\.title),
+                    "standalonePages": SettingsSidebar.groups.filter { $0.title == nil }.flatMap { $0.pages.map(\.displayTitle) },
+                    "navigationOrder": SettingsPage.allCases.map(\.displayTitle),
                     "renderedPages": SettingsPage.allCases.map(\.rawValue),
                     "capturesAreOurOwnViewHierarchy": true,
                     "pixelParityVerified": false,
@@ -560,7 +668,7 @@ enum SettingsVerification {
                     "windowChromeCaptured": rendered.contains("Window-chrome"),
                     "actualWindowFramePoints": [window.frame.width, window.frame.height],
                     "windowGeometryVerified": window.frame.size == NSSize(width: 620, height: 687) && host.bounds.size == NSSize(width: 620, height: 687),
-                    "userModificationRules": "no login item, automation, audio capture or preference write executed by this verifier"
+                    "userModificationRules": "no login item, automation, audio capture, system permission or preference write executed by this verifier"
                 ]
                 try JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys]).write(to: directory.appendingPathComponent("verification.json"))
                 window.orderOut(nil)
@@ -798,3 +906,4 @@ enum MenuBarIconVerification {
         }
     }
 }
+#endif

@@ -19,11 +19,14 @@ public struct NotchGeometry: Equatable, Sendable {
                         hasPhysicalNotch: true)
         }
         // 0x1002488c0–0x100248994: signed IEEE-754 immediates are -1 and -5.5.
+        // Non-notch hardware: simulated notch and ordinary pill share the same
+        // visible compact width and expanded width. Their height/top inset and
+        // contour style remain distinct; hasPhysicalNotch is never faked.
         if simulated {
             return Self(compact: CGSize(width: 140, height: menuBarHeight > 0 ? menuBarHeight - 1 : 24),
                         expanded: CGSize(width: 345, height: 175), hasPhysicalNotch: false)
         }
-        return Self(compact: CGSize(width: 74, height: menuBarHeight > 0 ? menuBarHeight - 5.5 : 19.5),
-                    expanded: CGSize(width: 321, height: 175), hasPhysicalNotch: false)
+        return Self(compact: CGSize(width: 140, height: menuBarHeight > 0 ? menuBarHeight - 5.5 : 19.5),
+                    expanded: CGSize(width: 345, height: 175), hasPhysicalNotch: false)
     }
 }

@@ -23,7 +23,6 @@ final class ScreenStateMonitor {
     private var suppressUntil = Date()
     private(set) var isFullscreen = false
     private(set) var isMissionControl = false
-    private(set) var isGaming = false
     var onStateChange: (() -> Void)?
 
     private typealias CGSConnection = Int32
@@ -132,20 +131,10 @@ final class ScreenStateMonitor {
                   (window[kCGWindowLayer as String] as? Int ?? 0) >= 10 else { return false }
             return coversDisplay(window)
         }
-        let gaming = gameApplication()
-
-        if fullscreen != isFullscreen || missionControl != isMissionControl || gaming != isGaming {
-            isFullscreen = fullscreen; isMissionControl = missionControl; isGaming = gaming
+        if fullscreen != isFullscreen || missionControl != isMissionControl {
+            isFullscreen = fullscreen; isMissionControl = missionControl
             onStateChange?()
         }
     }
 
-    private func gameApplication() -> Bool {
-        guard let app = NSWorkspace.shared.frontmostApplication else { return false }
-        let bundle = app.bundleURL.flatMap { Bundle(url: $0) }
-        let category = bundle?.infoDictionary?["LSApplicationCategoryType"] as? String
-        return GameMatcher.matches(bundleIdentifier: app.bundleIdentifier,
-                                   path: app.bundleURL?.path,
-                                   category: category)
-    }
 }

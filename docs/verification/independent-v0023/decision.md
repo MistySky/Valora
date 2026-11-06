@@ -1,0 +1,9 @@
+# V0023 独立复核：原失败修复，登录项副作用隔离尚未满足
+
+2026-10-25 独立39项针对性测试通过，包括原两项失败。pending/authorized getter与开启路由修复接受子集，但整体暂不接受，尚未重新构建放行候选。
+
+SettingsView.normalizePermissionPreferences首次显示会写draft.launchAtLogin=false；同一视图现存onChange(draft.launchAtLogin)仍直接读取全局LoginItem.isEnabled并调用LoginItem.set(enabled)。因此“只改本软件偏好”的路径仍与真实ServiceManagement写操作耦合。
+
+具体可达反例：视图使用注入loginItem=.requiresApproval（新首次挂载测试正是此状态），真实机器SMAppService.mainApp.status却是.enabled时，首次挂载normalize=false会通过global isEnabled guard并unregister真实登录项。刷新期间状态陈旧也可达。现有测试未注入/观测此直接静态写路径；本次实际39项运行没有login-item set日志，但这不证明在已开启登录项的另一台机器上无系统副作用。不执行真实register/unregister来复现。
+
+已限定R1：系统写必须经明确用户开关操作或撤销本次拥有注册的取消流程，走可注入AppPermissions/AppDelegate动作；程序性偏好纠正/权限刷新与隔离宿主挂载不得调用ServiceManagement。保留正常显式开启/关闭、pending取消不撤旧注册、旧回调拒绝和已授权on。需注入系统状态/动作spy的首次挂载回归，不能靠真实机器登录项刚好关闭使测试通过。

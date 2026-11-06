@@ -20,8 +20,7 @@ struct CompactPlaybackControl: View {
         } label: {
             ZStack {
                 CompactWaveform(image:model.artwork, color:model.artworkColors.first ?? .gray.withAlphaComponent(0.8),
-                    playing:model.playing, reducedMotion:reducedMotion, identity:(model.mediaRevisionIdentity.isEmpty ? model.mediaBundleIdentifier + "\u{1f}" + model.title + "\u{1f}" + model.artist : model.mediaRevisionIdentity),
-                    live:settings.musicPreferences.useLiveWaveform)
+                    playing:model.playing, reducedMotion:reducedMotion, identity:(model.mediaRevisionIdentity.isEmpty ? model.mediaBundleIdentifier + "\u{1f}" + model.title + "\u{1f}" + model.artist : model.mediaRevisionIdentity))
                     .opacity(hovered ? 0 : 1)
                 Image(systemName:model.playing ? "pause.fill" : "play.fill")
                     .foregroundStyle(.white).opacity(hovered ? 1 : 0)
@@ -45,10 +44,9 @@ struct CompactWaveform: NSViewRepresentable {
     let identity: String
     var profile:WaveformProfile = .compact
     var suspended=false
-    var live=false
     func makeNSView(context:Context) -> CompactWaveformView { CompactWaveformView() }
     func updateNSView(_ view:CompactWaveformView,context:Context) {
-        view.configure(image:image,color:color,playing:playing,reducedMotion:reducedMotion,identity:identity,profile:profile,suspended:suspended,live:live)
+        view.configure(image:image,color:color,playing:playing,reducedMotion:reducedMotion,identity:identity,profile:profile,suspended:suspended)
     }
     static func dismantleNSView(_ view:CompactWaveformView,coordinator:()) { view.stop() }
 }
@@ -58,13 +56,15 @@ struct PlayerWaveform:View {
     @ObservedObject var settings:RevivalSettings
     let active:Bool
     let translucent:Bool
+    /// Lock-card ink palette; only consulted when `translucent` is set.
+    var palette:LockCardPalette? = nil
     @Environment(\.accessibilityReduceMotion) private var reducedMotion
     var body:some View {
         CompactWaveform(image:translucent ? nil : model.artwork,
-            color:translucent ? .gray.withAlphaComponent(0.65) : (model.artworkColors.first ?? .gray.withAlphaComponent(0.8)),
+            color:translucent ? (NSColor(palette?.waveform ?? Color.gray.opacity(0.65))) : (model.artworkColors.first ?? .gray.withAlphaComponent(0.8)),
             playing:model.playing,reducedMotion:reducedMotion,
             identity:(model.mediaRevisionIdentity.isEmpty ? model.mediaBundleIdentifier+"\u{1f}"+model.title+"\u{1f}"+model.artist : model.mediaRevisionIdentity),
-            profile:.expanded,suspended:!active,live:settings.musicPreferences.useLiveWaveform)
+            profile:.expanded,suspended:!active)
             .accessibilityLabel(model.playing ? "正在播放" : "播放已暂停")
     }
 }
@@ -88,7 +88,6 @@ final class CompactWaveformView: NSView {
     private var playing = false
     private var reducedMotion = false
     private var suspended=false
-    private var live=false
     private var revision: UInt64 = 0
     private var previousImage: NSImage?
     private var profile:WaveformProfile = .compact
@@ -126,15 +125,13 @@ final class CompactWaveformView: NSView {
         }
     }
     required init?(coder:NSCoder) { fatalError("init(coder:) has not been implemented") }
-    func configure(image:NSImage?,color:NSColor,playing:Bool,reducedMotion:Bool,identity:String,profile:WaveformProfile = .compact,suspended:Bool=false,live:Bool=false) {
+    func configure(image:NSImage?,color:NSColor,playing:Bool,reducedMotion:Bool,identity:String,profile:WaveformProfile = .compact,suspended:Bool=false) {
         let nextRevision = identity.utf8.reduce(UInt64(14695981039346656037)) { ($0 ^ UInt64($1)) &* 1099511628211 }
         let geometryChanged = self.profile != profile
-        let liveChanged = self.live != live
         let revisionChanged = revision != nextRevision
         let changed = self.playing != playing || self.reducedMotion != reducedMotion || revisionChanged || geometryChanged || self.suspended != suspended
         self.suspended=suspended
         self.profile=profile
-        self.live=live
         if geometryChanged { rebuildBars(); textureSize = .zero; needsLayout=true }
         self.playing = playing; self.reducedMotion = reducedMotion; revision = nextRevision
         CATransaction.begin(); CATransaction.setDisableActions(true)
@@ -145,11 +142,10 @@ final class CompactWaveformView: NSView {
             needsLayout=true
         }
         CATransaction.commit()
-        if changed || liveChanged {
+        if changed {
             if geometryChanged || revisionChanged { lastTick = nil }
             refresh(animated:!reducedMotion)
         }
-        if liveChanged { stop() }
         synchronizeTimer()
     }
     override func layout() {
@@ -270,38 +266,16 @@ final class CompactWaveformView: NSView {
     private func synchronizeTimer() {
         guard window != nil,playing,!reducedMotion,!suspended else { stop(); return }
         registered = true
-        WaveformClock.shared.register(self,duration:live ? 1.0/30.0 : CompactWaveformMetrics.duration)
+        WaveformClock.shared.register(self,duration:CompactWaveformMetrics.duration)
     }
     fileprivate func clockTick() {
         guard registered,playing,!reducedMotion,!suspended else { return }
-        let duration = live ? 1.0/30.0 : CompactWaveformMetrics.duration
-        let tick = UInt64(max(0,(CACurrentMediaTime()-WaveformClock.epoch)/duration))
+        let tick = UInt64(max(0,(CACurrentMediaTime()-WaveformClock.epoch)/CompactWaveformMetrics.duration))
         guard tick != lastTick else { return }
         lastTick = tick
         refresh(animated:true)
     }
     private func refresh(animated:Bool) {
-        // Live branch: six bands from the Core Audio process tap. Compact uses
-        // the first five; both views consume the same analyzer without allocating.
-        if live && playing {
-            let levels = LiveAudioTap.shared.levels
-            for (i,bar) in bars.enumerated() {
-                let source = levels[min(i, levels.count-1)]
-                let height = max(2, profile.height * Double(source))
-                let target = CGRect(x:0,y:0,width:profile.width,height:height)
-                let from = bar.presentation()?.bounds ?? bar.bounds
-                CATransaction.begin(); CATransaction.setDisableActions(true)
-                bar.bounds = target
-                CATransaction.commit()
-                guard animated else { bar.removeAllAnimations(); continue }
-                let animation = CABasicAnimation(keyPath:"bounds")
-                animation.fromValue = NSValue(rect:from); animation.toValue = NSValue(rect:target)
-                animation.duration = 0.06
-                animation.timingFunction = CAMediaTimingFunction(name:.easeOut)
-                bar.add(animation,forKey:"bounds")
-            }
-            return
-        }
         let tick = UInt64(max(0,(CACurrentMediaTime()-WaveformClock.epoch)/CompactWaveformMetrics.duration))
         lastTick = tick
         for (i,bar) in bars.enumerated() {

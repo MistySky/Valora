@@ -1,0 +1,20 @@
+{
+  "task": "docs/pi-tasks/v0012-r3-anchor-cache-cancel.md",
+  "task_sha256": "ab5fe4d8b6a0b38ea2516214f039c12db377fceb7d0402d9bc79b1ba687beeb6",
+  "decision": "docs/verification/independent-v0012-r2/decision.md",
+  "independent_tests": [
+    "Tests/ValoraTests/IndependentLyricsDeadlineTests.swift"
+  ],
+  "deadline_latch": "single completion gate: cancel/complete before attach stores pending result; attach resumes exactly once; no structured group wait",
+  "sample_anchor": "AppModel.elapsedSampleDate + playbackRate; delayed mount/expand uses sample age; rate<=0/paused holds",
+  "metrics_cache": "identity + line start/text + complete word segmentation; bounded 8; guarded indices",
+  "qa": "docs/verification/v0012/qa/verification.json",
+  "qa_checks": 28,
+  "tests": {"valora": 63, "reference_core": 103, "total": 166},
+  "artifact": "docs/verification/v0012/artifact-manifest.json",
+  "binary_sha256": "9ff2fcf60e0964ba4135065ad6dd50af18a0d81dc77abd89957a4bced43d0906",
+  "limitations": [
+    "QA is static/injected; real QQ voice alignment/physical dual-screen remain user verification.",
+    "No real player/system/device writes."
+  ]
+}

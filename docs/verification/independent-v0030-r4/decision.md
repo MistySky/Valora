@@ -1,0 +1,4 @@
+# V0030-R4 独立验收：子集通过，冷却待修
+独立19无界面定向通过（RemainingQuotaCache、CodexUsageProvider、IndependentCodexUsage、MenuBarLayout）。剩余79/97、启动后台获取、保留成功缓存及原时间、失败提示、timer与stop代际确认。候选9f398925b0e4a60dec0b873d28cafc3be48d747289cc310e01b9f670402c608c deep/strict签名通过。无真实quota读取/界面点击/循环压力/全量，用户App未替换。
+新增testIndependentCachedFailureStillHonorsClickCooldown失败：成功缓存变旧且后台失败后，snapshot仍ready，refreshOnOpen只在非ready分支检查lastFailureAt，点击立刻再读requestCount2→3。ready/stale不能绕过failureCooldown，须保留旧数据但节流重试。原有效断言保留。
+用户最新确认合并系统监控和Codex单入口/面板，授权本轮派活；V0030-R5同轮修冷却并合并，R4未称整体完全通过。Chrome-only V0031延后串行。

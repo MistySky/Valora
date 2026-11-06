@@ -1,0 +1,22 @@
+{
+  "task": "docs/pi-tasks/v0012-r4-line-only-overflow.md",
+  "task_sha256": "53260b46249d253dd695b527d847b31adb49cafc6db8fcfdc16384c2cf6b65ef",
+  "line_only_policy": "words-empty long LRC: 15% prefix hold, then continuous gray-line slide over line start...next line start; no colored word fill or fake character timing",
+  "short": "words-empty short centered/static",
+  "pause_seek": "local Timeline clock freezes on pause; seek repositions immediately; next line resets offset",
+  "qa": "docs/verification/v0012/qa/verification.json",
+  "qa_checks": 31,
+  "tests": {"valora": 63, "reference_core": 105, "total": 168},
+  "artifact": "docs/verification/v0012/artifact-manifest.json",
+  "binary_sha256": "027ec2e24d2d06f9ebbbc5f7c096c7d4ebd80aed7dffb2c500f0dbd79e719fa1",
+  "evidence": [
+    "lyrics-line-only-before.png",
+    "lyrics-line-only-after.png",
+    "lyrics-line-only-reset.png",
+    "lyrics-line-only-short.png"
+  ],
+  "limitations": [
+    "QA is static/injected; real QQ voice alignment and physical dual-screen remain user verification.",
+    "No real player/system/device writes."
+  ]
+}

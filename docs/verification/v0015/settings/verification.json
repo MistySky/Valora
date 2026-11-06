@@ -1,0 +1,59 @@
+{
+  "actualWindowFramePoints" : [
+    620,
+    687
+  ],
+  "capturesAreOurOwnViewHierarchy" : true,
+  "displayLanguage" : "zh-Hans",
+  "featureBackendsVerified" : false,
+  "pagesRendered" : [
+    "Window-chrome",
+    "General",
+    "General-bottom",
+    "Connectivity",
+    "Connectivity-bottom",
+    "Now-Playing",
+    "Now-Playing-bottom",
+    "Connectivity",
+    "Connectivity-symbols",
+    "Connectivity-off",
+    "General-hover-on",
+    "General-all-displays",
+    "Now-Playing-dark"
+  ],
+  "pixelParityVerified" : false,
+  "preferenceKeysAndSelectionValuesUnchanged" : true,
+  "preferencePersistenceVerified" : true,
+  "preferencesUseIsolatedDomain" : true,
+  "productionWindowFactoryUsed" : true,
+  "renderedPages" : [
+    "General",
+    "Connectivity",
+    "Now Playing"
+  ],
+  "sidebarPoints" : 225,
+  "trafficLightButtons" : [
+    {
+      "enabled" : true,
+      "frame" : "{{18.25, 653.75}, {15, 15}}",
+      "id" : "trafficLight.close"
+    },
+    {
+      "enabled" : false,
+      "frame" : "{{41.25, 653.75}, {15, 15}}",
+      "id" : "trafficLight.minimize"
+    },
+    {
+      "enabled" : false,
+      "frame" : "{{64.25, 653.75}, {15, 15}}",
+      "id" : "trafficLight.zoom"
+    }
+  ],
+  "userModificationRules" : "no login item, automation, audio capture or preference write executed by this verifier",
+  "windowChromeCaptured" : true,
+  "windowGeometryVerified" : true,
+  "windowPoints" : [
+    620,
+    687
+  ]
+}

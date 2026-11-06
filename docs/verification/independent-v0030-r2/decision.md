@@ -1,0 +1,13 @@
+# V0030-R2 自动验证范围独立接受
+
+本轮独立30定向全部通过，包含DownloadEngineIsolationTests、IndependentHolidayDispatchTests、CalendarHolidayParityTests、IndependentMenuBarMigrationTests、FeatureSwitchTests；原自动enqueue后off复活、排队resume、hide后旧读取、原全量中授权fake读取失败均已通过。定向日志无CoreData/AddressBook/Contacts诊断。未重复全量，上一轮334例结果不能冒称本版全量通过；本版范围按变更定向+源码及视图验证接受。
+
+源码核manager suspendActions阻断自动/排队启动，service off先gate再取消暂停保存；假/默认holiday provider nonReading，生产明确注入real factory，排队transport调用前再次核状态与generation，hide递增generation，拒绝前释放在途latch。不扩大到真实媒体/用户日程/文件操作。
+
+固定Convoy37源manifest通过，干净上游临时副本应用V0030-R2 patch后37文件逐个hash与Vendor一致（仅临时规范diff头路径）；独立release构建通过，独立打包deep/strict签名通过，binary3a1fd8483764a16ae34b496027532a1794b0c7b124ecc8802b66445bc084387a。pi交付候选e1ce6c7d0996ca7a16c8c1021e4e5c55e3e09758500a1c7663f4170711b35ca3签名也通过；独立包/private/tmp/valora-independent-v0030-r2-candidate。用户dist仍19ba9a0f0cae669dcc32eb8f282750f9fd46a71a603d1bb2d01b9f872b0ffd9f，未替换或退出用户当前软件。
+
+独立native QA：下载17图/10诊断组，60开关、60shows、controller identity稳定、额外timer0、idle停timer、停止移除status且service shutdown1；原菜单无音乐/显示器项且有新建下载/基础设置退出，顶部无加号，已知/未知/暂停/失败环和删除计划各态检查；未对真实文件点击打开/删除。首次driver45秒deadline不足60次循环，已中止无结果，不记通过；随后同版以正确deadline完整运行退出0并生成结果，不生产改动。
+
+日历3张原生fixture图及JSON：10/1国庆+休，10/10班，10/18重阳，normal/arrangement各一次。设置实际39张PNG，非报告所称40，显示开关补齐；日历360pt监控400pt、AI360pt、下载560pt为当前已验版。UI材质透明截图仅证明生产视图布局，非真实鼠标/物理多屏体验。
+
+生产EventKit节假日源/真实StoreChanged与权限撤销、用户真实下载Trash、浏览器均未实机验收，仍明确待验。用户目前正在讨论统一面板宽度为360或400，Codex建议400；尚未确认实施，不擅改已验版宽度或自动投浏览器V0031，先收最新选择。定时器仍关闭。

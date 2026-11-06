@@ -4,6 +4,11 @@ import ReferenceCore
 
 @MainActor
 final class ArtworkTransitionController: ObservableObject {
+    // Preserve a rendered placeholder as a transition origin after an artwork
+    // gap. The previous cover is still released and never displayed as the
+    // new song's artwork; late artwork can now animate instead of looking like
+    // the first image mounted by this view.
+    private static let placeholderIdentity = "valora-artwork-placeholder"
     @Published private(set) var state = ArtworkTransitionState()
     @Published private(set) var image: NSImage?
     @Published private(set) var progress = 0.0
@@ -13,7 +18,11 @@ final class ArtworkTransitionController: ObservableObject {
     func update(image next: NSImage?, identity: String, animated: Bool) {
         if let next, !identity.isEmpty { frames[identity] = next }
         var candidate = state
-        candidate.set(next == nil || identity.isEmpty ? nil:identity,animated:animated)
+        let missing = next == nil || identity.isEmpty
+        let nextIdentity = missing
+            ? (animated && state.current != nil ? Self.placeholderIdentity : nil)
+            : identity
+        candidate.set(nextIdentity, animated: animated && !missing)
         guard candidate != state else { return }
         let changedGeneration = candidate.generation != state.generation
         state = candidate

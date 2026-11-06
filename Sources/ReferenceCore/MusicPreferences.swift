@@ -11,8 +11,8 @@ public struct MusicPreferences: Equatable, Sendable {
     public var peekDuration: Double
     public var idleDuration: Double
     public var hideSongTitleExtras: Bool
-    public var useLiveWaveform: Bool
     public var showLyrics: Bool
+    public var inlineLyrics: Bool
 
     public init(values: [String: Any] = [:]) {
         disableArtworkFlip = values["disableAlbumArtFlip"] as? Bool ?? false
@@ -26,8 +26,8 @@ public struct MusicPreferences: Equatable, Sendable {
         let idle = (values["idleDuration"] as? NSNumber)?.doubleValue ?? 3
         idleDuration = idle.isFinite ? min(10, max(0, idle)) : 3
         hideSongTitleExtras = values["hideSongTitleExtras"] as? Bool ?? false
-        useLiveWaveform = values["useLiveWaveform"] as? Bool ?? false
         showLyrics = values["showLyrics"] as? Bool ?? false
+        inlineLyrics = values["inlineLyrics"] as? Bool ?? false
     }
 
     public func hidesActivity(source: String, frontmost: String) -> Bool {

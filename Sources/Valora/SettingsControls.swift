@@ -6,10 +6,24 @@ struct SettingsIcon: View {
     var muted = false
     var size: CGFloat = 22
     var body: some View {
-        Image(systemName: page.symbol).font(.system(size: size * 0.60, weight: .semibold))
-            .foregroundStyle(.white).frame(width: size, height: size)
-            .background(LinearGradient(colors: [(muted ? .gray : page.color).opacity(0.65), muted ? .gray : page.color], startPoint: .top, endPoint: .bottom))
-            .clipShape(RoundedRectangle(cornerRadius: size * 0.29))
+        Group {
+            if page == .calendar {
+                // Directly recovered from the archived SettingsIcon calendar
+                // branch: colored header, paper surface and date "12".
+                VStack(spacing: 0) {
+                    Rectangle().fill(muted ? Color.gray : page.color)
+                        .frame(height: size * 0.27)
+                    Text("12")
+                        .font(.system(size: size * 0.48, weight: .medium))
+                        .foregroundStyle(muted ? .secondary : .primary)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }.background(Color(nsColor: .controlBackgroundColor))
+            } else {
+                Image(systemName: page.symbol).font(.system(size: size * 0.60, weight: .semibold))
+                    .foregroundStyle(.white).frame(width: size, height: size)
+                    .background(LinearGradient(colors: [(muted ? .gray : page.color).opacity(0.65), muted ? .gray : page.color], startPoint: .top, endPoint: .bottom))
+            }
+        }.frame(width: size, height: size).clipShape(RoundedRectangle(cornerRadius: size * 0.29))
             .overlay(RoundedRectangle(cornerRadius: size * 0.29).stroke(.black.opacity(0.06), lineWidth: 0.5)).accessibilityHidden(true)
     }
 }
@@ -62,8 +76,15 @@ struct SettingsToggleRow: View {
                     .buttonStyle(.plain).accessibilityLabel("查看说明").popover(isPresented: $showInfo) { Text(SettingsText.localized(info)).font(.system(size: 12)).padding(14).frame(width: 250) }
             }
             Spacer(minLength: 2)
-            if blocked { Button { onAccessory?() } label: { Image(systemName: "hand.raised.slash.fill").foregroundStyle(.secondary) }.buttonStyle(.plain).accessibilityLabel("需要授权") }
-            Toggle(SettingsText.localized(title), isOn: $value).labelsHidden().accessibilityLabel(SettingsText.localized(title)).toggleStyle(SettingsSwitch(label: title)).disabled(blocked)
+            if blocked {
+                // The hand is a status marker only. The switch below is the
+                // single interaction that can begin an authorization intent.
+                Image(systemName: "hand.raised.slash.fill")
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel("需要授权")
+                    .accessibilityHint("点击开关尝试开启并处理授权")
+            }
+            Toggle(SettingsText.localized(title), isOn: $value).labelsHidden().accessibilityLabel(SettingsText.localized(title)).toggleStyle(SettingsSwitch(label: title))
         }.font(.system(size: 13.5)).padding(.horizontal, 12).frame(height: 41)
     }
 }
@@ -211,6 +232,13 @@ struct SettingsChoices: View {
                     .frame(width: 26, height: 26)
                     .background(choice.title == "Music" ? Color.pink : Color.gray, in: RoundedRectangle(cornerRadius: 6)).accessibilityHidden(true)
             }
+        } else if choice.style == "airpods" {
+            ZStack {
+                RoundedRectangle(cornerRadius: 9).fill(.black)
+                Image(systemName: choice.symbol)
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundStyle(.white.opacity(choice.value == selected ? 1 : 0.75))
+            }.padding(.horizontal, 14).padding(.vertical, 10)
         } else if choice.style == "progress" {
             GeometryReader { g in
                 ZStack(alignment: .leading) {

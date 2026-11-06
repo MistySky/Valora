@@ -59,7 +59,8 @@ final class RevivalSettingsReloadTests: XCTestCase {
         XCTAssertEqual(settings.musicPreferences.peekDuration, 2)
         // Retained visible setting still reads its stored value.
         XCTAssertEqual(settings.musicPreferences.progressStyle, .gradient)
-        XCTAssertTrue(settings.musicPreferences.useLiveWaveform)
+        // The removed live-waveform key is tolerated in the old dictionary but
+        // has no consumer or runtime property anymore.
 
         // Old notch offsets are ignored by geometry consumers.
         let model = AppModel(settings: settings)
@@ -84,6 +85,28 @@ final class RevivalSettingsReloadTests: XCTestCase {
         draft.binding("hoverDelay", 0.0).wrappedValue = 4.0
         settings.reloadPreferences()
         XCTAssertEqual(settings.hoverDelay, 1.0, accuracy: 0.0001)
+    }
+
+    func testConnectivityPolicyIsFixedAndSwitchDefaultsOff() {
+        defaults.set([
+            "connectivityModel": "Symbols",
+            "connectivityDuration": 1.0,
+            "warnOnLowConnectBattery": false,
+            "lowConnectBatteryThreshold": 30,
+            "playSoundOnLowConnectBattery": false
+        ], forKey: "referenceSettingsUI")
+        let settings = RevivalSettings(defaults: defaults)
+        XCTAssertFalse(settings.bluetoothEnabled)
+        XCTAssertTrue(settings.connectivityPreferences.uses3DModels, "legacy appearance selection must be ignored")
+        XCTAssertEqual(settings.connectivityPreferences.duration, 5)
+        XCTAssertEqual(settings.connectivityPreferences.lowBatteryThreshold, 20)
+        XCTAssertTrue(settings.connectivityPreferences.warnOnLowBattery)
+        XCTAssertTrue(settings.connectivityPreferences.playSoundOnLowBattery)
+
+        settings.bluetoothEnabled = true
+        XCTAssertTrue(RevivalSettings(defaults: defaults).bluetoothEnabled)
+        settings.reloadPreferences()
+        XCTAssertTrue(settings.connectivityPreferences.uses3DModels)
     }
 
     func testShowLyricsDefaultsOffAndPersists() {

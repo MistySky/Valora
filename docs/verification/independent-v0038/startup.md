@@ -1,0 +1,1 @@
+2026-10-30 用户明确“退出替换”。Codex读取预览controller确认无Space/声音/真实session写；候选SHAf6d0390566f188e33d90632e4cebb7c721bedff87fde0ca8ee7ce87a5938d387与报告一致，strict/deep签名通过。通过CUA刘海菜单退出rollback候选，启动/private/tmp/valora-v0038-desktop-lock-preview-candidate/Valora.app。已实际打开锁屏设置页并确认模拟锁屏开关存在/off，总开关on；用户现有声音/音乐/设备off偏好未改。未点击模拟开关或真实锁屏/媒体控制，无UI循环。只启动与入口可见子集，整体动画仍待用户测试，不等于独立全功能接受。

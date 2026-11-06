@@ -55,6 +55,30 @@ final class QQMusicLyricsTests: XCTestCase {
         XCTAssertEqual(QQMusicMatcher.match(request, candidates: [one, two]), .noMatch(.ambiguous))
     }
 
+    func testIncompleteSoloArtistAcceptsCollaborationButNotMaleVersion() {
+        let request = QQMusicSample(title: "知否知否", artist: "胡夏",
+                                    album: "知否知否应是绿肥红瘦 电视剧原声带", duration: 276)
+        let collaboration = QQMusicCandidate(songmid: "collab", songID: 1,
+            title: "知否知否", artist: "胡夏 / 郁可唯",
+            album: "知否知否应是绿肥红瘦 电视剧原声带", duration: 276)
+        let male = QQMusicCandidate(songmid: "male", songID: 2,
+            title: "知否知否 (男声版)", artist: "胡夏",
+            album: "知否知否应是绿肥红瘦 电视剧原声带", duration: 276)
+        XCTAssertEqual(QQMusicMatcher.match(request, candidates: [male, collaboration]),
+                       .matched(collaboration))
+        XCTAssertEqual(QQMusicMatcher.match(request, candidates: [male]),
+                       .noMatch(.versionMismatch))
+    }
+
+    func testMissingRequestedCollaboratorIsStillRejected() {
+        let request = QQMusicSample(title: "知否知否", artist: "胡夏 / 郁可唯",
+                                    album: "知否知否应是绿肥红瘦 电视剧原声带", duration: 276)
+        let partial = QQMusicCandidate(songmid: "partial", title: "知否知否",
+            artist: "胡夏", album: "知否知否应是绿肥红瘦 电视剧原声带", duration: 276)
+        XCTAssertEqual(QQMusicMatcher.match(request, candidates: [partial]),
+                       .noMatch(.artistMismatch))
+    }
+
     func testArtistMismatchAndEmptyCandidates() {
         let request = QQMusicSample(title: "晴天", artist: "周杰伦", album: "叶惠美", duration: 269)
         XCTAssertEqual(QQMusicMatcher.match(request, candidates: [candidate(artist: "其他人")]),

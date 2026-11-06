@@ -1,0 +1,14 @@
+# V0027-R1：限定修复状态项恢复与日历授权时序
+
+Codex独立原263测试通过，release构建/签名和原生模块验证通过，但新增IndependentMenuBarMigrationTests三项中两项失败，整体未接受，见docs/verification/independent-v0027/boundaries.log。仅修下述内部逻辑，UI完全保持Calmon及既有Valora原样，不重做迁入、不新增功能。
+
+1 MenuBarModuleController隐藏再显示calendar会重建NSStatusItem，但lastCalendarText仍旧值，updateCalendarImage直接早退，新按钮日期为空。恢复入口应立即重绘正确日期图像、tooltip与accessibilityLabel，不能等下一天变化。检查监控同类缓存，补稳定相同数据下隐藏恢复验证，而非等待下一次采样掩盖。
+2 AppDelegate appPermissions.$calendar.sink同步refreshEvents，而readGate读permissions.calendar旧willSet值。面板已打开且enableCalendar已同意时，授权denied→fullAccess后读取次数为0，必须再点击才读。最小修订生产订阅/刷新接口确保基于已提交新状态；失权及时清空并拒绝新读取，停用/关闭/stop后旧排队授权回调不复活。不得触发真实TCC或个人日程。新增独立测试中的订阅是原生产接线的复现，修复时应让测试调用提取的共享生产接线入口或真正AppDelegate注入fixture，不能仅改测试复制的新逻辑而生产仍旧；保留原“已开面板授权后自动读一次”断言及禁止隐式读边界。
+
+保留原263项与五日历生命周期语义。UI/设置/刘海/音乐歌词/设备/品牌不动，历史代码/资源不删错，不改归档/Git/模型会话、不恢复定时器、不覆盖dist或退出用户应用。候选仅/private/tmp/valora-v0027-r1-candidate。
+
+内存专项：沿用并完善现有审计，连续打开样本必须同时验证对应popover始终isShown；如焦点被另一QA进程打断而关闭，该段不能称连续开窗稳定。可以复用原始有效证据，因修复改变生命周期须补针对性开关回归；原始RSS/physical footprint趋势与释放对象/真实图标缓存界限分别陈述，不将fake cache=0称真实全量图标实测通过。
+
+实际软件图标音乐菜单验证应复用生产构建路径，不用MenuBarModulesVerification里手工创建的仅版本/设置/退出样例菜单冒充真实软件图标音乐路由通过。模块基础菜单内容及左右键与现状保持。
+
+交付定向失败回归、必要权限/lifecycle、构建签名和原生模块QA，报告docs/reports/v0027-r1.md/证据docs/verification/v0027-r1，停止等Codex独立验收。

@@ -1,0 +1,13 @@
+# V0023-R1：首次纠正/注入宿主不得写真实登录项
+
+Codex独立39项定向测试通过，原两失败已修，binding路由子集接受；整体未放行。见docs/verification/independent-v0023/decision.md。不是重做V0023，不改已接受UI。
+
+具体问题：SettingsView首次normalize写draft.launchAtLogin=false后触发现存onChange，里面仍全局LoginItem.isEnabled并LoginItem.set(false)。在注入requiresApproval、真实SM状态enabled时（例如另一台开着登录项的机器跑新NSHostingView测试），会注销真实登录项。刷新状态陈旧也可达。当前测试未spy此直接静态系统写，因此“仅改Valora配置”声明不成立。本轮实际39项日志无login-item set，但不能以机器碰巧off证明安全；禁止用真实注册/注销复现。
+
+最小修范围：让SettingsView的程序性偏好更新/首次normalization/权限refresh完全无ServiceManagement写副作用；移除或隔离泛型draft onChange中的系统写，使系统register/unregister仅来自明确用户开关动作，以及已有本次注册所有权的取消撤销。复用已存在AppPermissions/AppDelegate注入接口，不造权限中心或改整体架构。SettingsView不要旁路注入去写全局LoginItem。
+
+保留显式用户正常关闭已启用登录项的真实行为（不可因删onChange让关闭只改本地配置），开启沿已有授权注册/批准流程；取消已有requiresApproval且非本次拥有注册，不得注销旧注册；取消本次新注册须按原所有权撤销；旧callback拒绝，授权on不被清、pending不重复发。初始/外部状态纠正只改本软件偏好，外部grant无用户意图不自启。
+
+加有意义隔离回归：注入系统“enabled”但权限状态陈旧/不可用、旧本地on，实际SettingsView首次挂载/refresh后register/unregister调用均0；另验证用户显式off恰好走注入unregister，normalization不能假装用户操作。所有status读取/系统动作都可控，不能依赖本机真实SM状态，更不能操作系统登录项。保留IndependentPersistedPermissionTests和既有所有权/旧callback测试，不弱化断言。
+
+定向测试至少覆盖上述39项及新回归；构建签名、隔离状态真实视图，不执行真实登录项/权限写。报告docs/reports/v0023-r1.md，证据docs/verification/v0023-r1/，完成Codex复核。禁止真实媒体/设备/个人日程账号/系统权限操作、Git提交推送、安装发布、改归档、扩AI/音乐来源等新功能。

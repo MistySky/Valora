@@ -22,7 +22,6 @@ app_notes = {
     'Controllers.swift': 'MediaController only; removed AppleScript/QQ/player-selection branches (system source only)',
     'SystemMediaSource.swift': 'Swift 6 Sendable/lock adaptation; same Perl + MediaRemoteAdapter stream/get/send/seek semantics',
     'AudioOutputController.swift': 'MainActor + scheduler isolation; CoreAudio volume/mute consumers preserved',
-    'AudioTap.swift': 'Swift 6 @unchecked Sendable with documented lock/serial-queue invariants; labels renamed to Valora',
     'PresentationController.swift': 'MainActor; notification/lock chevrons removed; expansion lifecycle, peek and idle timing preserved',
     'WindowCoordinator.swift': 'MainActor; notification/lock subscriptions and panels removed; display, hit-test, hover, scroll and secondary compact panels preserved',
     'NotchView.swift': 'music branches only; artwork/compact waveform/Quick Peek/expanded player retained; notification/lock/device/battery branches removed',

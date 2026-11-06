@@ -1,0 +1,119 @@
+{
+  "checks" : [
+    {
+      "name" : "static provider produces timed lyrics",
+      "passed" : true
+    },
+    {
+      "name" : "compact lyric row stays visible",
+      "passed" : true
+    },
+    {
+      "name" : "compact lyric row uses the 32pt auxiliary area",
+      "passed" : true
+    },
+    {
+      "name" : "artwork color is available for lyric fill",
+      "passed" : true
+    },
+    {
+      "name" : "short lyric resolves from playback time",
+      "passed" : true
+    },
+    {
+      "name" : "short lyric has real word timing",
+      "passed" : true
+    },
+    {
+      "name" : "long lyric resolves from playback time",
+      "passed" : true
+    },
+    {
+      "name" : "long lyric carries word timing",
+      "passed" : true
+    },
+    {
+      "name" : "pause keeps the current lyric line",
+      "passed" : true
+    },
+    {
+      "name" : "long lyric follows the current word",
+      "passed" : true
+    },
+    {
+      "name" : "seek moves to the new lyric line",
+      "passed" : true
+    },
+    {
+      "name" : "backward seek returns to the correct lyric line",
+      "passed" : true
+    },
+    {
+      "name" : "blank interstitial clears the previous line",
+      "passed" : true
+    },
+    {
+      "name" : "expanded player keeps lyrics at the bottom",
+      "passed" : true
+    },
+    {
+      "name" : "expanded lyric is below the original player and volume",
+      "passed" : true
+    },
+    {
+      "name" : "collapse restores the compact lyric row",
+      "passed" : true
+    },
+    {
+      "name" : "no-lyrics does not leave a song-title placeholder",
+      "passed" : true
+    },
+    {
+      "name" : "lyrics-on suppresses the song-change title prompt",
+      "passed" : true
+    },
+    {
+      "name" : "lyrics-off restores the original song-change prompt",
+      "passed" : true
+    },
+    {
+      "name" : "re-enabling lyrics restores the lyric row",
+      "passed" : true
+    },
+    {
+      "name" : "lyrics follow the active screen",
+      "passed" : true
+    },
+    {
+      "name" : "non-notch pill compact width is 214pt",
+      "passed" : true
+    },
+    {
+      "name" : "non-notch pill keeps lyrics without force-simulated",
+      "passed" : true
+    },
+    {
+      "name" : "non-notch pill keeps pill contour",
+      "passed" : true
+    },
+    {
+      "name" : "non-notch simulated compact width is also 214pt",
+      "passed" : true
+    },
+    {
+      "name" : "force-simulated shape switch does not clear lyrics",
+      "passed" : true
+    },
+    {
+      "name" : "non-notch simulated keeps notch contour",
+      "passed" : true
+    },
+    {
+      "name" : "non-notch simulated expanded width is 345pt",
+      "passed" : true
+    }
+  ],
+  "passed" : true,
+  "provider" : "static QA, no network\/media\/audio",
+  "screenCount" : 2
+}

@@ -1,0 +1,13 @@
+# V0093 独立验收：限定返修
+
+用户请求验收替换，随后只讨论监控放日历下方的方案；本轮不执行新布局移动。OpenCode同一会话用户另确认5H也显示日期、两行摘要合为一张卡（seq5413），当前代码已跟随该确认，不以旧任务的同日仅时间/两张卡作为返修理由。
+
+当前CodexUsageSummaryTests 13项独立通过。报告“新增13+协调器32+状态13+外观4=49”算术错误，实际应62；本轮未照抄数量。
+
+新增IndependentCodexTransportTests两项均失败，4个断言，测试只执行/private/tmp自产静默脚本，不调用真实Codex或读取账号：
+- testCancellingReadTerminatesTheActualSilentChild：Task.cancel后实际读取等待约1.93秒才返回processExited，不是CancellationError；未及时停止子进程。
+- testSilentStdoutCannotBypassTheReadDeadline：timeout2秒，静默3.2秒进程在约3.64秒后退出才返回processExited；availableData阻塞令deadline无法执行。
+
+源码CodexAppServerClient.readRateLimits缺取消处理，run同步availableData在while时间检查内阻塞；stderr不读且stdout无界，是同一传输收尾风险。上层provider.stop取消任务/定时器及代次保护不能代替停止实际子进程。整体不接受，不把现有候选称已通过。代码布局/内存/额度语义子集通过不抹杀该缺陷。
+
+限定R1修生产传输的真实取消、独立超时与有界管道收尾，保留UI及用户最新布局；正式交付后复验、构建签名及单实例替换，不真实账号探针、不反复弹窗。

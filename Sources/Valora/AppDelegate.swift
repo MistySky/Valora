@@ -4,6 +4,7 @@ import Combine
 import CoreImage
 import NativeBridge
 import ReferenceCore
+import OSLog
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
@@ -11,13 +12,64 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     let runtimeSuiteName: String
     let startupMode: AppRuntimeDefaults.StartupMode
     let settings: RevivalSettings
-    lazy var model = AppModel(settings: settings)
-    private var statusItem: NSStatusItem!
+    private var modelWasLoaded = false
+    lazy var model: AppModel = {
+        let model = AppModel(settings: settings)
+        model.openMediaSourceAction = { bundleIdentifier in
+            let logger = Logger(subsystem: "com.wangqing.valora", category: "MediaSourceActivation")
+            guard let application = NSRunningApplication.runningApplications(withBundleIdentifier: bundleIdentifier)
+                .first(where: { !$0.isTerminated }), let url = application.bundleURL else { return }
+            let configuration = NSWorkspace.OpenConfiguration()
+            configuration.activates = true
+            configuration.createsNewApplicationInstance = false
+            logger.notice("Opening running media source: \(bundleIdentifier, privacy: .public)")
+            NSWorkspace.shared.openApplication(at: url, configuration: configuration) { _, error in
+                if let error {
+                    logger.error("Media source activation failed: \(error.localizedDescription, privacy: .public)")
+                } else {
+                    logger.notice("Media source open request completed")
+                }
+            }
+        }
+        modelWasLoaded = true
+        return model
+    }()
+    private var statusItem: NSStatusItem?
+    private var statusMenu: NSMenu?
+    private var bluetoothAuthorizationRequester: BluetoothAuthorizationRequester?
+    private var menuBarModules: MenuBarModuleController?
+    /// Owns the single read-only Codex quota refresh for this process.
+    private var codexUsage: CodexUsageProvider?
     private var coordinator: WindowCoordinator!
+    private var lockMusic: LockMusicCoordinator?
+    #if VALORA_DEVELOPMENT
+    private var lockCardPreview: LockCardPreviewController?
+    #endif
     private var settingsWindow: NSWindow?
     private let settingsNavigation = SettingsNavigation()
     lazy var settingsDraft = SettingsDraft(defaults: runtimeDefaults)
     private var subscriptions = Set<AnyCancellable>()
+    private lazy var appPermissions = AppPermissions(
+        bluetoothRequest: { [weak self] in self?.requestBluetoothAuthorization() },
+        openBluetoothSettings: { AppPermissions.openBluetoothPrivacySettings() },
+        loginRegister: { completion in
+            do {
+                try LoginItem.set(true)
+                completion(AppPermissions.loginAccess(from: LoginItem.status))
+            } catch {
+                completion(.unknown)
+            }
+        },
+        loginUnregister: { completion in
+            do {
+                try LoginItem.set(false)
+                completion(AppPermissions.loginAccess(from: LoginItem.status))
+            } catch {
+                completion(.unknown)
+            }
+        },
+        openLoginSettings: { AppPermissions.openLoginItemSettings() },
+        openCalendarSettings: { AppPermissions.openCalendarPrivacySettings() })
 
     init(arguments: [String] = CommandLine.arguments) {
         let resolved = AppRuntimeDefaults.resolve(arguments: arguments)
@@ -29,22 +81,125 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        if startupMode == .verifyAudioTap { AudioTapVerification.run(); return }
+        #if !VALORA_DEVELOPMENT
+        // Defence in depth: main.swift rejects development-only flags before
+        // AppKit starts. If a future entry point bypasses that gate, fail here
+        // instead of continuing with a fake configuration and real services.
+        if startupMode != .production {
+            fputs("Valora: verification startup modes are development-only\n", stderr)
+            exit(2)
+        }
+        #endif
         settings.$hideFromScreenCapture.removeDuplicates().sink { [weak self] hidden in
             MainActor.assumeIsolated { self?.settingsWindow?.sharingType = hidden ? .none : .readOnly }
         }.store(in: &subscriptions)
         NSApp.setActivationPolicy(.accessory)
         model.showSettingsAction = { [weak self] in self?.showSettings() }
         model.quitAction = { [weak self] in self?.quit() }
+
+        #if VALORA_DEVELOPMENT
+        // Standalone development extras are not a valid launch on their own:
+        // reject them before any controller is constructed or started, so they
+        // can never silently fall through to a live production startup.
+        if let flag = LaunchPolicy.developmentStartupRejection(startupMode) {
+            fputs("Valora: \(flag) cannot run standalone; it only modifies --preview-music, which already starts the isolated synthetic preview. No media, audio, Bluetooth or calendar service was started.\n", stderr)
+            exit(2)
+        }
+        if startupMode == .verifyCalendarParity {
+            guard let output = AppRuntimeDefaults.value(after: "--verify-calendar-parity",
+                                                        arguments: CommandLine.arguments) else {
+                fputs("--verify-calendar-parity requires an output directory\n", stderr)
+                NSApp.terminate(nil); return
+            }
+            CalendarParityVerification.run(output: output)
+            return
+        }
+        if startupMode == .previewMenuBarModules {
+            // Isolated native preview of the two Calmon modules. No media,
+            // Bluetooth, EventKit authorization or real calendar query.
+            setupMenu()
+            return
+        }
+        if startupMode == .auditMenuBarMemory {
+            guard let output = AppRuntimeDefaults.value(after: "--audit-menubar-memory",
+                                                        arguments: CommandLine.arguments) else {
+                fputs("--audit-menubar-memory requires an output directory\n", stderr)
+                NSApp.terminate(nil); return
+            }
+            MenuBarMemoryAudit.run(output: output)
+            return
+        }
+        if startupMode == .auditCalendarFixedWindow {
+            guard let output = AppRuntimeDefaults.value(after: "--audit-calendar-fixed-window",
+                                                        arguments: CommandLine.arguments) else {
+                fputs("--audit-calendar-fixed-window requires an output directory\n", stderr)
+                NSApp.terminate(nil); return
+            }
+            CalendarFixedWindowAudit.run(output: output)
+            return
+        }
+        if startupMode == .auditCalendarPopover || startupMode == .auditCalendarPopoverFixed {
+            let fixed = startupMode == .auditCalendarPopoverFixed
+            let flag = fixed ? "--audit-calendar-popover-fixed" : "--audit-calendar-popover"
+            guard let output = AppRuntimeDefaults.value(after: flag,
+                                                        arguments: CommandLine.arguments) else {
+                fputs("\(flag) requires an output directory\n", stderr)
+                NSApp.terminate(nil); return
+            }
+            CalendarPopoverAudit.run(output: output, fixedDisplay: fixed)
+            return
+        }
+
+        #endif
+
         // Construct the controllers for every mode; only production starts them.
+        // This block is shared: release builds need the same live controllers.
         model.media = MediaController(model)
         model.audio = AudioOutputController(model)
+        model.bluetooth = ConnectivityController(model, authorizationGate: {
+            AppPermissions.currentBluetooth == .authorized
+        })
+        #if VALORA_DEVELOPMENT
+        // Guard the launch path itself: these must never be gated again.
+        assert(model.media != nil && model.audio != nil && model.bluetooth != nil,
+               "shared launch controllers must be constructed outside every development region")
 
+        // Isolated desktop preview of the lock card: the controllers exist but
+        // are never started, so no media, audio polling, Bluetooth or calendar
+        // service runs. The fixture keeps the card readable without a player.
+        if startupMode == .lockCardPreview {
+            model.previewMode = true
+            model.title = "锁屏音乐卡预览"
+            model.artist = "材质与布局检查 · 非真实播放"
+            model.album = "开发预览"
+            model.source = "预览"
+            model.playing = true
+            model.duration = 236
+            model.elapsed = 74
+            let art = NSImage(size: NSSize(width: 64, height: 64))
+            art.lockFocus()
+            NSColor(calibratedRed: 0.16, green: 0.42, blue: 0.62, alpha: 1).setFill()
+            NSBezierPath(rect: NSRect(x: 0, y: 0, width: 64, height: 64)).fill()
+            NSColor(calibratedRed: 0.86, green: 0.55, blue: 0.28, alpha: 1).setFill()
+            NSBezierPath(ovalIn: NSRect(x: 10, y: 10, width: 44, height: 44)).fill()
+            art.unlockFocus()
+            model.artwork = art
+            lockCardPreview = LockCardPreviewController(model)
+            lockCardPreview?.setVisible(true)
+            return
+        }
+        #endif
+
+        #if VALORA_DEVELOPMENT
         if startupMode == .verifyMenuBar {
             guard let output = AppRuntimeDefaults.value(after: "--verify-menubar", arguments: CommandLine.arguments) else {
                 fputs("--verify-menubar requires an output directory\n", stderr); NSApp.terminate(nil); return
             }
             setupMenu()
+            guard let statusItem else {
+                fputs("--verify-menubar requires the application status item\n", stderr)
+                NSApp.terminate(nil); return
+            }
             MenuBarIconVerification.run(statusItem: statusItem, output: output)
             return
         }
@@ -116,11 +271,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             model.album = "叶惠美"
             model.duration = 269
             model.source = "预览"
+            let art = NSImage(size: NSSize(width: 64, height: 64))
+            art.lockFocus()
+            NSColor(calibratedRed: 0.16, green: 0.62, blue: 0.55, alpha: 1).setFill()
+            NSBezierPath(rect: NSRect(x: 0, y: 0, width: 64, height: 64)).fill()
+            NSColor(calibratedRed: 0.86, green: 0.48, blue: 0.22, alpha: 1).setFill()
+            NSBezierPath(rect: NSRect(x: 0, y: 0, width: 32, height: 64)).fill()
+            art.unlockFocus()
+            model.artwork = art
             let lines = [
-                LyricLine(start: 1, text: "短句歌词"),
-                LyricLine(start: 5, text: "这是一句很长的歌词，需要在紧凑区域中慢速从右向左滚动显示，同时保持当前唱到的部分可见"),
+                LyricLine(start: 1, text: "短句歌词", words: [
+                    LyricWord(text: "短句", start: 1, duration: 0.5),
+                    LyricWord(text: "歌词", start: 1.5, duration: 0.5)
+                ]),
+                LyricLine(start: 5, text: "这是一句很长的歌词，需要在紧凑区域中慢速从左向右跟随当前字，同时保持当前唱到的部分可见", words: [
+                    LyricWord(text: "这是一句很长的歌词，", start: 5, duration: 0.5),
+                    LyricWord(text: "需要在紧凑区域中", start: 5.5, duration: 0.5),
+                    LyricWord(text: "慢速从左向右跟随当前字，", start: 6.0, duration: 0.5),
+                    LyricWord(text: "同时保持当前唱到的部分可见", start: 6.5, duration: 0.4)
+                ]),
                 LyricLine(start: 7, text: ""),
-                LyricLine(start: 9, text: "第二句")
+                LyricLine(start: 9, text: "第二句", words: [
+                    LyricWord(text: "第二句", start: 9, duration: 1)
+                ]),
+                LyricLine(start: 12, text: "这是一句没有逐字时间的长歌词，只有LRC整行时间，需要按行时间平滑滚动显示后半句，不能平均分字伪造成逐字同步"),
+                LyricLine(start: 20, text: "第三句")
             ]
             model.lyricsController = LyricsController(model: model,
                 provider: StaticLyricsProvider(result: .timed(LyricTimeline(lines: lines))))
@@ -137,6 +312,133 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             return
         }
 
+        if startupMode == .auditFluidity {
+            guard let output = AppRuntimeDefaults.value(after: "--audit-fluidity", arguments: CommandLine.arguments) else {
+                fputs("--audit-fluidity requires an output directory\n", stderr); NSApp.terminate(nil); return
+            }
+            settingsDraft.binding("showOnDisplay", "Main display").wrappedValue = "All displays"
+            settingsDraft.binding("showLyrics", false).wrappedValue = true
+            settings.reloadPreferences()
+            settings.showNotch = true
+            settings.forceSimulatedNotch = true
+            settings.hoverEnabled = false
+            settings.autoCollapse = false
+            settings.nowPlayingEnabled = true
+            settings.hideWhenIdle = false
+            model.playing = true
+            model.elapsed = 0.5
+            model.title = "audit-track"
+            model.artist = "audit-artist"
+            model.album = "audit-album"
+            model.duration = 120
+            model.source = "预览"
+            let provider = AuditLyricsProvider(result: .wordTimed(FluidityFixtures.timeline()))
+            model.lyricsController = LyricsController(model: model, provider: provider)
+            let builtIn = DisplayDescriptor(id: "builtin", name: "Built-in display",
+                frame: CGRect(x: 0, y: 0, width: 1728, height: 1117), safeAreaTop: 32,
+                auxiliaryLeftWidth: 771.5, auxiliaryRightWidth: 771.5, menuBarHeight: 32, isBuiltIn: true)
+            let external = DisplayDescriptor(id: "external", name: "External display",
+                frame: CGRect(x: -1920, y: -200, width: 1920, height: 1080), safeAreaTop: 0,
+                auxiliaryLeftWidth: nil, auxiliaryRightWidth: nil, menuBarHeight: 24)
+            coordinator = WindowCoordinator(model, displayProvider: { [builtIn, external] })
+            coordinator.start(trackPointer: false)
+            model.lyricsController?.start()
+            FluidityAudit.run(model: model, coordinator: coordinator, provider: provider,
+                              settings: settings, defaults: runtimeDefaults, output: output)
+            return
+        }
+
+        if startupMode == .auditResources {
+            let auditFlag = CommandLine.arguments.contains("--audit-resources-short")
+                ? "--audit-resources-short" : "--audit-resources"
+            guard let output = AppRuntimeDefaults.value(after: auditFlag, arguments: CommandLine.arguments) else {
+                fputs("\(auditFlag) requires an output directory\n", stderr); NSApp.terminate(nil); return
+            }
+            settingsDraft.binding("showOnDisplay", "Main display").wrappedValue = "Main display"
+            settingsDraft.binding("showLyrics", false).wrappedValue = true
+            settings.reloadPreferences()
+            settings.showNotch = true
+            settings.forceSimulatedNotch = false
+            settings.hoverEnabled = false
+            settings.autoCollapse = false
+            settings.nowPlayingEnabled = false
+            settings.hideWhenIdle = false
+            model.playing = false
+            model.elapsed = 0
+            model.title = "baseline-A"
+            model.artist = "baseline-artist"
+            model.album = "baseline-album"
+            model.duration = 240
+            model.source = "预览"
+            model.lyricsController = LyricsController(
+                model: model,
+                provider: AuditLyricsProvider(result: .wordTimed(FluidityFixtures.timeline())))
+            coordinator = WindowCoordinator(model)
+            coordinator.start(trackPointer: false)
+            model.lyricsController?.start()
+            ResourceBaselineAudit.run(model: model, coordinator: coordinator,
+                                      settings: settings, defaults: runtimeDefaults,
+                                      output: output,
+                                      short: CommandLine.arguments.contains("--audit-resources-short"))
+            return
+        }
+
+        if startupMode == .verifyConnectivity {
+            guard let output = AppRuntimeDefaults.value(after: "--verify-connectivity", arguments: CommandLine.arguments) else {
+                fputs("--verify-connectivity requires an output directory\n", stderr); NSApp.terminate(nil); return
+            }
+            settingsDraft.binding("showOnDisplay", "Main display").wrappedValue = "All displays"
+            settingsDraft.binding("showLyrics", false).wrappedValue = true
+            settings.reloadPreferences()
+            settings.showNotch = true
+            settings.forceSimulatedNotch = true
+            settings.hoverEnabled = false
+            settings.autoCollapse = false
+            settings.nowPlayingEnabled = true
+            settings.hideWhenIdle = false
+            settings.bluetoothEnabled = true
+            model.playing = true
+            model.elapsed = 0.5
+            model.title = "晴天"
+            model.artist = "周杰伦"
+            model.album = "叶惠美"
+            model.duration = 269
+            model.source = "预览"
+            let art = NSImage(size: NSSize(width: 64, height: 64))
+            art.lockFocus()
+            NSColor(calibratedRed: 0.16, green: 0.62, blue: 0.55, alpha: 1).setFill()
+            NSBezierPath(rect: NSRect(x: 0, y: 0, width: 64, height: 64)).fill()
+            NSColor(calibratedRed: 0.86, green: 0.48, blue: 0.22, alpha: 1).setFill()
+            NSBezierPath(rect: NSRect(x: 0, y: 0, width: 32, height: 64)).fill()
+            art.unlockFocus()
+            model.artwork = art
+            model.lyrics = LyricsDisplayState(status: .ready,
+                timeline: LyricTimeline(lines: [
+                    LyricLine(start: 0, text: "连接提示结束后的歌词", words: [
+                        LyricWord(text: "连接提示", start: 0, duration: 1),
+                        LyricWord(text: "结束后的歌词", start: 1, duration: 1)
+                    ])
+                ]), identity: LyricsTrackIdentity(title: model.title, artist: model.artist,
+                                                  album: model.album, duration: model.duration))
+            let sound = ConnectivitySoundSpy()
+            let controller = ConnectivityController(model, source: EmptyConnectivitySource(),
+                                                    sound: sound)
+            model.bluetooth = controller
+            let builtIn = DisplayDescriptor(id: "builtin", name: "Built-in display",
+                frame: CGRect(x: 0, y: 0, width: 1728, height: 1117), safeAreaTop: 32,
+                auxiliaryLeftWidth: 771.5, auxiliaryRightWidth: 771.5, menuBarHeight: 32, isBuiltIn: true)
+            let external = DisplayDescriptor(id: "external", name: "External display",
+                frame: CGRect(x: -1920, y: -200, width: 1920, height: 1080), safeAreaTop: 0,
+                auxiliaryLeftWidth: nil, auxiliaryRightWidth: nil, menuBarHeight: 24)
+            coordinator = WindowCoordinator(model, displayProvider: { [builtIn, external] })
+            coordinator.start(trackPointer: false)
+            ConnectivityVerification.run(model: model, coordinator: coordinator,
+                                          controller: controller, sound: sound, output: output)
+            return
+        }
+
+        #endif
+
         let lyricsProvider: any LyricsProviding = startupMode == .production
             ? QQMusicLyricsService() : NoLyricsProvider()
         model.lyricsController = LyricsController(model: model, provider: lyricsProvider)
@@ -145,10 +447,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         coordinator = WindowCoordinator(model)
         coordinator.start(trackPointer: startupMode == .production)
 
+        #if VALORA_DEVELOPMENT
         if startupMode == .verifyMusic {
             guard let output = AppRuntimeDefaults.value(after: "--verify-music", arguments: CommandLine.arguments) else {
                 fputs("--verify-music requires an output directory\n", stderr); NSApp.terminate(nil); return
             }
+            // Existing fake-media/coordinator verification exercises the
+            // independent Calmon status items alongside the notch coordinator.
+            // Calendar data is injected; no production media, Bluetooth,
+            // permission request or EventKit query is started by this QA mode.
+            setupMenu()
             MusicPresentationVerification.run(model: model, coordinator: coordinator, output: output)
             return
         }
@@ -165,23 +473,37 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             return
         }
 
-        if settings.musicPreferences.useLiveWaveform { LiveAudioTap.shared.startAsync() }
+        #endif
+
         let actualLogin = LoginItem.isEnabled
         settingsDraft.binding("launchAtLogin", actualLogin).wrappedValue = actualLogin
         setupMenu()
+        lockMusic = LockMusicCoordinator(
+            model,
+            notchWindowProvider: { [weak coordinator] in coordinator?.lockFallbackPanel },
+            notchWindowUpdates: coordinator.activeNotchWindowNumber.eraseToAnyPublisher())
+        lockMusic?.setEnabled(settings.lockPreferences.enabled)
+        model.settings.$lockPreferences.map(\.enabled).removeDuplicates().dropFirst().sink { [weak self] enabled in
+            DispatchQueue.main.async { self?.lockMusic?.setEnabled(enabled) }
+        }.store(in: &subscriptions)
         model.media.start()
         model.audio.start()
-        if CommandLine.arguments.contains("--expand-media") {
-            // QA-only: wait for the first system media snapshot, then expand.
-            model.pinned = true
-            Task { @MainActor [weak self] in
-                try? await Task.sleep(nanoseconds: 900_000_000)
-                self?.coordinator.expand()
-            }
-        }
+        model.bluetooth.start()
+        #if VALORA_DEVELOPMENT
+        // `--lock-card-preview` is handled earlier as an isolated preview and
+        // returns before any service starts; `--expand-media` standalone is
+        // rejected there too. Only combinations with `--preview-music` reach
+        // this point, and that preview already expands the panel.
+        #endif
         if !CommandLine.arguments.contains("--no-settings"),
            runtimeDefaults.object(forKey: "didLaunchValora") == nil || CommandLine.arguments.contains("--settings") {
             runtimeDefaults.set(true, forKey: "didLaunchValora")
+            // QA-only: open Settings on a specific page, e.g.
+            // `--settings --settings-page "Lock Screen"`.
+            if let title = AppRuntimeDefaults.value(after: "--settings-page", arguments: CommandLine.arguments),
+               let page = SettingsPage.allCases.first(where: { $0.rawValue == title }) {
+                settingsNavigation.page = page
+            }
             showSettings()
         }
         if let output = AppRuntimeDefaults.value(after: "--diagnostic", arguments: CommandLine.arguments) {
@@ -231,9 +553,61 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
     }
 
+    private func installApplicationStatusItemIfNeeded() {
+        if let statusItem {
+            statusItem.isVisible = true
+            return
+        }
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        item.button?.image = statusBarImage()
+        item.button?.imageScaling = .scaleProportionallyDown
+        item.button?.imagePosition = .imageOnly
+        item.button?.setAccessibilityLabel("Valora")
+        let menu = NSMenu()
+        menu.delegate = self
+        statusMenu = menu
+        rebuildStatusMenu(menu)
+        item.menu = menu
+        statusItem = item
+    }
+
+    /// The explicit General "show menu bar icon" switch controls only the
+    /// Outline-v7 application entry. Hiding it leaves the notch, music and
+    /// every module intact; showing it reuses the same item/menu route.
+    /// Lazily builds the provider once. Without a local engine the provider still
+    /// exists, reports `missingEngine`, and never spawns anything.
+    private func codexUsageProvider() -> CodexUsageProvider {
+        if let codexUsage { return codexUsage }
+        let client = CodexAppServerClient.locate().map { CodexAppServerClient(executable: $0) }
+        let provider = CodexUsageProvider(readLimits: {
+            guard let client else { throw CodexUsageError.missingEngine }
+            return try await client.readRateLimits()
+        })
+        codexUsage = provider
+        return provider
+    }
+
+    private func setApplicationStatusItemVisible(_ visible: Bool) {
+        if visible { installApplicationStatusItemIfNeeded() }
+        else { statusItem?.isVisible = false }
+    }
+
+    private func applyFeatureSettings() {
+        guard menuBarModules != nil else { return }
+        menuBarModules?.setSystemMonitorVisible(settingsDraft.value("enableSystemMonitor", true))
+        menuBarModules?.setCalendarVisible(true)
+        menuBarModules?.setCodexUsage(codexUsageProvider(),
+                                      visible: settingsDraft.value("enableCodexUsage", false))
+        setApplicationStatusItemVisible(settingsDraft.value("showApplicationMenuBarIcon", true))
+    }
+
+    private func refreshCalendarHolidaysAfterSettings() {
+        menuBarModules?.refreshCalendarHolidays()
+    }
+
     /// Borderless ribbon V alpha mask; macOS supplies the menu-bar tint.
     private func statusBarImage() -> NSImage {
-        let size = NSSize(width: 20, height: 20)
+        let size = NSSize(width: 22, height: 18)
         let image = NSImage(size: size)
         guard let resources = Bundle.main.resourceURL else { return image }
         for name in ["MenuBarIcon.png", "MenuBarIcon@2x.png", "MenuBarIcon@3x.png"] {
@@ -250,15 +624,61 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     private func setupMenu() {
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-        statusItem.button?.image = statusBarImage()
-        statusItem.button?.imageScaling = .scaleProportionallyDown
-        statusItem.button?.imagePosition = .imageOnly
-        statusItem.button?.setAccessibilityLabel("Valora")
-        let statusMenu = NSMenu()
-        statusMenu.delegate = self
-        statusItem.menu = statusMenu
-        rebuildStatusMenu(statusMenu)
+        guard menuBarModules == nil else { return }
+        if settingsDraft.value("showApplicationMenuBarIcon", true) {
+            installApplicationStatusItemIfNeeded()
+        }
+
+        let previewData = startupMode == .previewMenuBarModules
+            || startupMode == .previewMusic
+            || startupMode == .verifyMusic
+        let calendar: CalmonCalendarModel
+        if previewData || startupMode != .production {
+            calendar = CalmonCalendarModel(
+                provider: HolidayProvider(authorizationCheck: { false }),
+                readGate: { true }, preview: true)
+        } else {
+            let holidayProvider = HolidayProvider(
+                authorizationCheck: { [weak self] in
+                    guard let self else { return false }
+                    return self.settingsDraft.value("enableCalendar", false)
+                        && self.appPermissions.calendar == .fullAccess
+                },
+                transportFactory: { EventKitHolidayTransport() })
+            calendar = CalmonCalendarModel(
+                provider: holidayProvider,
+                readGate: { [weak self] in
+                    guard let self else { return false }
+                    return self.settingsDraft.value("enableCalendar", false)
+                        && self.appPermissions.calendar == .fullAccess
+                })
+        }
+        let monitor = SystemMonitor()
+        menuBarModules = MenuBarModuleController(
+            monitor: monitor, calendar: calendar,
+            onSettings: { [weak self] in self?.showSettings() },
+            onQuit: { [weak self] in self?.quit() })
+        menuBarModules?.setSystemMonitorVisible(settingsDraft.value("enableSystemMonitor", true))
+        menuBarModules?.setCalendarVisible(true)
+        menuBarModules?.setCodexUsage(codexUsageProvider(),
+                                      visible: settingsDraft.value("enableCodexUsage", false))
+        menuBarModules?.start()
+        setApplicationStatusItemVisible(settingsDraft.value("showApplicationMenuBarIcon", true))
+        if startupMode == .production {
+            CalendarAuthorizationRefresh.subscribe(appPermissions) { [weak self] in
+                self?.refreshCalendarHolidaysAfterSettings()
+            }.store(in: &subscriptions)
+            NotificationCenter.default.publisher(for: Notification.Name("ValoraSettingsDraftChanged"))
+                .sink { [weak self] _ in
+                    MainActor.assumeIsolated { self?.refreshCalendarHolidaysAfterSettings() }
+                }
+                .store(in: &subscriptions)
+            NotificationCenter.default.publisher(for: Notification.Name("ValoraSettingsDraftChanged"))
+                .sink { [weak self] _ in
+                    Task { @MainActor in self?.applyFeatureSettings() }
+                }
+                .store(in: &subscriptions)
+        }
 
         let main = NSMenu()
         let applicationItem = NSMenuItem(title: "Valora", action: nil, keyEquivalent: "")
@@ -275,17 +695,42 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         NSApp.mainMenu = main
     }
 
-    func menuNeedsUpdate(_ menu: NSMenu) {
-        if menu === statusItem?.menu { rebuildStatusMenu(menu) }
+    #if VALORA_DEVELOPMENT
+    /// Native feature-switch QA entry. It reuses the real status-item/menu
+    /// construction but never starts production media services.
+    func setupMenuForVerification() { setupMenu() }
+    func applyFeatureSettingsForVerification() { applyFeatureSettings() }
+    var applicationStatusItemForVerification: NSStatusItem? { statusItem }
+    var menuBarModulesForVerification: MenuBarModuleController? { menuBarModules }
+
+    func removeApplicationStatusItemForVerification() {
+        if let statusItem { NSStatusBar.system.removeStatusItem(statusItem) }
+        statusItem = nil
+        statusMenu = nil
     }
+
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        if menu === statusMenu { rebuildStatusMenu(menu) }
+    }
+
+    /// QA entry that reuses the exact production application-menu builder.
+    /// It does not start media, configure a status item, or dispatch any menu
+    /// action; the caller must supply the model fixture.
+    @MainActor
+    func applicationStatusMenuForVerification() -> NSMenu {
+        let menu = NSMenu()
+        rebuildStatusMenu(menu)
+        return menu
+    }
+    #endif
 
     private func rebuildStatusMenu(_ menu: NSMenu) {
         menu.removeAllItems()
         if model.hasTrack, settings.nowPlayingEnabled {
             let controls: [(String, String, Selector, Bool)] = [
                 (model.playing ? "暂停" : "播放", model.playing ? "pause.fill" : "play.fill", #selector(playPause), model.mediaCanControl),
-                ("下一首", "forward.end.fill", #selector(next), model.mediaCanSkip),
-                ("上一首", "backward.end.fill", #selector(previous), model.mediaCanSkip)
+                ("上一首", "backward.end.fill", #selector(previous), model.mediaCanSkip),
+                ("下一首", "forward.end.fill", #selector(next), model.mediaCanSkip)
             ]
             for (title, symbol, action, enabled) in controls {
                 let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
@@ -325,7 +770,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @objc private func showAbout() {
         NSApp.orderFrontStandardAboutPanel(options: [
             .applicationName: "Valora",
-            .applicationVersion: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.1",
+            .applicationVersion: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0",
             .version: Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "1"
         ])
     }
@@ -334,9 +779,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @objc private func previous() { model.media.command(5) }
     @objc private func quit() { NSApp.terminate(nil) }
 
+
+    /// Explicit user gesture from the Connectivity switch. This is the only
+    /// path that asks CoreBluetooth for Bluetooth authorization. It never
+    /// scans or reads a device; AppPermissions refreshes on completion.
+    private func requestBluetoothAuthorization() {
+        guard bluetoothAuthorizationRequester == nil else { return }
+        let requester = BluetoothAuthorizationRequester()
+        bluetoothAuthorizationRequester = requester
+        requester.request { [weak self] in
+            guard let self else { return }
+            self.bluetoothAuthorizationRequester = nil
+            self.appPermissions.refresh()
+        }
+    }
+
     @objc func showSettings() {
         if settingsWindow == nil {
-            let view = SettingsView(model:model,settings:settings,navigation:settingsNavigation,draft:settingsDraft)
+            let view = SettingsView(model:model,settings:settings,navigation:settingsNavigation,
+                                    draft:settingsDraft,permissions:appPermissions)
             let (window, _) = SettingsWindowFactory.make(rootView: view)
             window.center()
             settingsWindow = window
@@ -349,6 +810,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         settingsWindow?.makeKeyAndOrderFront(nil)
     }
 
+    #if VALORA_DEVELOPMENT
     func previewMusic() {
         model.media?.invalidate()
         model.previewMode = true
@@ -363,13 +825,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         settings.showNotch = true
         coordinator.expand()
     }
+    #endif
 
     func applicationWillTerminate(_ notification: Notification) {
-        model.lyricsController?.cancel()
+        // Do not touch the lazy model here when no controller was constructed;
+        // termination must not create an AppModel/ConnectivityController and
+        // accidentally start its lifecycle.
+        codexUsage?.stop()
+        codexUsage = nil
+        if modelWasLoaded {
+            lockMusic?.stop()
+            lockMusic = nil
+            #if VALORA_DEVELOPMENT
+            lockCardPreview?.stop()
+            lockCardPreview = nil
+            #endif
+            model.lyricsController?.cancel()
+            model.media?.stop()
+            model.audio?.stop()
+            model.bluetooth?.stop()
+        }
+        menuBarModules?.stop()
+        menuBarModules = nil
         coordinator?.cancelPendingHover()
-        model.media?.stop()
-        model.audio?.stop()
-        LiveAudioTap.shared.stop()
     }
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
 }

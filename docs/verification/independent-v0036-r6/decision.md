@@ -1,0 +1,14 @@
+# R6 独立核查与外部源码对照（2026-10-30）
+
+用户实测archive复刻包也下浮，故不能把复刻该路径当作正确体验基线。原版Alcove视频仍是视觉标准。
+
+独立4项NotchDiagnosticPolicyTests通过，candidate edb4446c8cc5ba632c8689804bc46981954e348b0aaaf29874b69809b2078181及strict/deep签名通过。日志限额保留/去重子集接受；总体诊断不完整，未解决下浮。
+
+问题：WindowCoordinator.recordDiagnostic contentTopScreen仅转换host.bounds.midX/maxY，既未判断isFlipped，也不是实际SwiftUI黑色NotchShape顶点。整个host固定624x320时，其边界不变不能排除内部VStack/shape下移。没有实际notch布局probe。Space before/after仅汇总数量/boolean不能证明原桌面归属是否仍保留。报告“一次日志足以决定根因”过强，WindowServer-only呈现变化也不能从普通frame自报确证。
+
+外部公开源码已下载只读到/private/tmp/valora-lock-open-source，不执行、不作为依赖引入。
+- TheBoredTeam/boring.notch @23e7705a4ffcb5d97a54fb1d4135e180084a566d：BoringNotchSkyLightWindow.enableSkyLight委托SkyLightOperator，其Package.resolved固定Lakr233/SkyLightWindow @b7bd99f62a0673a99bed4bfd31098ca1dcdd10eb。后者delegateWindow实际用SLSSpaceAddWindowsAndRemoveFromSpaces(connection,space,[windowNumber],7)。
+- jackson-storm/DynamicNotch @41ea276e4eaa0c774f2a251af169791a8c44fd81：Core/SystemBridges/SkyLightOperator.swift也用该迁移接口；AppDelegate+Window.suspendPrimaryWindowForLock隐藏普通window；LockScreenLiveActivityWindowManager创建独立顶锚overlay，host.frame显式匹配canvas，委托lockScreenNotchOverlay(401)，activeSpace/screen/wake时refreshPosition。OverlayWindowLayout以screen.frame.maxY锚定而非visibleFrame；LockScreenNotchOverlayView内容top alignment。不是必须一个NSWindow对象才能达到相同视觉，也不是另画一条下方刘海。
+- 当前复刻/Valora用CGSAddWindowsToSpaces只添加，detach再remove；与以上“加入并移除旧空间”不同。此差异是具体候选路径，尚未实机证明就是根因，不能盲替换私有API/照抄外部ABI或称其在本机macOS27已验证。
+
+下一轮先完善实际内容坐标与自有窗口空间成员证据，审计两种空间语义及恢复路径，提出最小修复，禁自动启动/锁屏/设置改写。当前未改生产源码/当前软件，也未恢复定时器。

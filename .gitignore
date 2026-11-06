@@ -22,3 +22,7 @@ xcuserdata/
 *.swp
 *.swo
 *~
+
+# Python interpreter cache.
+__pycache__/
+*.pyc

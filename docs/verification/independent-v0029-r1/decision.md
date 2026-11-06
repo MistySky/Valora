@@ -1,0 +1,12 @@
+# V0029-R1 独立验收：暂不接受，限定存储所有权返修
+
+独立复跑23项相关测试通过，包含真实本地Range分段、暂停继续、完整字节一致、A/B临时根、完成记录恢复、重名与隔离Trash替身。固定上游37源文件哈希校验通过；release构建和独立临时包deep/strict签名通过，二进制f8fa7e726003d2df02bb735ef8b50d7b396a9a090bde98c65dd00b9300ae8121。用户dist仍19ba9a0f0cae669dcc32eb8f282750f9fd46a71a603d1bb2d01b9f872b0ffd9f，未覆盖或重启。
+
+新增IndependentDownloadStorageTests两项均失败：
+
+1. 全新嵌套persistence父目录尚不存在时，DownloadManager先初始化DownloadListLock再创建目录；open锁失败被视为拥有。随后另一个manager成功拿锁，两个实例都声称ownsDownloadList=true。
+2. 即使预先创建父目录让锁正常，第二个lock-denied manager仍可调用clearOrphanedTemporaryFiles；它未加载列表，known IDs为空，会把第一个owner的有效分段文件当孤儿删除。用自产18字节分段文件独立复现，清理后文件消失。未触碰真实下载/Trash。
+
+需先创建目录再可靠获取所有权；无所有权或锁初始化失败的实例不能读写/清理所属资源或启动新下载。保留显式失败信息及已有正常所有者行为，不能只修测试布置顺序。另补真实部分下载暂停后释放/重建实例继续的验证；当前重建测试只覆盖已完成记录，未覆盖R1要求的未完成恢复。
+
+本批未接UI，不做菜单栏视图验收；V0030暂不派。仅返修上述边界及必要patch/manifest升级证据，原已通过下载能力不重做。用户目录隔离是已选择方案，不是菜单栏UI的必需条件。

@@ -1,0 +1,67 @@
+/Users/wangqing/code/Valora/.build/media-adapter/MediaRemoteAdapter.framework: replacing existing signature
+/Users/wangqing/code/Valora/.build/media-adapter/MediaRemoteAdapter.framework
+warning: 'valora': found 1 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /Users/wangqing/code/Valora/Tests/ReferenceCoreTests/Fixtures/qq-qrc-studio.hex
+Building for production...
+[3 / 12]
+[6 / 13] ReferenceCore
+[9 / 15] ReferenceCore
+[12 / 15] Valora-product
+/Users/wangqing/code/Valora/Sources/Valora/CompactLyricsView.swift:66:38: [1;33mwarning: [1;39mcall to main actor-isolated static method 'measure(_:size:weight:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m64 |[0;0m         for word in line.words {
+ [0;36m65 |[0;0m             prefixes.append(prefix)
+ [0;36m66 |[0;0m             let width = MarqueeLabel.measure(word.text, size: 12, weight: .semibold).width
+    [0;36m|[0;0m                                      `- [1;33mwarning: [1;39mcall to main actor-isolated static method 'measure(_:size:weight:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m67 |[0;0m             widths.append(width)
+ [0;36m68 |[0;0m             prefix += width
+
+/Users/wangqing/code/Valora/Sources/Valora/MarqueeLabel.swift:18:17: [1;39mnote: [1;39mcalls to static method 'measure(_:size:weight:)' from outside of its actor context are implicitly asynchronous[0;0m
+ [0;36m16 |[0;0m     var cycleStart: CFTimeInterval = 0
+ [0;36m17 |[0;0m     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+ [0;36m18 |[0;0m     static func measure(_ text:String,size:CGFloat,weight:NSFont.Weight)->CGSize {
+    [0;36m|[0;0m                 |- [1;39mnote: [1;39mcalls to static method 'measure(_:size:weight:)' from outside of its actor context are implicitly asynchronous[0;0m
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mmain actor isolation inferred from conformance to protocol 'NSViewRepresentable'[0;0m
+ [0;36m19 |[0;0m         (text as NSString).size(withAttributes:[.font:NSFont.systemFont(ofSize:size,weight:weight),.kern:0.05])
+ [0;36m20 |[0;0m     }
+
+/Users/wangqing/code/Valora/Sources/Valora/CompactLyricsView.swift:72:35: [1;33mwarning: [1;39mcall to main actor-isolated static method 'measure(_:size:weight:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m70 |[0;0m         wordWidths = widths
+ [0;36m71 |[0;0m         self.prefixes = prefixes
+ [0;36m72 |[0;0m         totalWidth = MarqueeLabel.measure(line.text, size: 12, weight: .semibold).width
+    [0;36m|[0;0m                                   `- [1;33mwarning: [1;39mcall to main actor-isolated static method 'measure(_:size:weight:)' in a synchronous nonisolated context[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call\ActorIsolatedCall]8;;\]
+ [0;36m73 |[0;0m     }
+ [0;36m74 |[0;0m 
+
+/Users/wangqing/code/Valora/Sources/Valora/MarqueeLabel.swift:18:17: [1;39mnote: [1;39mcalls to static method 'measure(_:size:weight:)' from outside of its actor context are implicitly asynchronous[0;0m
+ [0;36m16 |[0;0m     var cycleStart: CFTimeInterval = 0
+ [0;36m17 |[0;0m     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+ [0;36m18 |[0;0m     static func measure(_ text:String,size:CGFloat,weight:NSFont.Weight)->CGSize {
+    [0;36m|[0;0m                 |- [1;39mnote: [1;39mcalls to static method 'measure(_:size:weight:)' from outside of its actor context are implicitly asynchronous[0;0m
+    [0;36m|[0;0m                 `- [1;39mnote: [1;39mmain actor isolation inferred from conformance to protocol 'NSViewRepresentable'[0;0m
+ [0;36m19 |[0;0m         (text as NSString).size(withAttributes:[.font:NSFont.systemFont(ofSize:size,weight:weight),.kern:0.05])
+ [0;36m20 |[0;0m     }
+
+/Users/wangqing/code/Valora/Sources/Valora/WindowCoordinator.swift:377:26: [1;33mwarning: [1;39mimmutable value 'active' was never used; consider replacing with '_' or removing it[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/no-usage\NoUsage]8;;\]
+[0;36m375 |[0;0m             }
+[0;36m376 |[0;0m         }
+[0;36m377 |[0;0m         if !visible, let active {
+    [0;36m|[0;0m                          `- [1;33mwarning: [1;39mimmutable value 'active' was never used; consider replacing with '_' or removing it[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/no-usage\NoUsage]8;;\]
+[0;36m378 |[0;0m             model.presenter.pointerEntered(false)
+[0;36m379 |[0;0m         }
+
+/Users/wangqing/code/Valora/Sources/Valora/WindowCoordinator.swift:453:13: [1;33mwarning: [1;39minitialization of immutable value 'generation' was never used; consider replacing with assignment to '_' or removing it[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/no-usage\NoUsage]8;;\]
+[0;36m451 |[0;0m         cancelPendingHover(record)
+[0;36m452 |[0;0m         record.hoverGeneration += 1
+[0;36m453 |[0;0m         let generation = record.hoverGeneration
+    [0;36m|[0;0m             `- [1;33mwarning: [1;39minitialization of immutable value 'generation' was never used; consider replacing with assignment to '_' or removing it[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/no-usage\NoUsage]8;;\]
+[0;36m454 |[0;0m         let work = DispatchWorkItem { [weak self, weak record] in
+[0;36m455 |[0;0m             MainActor.assumeIsolated {
+
+[#ActorIsolatedCall]: <https://docs.swift.org/compiler/documentation/diagnostics/actor-isolated-call>
+[#NoUsage]: <https://docs.swift.org/compiler/documentation/diagnostics/no-usage>
+[15 / 17] Valora-product
+[17 / 17] Valora-product
+[18 / 19] Valora-product
+Build complete! (18.61秒)
+/Users/wangqing/code/Valora/dist/Valora.app: replacing existing signature
+/Users/wangqing/code/Valora/dist/Valora.app

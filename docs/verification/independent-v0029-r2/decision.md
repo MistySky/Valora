@@ -1,0 +1,9 @@
+# V0029-R2 独立验收：接受自动及本地HTTP范围
+
+独立复跑24项定向测试全部通过（CodexUsageProvider、DownloadEngineAdapter、DownloadEngineIsolation、IndependentDownloadStorage、MenuBarModuleController）。原先首次目录锁双owner与无锁清理误删两项有效断言未改且通过；真实localRange验证未完成partial暂停/保存/释放manager/重建同ID/继续完成全字节一致、分段进度、取消、重名、隔离Trash、完成记录恢复与坏列表备份。不可用目录明确拒绝新建，不创建scratch。
+
+源码审查：父目录先创建再获取显式owned/heldElsewhere/unavailable锁；失败不当拥有，非owner创建/恢复/清理/删除等入口拒绝。固定007a209...的37源文件manifest校验通过；临时复制干净基线并规范patch头路径后应用V0029-R2-COMPAT.patch，重建37源文件逐个哈希与Vendor完全一致。未改原checkout。兼容包仍由SPM编入Valora，不启动独立Convoy.app。
+
+独立release构建与项目外.app打包deep/strict签名通过；binary SHA256 626b9f9e1443a49652586ac79030f9f14445049318354b5200878275998a2752。原用户dist仍19ba9a0f0cae669dcc32eb8f282750f9fd46a71a603d1bb2d01b9f872b0ffd9f，未覆盖/重启。有效GPL许可保留。
+
+本批未新增可见UI，不宣称下载菜单栏体验通过；系统Trash/真实Downloads/helper/浏览器和真实用户操作未测，下一批V0030再按已确认设计迁入UI并验收，V0031浏览器另派。禁止据此称所有路径已实机通过，不重跑已接受日历与用量批次。

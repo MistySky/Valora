@@ -1,0 +1,194 @@
+{
+  "cache_limits": {
+    "disk_bytes": 52428800,
+    "memory_entries": 50,
+    "memory_payload_bytes": 5242880,
+    "policy": "LRU; successful timed/word-timed only; hash filenames; atomic writes"
+  },
+  "generated_at": "2026-10-24T06:49:42.281453+00:00",
+  "layout_findings_sha256": "024c1241689d8adc7f8f52bc2991bc8407eaac91601fb1edf69cc782df7042a1",
+  "lyrics_next_sha256": "5c8a766437802cdde552552451f3814344b6ff1f61516c82d099aec40d19ba33",
+  "preserved": [
+    "V0008 reduced settings/context menu",
+    "V0009 active-screen ownership and one expanded panel",
+    "R1/R2 idle deadline behavior",
+    "Valora color app icon and Outline-v7 menu-bar resources/wiring"
+  ],
+  "qrc_license": "QQMusicDecoder MIT adaptation; see docs/verification/v0012/source-license.md",
+  "r2_decision": "docs/verification/independent-v0012-r1/decision.md",
+  "r2_decision_sha256": "304e3397e97e984d55e86b1669c196befbd201094975b57dfbff2722473891b6",
+  "r2_task": "docs/pi-tasks/v0012-r2-local-timeline-deadline.md",
+  "r2_task_sha256": "a56f6ae8c4c36e04381a82beb8ef49ca586e5682610f5a4a9d98f6cfb991bb34",
+  "r3_decision": "docs/verification/independent-v0012-r2/decision.md",
+  "r3_decision_sha256": "e3d0992cfe1bf8da73318fb72a6eec83ab3c73fb991e5f14c2b174812ba8f14b",
+  "r3_task": "docs/pi-tasks/v0012-r3-anchor-cache-cancel.md",
+  "r3_task_sha256": "ab5fe4d8b6a0b38ea2516214f039c12db377fceb7d0402d9bc79b1ba687beeb6",
+  "r4_task": "docs/pi-tasks/v0012-r4-line-only-overflow.md",
+  "r4_task_sha256": "53260b46249d253dd695b527d847b31adb49cafc6db8fcfdc16384c2cf6b65ef",
+  "task": "docs/pi-tasks/v0012-word-lyrics-final.md",
+  "task_sha256": "fb4c8889cc664cafd1266053920f0e2820dbe832f6f8b0ef1dd2af8d9df3eb8d",
+  "v0011_report_sha256": "f5cb0469836b99c99056ff965e656761346aebea8a4509ac3a59d13875d467ae",
+  "v0011_source_report": "/Users/wangqing/code/Valora/docs/verification/v0011/source-fingerprints.json",
+  "v0012_owned": [
+    {
+      "path": "Sources/ReferenceCore/LyricsTimeline.swift",
+      "v0012_sha256": "8d0b813b64c06e4565923d898570563041b6e4921f248bc943e587b580f0e232"
+    },
+    {
+      "path": "Sources/ReferenceCore/QQMusicLyrics.swift",
+      "v0012_sha256": "b86e1e8151c375e24d9f7d49c9ef644ff7482b0608febbd31698b930e7fb4266"
+    },
+    {
+      "path": "Sources/ReferenceCore/QQMusicQRC.swift",
+      "v0012_sha256": "0d323ec4b3efeece14558e618270625f0d590b1339d64cc7661e79dc08e8b9d0"
+    },
+    {
+      "path": "Sources/ReferenceCore/MusicPreferences.swift",
+      "v0012_sha256": "cdc0e7f4d91dd5c8ad0d4fb34616115327169fb51a3e0a9827cbc7a81569ab6f"
+    },
+    {
+      "path": "Sources/ReferenceCore/NotchGeometry.swift",
+      "v0012_sha256": "a6c67e59ce434e9f4f981180f983dbd28694ae50248448987f242e547721c0f3"
+    },
+    {
+      "path": "Sources/ReferenceCore/PresentationMetrics.swift",
+      "v0012_sha256": "528390a27c95821ce09f334dac1f4a66e9ca8b5bf3e4ee916257c6c9e7a957fc"
+    },
+    {
+      "path": "Sources/ReferenceCore/NotchContour.swift",
+      "v0012_sha256": "b768ca2e99f99a360ed8a33f8e0be7decde234dbe29eb7c0a8bd665e1e0d8bad"
+    },
+    {
+      "path": "Sources/Valora/LyricsService.swift",
+      "v0012_sha256": "93e57a556728caa41aba54440a889e61f0d316fde969a49658a5370ee7f8358e"
+    },
+    {
+      "path": "Sources/Valora/LyricsCache.swift",
+      "v0012_sha256": "6ca32fc5075249570faa4cb06353fce636a230cb15736ead3b87b8feb1c48843"
+    },
+    {
+      "path": "Sources/Valora/LyricsController.swift",
+      "v0012_sha256": "c9f3f7e8db68595756d25e7390567987ac150156578bb53472bc291aaaf62e20"
+    },
+    {
+      "path": "Sources/Valora/CompactLyricsView.swift",
+      "v0012_sha256": "ecf3688603bcf7a7abf2e46a539d204e9541915dd3dc3500a9135a4375934467"
+    },
+    {
+      "path": "Sources/Valora/LyricsVerification.swift",
+      "v0012_sha256": "50f2df1cbf412f59f74af31190a7cd48ff8b0dfca1f8729a8f4721ed23f66d4f"
+    },
+    {
+      "path": "Sources/Valora/Models.swift",
+      "v0012_sha256": "75a5a9306a0f1f4d10f7c6d93991bd16994a59489fd2a47fecea66b52e6bb314"
+    },
+    {
+      "path": "Sources/Valora/NotchView.swift",
+      "v0012_sha256": "eddbc6014b0b4fefcd6ddacdc4f590d12b6ce77ac3bd9a83eb9aba2c1321ba2d"
+    },
+    {
+      "path": "Sources/Valora/MarqueeLabel.swift",
+      "v0012_sha256": "b175cb366be6879833a8638c5cae09d36fa275ddef233da6dd4f19e6eb0a09fd"
+    },
+    {
+      "path": "Sources/Valora/PresentationController.swift",
+      "v0012_sha256": "ebf4f7177e9a42209fc872b2dfdc682909cfc11105c2347789fde02a529868d8"
+    },
+    {
+      "path": "Sources/Valora/SettingsView.swift",
+      "v0012_sha256": "c9f6579cbfa3ea6e8f6e9b75a99e00f90fd1a6fd2df37a64f05d5e9faba97e25"
+    },
+    {
+      "path": "Sources/Valora/SettingsLocalization.swift",
+      "v0012_sha256": "e9edb8c89028468b5230c3d6500533ed124ae808ea41651822b83c0c77f1861b"
+    },
+    {
+      "path": "Sources/Valora/AppDelegate.swift",
+      "v0012_sha256": "8722ac0defb627f751d459f23de86845a3e4b68ff8e1f4c3b4cce5c297070d1b"
+    },
+    {
+      "path": "Sources/Valora/AppRuntimeDefaults.swift",
+      "v0012_sha256": "81f1ddb6661590f4a73991530263ccd7ed06c6ac6e49fc051fdd78019e885457"
+    },
+    {
+      "path": "Sources/Valora/Controllers.swift",
+      "v0012_sha256": "ecc8c755a4003e4659e8134903738c8531a869d61b53b4296d893e0d9bdd3b41"
+    },
+    {
+      "path": "Sources/Valora/Verification.swift",
+      "v0012_sha256": "0b11c298972ed99f0787e49bead995beddf8af853b2c1511ba6e67346d0c64a7"
+    },
+    {
+      "path": "Tests/ReferenceCoreTests/QQMusicQRCTests.swift",
+      "v0012_sha256": "3cb73ddda2844894f0802d63f0a3a38a3b92c5ee0ff4e8c908a54110508fa9f4"
+    },
+    {
+      "path": "Tests/ReferenceCoreTests/NonNotchLyricsGeometryTests.swift",
+      "v0012_sha256": "7dc28258e93511b55adefd2ae5f0da803cf41dabbd18d5408efd9a23e91a3f0e"
+    },
+    {
+      "path": "Tests/ReferenceCoreTests/Fixtures/qq-qrc-studio.hex",
+      "v0012_sha256": "9a43e8303af091092ecfa632c3a51638b7cce5e43be226e3538f4452d3e3b62e"
+    },
+    {
+      "path": "Tests/ReferenceCoreTests/LyricsTimelineTests.swift",
+      "v0012_sha256": "e03bc69bc9a67c43ac5d15c9a4819bc459aa9979f7572f4329601265dec42e5e"
+    },
+    {
+      "path": "Tests/ReferenceCoreTests/QQMusicLyricsTests.swift",
+      "v0012_sha256": "df9633334736e188b5215ee9745e54bb6549b8756d8f810207eed1982a32381c"
+    },
+    {
+      "path": "Tests/ReferenceCoreTests/NotchContourTests.swift",
+      "v0012_sha256": "4e8f69bf4446b53d0dd8c76b8c1fa9a27524b98fa22b116c311a35d6b67b7e18"
+    },
+    {
+      "path": "Tests/ValoraTests/LyricsServiceTests.swift",
+      "v0012_sha256": "cd19be3a4a687be6a68e554d064d3d13f5b4cb8df6bc7e40c4589407170c46d5"
+    },
+    {
+      "path": "Tests/ValoraTests/IndependentLyricsDeadlineTests.swift",
+      "v0012_sha256": "30bdc08c13192729e081f0aec75f15871ebfdefde381953e98e51575b30c3c96"
+    },
+    {
+      "path": "Tests/ValoraTests/LyricsCacheTests.swift",
+      "v0012_sha256": "8c17f9acead7e308e3f760c6ba1b969360d1fcaee7e6e9aa376437ae8e49325d"
+    },
+    {
+      "path": "Tests/ValoraTests/MultiDisplayCoordinatorTests.swift",
+      "v0012_sha256": "bfe183654a7c907c0760eefd7e5c941724a056d74905baf9b2861a18dec9a47b"
+    },
+    {
+      "path": "Tests/ValoraTests/RevivalSettingsReloadTests.swift",
+      "v0012_sha256": "5297a5907ba710545cd4328b0a4e4caa4662bae319155976f6f548c9c0468a2f"
+    },
+    {
+      "path": "Tests/ValoraTests/SettingsReductionTests.swift",
+      "v0012_sha256": "f17d9780dac70cfb16fe9d979ea6ed3595825369d985c6c0f03d220cde90de83"
+    },
+    {
+      "path": "scripts/qq_lyrics_probe.swift",
+      "v0012_sha256": "f0199b271e1d4b0e9f25cc0f37c26f8f798bf1b67495bded2f51c9c18190ec11"
+    },
+    {
+      "path": "scripts/run_qq_lyrics_probe.sh",
+      "v0012_sha256": "d0ed0bb947954bc0ec9029d13e2bd5f85f0cb2acce08bcaf51f3ababc8ec8d06"
+    },
+    {
+      "path": "docs/research/lyrics-provider-comparison.md",
+      "v0012_sha256": "52b7a7811965f89f89e84b6c17b267d9e303c1c41cdc54d1758b5366643419db"
+    },
+    {
+      "path": "docs/verification/v0012/source-license.md",
+      "v0012_sha256": "865cdbfbf0294bb68e221e20174326fb59b5af6e39eb412f8552be803d5b6385"
+    },
+    {
+      "path": "docs/reports/v0012-shape-supplement.md",
+      "v0012_sha256": "8de3cf0df8fc53abb4b658acc1a1bdf8ed784df6e3e68ace1d1bd6d8910fe798"
+    },
+    {
+      "path": "docs/verification/v0012/zhifou-match/summary.json",
+      "v0012_sha256": "406ecf5bb7721f8374b9048e58d7d008d19bcfc4a80daff6be0cda45492aa204"
+    }
+  ]
+}

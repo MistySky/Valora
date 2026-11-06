@@ -10,6 +10,8 @@ struct MusicPlayerContent:View {
     let compensatesForNotch:Bool
     let active:Bool
     var translucent=false
+    /// Lock-card ink palette; only consulted when `translucent` is set.
+    var palette: LockCardPalette? = nil
     @State private var outputHovered=false
     @Binding var showsVolume:Bool
     @Environment(\.accessibilityReduceMotion) private var reducedMotion
@@ -22,15 +24,18 @@ struct MusicPlayerContent:View {
                         .animation(reducedMotion ? .easeOut(duration:0.12):.spring(duration:0.6,bounce:0.4),value:model.playing)
                     // MarqueeText records in 0x1000d8bb0: title 13.5 semibold,
                     // artist 13 medium, kerning .05, shared text cycle duration.
-                    MusicMarqueePair(title:model.displayTitle,artist:displayArtist,active:active,artistColor:translucent ? NSColor.white.withAlphaComponent(0.7):NSColor.gray.withAlphaComponent(0.85))
+                    MusicMarqueePair(title:model.displayTitle,artist:displayArtist,active:active,artistColor:translucent ? NSColor(palette?.secondary ?? .white.opacity(0.7)):NSColor.gray.withAlphaComponent(0.85),onDoubleClick: { model.openCurrentMediaSource() })
                         .id(model.mediaBundleIdentifier+"\u{0}"+model.title+"\u{0}"+model.artist+"\u{0}"+model.album)
                         .frame(maxWidth:.infinity,alignment:.leading)
                         .padding(.top,compensatesForNotch ? 23:11)
-                    PlayerWaveform(model:model, settings:settings, active:active, translucent:translucent).frame(width:24,height:24)
+                        .contentShape(Rectangle())
+                        .accessibilityAction(named: "打开当前播放软件") { model.openCurrentMediaSource() }
+                        .help("双击打开当前播放软件")
+                    PlayerWaveform(model:model, settings:settings, active:active, translucent:translucent, palette:palette).frame(width:24,height:24)
                         .padding(.top,compensatesForNotch ? 16:8)
                         .padding(.leading,4).padding(.trailing,6)
                 }.padding(.bottom,translucent ? 0:4)
-                MediaProgressView(model:model,settings:settings,trackWidth:width-42,translucent:translucent).id(model.mediaBundleIdentifier+"\u{0}"+model.title+"\u{0}"+model.artist+"\u{0}"+model.album)
+                MediaProgressView(model:model,settings:settings,trackWidth:width-42,translucent:translucent,palette:palette).id(model.mediaBundleIdentifier+"\u{0}"+model.title+"\u{0}"+model.artist+"\u{0}"+model.album)
                 ZStack(alignment:.trailing) {
                   HStack(spacing:32){
                     MediaButton(symbol:"backward.fill",label:"上一首",size:23){model.media.command(5)}.disabled(!model.previewMode && !model.mediaCanSkip)
@@ -46,7 +51,7 @@ struct MusicPlayerContent:View {
                       Image(systemName:model.output.symbol).font(.system(size:18,weight:.medium)).imageScale(.medium)
                           .frame(width:20,height:20)
                           .contentTransition(.symbolEffect(.replace))
-                          .foregroundStyle(translucent ? Color.white.opacity(0.7):.gray).frame(width:46,height:44)
+                          .foregroundStyle(translucent ? (palette?.secondary ?? Color.white.opacity(0.7)):.gray).frame(width:46,height:44)
                           .background(showsVolume || outputHovered ? Color.white.opacity(0.1) : .clear,in:RoundedRectangle(cornerRadius:16))
                   }.buttonStyle(.plain)
                       .onHover { outputHovered=$0 }

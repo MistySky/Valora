@@ -1,0 +1,17 @@
+{
+  "task": "docs/pi-tasks/v0012-r2-local-timeline-deadline.md",
+  "task_sha256": "a56f6ae8c4c36e04381a82beb8ef49ca586e5682610f5a4a9d98f6cfb991bb34",
+  "independent_deadline_regression": "Tests/ValoraTests/IndependentLyricsDeadlineTests.swift",
+  "deadline": "unstructured race gate; continuation deadline at 50ms/3s; noncooperative provider cannot block UI state",
+  "local_timeline": "single 30Hz TimelineView selects line and word; LyricsPlaybackClock anchor from player elapsed + playbackRate",
+  "continuous_offset": "word fraction (multi-character source words included), 0..overflow, 30..65% reading window",
+  "qa": "docs/verification/v0012/qa/verification.json",
+  "qa_checks": 28,
+  "tests": {"valora": 60, "reference_core": 103, "total": 163},
+  "artifact": "docs/verification/v0012/artifact-manifest.json",
+  "binary_sha256": "3445b7d6c9c20f22b3271ab7fc821ba13d149fe39a40d604dac683168e88c65b",
+  "limitations": [
+    "QA is static/injected; real QQ voice alignment and physical dual-screen remain user/device verification.",
+    "QRC network probe is explicit public samples only; no real player control."
+  ]
+}

@@ -14,16 +14,18 @@ struct DisplayDescriptor: Equatable, Sendable {
     let auxiliaryRightWidth: CGFloat?
     let menuBarHeight: CGFloat
     let isBuiltIn: Bool
+    let isActive: Bool
 
     init(id: String, name: String, frame: CGRect, safeAreaTop: CGFloat,
          auxiliaryLeftWidth: CGFloat?, auxiliaryRightWidth: CGFloat?,
-         menuBarHeight: CGFloat, isBuiltIn: Bool = false) {
+         menuBarHeight: CGFloat, isBuiltIn: Bool = false, isActive: Bool = true) {
         self.id = id; self.name = name; self.frame = frame
         self.safeAreaTop = safeAreaTop
         self.auxiliaryLeftWidth = auxiliaryLeftWidth
         self.auxiliaryRightWidth = auxiliaryRightWidth
         self.menuBarHeight = menuBarHeight
         self.isBuiltIn = isBuiltIn
+        self.isActive = isActive
     }
 
     init(screen: NSScreen) {
@@ -36,12 +38,22 @@ struct DisplayDescriptor: Equatable, Sendable {
         auxiliaryRightWidth = screen.auxiliaryTopRightArea?.width
         menuBarHeight = screen.frame.maxY - screen.visibleFrame.maxY
         isBuiltIn = number.map { CGDisplayIsBuiltin($0) != 0 } ?? false
+        isActive = number.map { CGDisplayIsOnline($0) != 0 && CGDisplayIsActive($0) != 0 } ?? true
     }
 }
 
 final class NotchPanel: NSPanel {
     override var canBecomeKey: Bool { false }
     override var canBecomeMain: Bool { false }
+
+    /// The notch is an edge-anchored, programmatically positioned panel. AppKit
+    /// may otherwise constrain a window to the visible frame/menu-bar area
+    /// during screen/Space transitions, producing a short down-shifted notch.
+    /// This does not add an offset; it preserves the caller's full-screen top
+    /// coordinate. Normal user-driven window movement never applies here.
+    override func constrainFrameRect(_ frameRect: NSRect, to screen: NSScreen?) -> NSRect {
+        frameRect
+    }
 }
 final class EdgeHostingView: NSHostingView<NotchView> {
     override var safeAreaInsets: NSEdgeInsets { NSEdgeInsetsZero }
@@ -60,6 +72,7 @@ final class WindowCoordinator {
         var pointerInside = false
         var pendingHover: DispatchWorkItem?
         var hoverGeneration = 0
+        var moveObserver: NSObjectProtocol?
         init(display: DisplayDescriptor, panel: NotchPanel, geometry: NotchGeometry) {
             self.id = display.id; self.display = display; self.panel = panel; self.geometry = geometry
         }
@@ -76,6 +89,9 @@ final class WindowCoordinator {
     private var screenObserver: NSObjectProtocol?
     private var subscriptions = Set<AnyCancellable>()
     private var screenStateMonitor: ScreenStateMonitor?
+    /// Current active notch panel number is published for the lock coordinator;
+    /// screen reconciliation/activation can replace the panel after startup.
+    let activeNotchWindowNumber = CurrentValueSubject<Int?, Never>(nil)
 
     init(_ model: AppModel, displayProvider: (() -> [DisplayDescriptor])? = nil) {
         self.model = model
@@ -132,6 +148,11 @@ final class WindowCoordinator {
                 MainActor.assumeIsolated { self?.updateVisibility() }
             }
         }.store(in: &subscriptions)
+        model.$connectionToast.removeDuplicates().sink { [weak self] _ in
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated { self?.updateVisibility() }
+            }
+        }.store(in: &subscriptions)
         model.settings.$musicPreferences.removeDuplicates().sink { [weak self] _ in
             DispatchQueue.main.async {
                 MainActor.assumeIsolated { self?.musicVisibilityChanged() }
@@ -180,8 +201,7 @@ final class WindowCoordinator {
         }.store(in: &subscriptions)
         Publishers.MergeMany(
             model.settings.$hideWhileInFullscreen.map { _ in () }.eraseToAnyPublisher(),
-            model.settings.$hideWhileInMissionControl.map { _ in () }.eraseToAnyPublisher(),
-            model.settings.$hideWhileGaming.map { _ in () }.eraseToAnyPublisher()
+            model.settings.$hideWhileInMissionControl.map { _ in () }.eraseToAnyPublisher()
         ).sink { [weak self] _ in
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
@@ -207,6 +227,16 @@ final class WindowCoordinator {
                 MainActor.assumeIsolated { self?.updateVisibility() }
             }
         }.store(in: &subscriptions)
+        Publishers.MergeMany(
+            model.$isSessionLocked.map { _ in () }.eraseToAnyPublisher(),
+            model.$lockIndicator.map { _ in () }.eraseToAnyPublisher(),
+            model.$lockNotchMounted.map { _ in () }.eraseToAnyPublisher(),
+            model.$lockOverlayReady.map { _ in () }.eraseToAnyPublisher()
+        ).sink { [weak self] _ in
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated { self?.updateVisibility() }
+            }
+        }.store(in: &subscriptions)
     }
 
     private func musicVisibilityChanged() {
@@ -219,9 +249,10 @@ final class WindowCoordinator {
 
     private func applyScreenState() {
         guard let monitor = screenStateMonitor else { return }
+        // Game hiding is fixed off in this product slice; the detection chain is
+        // gone, so only fullscreen and Mission Control can hide the surface.
         let hidden = (monitor.isFullscreen && model.settings.hideWhileInFullscreen)
             || (monitor.isMissionControl && model.settings.hideWhileInMissionControl)
-            || (monitor.isGaming && model.settings.hideWhileGaming)
         let wasHidden = model.screenHidden
         if hidden != model.screenHidden { model.screenHidden = hidden }
         if hidden && !wasHidden {
@@ -257,11 +288,82 @@ final class WindowCoordinator {
                                                        allowsDynamic:false))
         host.sizingOptions = []
         window.contentView = host
-        return ScreenPanel(display: display, panel: window, geometry: geom)
+        let record = ScreenPanel(display: display, panel: window, geometry: geom)
+        record.moveObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.didMoveNotification, object: window, queue: .main) { [weak self, weak window] _ in
+                guard let self, let window,
+                      let record = self.panels.first(where: { $0.panel === window }) else { return }
+                MainActor.assumeIsolated { self.anchorPanelTop(record) }
+            }
+        return record
+    }
+
+    /// The notch uses the same compact edge panel in normal/lock states. Lock
+    /// is a content/activity swap inside that panel, not a separate full-screen
+    /// window or a lower bar. The frame stays screen-top anchored.
+    private func panelFrame(for record: ScreenPanel) -> NSRect {
+        NSRect(x: record.display.frame.midX - 312,
+               y: record.display.frame.maxY - 320,
+               width: 624, height: 320)
+    }
+
+    /// Reassert the panel's screen-top edge after ordering, when WindowServer
+    /// may have applied a menu-bar/safe-area constraint during a login Space
+    /// handoff. This is event-driven, not a repeating order-front timer.
+    private func anchorPanelTop(_ record: ScreenPanel) {
+        let before = record.panel.frame
+        let target = panelFrame(for: record)
+        if record.panel.frame != target {
+            record.panel.setFrame(target, display: false)
+        }
+        recordDiagnostic(record, reason: "anchor", panelBefore: before)
+    }
+
+    private func recordDiagnostic(_ record: ScreenPanel, reason: String, panelBefore: CGRect? = nil) {
+        guard NotchWindowDiagnostic.shared.isEnabled else { return }
+        let host = record.panel.contentView
+        host?.layoutSubtreeIfNeeded()
+        let hostFrame = host?.frame ?? .zero
+        let hostBounds = host?.bounds ?? .zero
+        let hostSafeArea = host?.safeAreaInsets ?? NSEdgeInsetsZero
+        let hostTop = NotchDiagnosticCoordinate.hostTop(bounds: hostBounds,
+                                                        isFlipped: host?.isFlipped ?? false)
+        let contentTopScreen: CGPoint? = {
+            guard let host, let window = record.panel as NSWindow? else { return nil }
+            let point = host.convert(NSPoint(x: host.bounds.midX, y: hostTop), to: nil)
+            return window.convertPoint(toScreen: point)
+        }()
+        let phase = model.lockIndicator.phase
+        NotchWindowDiagnostic.shared.record(
+            role: "primary",
+            reason: reason,
+            phase: String(describing: phase),
+            displayID: record.id,
+            screenFrame: record.display.frame,
+            safeAreaTop: record.display.safeAreaTop,
+            menuBarHeight: record.display.menuBarHeight,
+            auxLeftWidth: record.display.auxiliaryLeftWidth,
+            auxRightWidth: record.display.auxiliaryRightWidth,
+            forceSimulated: model.settings.forceSimulatedNotch,
+            hasPhysicalNotch: model.notchGeometry.hasPhysicalNotch,
+            compact: model.notchGeometry.compact,
+            visibleSize: model.visibleSize,
+            contourTopInset: model.contour.topInset,
+            panelBefore: panelBefore ?? record.panel.frame,
+            panelAfter: record.panel.frame,
+            hostFrame: hostFrame,
+            hostBounds: hostBounds,
+            hostSafeArea: hostSafeArea,
+            hostTop: hostTop,
+            contentTopScreen: contentTopScreen,
+            visible: record.panel.isVisible,
+            sessionLocked: model.isSessionLocked,
+            notchMounted: model.lockNotchMounted,
+            windowNumber: record.panel.windowNumber)
     }
 
     private func selectedDisplays() -> [DisplayDescriptor] {
-        let all = displayProvider()
+        let all = displayProvider().filter(\.isActive)
         guard !all.isEmpty else { return [] }
         switch model.settings.selectedDisplay {
         case "All displays": return all
@@ -275,7 +377,7 @@ final class WindowCoordinator {
 
     private func place() {
         let selectedRaw = selectedDisplays()
-        let selected = selectedRaw.isEmpty ? Array(displayProvider().prefix(1)) : selectedRaw
+        let selected = selectedRaw.isEmpty ? Array(displayProvider().filter(\.isActive).prefix(1)) : selectedRaw
         let wanted = Set(selected.map(\.id))
         var kept: [ScreenPanel] = []
         for record in panels {
@@ -283,6 +385,10 @@ final class WindowCoordinator {
                 kept.append(record)
             } else {
                 record.pendingHover?.cancel()
+                if let observer = record.moveObserver {
+                    NotificationCenter.default.removeObserver(observer)
+                    record.moveObserver = nil
+                }
                 record.panel.orderOut(nil)
                 record.panel.contentView = nil
                 record.panel.close()
@@ -296,21 +402,25 @@ final class WindowCoordinator {
                 record.display = display
                 record.geometry = geom
                 record.panel.identifier = NSUserInterfaceItemIdentifier(id)
-                record.panel.setFrame(NSRect(x:display.frame.midX-312, y:display.frame.maxY-320, width:624, height:320), display:true)
+                record.panel.setFrame(panelFrame(for: record), display:true)
             } else {
                 panels.append(makeScreenPanel(display))
             }
         }
         model.allowsMultiDisplayDynamic = model.settings.selectedDisplay == "All displays" && panels.count > 1
+        model.inlineLyricsDisplayEligible = panels.count == 1
+            && panels.first?.geometry.hasPhysicalNotch == false
         if panels.isEmpty {
             active = nil
             panel = nil
+            activeNotchWindowNumber.send(nil)
             return
         }
         let previousID = active?.id
         active = panels.first(where: { $0.id == previousID }) ?? panels.first
         model.notchGeometry = active.geometry
         panel = active.panel
+        activeNotchWindowNumber.send(panel.windowNumber)
         cancelPendingHover()
         for record in panels {
             record.pointerInside = false
@@ -324,6 +434,7 @@ final class WindowCoordinator {
         guard let active else { return }
         model.notchGeometry = active.geometry
         panel = active.panel
+        activeNotchWindowNumber.send(panel.windowNumber)
         for record in panels {
             let isActive = record === active
             let root = NotchView(model:model, settings:model.settings,
@@ -352,6 +463,7 @@ final class WindowCoordinator {
         active = record
         model.notchGeometry = record.geometry
         panel = record.panel
+        activeNotchWindowNumber.send(panel.windowNumber)
         renderPanels()
         updateVisibility()
         if record.pointerInside, model.settings.hoverEnabled, !model.expanded {
@@ -361,12 +473,40 @@ final class WindowCoordinator {
 
     private func updateVisibility() {
         guard !panels.isEmpty else { return }
+        let lockVisible = model.showsLockActivity
+        // During the lock-collapse stage the ordinary surface remains visible
+        // while it animates closed. Hiding here would make the notch disappear
+        // and reappear, which is the observed "pull down then return" defect.
         let visible = !model.screenHidden && model.settings.showNotch
-            && (!model.settings.hideWhenIdle || model.showsMusicActivity || model.expanded)
+            && (!model.isSessionLocked || lockVisible || model.isLockTransitioning
+                || model.isLockNeutralGeometry)
+            && (!model.settings.hideWhenIdle || model.showsMusicActivity
+                || model.expanded || model.connectionToast != nil || lockVisible
+                || model.isLockTransitioning || model.isLockNeutralGeometry)
         for record in panels {
             record.panel.sharingType = model.settings.hideFromScreenCapture ? .none : .readOnly
+            if model.isSessionLocked, model.lockNotchMounted,
+               model.lockIndicator.phase != .locking,
+               record.id != LockDisplayPolicy.select(from: displayProvider())?.id {
+                record.panel.orderOut(nil)
+                record.panel.ignoresMouseEvents = true
+                continue
+            }
+            // The dedicated lock overlay owns the top surface while the real
+            // session is locked. The ordinary desktop panel stays ordered out
+            // until the overlay's neutral completion hands back.
+            if model.lockOverlayReady && model.isSessionLocked {
+                record.pendingHover?.cancel(); record.pendingHover = nil
+                record.pointerInside = false
+                record.panel.orderOut(nil)
+                record.panel.ignoresMouseEvents = true
+                continue
+            }
             if visible {
+                record.panel.ignoresMouseEvents = model.isSessionLocked
                 record.panel.orderFrontRegardless()
+                anchorPanelTop(record)
+                if record === active { recordDiagnostic(record, reason: "visibility") }
             } else {
                 record.pendingHover?.cancel(); record.pendingHover = nil
                 record.pointerInside = false
@@ -374,7 +514,7 @@ final class WindowCoordinator {
                 record.panel.ignoresMouseEvents = true
             }
         }
-        if !visible, let active {
+        if !visible || model.isSessionLocked {
             model.presenter.pointerEntered(false)
         }
     }
@@ -423,6 +563,15 @@ final class WindowCoordinator {
 
     private func trackMouse(at point: NSPoint) {
         guard !model.pointerInteractionActive else { return }
+        if model.isSessionLocked {
+            for record in panels {
+                record.panel.ignoresMouseEvents = true
+                record.pointerInside = false
+                cancelPendingHover(record)
+            }
+            model.presenter.pointerEntered(false)
+            return
+        }
         for record in panels {
             let inside = containsMouse(record, point: point)
             record.panel.ignoresMouseEvents = !inside
@@ -449,13 +598,15 @@ final class WindowCoordinator {
 
     private func scheduleHover(_ record: ScreenPanel) {
         cancelPendingHover(record)
+        // Keep the generation counter and increment on every scheduled hover;
+        // pending work is invalidated by cancelPendingHover above.
         record.hoverGeneration += 1
-        let generation = record.hoverGeneration
         let work = DispatchWorkItem { [weak self, weak record] in
             MainActor.assumeIsolated {
                 guard let self, let record, record === self.active,
                       record.pointerInside, self.model.settings.hoverEnabled,
-                      !self.model.expanded, !self.model.pointerInteractionActive else { return }
+                      !self.model.expanded, !self.model.pointerInteractionActive,
+                      !self.model.isSessionLocked else { return }
                 record.pendingHover = nil
                 self.model.presenter.expand()
                 self.updateVisibility()
@@ -476,7 +627,7 @@ final class WindowCoordinator {
 
     /// Test/verification entry for the active interaction screen.
     func pointerChanged(_ inside: Bool) {
-        guard let active else { return }
+        guard let active, !model.isSessionLocked else { return }
         if inside == active.pointerInside { return }
         active.pointerInside = inside
         if inside {
@@ -498,6 +649,12 @@ final class WindowCoordinator {
 
     var verificationPanelCount: Int { panels.count }
     var verificationActiveScreenID: String? { active?.id }
+    var currentNotchDisplayFrame: CGRect? { active?.display.frame }
+    /// Never mount a music panel from an unrelated screen as lock fallback.
+    var lockFallbackPanel: NotchPanel? {
+        guard let target = LockDisplayPolicy.select(from: displayProvider()) else { return nil }
+        return panels.first(where: { $0.id == target.id })?.panel
+    }
     var verificationScreenIDs: [String] { panels.map(\.id) }
     func verificationActivateScreen(_ id: String) {
         guard let record = panels.first(where: { $0.id == id }) else { return }
@@ -565,6 +722,10 @@ final class WindowCoordinator {
         model.trackChangedHandler = nil
         for record in panels {
             record.pendingHover?.cancel()
+            if let observer = record.moveObserver {
+                NotificationCenter.default.removeObserver(observer)
+                record.moveObserver = nil
+            }
             record.panel.orderOut(nil)
             record.panel.contentView = nil
             record.panel.close()

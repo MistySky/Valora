@@ -1,0 +1,628 @@
+warning: 'valora': found 1 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /Users/wangqing/code/Valora/Tests/ReferenceCoreTests/Fixtures/qq-qrc-studio.hex
+Building for debugging...
+[Using on-disk description]
+Build complete! (0.34秒)
+Test Suite 'All tests' started at 2026-10-24 17:34:42.813.
+Test Suite 'ValoraTests.xctest' started at 2026-10-24 17:34:42.814.
+Test Suite 'ConnectivityControllerTests' started at 2026-10-24 17:34:42.814.
+Test Case '-[ValoraTests.ConnectivityControllerTests testFirstLowSnapshotDoesNotAlertOrSound]' started.
+Test Case '-[ValoraTests.ConnectivityControllerTests testFirstLowSnapshotDoesNotAlertOrSound]' passed (0.005 seconds).
+Test Case '-[ValoraTests.ConnectivityControllerTests testFirstSnapshotIsBaselineAndNewConnectionArrivesOnce]' started.
+Test Case '-[ValoraTests.ConnectivityControllerTests testFirstSnapshotIsBaselineAndNewConnectionArrivesOnce]' passed (0.003 seconds).
+Test Case '-[ValoraTests.ConnectivityControllerTests testLateMetadataUpdatesToastWithoutReplay]' started.
+Test Case '-[ValoraTests.ConnectivityControllerTests testLateMetadataUpdatesToastWithoutReplay]' passed (0.002 seconds).
+Test Case '-[ValoraTests.ConnectivityControllerTests testLateSourceResultAfterSwitchOffIsIgnored]' started.
+Test Case '-[ValoraTests.ConnectivityControllerTests testLateSourceResultAfterSwitchOffIsIgnored]' passed (0.429 seconds).
+Test Case '-[ValoraTests.ConnectivityControllerTests testLowBatteryEdgeAndZeroVersusNil]' started.
+Test Case '-[ValoraTests.ConnectivityControllerTests testLowBatteryEdgeAndZeroVersusNil]' passed (0.003 seconds).
+Test Case '-[ValoraTests.ConnectivityControllerTests testQueryIsBoundedToOneAndStaleResultIsIgnored]' started.
+Test Case '-[ValoraTests.ConnectivityControllerTests testQueryIsBoundedToOneAndStaleResultIsIgnored]' passed (0.698 seconds).
+Test Case '-[ValoraTests.ConnectivityControllerTests testSwitchOffClearsToastAndRejectsLateSnapshot]' started.
+Test Case '-[ValoraTests.ConnectivityControllerTests testSwitchOffClearsToastAndRejectsLateSnapshot]' passed (0.006 seconds).
+Test Suite 'ConnectivityControllerTests' passed at 2026-10-24 17:34:43.961.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 1.146 (1.147) seconds
+Test Suite 'IndependentLyricsDeadlineTests' started at 2026-10-24 17:34:43.961.
+Test Case '-[ValoraTests.IndependentLyricsDeadlineTests testDeadlineSettlesWithoutWaitingForNoncooperativeProvider]' started.
+Test Case '-[ValoraTests.IndependentLyricsDeadlineTests testDeadlineSettlesWithoutWaitingForNoncooperativeProvider]' passed (0.775 seconds).
+Test Case '-[ValoraTests.IndependentLyricsDeadlineTests testImmediateCancellationDoesNotRetainController]' started.
+CoreData: error: Unable to create token NSXPCConnection.  NSXPCStoreServerEndpointFactory 0x765807cbb0 -newEndpointWithError returned error Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: NSXPCStoreConnectionManager failed to initialize any connections for store at file:///Users/wangqing/Library/Application%20Support/AddressBook/AddressBook-v22.abcddb with error = Error Domain=NSCocoaErrorDomain Code=4097 "无法与帮助程序通信。" UserInfo={NSUnderlyingError=0x765993cea0 {Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}}}
+Test Case '-[ValoraTests.IndependentLyricsDeadlineTests testImmediateCancellationDoesNotRetainController]' passed (0.937 seconds).
+Test Suite 'IndependentLyricsDeadlineTests' passed at 2026-10-24 17:34:45.674.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 1.712 (1.713) seconds
+Test Suite 'LyricMetricsCacheTests' started at 2026-10-24 17:34:45.674.
+Test Case '-[ValoraTests.LyricMetricsCacheTests testDelayedMountUsesElapsedSampleAge]' started.
+Test Case '-[ValoraTests.LyricMetricsCacheTests testDelayedMountUsesElapsedSampleAge]' passed (0.001 seconds).
+Test Case '-[ValoraTests.LyricMetricsCacheTests testSameTextAndStartButDifferentWordSegmentationRebuilds]' started.
+Test Case '-[ValoraTests.LyricMetricsCacheTests testSameTextAndStartButDifferentWordSegmentationRebuilds]' passed (0.044 seconds).
+Test Suite 'LyricMetricsCacheTests' passed at 2026-10-24 17:34:45.719.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.045 (0.045) seconds
+Test Suite 'LyricsCacheTests' started at 2026-10-24 17:34:45.719.
+Test Case '-[ValoraTests.LyricsCacheTests testDiskLimitAndCorruptFileProtection]' started.
+Test Case '-[ValoraTests.LyricsCacheTests testDiskLimitAndCorruptFileProtection]' passed (0.005 seconds).
+Test Case '-[ValoraTests.LyricsCacheTests testFailuresAreNotCachedAndSameVersionOverwrites]' started.
+Test Case '-[ValoraTests.LyricsCacheTests testFailuresAreNotCachedAndSameVersionOverwrites]' passed (0.002 seconds).
+Test Case '-[ValoraTests.LyricsCacheTests testMemoryEntryAndPayloadLimitsEvictOldest]' started.
+Test Case '-[ValoraTests.LyricsCacheTests testMemoryEntryAndPayloadLimitsEvictOldest]' passed (0.002 seconds).
+Test Case '-[ValoraTests.LyricsCacheTests testPayloadLimitRejectsOversizeEntry]' started.
+Test Case '-[ValoraTests.LyricsCacheTests testPayloadLimitRejectsOversizeEntry]' passed (0.001 seconds).
+Test Suite 'LyricsCacheTests' passed at 2026-10-24 17:34:45.729.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.010 (0.010) seconds
+Test Suite 'LyricsServiceTests' started at 2026-10-24 17:34:45.729.
+Test Case '-[ValoraTests.LyricsServiceTests testCanceledInFlightDoesNotTrapFreshSameRequest]' started.
+Test Case '-[ValoraTests.LyricsServiceTests testCanceledInFlightDoesNotTrapFreshSameRequest]' passed (0.456 seconds).
+Test Case '-[ValoraTests.LyricsServiceTests testCanceledNoncooperativeResultDoesNotPopulateCache]' started.
+Test Case '-[ValoraTests.LyricsServiceTests testCanceledNoncooperativeResultDoesNotPopulateCache]' passed (0.358 seconds).
+Test Case '-[ValoraTests.LyricsServiceTests testCanceledQRCPhaseDoesNotFallBackToLRC]' started.
+Test Case '-[ValoraTests.LyricsServiceTests testCanceledQRCPhaseDoesNotFallBackToLRC]' passed (0.365 seconds).
+Test Case '-[ValoraTests.LyricsServiceTests testControllerClearsWhenMusicIsDisabled]' started.
+Test Case '-[ValoraTests.LyricsServiceTests testControllerClearsWhenMusicIsDisabled]' passed (0.203 seconds).
+Test Case '-[ValoraTests.LyricsServiceTests testControllerDoesNotRequestWhenLyricsAreDisabled]' started.
+Test Case '-[ValoraTests.LyricsServiceTests testControllerDoesNotRequestWhenLyricsAreDisabled]' passed (0.110 seconds).
+Test Case '-[ValoraTests.LyricsServiceTests testControllerFallsBackWhenProviderFails]' started.
+Test Case '-[ValoraTests.LyricsServiceTests testControllerFallsBackWhenProviderFails]' passed (0.116 seconds).
+Test Case '-[ValoraTests.LyricsServiceTests testControllerPublishesLyricsAndClearsWhenDisabled]' started.
+CoreData: error: Unable to create token NSXPCConnection.  NSXPCStoreServerEndpointFactory 0x765807cbb0 -newEndpointWithError returned error Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: NSXPCStoreConnectionManager failed to initialize any connections for store at file:///Users/wangqing/Library/Application%20Support/AddressBook/AddressBook-v22.abcddb with error = Error Domain=NSCocoaErrorDomain Code=4097 "无法与帮助程序通信。" UserInfo={NSUnderlyingError=0x765993d470 {Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}}}
+CoreData: warning: Caught exception trying to load store metadata during error recovery: NSXPCStoreServerEndpointFactory failed to provide an endpoint
+CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (4097)
+CoreData: error: userInfo:
+CoreData: error: 	NSUnderlyingException : NSXPCStoreServerEndpointFactory failed to provide an endpoint
+CoreData: error: 	NSUnderlyingError : Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: storeType: NSXPCStore
+CoreData: error: configuration: (null)
+CoreData: error: URL: file:///Users/wangqing/Library/Application%20Support/AddressBook/AddressBook-v22.abcddb
+CoreData: annotation: options:
+CoreData: annotation: 	NSReadOnlyPersistentStoreOption : 0
+CoreData: annotation: 	NSXPCStoreServerEndpointFactory : <CNCDRemotePersistentStoreEndpointFactory: 0x765807cbb0>
+CoreData: annotation: 	skipModelCheck : 1
+CoreData: annotation: 	NSPersistentHistoryTrackingKey : 1
+Test Case '-[ValoraTests.LyricsServiceTests testControllerPublishesLyricsAndClearsWhenDisabled]' passed (0.224 seconds).
+Test Case '-[ValoraTests.LyricsServiceTests testControllerRejectsStaleTrackResponse]' started.
+Test Case '-[ValoraTests.LyricsServiceTests testControllerRejectsStaleTrackResponse]' passed (0.297 seconds).
+Test Case '-[ValoraTests.LyricsServiceTests testControllerThreeSecondBudgetHidesLateResult]' started.
+Test Case '-[ValoraTests.LyricsServiceTests testControllerThreeSecondBudgetHidesLateResult]' passed (1.395 seconds).
+Test Case '-[ValoraTests.LyricsServiceTests testDisablingLyricsCancelsInFlightRequest]' started.
+Test Case '-[ValoraTests.LyricsServiceTests testDisablingLyricsCancelsInFlightRequest]' passed (0.157 seconds).
+Test Case '-[ValoraTests.LyricsServiceTests testElapsedTicksAndPauseDoNotRepeatRequests]' started.
+Test Case '-[ValoraTests.LyricsServiceTests testElapsedTicksAndPauseDoNotRepeatRequests]' passed (0.348 seconds).
+Test Case '-[ValoraTests.LyricsServiceTests testHiddenNotchDoesNotStartRequestOnMetadataChange]' started.
+CoreData: error: Unable to create token NSXPCConnection.  NSXPCStoreServerEndpointFactory 0x765807cdb0 -newEndpointWithError returned error Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: NSXPCStoreConnectionManager failed to initialize any connections for store at file:///Users/wangqing/Library/Application%20Support/AddressBook/AddressBook-v22.abcddb with error = Error Domain=NSCocoaErrorDomain Code=4097 "无法与帮助程序通信。" UserInfo={NSUnderlyingError=0x765996f4e0 {Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}}}
+Test Case '-[ValoraTests.LyricsServiceTests testHiddenNotchDoesNotStartRequestOnMetadataChange]' passed (0.315 seconds).
+Test Case '-[ValoraTests.LyricsServiceTests testServiceCacheIsKeyedByVersionIdentity]' started.
+Test Case '-[ValoraTests.LyricsServiceTests testServiceCacheIsKeyedByVersionIdentity]' passed (0.009 seconds).
+Test Case '-[ValoraTests.LyricsServiceTests testServiceDeduplicatesConcurrentIdenticalRequests]' started.
+Test Case '-[ValoraTests.LyricsServiceTests testServiceDeduplicatesConcurrentIdenticalRequests]' passed (0.272 seconds).
+Test Case '-[ValoraTests.LyricsServiceTests testServiceDoesNotCacheHTTPFailure]' started.
+Test Case '-[ValoraTests.LyricsServiceTests testServiceDoesNotCacheHTTPFailure]' passed (0.004 seconds).
+Test Case '-[ValoraTests.LyricsServiceTests testServiceFetchesTimedLyricsAndCachesOnlySuccess]' started.
+Test Case '-[ValoraTests.LyricsServiceTests testServiceFetchesTimedLyricsAndCachesOnlySuccess]' passed (0.005 seconds).
+Test Case '-[ValoraTests.LyricsServiceTests testServicePrefersRealQRCWordTimingOverLineLRC]' started.
+Test Case '-[ValoraTests.LyricsServiceTests testServicePrefersRealQRCWordTimingOverLineLRC]' passed (0.074 seconds).
+Test Suite 'LyricsServiceTests' passed at 2026-10-24 17:34:50.442.
+	 Executed 17 tests, with 0 failures (0 unexpected) in 4.710 (4.713) seconds
+Test Suite 'MediaControllerRecoveryTests' started at 2026-10-24 17:34:50.442.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testDisablePreventsReconnectAndDoesNotLoseSourceStop]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testDisablePreventsReconnectAndDoesNotLoseSourceStop]' passed (0.003 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testFailureRetryIsRateLimitedAndNotAReentrantLoop]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testFailureRetryIsRateLimitedAndNotAReentrantLoop]' passed (0.002 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testInitialStartFailureRecoversThroughExistingRefresh]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testInitialStartFailureRecoversThroughExistingRefresh]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testNormalSeekKeepsClampAndTruncationSemantics]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testNormalSeekKeepsClampAndTruncationSemantics]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testPlaybackCommandsUseSingleSharedFakePlayer]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testPlaybackCommandsUseSingleSharedFakePlayer]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testPlayerRateReachesLyricsClock]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testPlayerRateReachesLyricsClock]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testRepeatedRefreshDoesNotStartDuplicateAdapters]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testRepeatedRefreshDoesNotStartDuplicateAdapters]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testRunningStreamExitRecoversThroughExistingRefresh]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testRunningStreamExitRecoversThroughExistingRefresh]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testSeekMicrosBoundariesAreSafe]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testSeekMicrosBoundariesAreSafe]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testSeekRejectsUnrepresentableAndInvalidValuesWithoutCallingRunner]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testSeekRejectsUnrepresentableAndInvalidValuesWithoutCallingRunner]' passed (0.001 seconds).
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testStopPreventsFurtherReconnects]' started.
+Test Case '-[ValoraTests.MediaControllerRecoveryTests testStopPreventsFurtherReconnects]' passed (0.001 seconds).
+Test Suite 'MediaControllerRecoveryTests' passed at 2026-10-24 17:34:50.457.
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.014 (0.015) seconds
+Test Suite 'MultiDisplayCoordinatorTests' started at 2026-10-24 17:34:50.457.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testActiveScreenSwitchKeepsAtMostOneExpanded]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testActiveScreenSwitchKeepsAtMostOneExpanded]' passed (0.148 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testAllDisplaysCreatesOneInteractivePanelPerScreen]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testAllDisplaysCreatesOneInteractivePanelPerScreen]' passed (0.029 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testDragOwnershipBlocksScreenSwitch]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testDragOwnershipBlocksScreenSwitch]' passed (0.023 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testExternalPillGetsPeekWhenMultipleDisplaysAreEnabled]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testExternalPillGetsPeekWhenMultipleDisplaysAreEnabled]' passed (0.417 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testInjectedNegativeFramePanelAcceptsOnlyItsOwnContour]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testInjectedNegativeFramePanelAcceptsOnlyItsOwnContour]' passed (0.035 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testLeavingBeforeHoverDelayCancelsThePendingExpansion]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testLeavingBeforeHoverDelayCancelsThePendingExpansion]' passed (0.575 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testLyricsStayOnTheActiveScreenAfterSwitch]' started.
+CoreData: error: Unable to create token NSXPCConnection.  NSXPCStoreServerEndpointFactory 0x765807cdb0 -newEndpointWithError returned error Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: NSXPCStoreConnectionManager failed to initialize any connections for store at file:///Users/wangqing/Library/Application%20Support/AddressBook/AddressBook-v22.abcddb with error = Error Domain=NSCocoaErrorDomain Code=4097 "无法与帮助程序通信。" UserInfo={NSUnderlyingError=0x765996f6c0 {Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}}}
+CoreData: warning: Caught exception trying to load store metadata during error recovery: NSXPCStoreServerEndpointFactory failed to provide an endpoint
+CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (4097)
+CoreData: error: userInfo:
+CoreData: error: 	NSUnderlyingException : NSXPCStoreServerEndpointFactory failed to provide an endpoint
+CoreData: error: 	NSUnderlyingError : Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: storeType: NSXPCStore
+CoreData: error: configuration: (null)
+CoreData: error: URL: file:///Users/wangqing/Library/Application%20Support/AddressBook/AddressBook-v22.abcddb
+CoreData: annotation: options:
+CoreData: annotation: 	NSReadOnlyPersistentStoreOption : 0
+CoreData: annotation: 	NSXPCStoreServerEndpointFactory : <CNCDRemotePersistentStoreEndpointFactory: 0x765807cdb0>
+CoreData: annotation: 	skipModelCheck : 1
+CoreData: annotation: 	NSPersistentHistoryTrackingKey : 1
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testLyricsStayOnTheActiveScreenAfterSwitch]' passed (0.626 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testNegativeScreenFrameHitTestingUsesPerScreenGeometry]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testNegativeScreenFrameHitTestingUsesPerScreenGeometry]' passed (0.048 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testOrdinaryDesktopMovementDoesNotMoveTheExpandedPanel]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testOrdinaryDesktopMovementDoesNotMoveTheExpandedPanel]' passed (0.100 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPassivePanelPointerActivatesAndPeekTargetsIt]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPassivePanelPointerActivatesAndPeekTargetsIt]' passed (0.249 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedHoveredActivityExpiresAfterDirectScreenReset]' started.
+CoreData: error: Unable to create token NSXPCConnection.  NSXPCStoreServerEndpointFactory 0x76575dc0c0 -newEndpointWithError returned error Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: NSXPCStoreConnectionManager failed to initialize any connections for store at file:///Users/wangqing/Library/Application%20Support/AddressBook/Sources/4847AE2F-995C-4AE9-BCCE-009CDEB28D07/AddressBook-v22.abcddb with error = Error Domain=NSCocoaErrorDomain Code=4097 "无法与帮助程序通信。" UserInfo={NSUnderlyingError=0x7659939080 {Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}}}
+CoreData: error: Unable to create token NSXPCConnection.  NSXPCStoreServerEndpointFactory 0x76575dc0c0 -newEndpointWithError returned error Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: NSXPCStoreConnectionManager failed to initialize any connections for store at file:///Users/wangqing/Library/Application%20Support/AddressBook/Sources/4847AE2F-995C-4AE9-BCCE-009CDEB28D07/AddressBook-v22.abcddb with error = Error Domain=NSCocoaErrorDomain Code=4097 "无法与帮助程序通信。" UserInfo={NSUnderlyingError=0x7659938c90 {Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}}}
+CoreData: warning: Caught exception trying to load store metadata during error recovery: NSXPCStoreServerEndpointFactory failed to provide an endpoint
+CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (4097)
+CoreData: error: userInfo:
+CoreData: error: 	NSUnderlyingException : NSXPCStoreServerEndpointFactory failed to provide an endpoint
+CoreData: error: 	NSUnderlyingError : Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: storeType: NSXPCStore
+CoreData: error: configuration: (null)
+CoreData: error: URL: file:///Users/wangqing/Library/Application%20Support/AddressBook/Sources/4847AE2F-995C-4AE9-BCCE-009CDEB28D07/AddressBook-v22.abcddb
+CoreData: annotation: options:
+CoreData: annotation: 	NSReadOnlyPersistentStoreOption : 0
+CoreData: annotation: 	NSXPCStoreServerEndpointFactory : <CNCDRemotePersistentStoreEndpointFactory: 0x76575dc0c0>
+CoreData: annotation: 	skipModelCheck : 1
+CoreData: annotation: 	NSPersistentHistoryTrackingKey : 1
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedHoveredActivityExpiresAfterDirectScreenReset]' passed (3.954 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedHoveredActivityExpiresAfterDisplaySelectionClearsPointer]' started.
+CoreData: error: Unable to create token NSXPCConnection.  NSXPCStoreServerEndpointFactory 0x76575dc310 -newEndpointWithError returned error Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: NSXPCStoreConnectionManager failed to initialize any connections for store at file:///Users/wangqing/Library/Application%20Support/AddressBook/Sources/4847AE2F-995C-4AE9-BCCE-009CDEB28D07/AddressBook-v22.abcddb with error = Error Domain=NSCocoaErrorDomain Code=4097 "无法与帮助程序通信。" UserInfo={NSUnderlyingError=0x7659e1b5a0 {Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}}}
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedHoveredActivityExpiresAfterDisplaySelectionClearsPointer]' passed (4.000 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesDisableThenEnable]' started.
+CoreData: error: Unable to create token NSXPCConnection.  NSXPCStoreServerEndpointFactory 0x76575dc310 -newEndpointWithError returned error Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: NSXPCStoreConnectionManager failed to initialize any connections for store at file:///Users/wangqing/Library/Application%20Support/AddressBook/Sources/4847AE2F-995C-4AE9-BCCE-009CDEB28D07/AddressBook-v22.abcddb with error = Error Domain=NSCocoaErrorDomain Code=4097 "无法与帮助程序通信。" UserInfo={NSUnderlyingError=0x7659e1b870 {Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}}}
+CoreData: warning: Caught exception trying to load store metadata during error recovery: NSXPCStoreServerEndpointFactory failed to provide an endpoint
+CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (4097)
+CoreData: error: userInfo:
+CoreData: error: 	NSUnderlyingException : NSXPCStoreServerEndpointFactory failed to provide an endpoint
+CoreData: error: 	NSUnderlyingError : Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: storeType: NSXPCStore
+CoreData: error: configuration: (null)
+CoreData: error: URL: file:///Users/wangqing/Library/Application%20Support/AddressBook/Sources/4847AE2F-995C-4AE9-BCCE-009CDEB28D07/AddressBook-v22.abcddb
+CoreData: annotation: options:
+CoreData: annotation: 	NSReadOnlyPersistentStoreOption : 0
+CoreData: annotation: 	NSXPCStoreServerEndpointFactory : <CNCDRemotePersistentStoreEndpointFactory: 0x76575dc310>
+CoreData: annotation: 	skipModelCheck : 1
+CoreData: annotation: 	NSPersistentHistoryTrackingKey : 1
+CoreData: error: Unable to create token NSXPCConnection.  NSXPCStoreServerEndpointFactory 0x76575dc080 -newEndpointWithError returned error Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: NSXPCStoreConnectionManager failed to initialize any connections for store at file:///Users/wangqing/Library/Application%20Support/AddressBook/AddressBook-v22.abcddb with error = Error Domain=NSCocoaErrorDomain Code=4097 "无法与帮助程序通信。" UserInfo={NSUnderlyingError=0x7659977120 {Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}}}
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesDisableThenEnable]' passed (3.999 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesDisplaySelectionChange]' started.
+CoreData: error: Unable to create token NSXPCConnection.  NSXPCStoreServerEndpointFactory 0x76575dc080 -newEndpointWithError returned error Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: NSXPCStoreConnectionManager failed to initialize any connections for store at file:///Users/wangqing/Library/Application%20Support/AddressBook/AddressBook-v22.abcddb with error = Error Domain=NSCocoaErrorDomain Code=4097 "无法与帮助程序通信。" UserInfo={NSUnderlyingError=0x76599772a0 {Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}}}
+CoreData: warning: Caught exception trying to load store metadata during error recovery: NSXPCStoreServerEndpointFactory failed to provide an endpoint
+CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (4097)
+CoreData: error: userInfo:
+CoreData: error: 	NSUnderlyingException : NSXPCStoreServerEndpointFactory failed to provide an endpoint
+CoreData: error: 	NSUnderlyingError : Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: storeType: NSXPCStore
+CoreData: error: configuration: (null)
+CoreData: error: URL: file:///Users/wangqing/Library/Application%20Support/AddressBook/AddressBook-v22.abcddb
+CoreData: annotation: options:
+CoreData: annotation: 	NSReadOnlyPersistentStoreOption : 0
+CoreData: annotation: 	NSXPCStoreServerEndpointFactory : <CNCDRemotePersistentStoreEndpointFactory: 0x76575dc080>
+CoreData: annotation: 	skipModelCheck : 1
+CoreData: annotation: 	NSPersistentHistoryTrackingKey : 1
+CoreData: error: Unable to create token NSXPCConnection.  NSXPCStoreServerEndpointFactory 0x76575dcc70 -newEndpointWithError returned error Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: NSXPCStoreConnectionManager failed to initialize any connections for store at file:///Users/wangqing/Library/Application%20Support/AddressBook/AddressBook-v22.abcddb with error = Error Domain=NSCocoaErrorDomain Code=4097 "无法与帮助程序通信。" UserInfo={NSUnderlyingError=0x7659981080 {Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}}}
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesDisplaySelectionChange]' passed (4.102 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesScreenReset]' started.
+CoreData: error: Unable to create token NSXPCConnection.  NSXPCStoreServerEndpointFactory 0x76575dcc70 -newEndpointWithError returned error Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: NSXPCStoreConnectionManager failed to initialize any connections for store at file:///Users/wangqing/Library/Application%20Support/AddressBook/AddressBook-v22.abcddb with error = Error Domain=NSCocoaErrorDomain Code=4097 "无法与帮助程序通信。" UserInfo={NSUnderlyingError=0x7659981110 {Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}}}
+CoreData: warning: Caught exception trying to load store metadata during error recovery: NSXPCStoreServerEndpointFactory failed to provide an endpoint
+CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (4097)
+CoreData: error: userInfo:
+CoreData: error: 	NSUnderlyingException : NSXPCStoreServerEndpointFactory failed to provide an endpoint
+CoreData: error: 	NSUnderlyingError : Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: storeType: NSXPCStore
+CoreData: error: configuration: (null)
+CoreData: error: URL: file:///Users/wangqing/Library/Application%20Support/AddressBook/AddressBook-v22.abcddb
+CoreData: annotation: options:
+CoreData: annotation: 	NSReadOnlyPersistentStoreOption : 0
+CoreData: annotation: 	NSXPCStoreServerEndpointFactory : <CNCDRemotePersistentStoreEndpointFactory: 0x76575dcc70>
+CoreData: annotation: 	skipModelCheck : 1
+CoreData: annotation: 	NSPersistentHistoryTrackingKey : 1
+2026-10-24 17:35:10.205 xctest[40062:6395378] Error obtaining permanent ID: Error Domain=NSCocoaErrorDomain Code=134020 "用来打开储存的型号配置与用来创建该储存的型号配置不兼容。"
+CoreData: error: Unable to create token NSXPCConnection.  NSXPCStoreServerEndpointFactory 0x7658958d60 -newEndpointWithError returned error Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: NSXPCStoreConnectionManager failed to initialize any connections for store at file:///Users/wangqing/Library/Application%20Support/AddressBook/Sources/4847AE2F-995C-4AE9-BCCE-009CDEB28D07/AddressBook-v22.abcddb with error = Error Domain=NSCocoaErrorDomain Code=4097 "无法与帮助程序通信。" UserInfo={NSUnderlyingError=0x765993de30 {Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}}}
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testPausedIdleDeadlineSurvivesScreenReset]' passed (3.901 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testSameValueMetadataPollsDoNotPostponePausedIdleDeadline]' started.
+CoreData: error: Unable to create token NSXPCConnection.  NSXPCStoreServerEndpointFactory 0x7658958d60 -newEndpointWithError returned error Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: NSXPCStoreConnectionManager failed to initialize any connections for store at file:///Users/wangqing/Library/Application%20Support/AddressBook/Sources/4847AE2F-995C-4AE9-BCCE-009CDEB28D07/AddressBook-v22.abcddb with error = Error Domain=NSCocoaErrorDomain Code=4097 "无法与帮助程序通信。" UserInfo={NSUnderlyingError=0x765993c7e0 {Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}}}
+CoreData: warning: Caught exception trying to load store metadata during error recovery: NSXPCStoreServerEndpointFactory failed to provide an endpoint
+CoreData: error: addPersistentStoreWithType:configuration:URL:options:error: returned error NSCocoaErrorDomain (4097)
+CoreData: error: userInfo:
+CoreData: error: 	NSUnderlyingException : NSXPCStoreServerEndpointFactory failed to provide an endpoint
+CoreData: error: 	NSUnderlyingError : Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: storeType: NSXPCStore
+CoreData: error: configuration: (null)
+CoreData: error: URL: file:///Users/wangqing/Library/Application%20Support/AddressBook/Sources/4847AE2F-995C-4AE9-BCCE-009CDEB28D07/AddressBook-v22.abcddb
+CoreData: annotation: options:
+CoreData: annotation: 	NSReadOnlyPersistentStoreOption : 0
+CoreData: annotation: 	NSXPCStoreServerEndpointFactory : <CNCDRemotePersistentStoreEndpointFactory: 0x7658958d60>
+CoreData: annotation: 	skipModelCheck : 1
+CoreData: annotation: 	NSPersistentHistoryTrackingKey : 1
+CoreData: error: Unable to create token NSXPCConnection.  NSXPCStoreServerEndpointFactory 0x76575dc090 -newEndpointWithError returned error Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}
+CoreData: error: NSXPCStoreConnectionManager failed to initialize any connections for store at file:///Users/wangqing/Library/Application%20Support/AddressBook/Sources/4847AE2F-995C-4AE9-BCCE-009CDEB28D07/AddressBook-v22.abcddb with error = Error Domain=NSCocoaErrorDomain Code=4097 "无法与帮助程序通信。" UserInfo={NSUnderlyingError=0x7659939290 {Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.contactsd.persistence" UserInfo={NSDebugDescription=connection to service named com.apple.contactsd.persistence}}}
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testSameValueMetadataPollsDoNotPostponePausedIdleDeadline]' passed (3.634 seconds).
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testSelectingMainDisplayConvergesToOnePanel]' started.
+Test Case '-[ValoraTests.MultiDisplayCoordinatorTests testSelectingMainDisplayConvergesToOnePanel]' passed (0.325 seconds).
+Test Suite 'MultiDisplayCoordinatorTests' passed at 2026-10-24 17:35:16.623.
+	 Executed 17 tests, with 0 failures (0 unexpected) in 26.164 (26.166) seconds
+Test Suite 'MusicTitleExtrasIntegrationTests' started at 2026-10-24 17:35:16.623.
+Test Case '-[ValoraTests.MusicTitleExtrasIntegrationTests testRemovedTitleExtrasSettingCannotOverrideFixedFullTitle]' started.
+Test Case '-[ValoraTests.MusicTitleExtrasIntegrationTests testRemovedTitleExtrasSettingCannotOverrideFixedFullTitle]' passed (0.004 seconds).
+Test Suite 'MusicTitleExtrasIntegrationTests' passed at 2026-10-24 17:35:16.627.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.004 (0.004) seconds
+Test Suite 'RevivalSettingsReloadTests' started at 2026-10-24 17:35:16.627.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testConnectivityPolicyIsFixedAndSwitchDefaultsOff]' started.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testConnectivityPolicyIsFixedAndSwitchDefaultsOff]' passed (0.006 seconds).
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testFixedPoliciesIgnoreLegacyValuesAndKeepRetainedDefaults]' started.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testFixedPoliciesIgnoreLegacyValuesAndKeepRetainedDefaults]' passed (0.002 seconds).
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testHoverDelayIsRetainedAndClamped]' started.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testHoverDelayIsRetainedAndClamped]' passed (0.008 seconds).
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testNowPlayingToggleRemainsUserControlled]' started.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testNowPlayingToggleRemainsUserControlled]' passed (0.002 seconds).
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testShowLyricsDefaultsOffAndPersists]' started.
+Test Case '-[ValoraTests.RevivalSettingsReloadTests testShowLyricsDefaultsOffAndPersists]' passed (0.002 seconds).
+Test Suite 'RevivalSettingsReloadTests' passed at 2026-10-24 17:35:16.648.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.020 (0.021) seconds
+Test Suite 'SettingsReductionTests' started at 2026-10-24 17:35:16.648.
+Test Case '-[ValoraTests.SettingsReductionTests testDisplayChoiceIconsAreDistinctAndMapped]' started.
+Test Case '-[ValoraTests.SettingsReductionTests testDisplayChoiceIconsAreDistinctAndMapped]' passed (0.045 seconds).
+Test Case '-[ValoraTests.SettingsReductionTests testExistingSettingsWindowIsReused]' started.
+Test Case '-[ValoraTests.SettingsReductionTests testExistingSettingsWindowIsReused]' passed (0.177 seconds).
+Test Case '-[ValoraTests.SettingsReductionTests testHoverDelayExpandsAndCanBeCancelledByDisable]' started.
+Test Case '-[ValoraTests.SettingsReductionTests testHoverDelayExpandsAndCanBeCancelledByDisable]' passed (0.630 seconds).
+Test Case '-[ValoraTests.SettingsReductionTests testLegacyGestureCodeIsGoneAndNormalControlsRemain]' started.
+Test Case '-[ValoraTests.SettingsReductionTests testLegacyGestureCodeIsGoneAndNormalControlsRemain]' passed (0.056 seconds).
+Test Case '-[ValoraTests.SettingsReductionTests testPointerExitAndStopCancelPendingHover]' started.
+Test Case '-[ValoraTests.SettingsReductionTests testPointerExitAndStopCancelPendingHover]' passed (0.632 seconds).
+Test Suite 'SettingsReductionTests' passed at 2026-10-24 17:35:18.188.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 1.539 (1.540) seconds
+Test Suite 'ValoraTests.xctest' passed at 2026-10-24 17:35:18.188.
+	 Executed 71 tests, with 0 failures (0 unexpected) in 35.363 (35.374) seconds
+Test Suite 'All tests' passed at 2026-10-24 17:35:18.188.
+	 Executed 71 tests, with 0 failures (0 unexpected) in 35.363 (35.375) seconds
+Test Suite 'All tests' started at 2026-10-24 17:35:18.297.
+Test Suite 'ReferenceCoreTests.xctest' started at 2026-10-24 17:35:18.298.
+Test Suite 'ArtworkTransitionTests' started at 2026-10-24 17:35:18.298.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testDisableOrMissingArtworkInvalidatesPendingCompletion]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testDisableOrMissingArtworkInvalidatesPendingCompletion]' passed (0.001 seconds).
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testInitialAndDuplicateArtworkDoNotFlip]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testInitialAndDuplicateArtworkDoNotFlip]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testRapidChangesKeepOnlyNewestQueuedArtwork]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testRapidChangesKeepOnlyNewestQueuedArtwork]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testRecoveredScaleEndpointsAndPreferenceFallbacks]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testRecoveredScaleEndpointsAndPreferenceFallbacks]' passed (0.001 seconds).
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testReturningToTargetDropsObsoleteQueue]' started.
+Test Case '-[ReferenceCoreTests.ArtworkTransitionTests testReturningToTargetDropsObsoleteQueue]' passed (0.000 seconds).
+Test Suite 'ArtworkTransitionTests' passed at 2026-10-24 17:35:18.301.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+Test Suite 'CompactWaveformTests' started at 2026-10-24 17:35:18.301.
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testExpandedConstructorHasItsOwnEnvelope]' started.
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testExpandedConstructorHasItsOwnEnvelope]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testRecoveredUnsignedHashVector]' started.
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testRecoveredUnsignedHashVector]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testSourceRevisionAndOverflowStayWithinRecoveredHeightRange]' started.
+Test Case '-[ReferenceCoreTests.CompactWaveformTests testSourceRevisionAndOverflowStayWithinRecoveredHeightRange]' passed (0.000 seconds).
+Test Suite 'CompactWaveformTests' passed at 2026-10-24 17:35:18.302.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'ConnectionAppearanceTests' started at 2026-10-24 17:35:18.302.
+Test Case '-[ReferenceCoreTests.ConnectionAppearanceTests testAirPodsMaxColorMappingAndUnknownFallback]' started.
+Test Case '-[ReferenceCoreTests.ConnectionAppearanceTests testAirPodsMaxColorMappingAndUnknownFallback]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ConnectionAppearanceTests testFixedPolicyAndAppearance]' started.
+Test Case '-[ReferenceCoreTests.ConnectionAppearanceTests testFixedPolicyAndAppearance]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ConnectionAppearanceTests testGenerationsNoLongerCollapseToOneSymbol]' started.
+Test Case '-[ReferenceCoreTests.ConnectionAppearanceTests testGenerationsNoLongerCollapseToOneSymbol]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ConnectionAppearanceTests testPhysicalAndFloatingGeometry]' started.
+Test Case '-[ReferenceCoreTests.ConnectionAppearanceTests testPhysicalAndFloatingGeometry]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ConnectionAppearanceTests testReduceMotionForcesSymbolFallback]' started.
+Test Case '-[ReferenceCoreTests.ConnectionAppearanceTests testReduceMotionForcesSymbolFallback]' passed (0.000 seconds).
+Test Suite 'ConnectionAppearanceTests' passed at 2026-10-24 17:35:18.303.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'DeviceBatteryAlertTests' started at 2026-10-24 17:35:18.303.
+Test Case '-[ReferenceCoreTests.DeviceBatteryAlertTests testCrossingDedupesAndRearms]' started.
+Test Case '-[ReferenceCoreTests.DeviceBatteryAlertTests testCrossingDedupesAndRearms]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.DeviceBatteryAlertTests testInitialLowDoesNotReplay]' started.
+Test Case '-[ReferenceCoreTests.DeviceBatteryAlertTests testInitialLowDoesNotReplay]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.DeviceBatteryAlertTests testRemoveRearms]' started.
+Test Case '-[ReferenceCoreTests.DeviceBatteryAlertTests testRemoveRearms]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.DeviceBatteryAlertTests testZeroIsARealBatteryValue]' started.
+Test Case '-[ReferenceCoreTests.DeviceBatteryAlertTests testZeroIsARealBatteryValue]' passed (0.000 seconds).
+Test Suite 'DeviceBatteryAlertTests' passed at 2026-10-24 17:35:18.304.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'GameMatcherTests' started at 2026-10-24 17:35:18.304.
+Test Case '-[ReferenceCoreTests.GameMatcherTests testNonGamesDoNotMatch]' started.
+Test Case '-[ReferenceCoreTests.GameMatcherTests testNonGamesDoNotMatch]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.GameMatcherTests testPathFragmentsAndCategoryFallback]' started.
+Test Case '-[ReferenceCoreTests.GameMatcherTests testPathFragmentsAndCategoryFallback]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.GameMatcherTests testRecoveredLeagueBundleIdentifiers]' started.
+Test Case '-[ReferenceCoreTests.GameMatcherTests testRecoveredLeagueBundleIdentifiers]' passed (0.000 seconds).
+Test Suite 'GameMatcherTests' passed at 2026-10-24 17:35:18.304.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'LineOnlyReadingTests' started at 2026-10-24 17:35:18.304.
+Test Case '-[ReferenceCoreTests.LineOnlyReadingTests testLineOnlyOffsetPauseAndSeekWithPlayerClock]' started.
+Test Case '-[ReferenceCoreTests.LineOnlyReadingTests testLineOnlyOffsetPauseAndSeekWithPlayerClock]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.LineOnlyReadingTests testLineOnlyOffsetUsesLineProgressAndClampsTail]' started.
+Test Case '-[ReferenceCoreTests.LineOnlyReadingTests testLineOnlyOffsetUsesLineProgressAndClampsTail]' passed (0.000 seconds).
+Test Suite 'LineOnlyReadingTests' passed at 2026-10-24 17:35:18.305.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'LyricsContinuousOffsetTests' started at 2026-10-24 17:35:18.305.
+Test Case '-[ReferenceCoreTests.LyricsContinuousOffsetTests testOffsetMovesContinuouslyWithinMultiCharacterWord]' started.
+Test Case '-[ReferenceCoreTests.LyricsContinuousOffsetTests testOffsetMovesContinuouslyWithinMultiCharacterWord]' passed (0.000 seconds).
+Test Suite 'LyricsContinuousOffsetTests' passed at 2026-10-24 17:35:18.305.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'LyricsPlaybackClockTests' started at 2026-10-24 17:35:18.305.
+Test Case '-[ReferenceCoreTests.LyricsPlaybackClockTests testClockInterpolatesWithoutUsingNetworkTime]' started.
+Test Case '-[ReferenceCoreTests.LyricsPlaybackClockTests testClockInterpolatesWithoutUsingNetworkTime]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.LyricsPlaybackClockTests testPausedClockDoesNotAdvance]' started.
+Test Case '-[ReferenceCoreTests.LyricsPlaybackClockTests testPausedClockDoesNotAdvance]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.LyricsPlaybackClockTests testSeekIsAnExplicitAnchorResetInBothDirections]' started.
+Test Case '-[ReferenceCoreTests.LyricsPlaybackClockTests testSeekIsAnExplicitAnchorResetInBothDirections]' passed (0.000 seconds).
+Test Suite 'LyricsPlaybackClockTests' passed at 2026-10-24 17:35:18.305.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'LyricsTimelineTests' started at 2026-10-24 17:35:18.305.
+Test Case '-[ReferenceCoreTests.LyricsTimelineTests testBlankInterstitialClearsPreviousLine]' started.
+Test Case '-[ReferenceCoreTests.LyricsTimelineTests testBlankInterstitialClearsPreviousLine]' passed (0.001 seconds).
+Test Case '-[ReferenceCoreTests.LyricsTimelineTests testParserDropsLeadingAndTrailingBlankTimestamps]' started.
+Test Case '-[ReferenceCoreTests.LyricsTimelineTests testParserDropsLeadingAndTrailingBlankTimestamps]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.LyricsTimelineTests testParserPreservesInternalBlankTimestampAndAppliesOffset]' started.
+Test Case '-[ReferenceCoreTests.LyricsTimelineTests testParserPreservesInternalBlankTimestampAndAppliesOffset]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.LyricsTimelineTests testShowLyricsDefaultsOffAndPersistsFromReferenceDictionary]' started.
+Test Case '-[ReferenceCoreTests.LyricsTimelineTests testShowLyricsDefaultsOffAndPersistsFromReferenceDictionary]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.LyricsTimelineTests testTimelineSortsStableAndFindsCurrentLine]' started.
+Test Case '-[ReferenceCoreTests.LyricsTimelineTests testTimelineSortsStableAndFindsCurrentLine]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.LyricsTimelineTests testWordProgressHonorsShortAndLongWordDurations]' started.
+Test Case '-[ReferenceCoreTests.LyricsTimelineTests testWordProgressHonorsShortAndLongWordDurations]' passed (0.000 seconds).
+Test Suite 'LyricsTimelineTests' passed at 2026-10-24 17:35:18.307.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.001 (0.002) seconds
+Test Suite 'MarqueeTests' started at 2026-10-24 17:35:18.307.
+Test Case '-[ReferenceCoreTests.MarqueeTests testOverflowIncludesLeadingInset]' started.
+Test Case '-[ReferenceCoreTests.MarqueeTests testOverflowIncludesLeadingInset]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MarqueeTests testTwoRowsShareCycleButUseTheirOwnMovementDuration]' started.
+Test Case '-[ReferenceCoreTests.MarqueeTests testTwoRowsShareCycleButUseTheirOwnMovementDuration]' passed (0.000 seconds).
+Test Suite 'MarqueeTests' passed at 2026-10-24 17:35:18.307.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'MediaIdleTests' started at 2026-10-24 17:35:18.307.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testDurationChangeReplacesTaskAndZeroMeansNoGrace]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testDurationChangeReplacesTaskAndZeroMeansNoGrace]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testHoverCancelsThenExitStartsFullNewWait]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testHoverCancelsThenExitStartsFullNewWait]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testNotificationIsNotDismissedByAnOldMusicTimeout]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testNotificationIsNotDismissedByAnOldMusicTimeout]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testPausedTrackExpiresWithoutRepeatedPollsExtendingDeadline]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testPausedTrackExpiresWithoutRepeatedPollsExtendingDeadline]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testResumeAndSecondPauseRejectFirstPauseTimeout]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testResumeAndSecondPauseRejectFirstPauseTimeout]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaIdleTests testTrackSourceAndDisableInvalidateOldTasks]' started.
+Test Case '-[ReferenceCoreTests.MediaIdleTests testTrackSourceAndDisableInvalidateOldTasks]' passed (0.000 seconds).
+Test Suite 'MediaIdleTests' passed at 2026-10-24 17:35:18.309.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'MediaProgressTests' started at 2026-10-24 17:35:18.309.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testCancelledDragDoesNotLeakIntoNewTrack]' started.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testCancelledDragDoesNotLeakIntoNewTrack]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaProgressTests testDragIsRelativeAndDoesNotJumpWhenPlayerUpdates]' started.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testDragIsRelativeAndDoesNotJumpWhenPlayerUpdates]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaProgressTests testTapAfterDragIsSuppressedAndCoordinatesAreClamped]' started.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testTapAfterDragIsSuppressedAndCoordinatesAreClamped]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MediaProgressTests testUnknownDurationAndNonFiniteInputsCannotSeek]' started.
+Test Case '-[ReferenceCoreTests.MediaProgressTests testUnknownDurationAndNonFiniteInputsCannotSeek]' passed (0.000 seconds).
+Test Suite 'MediaProgressTests' passed at 2026-10-24 17:35:18.309.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'MusicPreferencesTests' started at 2026-10-24 17:35:18.309.
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testDefaultsAndDictionaryRoundTrip]' started.
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testDefaultsAndDictionaryRoundTrip]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testDurationCannotCrashTaskSleepOrEscapeSliderBounds]' started.
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testDurationCannotCrashTaskSleepOrEscapeSliderBounds]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testOnlyTheKnownCurrentSourceHidesActivity]' started.
+Test Case '-[ReferenceCoreTests.MusicPreferencesTests testOnlyTheKnownCurrentSourceHidesActivity]' passed (0.000 seconds).
+Test Suite 'MusicPreferencesTests' passed at 2026-10-24 17:35:18.310.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'MusicTitleFormattingTests' started at 2026-10-24 17:35:18.310.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testDisabledPreservesRawTitleExactly]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testDisabledPreservesRawTitleExactly]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testEmptyProcessedTitleFallsBackToTrimmedOriginal]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testEmptyProcessedTitleFallsBackToTrimmedOriginal]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testNestedAndCrossedBracketsUseIndependentDepths]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testNestedAndCrossedBracketsUseIndependentDepths]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testUnicodeCharactersAndFullWidthBracketsArePreserved]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testUnicodeCharactersAndFullWidthBracketsArePreserved]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testUnmatchedClosersRemainAndOpenersHideRemainder]' started.
+Test Case '-[ReferenceCoreTests.MusicTitleFormattingTests testUnmatchedClosersRemainAndOpenersHideRemainder]' passed (0.000 seconds).
+Test Suite 'MusicTitleFormattingTests' passed at 2026-10-24 17:35:18.311.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'NonNotchLyricsGeometryTests' started at 2026-10-24 17:35:18.311.
+Test Case '-[ReferenceCoreTests.NonNotchLyricsGeometryTests testMusicCompactWidthIs214InBothNonNotchForms]' started.
+Test Case '-[ReferenceCoreTests.NonNotchLyricsGeometryTests testMusicCompactWidthIs214InBothNonNotchForms]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NonNotchLyricsGeometryTests testNonNotchBaseAndExpandedWidthsAreUnified]' started.
+Test Case '-[ReferenceCoreTests.NonNotchLyricsGeometryTests testNonNotchBaseAndExpandedWidthsAreUnified]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NonNotchLyricsGeometryTests testPhysicalNotchWidthIsNotOverriddenByUnifiedNonNotchRule]' started.
+Test Case '-[ReferenceCoreTests.NonNotchLyricsGeometryTests testPhysicalNotchWidthIsNotOverriddenByUnifiedNonNotchRule]' passed (0.000 seconds).
+Test Suite 'NonNotchLyricsGeometryTests' passed at 2026-10-24 17:35:18.312.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'NotchContourLyricPillTests' started at 2026-10-24 17:35:18.312.
+Test Case '-[ReferenceCoreTests.NotchContourLyricPillTests testPillRadiusDoesNotGrowWithLyricHeight]' started.
+Test Case '-[ReferenceCoreTests.NotchContourLyricPillTests testPillRadiusDoesNotGrowWithLyricHeight]' passed (0.000 seconds).
+Test Suite 'NotchContourLyricPillTests' passed at 2026-10-24 17:35:18.312.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'NotchContourTests' started at 2026-10-24 17:35:18.312.
+Test Case '-[ReferenceCoreTests.NotchContourTests testFloatingScreenUsesPillAndIgnoresDelayedNotchCornerFlag]' started.
+Test Case '-[ReferenceCoreTests.NotchContourTests testFloatingScreenUsesPillAndIgnoresDelayedNotchCornerFlag]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchContourTests testPhysicalCornersRequireBothExpandedFlags]' started.
+Test Case '-[ReferenceCoreTests.NotchContourTests testPhysicalCornersRequireBothExpandedFlags]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchContourTests testSimulatedNotchKeepsShouldersOnExternalScreen]' started.
+Test Case '-[ReferenceCoreTests.NotchContourTests testSimulatedNotchKeepsShouldersOnExternalScreen]' passed (0.000 seconds).
+Test Suite 'NotchContourTests' passed at 2026-10-24 17:35:18.313.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'NotchHoverTests' started at 2026-10-24 17:35:18.313.
+Test Case '-[ReferenceCoreTests.NotchHoverTests testElevationOnlyAppliesToCollapsedCutout]' started.
+Test Case '-[ReferenceCoreTests.NotchHoverTests testElevationOnlyAppliesToCollapsedCutout]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchHoverTests testEnlargedEdgeRemainsInInputEnvelope]' started.
+Test Case '-[ReferenceCoreTests.NotchHoverTests testEnlargedEdgeRemainsInInputEnvelope]' passed (0.000 seconds).
+Test Suite 'NotchHoverTests' passed at 2026-10-24 17:35:18.313.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'NotchTransitionTests' started at 2026-10-24 17:35:18.313.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testContentSurvivesCollapseAndInteractionWaitsForExpansion]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testContentSurvivesCollapseAndInteractionWaitsForExpansion]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testDuplicateRequestsKeepOriginalClockAndGeneration]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testDuplicateRequestsKeepOriginalClockAndGeneration]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testInterruptedExpansionCannotRestoreCollapsedVisuals]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testInterruptedExpansionCannotRestoreCollapsedVisuals]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testRapidAlternationRejectsEveryOlderGeneration]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testRapidAlternationRejectsEveryOlderGeneration]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testStaleCollapseCompletionCannotClearReopenedPanel]' started.
+Test Case '-[ReferenceCoreTests.NotchTransitionTests testStaleCollapseCompletionCannotClearReopenedPanel]' passed (0.000 seconds).
+Test Suite 'NotchTransitionTests' passed at 2026-10-24 17:35:18.314.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'NotchTuningTests' started at 2026-10-24 17:35:18.314.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testExtremeFiniteValuesAreClampedToCandidateUIRangeAndNonFiniteIsZero]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testExtremeFiniteValuesAreClampedToCandidateUIRangeAndNonFiniteIsZero]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testNotificationAndQuickPeekReceiveTheSamePhysicalCompactOffset]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testNotificationAndQuickPeekReceiveTheSamePhysicalCompactOffset]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPhysicalFloatingAndSimulatedBranchesKeepTheirOwnBaseGeometry]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPhysicalFloatingAndSimulatedBranchesKeepTheirOwnBaseGeometry]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPhysicalGateRejectsFloatingAndForcedSimulatedScreens]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPhysicalGateRejectsFloatingAndForcedSimulatedScreens]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPositiveAndNegativeOffsetsApplyToPhysicalCompactOnly]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testPositiveAndNegativeOffsetsApplyToPhysicalCompactOnly]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.NotchTuningTests testZeroIsBaselineInEveryCompactBranch]' started.
+Test Case '-[ReferenceCoreTests.NotchTuningTests testZeroIsBaselineInEveryCompactBranch]' passed (0.000 seconds).
+Test Suite 'NotchTuningTests' passed at 2026-10-24 17:35:18.315.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'QQMusicLyricsTests' started at 2026-10-24 17:35:18.315.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testAlbumMismatchIsRejected]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testAlbumMismatchIsRejected]' passed (0.001 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testAmbiguousCandidatesAreNotPickedByPosition]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testAmbiguousCandidatesAreNotPickedByPosition]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testArtistMismatchAndEmptyCandidates]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testArtistMismatchAndEmptyCandidates]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testDurationMismatchIsRejected]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testDurationMismatchIsRejected]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExactAlbumIsPreferredOverUnknownAlbum]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExactAlbumIsPreferredOverUnknownAlbum]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExactStudioMatchRequiresMetadataAgreement]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExactStudioMatchRequiresMetadataAgreement]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExplicitLiveRequestMatchesOnlyLiveVersion]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testExplicitLiveRequestMatchesOnlyLiveVersion]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testIncompleteSoloArtistAcceptsCollaborationButNotMaleVersion]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testIncompleteSoloArtistAcceptsCollaborationButNotMaleVersion]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLiveVersionIsNotChosenForStudioRequest]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLiveVersionIsNotChosenForStudioRequest]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCClassifiesPlainInstrumentalAndEmpty]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCClassifiesPlainInstrumentalAndEmpty]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCRejectsInvalidTimeBoundariesAndEmptyTimedText]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCRejectsInvalidTimeBoundariesAndEmptyTimedText]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCTimedLinesMetadataMultipleTimestampsAndOffset]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLRCTimedLinesMetadataMultipleTimestampsAndOffset]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricAPIErrorWinsOverLyricBody]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricAPIErrorWinsOverLyricBody]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricHTTPFailureWinsOverParseableBody]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricHTTPFailureWinsOverParseableBody]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricMalformedAndNoLyricsAreDistinct]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricMalformedAndNoLyricsAreDistinct]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricResponseSupportsPlainAndBase64Payloads]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricResponseSupportsPlainAndBase64Payloads]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricSuccessfulEvaluationKeepsTimedContent]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testLyricSuccessfulEvaluationKeepsTimedContent]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testMissingRequestedCollaboratorIsStillRejected]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testMissingRequestedCollaboratorIsStillRejected]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testQRCHTTPAndBusinessStatusAreGated]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testQRCHTTPAndBusinessStatusAreGated]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testQRCWordTimingParserDoesNotInventTimestamps]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testQRCWordTimingParserDoesNotInventTimestamps]' passed (0.001 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testRemixAndInstrumentalTagsAreTreatedAsVersions]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testRemixAndInstrumentalTagsAreTreatedAsVersions]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testSearchHTTPAndAPIStatusAreGatedBeforeCandidates]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testSearchHTTPAndAPIStatusAreGatedBeforeCandidates]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testSearchParserAcceptsCurrentShapeAndLegacyJSONP]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testSearchParserAcceptsCurrentShapeAndLegacyJSONP]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testSearchParserReportsAPIError]' started.
+Test Case '-[ReferenceCoreTests.QQMusicLyricsTests testSearchParserReportsAPIError]' passed (0.000 seconds).
+Test Suite 'QQMusicLyricsTests' passed at 2026-10-24 17:35:18.323.
+	 Executed 24 tests, with 0 failures (0 unexpected) in 0.006 (0.007) seconds
+Test Suite 'QQMusicQRCTests' started at 2026-10-24 17:35:18.323.
+Test Case '-[ReferenceCoreTests.QQMusicQRCTests testMalformedQRCIsRejectedWithoutInventedWords]' started.
+Test Case '-[ReferenceCoreTests.QQMusicQRCTests testMalformedQRCIsRejectedWithoutInventedWords]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicQRCTests testReadingWindowClampsAndFollowsAtSixtyFivePercent]' started.
+Test Case '-[ReferenceCoreTests.QQMusicQRCTests testReadingWindowClampsAndFollowsAtSixtyFivePercent]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.QQMusicQRCTests testRealPublicQRCFixtureDecryptsAndContainsRealWordTiming]' started.
+Test Case '-[ReferenceCoreTests.QQMusicQRCTests testRealPublicQRCFixtureDecryptsAndContainsRealWordTiming]' passed (0.065 seconds).
+Test Suite 'QQMusicQRCTests' passed at 2026-10-24 17:35:18.389.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.066 (0.066) seconds
+Test Suite 'ReferenceCoreTests' started at 2026-10-24 17:35:18.389.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testMinimumAndLargerPhysicalGeometry]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testMinimumAndLargerPhysicalGeometry]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testMissingAuxiliaryAreaUsesNonNotchBranch]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testMissingAuxiliaryAreaUsesNonNotchBranch]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testNonNotchAndSimulatedBranchesFromArm64Registers]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testNonNotchAndSimulatedBranchesFromArm64Registers]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testObservedModelUIDAndAllReferenceProductAliases]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testObservedModelUIDAndAllReferenceProductAliases]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testPhysicalNotchOnUsersBuiltInDisplay]' started.
+Test Case '-[ReferenceCoreTests.ReferenceCoreTests testPhysicalNotchOnUsersBuiltInDisplay]' passed (0.000 seconds).
+Test Suite 'ReferenceCoreTests' passed at 2026-10-24 17:35:18.390.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'SongPeekTests' started at 2026-10-24 17:35:18.390.
+Test Case '-[ReferenceCoreTests.SongPeekTests testDisabledAndSourceResetNeverReplayOldChange]' started.
+Test Case '-[ReferenceCoreTests.SongPeekTests testDisabledAndSourceResetNeverReplayOldChange]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SongPeekTests testOnlySubsequentTrackChangeShowsPeek]' started.
+Test Case '-[ReferenceCoreTests.SongPeekTests testOnlySubsequentTrackChangeShowsPeek]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SongPeekTests testRapidChangesIgnoreOldExpiryAndExpansionCancels]' started.
+Test Case '-[ReferenceCoreTests.SongPeekTests testRapidChangesIgnoreOldExpiryAndExpansionCancels]' passed (0.000 seconds).
+Test Suite 'SongPeekTests' passed at 2026-10-24 17:35:18.390.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'SystemMediaSnapshotTests' started at 2026-10-24 17:35:18.390.
+Test Case '-[ReferenceCoreTests.SystemMediaSnapshotTests testRevisionPrefersContentItemIdentifier]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaSnapshotTests testRevisionPrefersContentItemIdentifier]' passed (0.001 seconds).
+Test Suite 'SystemMediaSnapshotTests' passed at 2026-10-24 17:35:18.391.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'SystemMediaTests' started at 2026-10-24 17:35:18.391.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testMissingOrInvalidTimingDoesNotInventProgress]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testMissingOrInvalidTimingDoesNotInventProgress]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SystemMediaTests testProgressUsesTimestampAndFreezesWhenPaused]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testProgressUsesTimestampAndFreezesWhenPaused]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SystemMediaTests testSameTitleDifferentSourceAlbumOrTrackInvalidatesIdentity]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testSameTitleDifferentSourceAlbumOrTrackInvalidatesIdentity]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.SystemMediaTests testStateOnlyPauseDoesNotJumpBackAndResumeDoesNotCountPausedTime]' started.
+Test Case '-[ReferenceCoreTests.SystemMediaTests testStateOnlyPauseDoesNotJumpBackAndResumeDoesNotCountPausedTime]' passed (0.000 seconds).
+Test Suite 'SystemMediaTests' passed at 2026-10-24 17:35:18.392.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'VolumeKeyTests' started at 2026-10-24 17:35:18.392.
+Test Case '-[ReferenceCoreTests.VolumeKeyTests testKeyCodes]' started.
+Test Case '-[ReferenceCoreTests.VolumeKeyTests testKeyCodes]' passed (0.000 seconds).
+Test Case '-[ReferenceCoreTests.VolumeKeyTests testStepsAndClamp]' started.
+Test Case '-[ReferenceCoreTests.VolumeKeyTests testStepsAndClamp]' passed (0.000 seconds).
+Test Suite 'VolumeKeyTests' passed at 2026-10-24 17:35:18.393.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'ReferenceCoreTests.xctest' passed at 2026-10-24 17:35:18.393.
+	 Executed 114 tests, with 0 failures (0 unexpected) in 0.086 (0.094) seconds
+Test Suite 'All tests' passed at 2026-10-24 17:35:18.393.
+	 Executed 114 tests, with 0 failures (0 unexpected) in 0.086 (0.095) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.

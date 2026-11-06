@@ -1,0 +1,7 @@
+# V0030-R5：合并与缓存子集通过，启用后订阅未恢复
+
+独立20项无弹窗功能回归通过，包含旧cachedFailure冷却失败修复。源码确认单combinedItem、CPU/MEM+5H/WEEK并排、上监控下Codex、400pt外层单滚动、各自开关控制provider，右键基础菜单保留。候选7cc5981c9d472955a43f2180c591a5f499aca05341014f41d4d3355a209ecb8c独立deep/strict签名通过，未改用户运行包。未真实额度读取/弹窗点击/循环/压力或全量。
+
+新增IndependentCombinedEntryTests.testEnablingCodexAfterDisabledStartupUpdatesSharedStatusFromBackground失败（2断言）：初始两个模块off→start→仅开启Codex，一次功能调用后provider已得79/97，但共享status item tooltip仍--。测试无菜单点击/无popover，临时建立一个状态项并正常收尾。
+
+原因start仅为当时启用的模块调用observeMonitor/observeCodex；setSystemMonitorVisible(true)/setCodexVisible(true)未连接观察。Codex关时snapshot.initial触发旧观察callback，observeCodex因visible=false不续订，之后再开也会丢更新。监控初始off再开同理。需要最小恢复订阅，非仅立即update一次图像；避免重复观察/旧生命周期callback覆盖新标志。修复前整体未接受，不进入Chrome V0031。

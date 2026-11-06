@@ -1,0 +1,83 @@
+{
+  "request": {
+    "title": "知否知否",
+    "artist": "胡夏",
+    "album": "知否知否应是绿肥红瘦 电视剧原声带",
+    "duration": 276.0
+  },
+  "http_status": 200,
+  "api_code": 0,
+  "seconds": 0.93,
+  "candidates": [
+    {
+      "songmid": "002krvKI4Jgvq9",
+      "title": "知否知否",
+      "artist": "胡夏 / 郁可唯",
+      "album": "知否知否应是绿肥红瘦 电视剧原声带",
+      "duration": 276
+    },
+    {
+      "songmid": "001qxsQM2CmqB2",
+      "title": "知否知否 (男声版)",
+      "artist": "胡夏",
+      "album": "知否知否应是绿肥红瘦 电视剧原声带",
+      "duration": 276
+    },
+    {
+      "songmid": "003BWDKn1CQ2L6",
+      "title": "知否知否 (2020天津卫视春晚现场)",
+      "artist": "胡夏 / 于淑珍",
+      "album": "",
+      "duration": 77
+    },
+    {
+      "songmid": "003TQwKP4dF0R2",
+      "title": "知否知否 (Live)",
+      "artist": "胡夏 / 郁可唯",
+      "album": "经典咏流传第二季 第四期",
+      "duration": 276
+    },
+    {
+      "songmid": "001fa5wW3GaIqc",
+      "title": "知否知否 (Live)",
+      "artist": "齐豫 / 胡夏",
+      "album": "歌手第三季 第14期",
+      "duration": 290
+    },
+    {
+      "songmid": "000uUxba33etcr",
+      "title": "知否知否 (伴奏)",
+      "artist": "胡夏 / 郁可唯",
+      "album": "知否知否应是绿肥红瘦 电视剧原声带",
+      "duration": 276
+    },
+    {
+      "songmid": "003YEWSY23CHzY",
+      "title": "知否知否 (DJ 阿雪版)",
+      "artist": "胡夏 / 郁可唯",
+      "album": "",
+      "duration": 226
+    },
+    {
+      "songmid": "002zl8qd1uVuKN",
+      "title": "知否知否 (北京卫视京东618沸腾之夜热爱直播盛典现场)",
+      "artist": "胡夏 / 郁可唯",
+      "album": "",
+      "duration": 212
+    },
+    {
+      "songmid": "000MZELp2YvYNw",
+      "title": "知否知否 (Live)",
+      "artist": "许嵩 / 胡夏",
+      "album": "",
+      "duration": 100
+    },
+    {
+      "songmid": "004CJ9Fp1eFkJy",
+      "title": "知否知否 (Live)",
+      "artist": "胡夏",
+      "album": "",
+      "duration": 270
+    }
+  ]
+}

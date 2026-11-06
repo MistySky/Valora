@@ -16,6 +16,12 @@ final class PresentationController {
     init(_ model: AppModel) { self.model = model }
 
     func trackChanged(identity: String?) {
+        // Final V0012 behavior: with lyrics enabled the small row belongs to
+        // lyrics only; no song-title prompt may compete with it.
+        if model.settings.musicPreferences.showLyrics {
+            model.songPeek.cancel()
+            return
+        }
         let eligible = model.settings.nowPlayingEnabled && model.settings.quickPeekEnabled && model.settings.peekWhenSongChanges
             && !model.sourceActivityHidden && !model.expanded && !model.screenHidden
             && (model.notchGeometry.hasPhysicalNotch || model.settings.forceSimulatedNotch || model.allowsMultiDisplayDynamic)

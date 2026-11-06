@@ -1,6 +1,6 @@
 import Foundation
 
-public struct LyricsTrackIdentity: Hashable, Sendable, Equatable {
+public struct LyricsTrackIdentity: Hashable, Sendable, Equatable, Codable {
     public let title: String
     public let artist: String
     public let album: String
@@ -14,7 +14,7 @@ public struct LyricsTrackIdentity: Hashable, Sendable, Equatable {
     }
 }
 
-public struct LyricsRequest: Hashable, Sendable, Equatable {
+public struct LyricsRequest: Hashable, Sendable, Equatable, Codable {
     public let identity: LyricsTrackIdentity
     public let title: String
     public let artist: String
@@ -37,8 +37,9 @@ public struct LyricsRequest: Hashable, Sendable, Equatable {
     }
 }
 
-public enum LyricsFetchResult: Sendable, Equatable {
+public enum LyricsFetchResult: Sendable, Equatable, Codable {
     case timed(LyricTimeline)
+    case wordTimed(LyricTimeline)
     case noLyrics
     case instrumental
     case unsynchronized
@@ -48,6 +49,7 @@ public enum LyricsFetchError: Error, Equatable, Sendable {
     case requestFailed
     case noMatch
     case invalidResponse
+    case timedOut
 }
 
 public enum LyricsDisplayStatus: String, Sendable, Equatable {
@@ -76,7 +78,7 @@ public struct LyricsDisplayState: Sendable, Equatable {
     public var hasTimedLyrics: Bool { status == .ready && timeline != nil }
 }
 
-public struct LyricTimeline: Sendable, Equatable {
+public struct LyricTimeline: Sendable, Equatable, Codable {
     public let lines: [LyricLine]
 
     public init(lines: [LyricLine]) {
@@ -112,5 +114,89 @@ public struct LyricTimeline: Sendable, Equatable {
             index = offset
         }
         return index
+    }
+
+    /// Progress within a line's real QRC words. Returns nil for plain LRC or
+    /// before the line begins. Fraction is 0...1 for the current word only.
+    public func wordProgress(in line: LyricLine, at time: TimeInterval) -> (index: Int, fraction: Double)? {
+        guard !line.words.isEmpty, time.isFinite, time >= line.start else { return nil }
+        var index: Int?
+        for (offset, word) in line.words.enumerated() {
+            guard word.start <= time else { break }
+            index = offset
+        }
+        guard let index else { return nil }
+        let word = line.words[index]
+        let fraction: Double
+        if word.duration > 0 {
+            fraction = min(1, max(0, (time - word.start) / word.duration))
+        } else {
+            fraction = 0
+        }
+        return (index, fraction)
+    }
+}
+
+/// Pure geometry for the real-word reading window. The view supplies measured
+/// prefix/word widths; this helper only enforces the 65% right edge and the
+/// 0...overflow clamp so the sentence tail is never pushed out artificially.
+public enum LyricsLineLayout {
+    public static func horizontalOffset(currentWordCenter: CGFloat,
+                                        totalWidth: CGFloat,
+                                        availableWidth: CGFloat) -> CGFloat {
+        guard totalWidth > availableWidth, availableWidth > 0 else { return 0 }
+        let target = max(0, currentWordCenter - availableWidth * 0.65)
+        return min(target, max(0, totalWidth - availableWidth))
+    }
+
+    /// Continuous reading-window offset inside a word. Source QRC words can
+    /// contain multiple characters; their fraction is still the only timing
+    /// evidence, so the window follows that fraction rather than jumping at a
+    /// word center.
+    public static func followingOffset(prefixWidth: CGFloat, currentWordWidth: CGFloat,
+                                       fraction: Double, totalWidth: CGFloat,
+                                       availableWidth: CGFloat) -> CGFloat {
+        let f = fraction.isFinite ? min(1, max(0, fraction)) : 0
+        let center = max(0, prefixWidth) + max(0, currentWordWidth) * f
+        return horizontalOffset(currentWordCenter: center, totalWidth: totalWidth,
+                                availableWidth: availableWidth)
+    }
+
+    /// Line-only LRC fallback: one explainable reading-slide over the real
+    /// line lifetime. It is not word timing and never drives colored fill.
+    public static func lineOnlyOffset(progress: Double, totalWidth: CGFloat,
+                                      availableWidth: CGFloat) -> CGFloat {
+        guard totalWidth > availableWidth, availableWidth > 0 else { return 0 }
+        let p = progress.isFinite ? min(1, max(0, progress)) : 0
+        return (totalWidth - availableWidth) * p
+    }
+
+    public static func fillWidth(prefixWidth: CGFloat, currentWordWidth: CGFloat,
+                                 fraction: Double, totalWidth: CGFloat) -> CGFloat {
+        let f = fraction.isFinite ? min(1, max(0, fraction)) : 0
+        return min(max(0, totalWidth), max(0, prefixWidth) + max(0, currentWordWidth) * f)
+    }
+}
+
+/// Local interpolation anchor for the visible lyric row. It extrapolates from
+/// the player's last real elapsed sample with the player's rate; it never uses
+/// the network response time or an independent accumulating stopwatch.
+public struct LyricsPlaybackClock: Sendable, Equatable {
+    public let anchorElapsed: TimeInterval
+    public let anchorDate: Date
+    public let rate: Double
+    public let playing: Bool
+
+    public init(anchorElapsed: TimeInterval, anchorDate: Date,
+                rate: Double, playing: Bool) {
+        self.anchorElapsed = anchorElapsed
+        self.anchorDate = anchorDate
+        self.rate = rate
+        self.playing = playing
+    }
+
+    public func elapsed(at date: Date) -> TimeInterval {
+        guard playing, rate.isFinite, rate > 0 else { return anchorElapsed }
+        return anchorElapsed + max(0, date.timeIntervalSince(anchorDate)) * rate
     }
 }

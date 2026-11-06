@@ -1,0 +1,10 @@
+# V0106-R1 cleanup
+
+build15 (shipping candidate) still running:
+69159       51:24 /private/tmp/valora-v0105-calendar-holidays-only-candidate/Valora.app/Contents/MacOS/Valora
+
+QA host processes left:
+none
+
+shipping candidate hash:
+3b0284706ccdb881f19aaaf8cedce0d4013fee7535f7617dff01128affdd381f  /private/tmp/valora-v0105-calendar-holidays-only-candidate/Valora.app/Contents/MacOS/Valora

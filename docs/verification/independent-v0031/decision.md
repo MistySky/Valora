@@ -1,0 +1,13 @@
+# V0031 独立验收：整体暂不接受，Chrome接管/协议边界返修
+
+独立12项Swift功能测试通过；app32699c8ee2e7c0a4b4d1cae3ba13ab6513343b373bcbb92db474f6d0aafb32fa及host6c7689a80011da6fc0ef96c7b9c6517ab33820c0694514d20875674bb1ff4a6d与报告一致，deep/strict签名通过。源码专属Valora扩展ID/host/打包资源与设置引导子集存在。未加载真实Chrome扩展/写注册/触碰用户下载，未UI循环/压力/真实账号读取。
+
+独立Node vm模拟Chrome的三个功能情景全部失败，见js-handoff.log（不启动Chrome、不发网络）：
+1 accepted:true成功路径suggest调用0次，Chrome官方规定onDeterminingFilename监听者必须恰好调用一次suggest。文档https://developer.chrome.com/docs/extensions/reference/api/downloads#event-onDeterminingFilename。
+2 仅ok:true但没有accepted:true，扩展仍cancel并erase原Chrome记录。必须有明确接管确认才转移所有权。
+3 chrome.downloads.cancel回调带lastError时仍erase记录。取消失败不能清记录，保留Chrome可恢复路径并显示明确错误。
+另nativeRequest无JS总deadline：异常host不回调时suggest永不完成；需有限超时及suggest-once收尾，不让迟到响应再次cancel/erase或重复交接。
+
+独立隔离TMPDIR的真实host子进程探针两个输入均失败，见native-version.log：protocolVersion999或缺失，host仍exit0/ok:true并返回version1，未在Chrome入口验证而将请求重写为当前协议。测试传正确Valora extension origin，无用户socket访问。须在任何status/download/launchApp/控制动作前拒绝错误版本及非法origin，不仅App侧validateEnvelope单元测试通过。
+
+源码另见popup按钮open初始hidden且render所有分支都hidden，从未显示，未运行时无法用户显式打开Valora；本批引导要求未闭环。先限定修以上功能，不改成熟下载算法/日历/监控AI/400pt，不继续新功能。未做真正Chrome安装联调，不冒称通过。
