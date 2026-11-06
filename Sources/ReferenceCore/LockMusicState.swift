@@ -102,9 +102,11 @@ public struct LockCardLayout: Equatable, Sendable {
     public var screenHeight: Double
     public var verticalOffset: Double
     /// External/clamshell targets reserve room for the **fully expanded** card
-    /// above the login line, so opening the volume and the lyric row can never
-    /// cover the avatar. The built-in screen keeps the accepted anchor, where
-    /// the volume-expanded state sits exactly on that line.
+    /// above the same reference line the collapsed card uses. That line is a
+    /// product placement value (21% of the screen height) — macOS does not expose
+    /// the login avatar bounds — so this keeps the layout predictable rather than
+    /// guaranteeing the avatar is never covered. The built-in screen keeps the
+    /// accepted anchor, where the volume-expanded state sits exactly on the line.
     public var reserveFullExpansion: Bool
 
     public init(screenMinY: Double = 0, screenHeight: Double,

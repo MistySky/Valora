@@ -1,3 +1,4 @@
+#if VALORA_DEVELOPMENT
 import AppKit
 import SwiftUI
 import QuartzCore
@@ -905,3 +906,4 @@ enum MenuBarIconVerification {
         }
     }
 }
+#endif

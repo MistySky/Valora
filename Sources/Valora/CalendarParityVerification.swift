@@ -1,3 +1,4 @@
+#if VALORA_DEVELOPMENT
 import AppKit
 import Foundation
 
@@ -34,7 +35,7 @@ enum CalendarParityVerification {
                 let model = CalmonCalendarModel(
                     provider: provider, calendar: calendar,
                     now: { date(1, hour: 12) }, timeZoneProvider: { calendar.timeZone },
-                    eventProvider: EmptyParityEvents(), readGate: { true }, preview: true)
+                    readGate: { true }, preview: true)
                 let monitor = SystemMonitor()
                 let controller = MenuBarModuleController(
                     monitor: monitor, calendar: model, onSettings: {}, onQuit: {})
@@ -114,8 +115,4 @@ enum CalendarParityVerification {
         }
     }
 }
-
-@MainActor
-private final class EmptyParityEvents: CalendarEventProviding {
-    func events(on day: Date, calendar: Calendar) async -> [CalendarEvent] { [] }
-}
+#endif

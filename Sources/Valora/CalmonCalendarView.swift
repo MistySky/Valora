@@ -157,38 +157,7 @@ struct CalmonCalendarView: View {
                         .font(UIStyle.Fonts.caption)
                         .foregroundStyle(.secondary)
                 }
-
-                systemEventsSection
             }
-        }
-    }
-
-    /// System events use the same authorized, selected-day data as the
-    /// Alcove-style single calendar switch. The sample provider is tagged.
-    @ViewBuilder
-    private var systemEventsSection: some View {
-        if model.events.isEmpty {
-            switch model.eventState {
-            case .loading:
-                Text("正在读取日程…")
-                    .font(UIStyle.Fonts.caption)
-                    .foregroundStyle(.secondary)
-            case .notAvailable:
-                Text("开启日历授权后显示系统日程")
-                    .font(UIStyle.Fonts.caption)
-                    .foregroundStyle(.secondary)
-            case .loaded:
-                EmptyView()
-            }
-        } else {
-            ForEach(model.events) { event in
-                CalendarSystemEventRow(event: event, metrics: .popover)
-            }
-        }
-        if model.preview {
-            Text("预览样例 · 日历内容为注入样例")
-                .font(UIStyle.Fonts.caption)
-                .foregroundStyle(.tertiary)
         }
     }
 
@@ -211,41 +180,4 @@ struct CalmonCalendarView: View {
         }
     }
 
-}
-
-
-/// System-event row in the Calmon detail rhythm: time label + light card.
-private struct CalendarSystemEventRow: View {
-    let event: CalendarEvent
-    let metrics: CalendarInfoMetrics
-
-    var body: some View {
-        HStack(alignment: .top, spacing: metrics.gap) {
-            Text(event.isAllDay ? "全天" : event.start.formatted(date: .omitted, time: .shortened))
-                .font(metrics.captionFont)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.85)
-                .frame(width: 42, alignment: .leading)
-                .padding(.top, metrics.cardPadding / 2)
-            HStack(alignment: .top, spacing: metrics.gap) {
-                Rectangle()
-                    .fill(UIStyle.Colors.applicationBar)
-                    .frame(width: metrics.ruleWidth)
-                Text(event.title)
-                    .font(metrics.bodyFont)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
-                Spacer(minLength: metrics.gap)
-            }
-            .padding(metrics.cardPadding)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: metrics.cardCorner, style: .continuous)
-                    .fill(UIStyle.Colors.cardBackground)
-            )
-        }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("日程 \(event.title)")
-    }
 }

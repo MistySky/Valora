@@ -1,3 +1,4 @@
+#if VALORA_DEVELOPMENT
 import AppKit
 import Darwin
 import Foundation
@@ -18,7 +19,6 @@ enum CalendarFixedWindowAudit {
                 try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
                 let calendar = CalmonCalendarModel(
                     calendar: .current, now: Date.init,
-                    eventProvider: PreviewCalendarEvents(),
                     readGate: { true }, preview: true)
                 calendar.start()
                 calendar.setPanelVisibility(panel: true, calendarModule: true)
@@ -57,9 +57,6 @@ enum CalendarFixedWindowAudit {
                         "appActive": NSApp.isActive,
                         "physicalFootprint": memory.physical,
                         "residentBytes": memory.resident,
-                        "calendarEventStarts": calendar.eventReadStartCount,
-                        "calendarEventCompletions": calendar.eventReadCompletionCount,
-                        "calendarEvents": calendar.events.count,
                         "visible": visible
                     ]
                     samples.append(sample)
@@ -122,3 +119,4 @@ enum CalendarFixedWindowAudit {
         return (physical, resident)
     }
 }
+#endif

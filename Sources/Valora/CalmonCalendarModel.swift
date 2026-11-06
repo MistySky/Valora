@@ -78,8 +78,6 @@ final class CalmonCalendarModel {
     private(set) var weeks: [Week] = []
     private(set) var detail: Detail?
     private(set) var menuBarText: String = ""
-    private(set) var events: [CalendarEvent] = []
-    private(set) var eventState: EventState = .notAvailable
 
     private static let showWeekday = true
     private static let showLunar = true
@@ -91,7 +89,6 @@ final class CalmonCalendarModel {
     private var holidayReadAllowed: Bool { Self.showChineseHolidays && readGate() }
     private let now: () -> Date
     private let timeZoneProvider: () -> TimeZone
-    private let eventProvider: (any CalendarEventProviding)?
     private let readGate: () -> Bool
     let preview: Bool
     private var observers: [NSObjectProtocol] = []
@@ -99,14 +96,6 @@ final class CalmonCalendarModel {
     private var started = false
     private var panelVisible = false
     private var calendarModuleVisible = false
-    private var eventGeneration: UInt64 = 0
-    private var requestedGeneration: UInt64 = 0
-    private var requestedDay: Date?
-    private var eventTask: Task<Void, Never>?
-    private var eventInFlight = false
-    private(set) var eventReadStartCount = 0
-    private(set) var eventReadCompletionCount = 0
-    private(set) var eventReadDiscardCount = 0
 
     private static let lunarMonths = ["正月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "冬月", "腊月"]
     private static let lunarDayNames = [
@@ -126,7 +115,6 @@ final class CalmonCalendarModel {
          calendar: Calendar = .current,
          now: @escaping () -> Date = Date.init,
          timeZoneProvider: @escaping () -> TimeZone = { TimeZone.current },
-         eventProvider: (any CalendarEventProviding)? = nil,
          readGate: @escaping () -> Bool = { false },
          preview: Bool = false) {
         // Production AppDelegate injects the real provider explicitly. A
@@ -136,7 +124,6 @@ final class CalmonCalendarModel {
         self.calendar = calendar
         self.now = now
         self.timeZoneProvider = timeZoneProvider
-        self.eventProvider = eventProvider
         self.readGate = readGate
         self.preview = preview
         let date = now()
@@ -160,7 +147,7 @@ final class CalmonCalendarModel {
         visibleMonth = Self.monthStart(for: date, calendar: calendar)
         selectedDate = today
         rebuild()
-        refreshEvents()
+        refreshCalendarHolidays()
     }
 
     func goToPreviousMonth() { changeMonth(by: -1) }
@@ -203,7 +190,7 @@ final class CalmonCalendarModel {
             selectedDate = calendar.startOfDay(for: calendar.date(from: components) ?? visibleMonth)
         }
         rebuild()
-        refreshEvents()
+        refreshCalendarHolidays()
     }
 
     func select(_ date: Date) {
@@ -213,7 +200,7 @@ final class CalmonCalendarModel {
             visibleMonth = Self.monthStart(for: start, calendar: calendar)
         }
         rebuild()
-        refreshEvents()
+        refreshCalendarHolidays()
     }
 
     func moveSelection(byDays days: Int) {
@@ -441,14 +428,6 @@ final class CalmonCalendarModel {
         observers.removeAll()
         workspaceObservers.forEach { NSWorkspace.shared.notificationCenter.removeObserver($0) }
         workspaceObservers.removeAll()
-        requestedGeneration &+= 1
-        eventGeneration &+= 1
-        eventTask?.cancel()
-        eventTask = nil
-        // Keep the in-flight latch if a non-cooperative provider is still
-        // running; a restart must not create a second real query.
-        events = []
-        eventState = .notAvailable
     }
 
     func setPanelVisibility(panel: Bool, calendarModule: Bool) {
@@ -457,28 +436,14 @@ final class CalmonCalendarModel {
         provider.setPanelVisible(panel && calendarModule)
         if panel && calendarModule {
             refreshHolidayRangeIfVisible()
-            refreshEvents()
-        } else {
-            requestedGeneration &+= 1
-            eventGeneration &+= 1
-            eventTask?.cancel()
-            eventTask = nil
-            events = []
-            eventState = .notAvailable
+            refreshCalendarHolidays()
         }
     }
 
-    func refreshEvents() {
-        requestedGeneration &+= 1
-        let generation = requestedGeneration
-        requestedDay = selectedDate
-        guard started, panelVisible, calendarModuleVisible,
-              readGate(), let eventProvider else {
-            eventGeneration &+= 1
-            eventTask?.cancel()
-            eventTask = nil
-            events = []
-            eventState = .notAvailable
+    /// Refresh only the trusted holiday range. Personal calendar events are not
+    /// read or displayed in this product slice.
+    func refreshCalendarHolidays() {
+        guard started, panelVisible, calendarModuleVisible, readGate() else {
             if !readGate() {
                 provider.invalidateEvents()
                 rebuild()
@@ -486,55 +451,6 @@ final class CalmonCalendarModel {
             return
         }
         refreshHolidayRangeIfVisible()
-        guard !eventInFlight else { return }
-        startEventRead(generation: generation, day: selectedDate, provider: eventProvider)
-    }
-
-    private func startEventRead(generation: UInt64, day: Date,
-                                provider: any CalendarEventProviding) {
-        eventInFlight = true
-        eventReadStartCount &+= 1
-        eventState = .loading
-        eventTask = Task { @MainActor [weak self] in
-            guard let self else { return }
-            guard self.started, self.panelVisible, self.calendarModuleVisible,
-                  self.readGate(), self.requestedGeneration == generation,
-                  self.requestedDay == day else {
-                self.eventReadDiscardCount &+= 1
-                self.eventInFlight = false
-                self.eventTask = nil
-                if self.started, self.panelVisible, self.calendarModuleVisible,
-                   self.readGate(), let next = self.requestedDay,
-                   self.requestedGeneration != generation {
-                    self.startEventRead(generation: self.requestedGeneration,
-                                        day: next, provider: provider)
-                }
-                return
-            }
-            let loaded = await provider.events(on: day, calendar: self.calendar)
-            self.eventReadCompletionCount &+= 1
-            self.eventInFlight = false
-            self.eventTask = nil
-            guard self.started, self.panelVisible, self.calendarModuleVisible,
-                  self.readGate() else {
-                self.eventReadDiscardCount &+= 1
-                self.events = []
-                self.eventState = .notAvailable
-                return
-            }
-            if self.requestedGeneration == generation {
-                let holidayID = self.provider.selectedCalendarID
-                var seen = Set<String>()
-                self.events = loaded.filter { event in
-                    if let id = event.calendarIdentifier, let holidayID, id == holidayID { return false }
-                    return seen.insert(event.id).inserted
-                }
-                self.eventState = .loaded
-            } else if let next = self.requestedDay {
-                self.startEventRead(generation: self.requestedGeneration,
-                                    day: next, provider: provider)
-            }
-        }
     }
 
     // MARK: - System observations
@@ -576,7 +492,7 @@ final class CalmonCalendarModel {
             visibleMonth = Self.monthStart(for: visibleMonth, calendar: calendar)
         }
         rebuild()
-        refreshEvents()
+        refreshCalendarHolidays()
     }
 
     private func handleTimeZoneChange() {

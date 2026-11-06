@@ -6,7 +6,7 @@ import XCTest
 @MainActor
 final class FeatureSwitchTests: XCTestCase {
     private func calendar() -> CalmonCalendarModel {
-        CalmonCalendarModel(eventProvider: PreviewCalendarEvents(), readGate: { true }, preview: true)
+        CalmonCalendarModel(readGate: { true }, preview: true)
     }
 
     func testDefaultsPersistAndFeaturePagesUseRealToggleBindings() throws {

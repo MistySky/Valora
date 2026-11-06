@@ -1,0 +1,1213 @@
+{
+  "checks" : [
+    {
+      "name" : "single QA window is available",
+      "passed" : true
+    },
+    {
+      "name" : "fake anchor advanced before measurement",
+      "passed" : true
+    },
+    {
+      "name" : "compact lyrics are visible",
+      "passed" : true
+    },
+    {
+      "name" : "music activity is visible",
+      "passed" : true
+    },
+    {
+      "name" : "fake anchor advanced during 30 s compact play",
+      "passed" : true
+    },
+    {
+      "name" : "lyrics crossed lines during play",
+      "passed" : true
+    },
+    {
+      "name" : "word index\/fraction changed during play",
+      "passed" : true
+    },
+    {
+      "name" : "compact play produced Timeline callbacks",
+      "passed" : true
+    },
+    {
+      "name" : "compact play produced display-link callbacks",
+      "passed" : true
+    },
+    {
+      "name" : "play continues without the display-link sampler",
+      "passed" : true
+    },
+    {
+      "name" : "interaction kept the lyric view refreshing",
+      "passed" : true
+    },
+    {
+      "name" : "interaction recorded the full script",
+      "passed" : true
+    },
+    {
+      "name" : "pause stops Timeline callbacks",
+      "passed" : true
+    },
+    {
+      "name" : "pause freezes the fake anchor",
+      "passed" : true
+    }
+  ],
+  "environment" : {
+    "hostName" : "wq-macbook-pro.local",
+    "os" : "Version 27.2 (Build 26B123)",
+    "panelScreen" : {
+      "available" : true,
+      "frame" : "{{0, 0}, {1728, 1117}}",
+      "maxFramesPerSecond" : 120,
+      "name" : "Built-in Retina Display",
+      "scale" : 2
+    },
+    "physicalMemoryBytes" : 34359738368,
+    "processorCount" : 10,
+    "screens" : [
+      {
+        "frame" : "{{0, 0}, {1728, 1117}}",
+        "maxFramesPerSecond" : 120,
+        "name" : "Built-in Retina Display",
+        "scale" : 2
+      },
+      {
+        "frame" : "{{1728, 37}, {1920, 1080}}",
+        "maxFramesPerSecond" : 60,
+        "name" : "U2701B",
+        "scale" : 2
+      }
+    ]
+  },
+  "limitations" : [
+    "Optimized QA is not the shipping Release app bundle; it uses the development define only for instrumentation.",
+    "CADisplayLink timestamp\/arrival gaps are not rendered\/composited frame times; no 60 fps or Alcove-parity claim.",
+    "Wakeups remain unavailable without privileged tooling.",
+    "Production audio 0.5 s polling, real media\/lock\/dual-screen\/voice and full shipping resource cost are still unmeasured.",
+    "One bounded run; the earlier 6-minute baseline is not rerun."
+  ],
+  "method" : {
+    "configuration" : "release-optimized QA host (swift -c release + -DVALORA_DEVELOPMENT); not the shipping Release artifact",
+    "cpuPeak" : "max of per-sample CPU-second differences \/ elapsed difference (1 s resolution); phase cpuPercent is cumulative average",
+    "displayLink" : "two gap definitions: sender.timestamp gaps and wall-clock arrival gaps; neither is a composited frame",
+    "media" : "AuditTickingMediaSource: local SystemMediaSnapshot with elapsed\/timestamp\/artwork; MediaController's real 0.25 s anchor; no player read or command",
+    "resourceSampler" : "getrusage(RUSAGE_SELF) + mach_task_basic_info.resident_size + task_vm_info.phys_footprint, 1 s MainActor samples",
+    "timelineProbe" : "SwiftUI TimelineView body callback (CompactLyricsView)",
+    "window" : "one WindowCoordinator panel on the main display; no status item, no activation"
+  },
+  "mode" : "short-r1-optimized-qa",
+  "passed" : true,
+  "phases" : [
+    {
+      "actualSeconds" : 30.016458166704979,
+      "display" : {
+        "arrivalMaxGap" : 0.020371583348605782,
+        "arrivalMeanGap" : 0.0083708116108768549,
+        "arrivalP50Gap" : 0.0083343333099037409,
+        "arrivalP95Gap" : 0.009188666648697108,
+        "arrivalRateHz" : 119.4627291218239,
+        "callbacks" : 3586,
+        "definitions" : {
+          "arrivalGap" : "ProcessInfo.systemUptime sampled in the callback body (main-thread arrival, includes scheduling)",
+          "frames" : "neither value is a rendered\/composited frame count",
+          "timestampGap" : "difference between CADisplayLink sender.timestamp values (video-refresh clock)"
+        },
+        "note" : "CADisplayLink callbacks on the QA window; not rendered-frame count",
+        "timestampCallbacks" : 3586,
+        "timestampMaxGap" : 0.020817583368625492,
+        "timestampMeanGap" : 0.0083705344142241608,
+        "timestampP50Gap" : 0.0083333333604969084,
+        "timestampP95Gap" : 0.0083333333604969084
+      },
+      "name" : "opt-compact-play-30",
+      "notes" : {
+        "finalElapsed" : 32.026236057281494,
+        "finalLineStart" : 20,
+        "finalLineText" : "第二句短句",
+        "screen" : {
+          "available" : true,
+          "frame" : "{{0, 0}, {1728, 1117}}",
+          "maxFramesPerSecond" : 120,
+          "name" : "Built-in Retina Display",
+          "scale" : 2
+        }
+      },
+      "requestedSeconds" : 30,
+      "resources" : {
+        "cpuPeakMinIntervalSeconds" : 0.80000000000000004,
+        "cpuPeakResolutionSeconds" : 1,
+        "cpuPeakSingleCore" : 16.529515828984639,
+        "cpuPercentSingleCore" : 11.196534185795073,
+        "cpuSeconds" : 3.3608030000000002,
+        "footprintFirstBytes" : 24888256,
+        "footprintLastBytes" : 25396160,
+        "footprintMaxBytes" : 25396160,
+        "footprintMeanBytes" : 25252288,
+        "footprintMinBytes" : 24888256,
+        "rssFirstBytes" : 80543744,
+        "rssLastBytes" : 82264064,
+        "rssMaxBytes" : 82264064,
+        "rssMeanBytes" : 81889280,
+        "rssMinBytes" : 80543744,
+        "sampleCount" : 32,
+        "sampleIntervalSeconds" : 1
+      },
+      "samples" : [
+        {
+          "cpuSeconds" : 0.48786600000000002,
+          "elapsedSeconds" : 0,
+          "physicalFootprintBytes" : 24888256,
+          "rssBytes" : 80543744,
+          "wallSeconds" : 263531.811869625
+        },
+        {
+          "cpuSeconds" : 0.60979400000000006,
+          "elapsedSeconds" : 1.0314720000023954,
+          "physicalFootprintBytes" : 24921024,
+          "rssBytes" : 80576512,
+          "wallSeconds" : 263532.843341625
+        },
+        {
+          "cpuSeconds" : 0.71965900000000005,
+          "elapsedSeconds" : 2.0785950417048298,
+          "physicalFootprintBytes" : 24921024,
+          "rssBytes" : 80576512,
+          "wallSeconds" : 263533.89046466671
+        },
+        {
+          "cpuSeconds" : 0.8453170000000001,
+          "elapsedSeconds" : 3.0884307916858234,
+          "physicalFootprintBytes" : 25166784,
+          "rssBytes" : 81788928,
+          "wallSeconds" : 263534.90030041669
+        },
+        {
+          "cpuSeconds" : 0.95968000000000009,
+          "elapsedSeconds" : 4.1127720416989177,
+          "physicalFootprintBytes" : 25183168,
+          "rssBytes" : 81805312,
+          "wallSeconds" : 263535.9246416667
+        },
+        {
+          "cpuSeconds" : 1.0714000000000001,
+          "elapsedSeconds" : 5.1157460417016409,
+          "physicalFootprintBytes" : 25183168,
+          "rssBytes" : 81805312,
+          "wallSeconds" : 263536.9276156667
+        },
+        {
+          "cpuSeconds" : 1.214704,
+          "elapsedSeconds" : 6.1832060416927561,
+          "physicalFootprintBytes" : 25199552,
+          "rssBytes" : 81821696,
+          "wallSeconds" : 263537.99507566669
+        },
+        {
+          "cpuSeconds" : 1.3356110000000001,
+          "elapsedSeconds" : 7.1901711666723713,
+          "physicalFootprintBytes" : 25150400,
+          "rssBytes" : 81772544,
+          "wallSeconds" : 263539.00204079167
+        },
+        {
+          "cpuSeconds" : 1.4272940000000001,
+          "elapsedSeconds" : 8.1907308333320543,
+          "physicalFootprintBytes" : 25150400,
+          "rssBytes" : 81772544,
+          "wallSeconds" : 263540.00260045833
+        },
+        {
+          "cpuSeconds" : 1.5702970000000001,
+          "elapsedSeconds" : 9.2520340833580121,
+          "physicalFootprintBytes" : 25166784,
+          "rssBytes" : 81788928,
+          "wallSeconds" : 263541.06390370836
+        },
+        {
+          "cpuSeconds" : 1.6818149999999998,
+          "elapsedSeconds" : 10.256297125015408,
+          "physicalFootprintBytes" : 25166784,
+          "rssBytes" : 81788928,
+          "wallSeconds" : 263542.06816675002
+        },
+        {
+          "cpuSeconds" : 1.8199480000000001,
+          "elapsedSeconds" : 11.316124875040259,
+          "physicalFootprintBytes" : 25215936,
+          "rssBytes" : 81838080,
+          "wallSeconds" : 263543.12799450004
+        },
+        {
+          "cpuSeconds" : 1.9424239999999999,
+          "elapsedSeconds" : 12.36320016667014,
+          "physicalFootprintBytes" : 25215936,
+          "rssBytes" : 81838080,
+          "wallSeconds" : 263544.17506979167
+        },
+        {
+          "cpuSeconds" : 2.0563850000000001,
+          "elapsedSeconds" : 13.36680954170879,
+          "physicalFootprintBytes" : 25232320,
+          "rssBytes" : 81854464,
+          "wallSeconds" : 263545.17867916671
+        },
+        {
+          "cpuSeconds" : 2.164444,
+          "elapsedSeconds" : 14.383325416652951,
+          "physicalFootprintBytes" : 25248704,
+          "rssBytes" : 81870848,
+          "wallSeconds" : 263546.19519504166
+        },
+        {
+          "cpuSeconds" : 2.2616649999999998,
+          "elapsedSeconds" : 15.3848085833597,
+          "physicalFootprintBytes" : 25248704,
+          "rssBytes" : 81870848,
+          "wallSeconds" : 263547.19667820836
+        },
+        {
+          "cpuSeconds" : 2.3700840000000003,
+          "elapsedSeconds" : 16.385368791699875,
+          "physicalFootprintBytes" : 25265088,
+          "rssBytes" : 81887232,
+          "wallSeconds" : 263548.1972384167
+        },
+        {
+          "cpuSeconds" : 2.4723120000000001,
+          "elapsedSeconds" : 17.386030125024263,
+          "physicalFootprintBytes" : 25297856,
+          "rssBytes" : 81920000,
+          "wallSeconds" : 263549.19789975003
+        },
+        {
+          "cpuSeconds" : 2.639732,
+          "elapsedSeconds" : 18.398884958354756,
+          "physicalFootprintBytes" : 25330624,
+          "rssBytes" : 82132992,
+          "wallSeconds" : 263550.21075458336
+        },
+        {
+          "cpuSeconds" : 2.7650619999999999,
+          "elapsedSeconds" : 19.465233166702092,
+          "physicalFootprintBytes" : 25281472,
+          "rssBytes" : 82149376,
+          "wallSeconds" : 263551.2771027917
+        },
+        {
+          "cpuSeconds" : 2.8825759999999998,
+          "elapsedSeconds" : 20.471630791667849,
+          "physicalFootprintBytes" : 25297856,
+          "rssBytes" : 82165760,
+          "wallSeconds" : 263552.28350041667
+        },
+        {
+          "cpuSeconds" : 3.0009869999999998,
+          "elapsedSeconds" : 21.472939625033177,
+          "physicalFootprintBytes" : 25379776,
+          "rssBytes" : 82247680,
+          "wallSeconds" : 263553.28480925004
+        },
+        {
+          "cpuSeconds" : 3.1087899999999999,
+          "elapsedSeconds" : 22.4880944583565,
+          "physicalFootprintBytes" : 25396160,
+          "rssBytes" : 82264064,
+          "wallSeconds" : 263554.29996408336
+        },
+        {
+          "cpuSeconds" : 3.2071929999999997,
+          "elapsedSeconds" : 23.554641458322294,
+          "physicalFootprintBytes" : 25396160,
+          "rssBytes" : 82264064,
+          "wallSeconds" : 263555.36651108332
+        },
+        {
+          "cpuSeconds" : 3.3051060000000003,
+          "elapsedSeconds" : 24.57019624998793,
+          "physicalFootprintBytes" : 25396160,
+          "rssBytes" : 82264064,
+          "wallSeconds" : 263556.38206587499
+        },
+        {
+          "cpuSeconds" : 3.3848799999999999,
+          "elapsedSeconds" : 25.591409375017975,
+          "physicalFootprintBytes" : 25396160,
+          "rssBytes" : 82264064,
+          "wallSeconds" : 263557.40327900002
+        },
+        {
+          "cpuSeconds" : 3.4959610000000003,
+          "elapsedSeconds" : 26.614565666706767,
+          "physicalFootprintBytes" : 25396160,
+          "rssBytes" : 82264064,
+          "wallSeconds" : 263558.42643529171
+        },
+        {
+          "cpuSeconds" : 3.5953790000000003,
+          "elapsedSeconds" : 27.616526083322242,
+          "physicalFootprintBytes" : 25396160,
+          "rssBytes" : 82264064,
+          "wallSeconds" : 263559.42839570832
+        },
+        {
+          "cpuSeconds" : 3.699163,
+          "elapsedSeconds" : 28.680121791665442,
+          "physicalFootprintBytes" : 25396160,
+          "rssBytes" : 82264064,
+          "wallSeconds" : 263560.49199141667
+        },
+        {
+          "cpuSeconds" : 3.8146170000000001,
+          "elapsedSeconds" : 29.74592549999943,
+          "physicalFootprintBytes" : 25396160,
+          "rssBytes" : 82264064,
+          "wallSeconds" : 263561.557795125
+        },
+        {
+          "cpuSeconds" : 3.848643,
+          "elapsedSeconds" : 30.016432250034995,
+          "physicalFootprintBytes" : 25396160,
+          "rssBytes" : 82264064,
+          "wallSeconds" : 263561.82830187504
+        },
+        {
+          "cpuSeconds" : 3.8486690000000001,
+          "elapsedSeconds" : 30.016458166704979,
+          "physicalFootprintBytes" : 25396160,
+          "rssBytes" : 82264064,
+          "wallSeconds" : 263561.82832779171
+        }
+      ],
+      "timeline" : {
+        "activeTicks" : 1076,
+        "firstElapsed" : 2.1322355270385742,
+        "firstTickOffset" : 0.00063362496439367533,
+        "lastElapsed" : 32.132205963134766,
+        "lastTickOffset" : 29.995695583347697,
+        "lineChanges" : 3,
+        "maxInterval" : 0.043829833331983536,
+        "meanInterval" : 0.027902383217100746,
+        "minInterval" : 0.00073445832822471857,
+        "passiveTicks" : 0,
+        "roleTicks" : {
+          "active" : 1076
+        },
+        "wordChanges" : 8
+      }
+    },
+    {
+      "actualSeconds" : 30.00260216667084,
+      "display" : {
+        "callbacks" : 0,
+        "note" : "display link stopped for this phase"
+      },
+      "name" : "opt-compact-play-30-no-displaylink",
+      "notes" : {
+        "finalElapsed" : 62.026275157928467,
+        "finalLineStart" : 60,
+        "finalLineText" : "末尾短句",
+        "screen" : {
+          "available" : true,
+          "frame" : "{{0, 0}, {1728, 1117}}",
+          "maxFramesPerSecond" : 120,
+          "name" : "Built-in Retina Display",
+          "scale" : 2
+        }
+      },
+      "requestedSeconds" : 30,
+      "resources" : {
+        "cpuPeakMinIntervalSeconds" : 0.80000000000000004,
+        "cpuPeakResolutionSeconds" : 1,
+        "cpuPeakSingleCore" : 15.720453085097727,
+        "cpuPercentSingleCore" : 10.950596824063952,
+        "cpuSeconds" : 3.2854639999999993,
+        "footprintFirstBytes" : 25428928,
+        "footprintLastBytes" : 26002368,
+        "footprintMaxBytes" : 26117056,
+        "footprintMeanBytes" : 25871296,
+        "footprintMinBytes" : 25428928,
+        "rssFirstBytes" : 82296832,
+        "rssLastBytes" : 85213184,
+        "rssMaxBytes" : 85213184,
+        "rssMeanBytes" : 84389376,
+        "rssMinBytes" : 82296832,
+        "sampleCount" : 32,
+        "sampleIntervalSeconds" : 1
+      },
+      "samples" : [
+        {
+          "cpuSeconds" : 3.8498200000000002,
+          "elapsedSeconds" : 0,
+          "physicalFootprintBytes" : 25428928,
+          "rssBytes" : 82296832,
+          "wallSeconds" : 263561.83022250002
+        },
+        {
+          "cpuSeconds" : 3.9363320000000002,
+          "elapsedSeconds" : 1.0051530416822061,
+          "physicalFootprintBytes" : 25445312,
+          "rssBytes" : 82313216,
+          "wallSeconds" : 263562.8353755417
+        },
+        {
+          "cpuSeconds" : 4.0130710000000001,
+          "elapsedSeconds" : 2.072497958317399,
+          "physicalFootprintBytes" : 25445312,
+          "rssBytes" : 82313216,
+          "wallSeconds" : 263563.90272045834
+        },
+        {
+          "cpuSeconds" : 4.0936209999999997,
+          "elapsedSeconds" : 3.0935387916397303,
+          "physicalFootprintBytes" : 25445312,
+          "rssBytes" : 82313216,
+          "wallSeconds" : 263564.92376129166
+        },
+        {
+          "cpuSeconds" : 4.1731730000000002,
+          "elapsedSeconds" : 4.0990092499996535,
+          "physicalFootprintBytes" : 25445312,
+          "rssBytes" : 82313216,
+          "wallSeconds" : 263565.92923175002
+        },
+        {
+          "cpuSeconds" : 4.2667619999999999,
+          "elapsedSeconds" : 5.1654127083020285,
+          "physicalFootprintBytes" : 25445312,
+          "rssBytes" : 82313216,
+          "wallSeconds" : 263566.99563520832
+        },
+        {
+          "cpuSeconds" : 4.3729789999999999,
+          "elapsedSeconds" : 6.1771384999738075,
+          "physicalFootprintBytes" : 25461696,
+          "rssBytes" : 82329600,
+          "wallSeconds" : 263568.007361
+        },
+        {
+          "cpuSeconds" : 4.4735570000000004,
+          "elapsedSeconds" : 7.2439284583088011,
+          "physicalFootprintBytes" : 25478080,
+          "rssBytes" : 82345984,
+          "wallSeconds" : 263569.07415095833
+        },
+        {
+          "cpuSeconds" : 4.6198869999999994,
+          "elapsedSeconds" : 8.3112188333179802,
+          "physicalFootprintBytes" : 26018752,
+          "rssBytes" : 85049344,
+          "wallSeconds" : 263570.14144133334
+        },
+        {
+          "cpuSeconds" : 4.7242549999999994,
+          "elapsedSeconds" : 9.3510392499738373,
+          "physicalFootprintBytes" : 26067904,
+          "rssBytes" : 85098496,
+          "wallSeconds" : 263571.18126175
+        },
+        {
+          "cpuSeconds" : 4.8531119999999994,
+          "elapsedSeconds" : 10.3637730833143,
+          "physicalFootprintBytes" : 26100672,
+          "rssBytes" : 85131264,
+          "wallSeconds" : 263572.19399558334
+        },
+        {
+          "cpuSeconds" : 4.965884,
+          "elapsedSeconds" : 11.373574583325535,
+          "physicalFootprintBytes" : 26100672,
+          "rssBytes" : 85131264,
+          "wallSeconds" : 263573.20379708335
+        },
+        {
+          "cpuSeconds" : 5.0915240000000006,
+          "elapsedSeconds" : 12.378701000008732,
+          "physicalFootprintBytes" : 26117056,
+          "rssBytes" : 85147648,
+          "wallSeconds" : 263574.20892350003
+        },
+        {
+          "cpuSeconds" : 5.2002790000000001,
+          "elapsedSeconds" : 13.445898875012062,
+          "physicalFootprintBytes" : 25953216,
+          "rssBytes" : 84983808,
+          "wallSeconds" : 263575.27612137503
+        },
+        {
+          "cpuSeconds" : 5.3509679999999999,
+          "elapsedSeconds" : 14.512206499988679,
+          "physicalFootprintBytes" : 25953216,
+          "rssBytes" : 84983808,
+          "wallSeconds" : 263576.34242900001
+        },
+        {
+          "cpuSeconds" : 5.5052159999999999,
+          "elapsedSeconds" : 15.55630470829783,
+          "physicalFootprintBytes" : 25969600,
+          "rssBytes" : 85000192,
+          "wallSeconds" : 263577.38652720832
+        },
+        {
+          "cpuSeconds" : 5.6649030000000007,
+          "elapsedSeconds" : 16.572096041636541,
+          "physicalFootprintBytes" : 25969600,
+          "rssBytes" : 85000192,
+          "wallSeconds" : 263578.40231854166
+        },
+        {
+          "cpuSeconds" : 5.8200890000000003,
+          "elapsedSeconds" : 17.600135500018951,
+          "physicalFootprintBytes" : 25969600,
+          "rssBytes" : 85000192,
+          "wallSeconds" : 263579.43035800004
+        },
+        {
+          "cpuSeconds" : 5.9740060000000001,
+          "elapsedSeconds" : 18.662907166639343,
+          "physicalFootprintBytes" : 25969600,
+          "rssBytes" : 85000192,
+          "wallSeconds" : 263580.49312966666
+        },
+        {
+          "cpuSeconds" : 6.0734850000000007,
+          "elapsedSeconds" : 19.704723374976311,
+          "physicalFootprintBytes" : 25969600,
+          "rssBytes" : 85000192,
+          "wallSeconds" : 263581.534945875
+        },
+        {
+          "cpuSeconds" : 6.1786600000000007,
+          "elapsedSeconds" : 20.746063500002492,
+          "physicalFootprintBytes" : 25969600,
+          "rssBytes" : 85000192,
+          "wallSeconds" : 263582.57628600002
+        },
+        {
+          "cpuSeconds" : 6.2819069999999995,
+          "elapsedSeconds" : 21.771911708347034,
+          "physicalFootprintBytes" : 26018752,
+          "rssBytes" : 85065728,
+          "wallSeconds" : 263583.60213420837
+        },
+        {
+          "cpuSeconds" : 6.3347329999999999,
+          "elapsedSeconds" : 22.831720750022214,
+          "physicalFootprintBytes" : 26018752,
+          "rssBytes" : 85065728,
+          "wallSeconds" : 263584.66194325004
+        },
+        {
+          "cpuSeconds" : 6.4178680000000004,
+          "elapsedSeconds" : 23.872572333319113,
+          "physicalFootprintBytes" : 26018752,
+          "rssBytes" : 85065728,
+          "wallSeconds" : 263585.70279483334
+        },
+        {
+          "cpuSeconds" : 6.5584500000000006,
+          "elapsedSeconds" : 24.874435333302245,
+          "physicalFootprintBytes" : 26035136,
+          "rssBytes" : 85082112,
+          "wallSeconds" : 263586.70465783332
+        },
+        {
+          "cpuSeconds" : 6.6953490000000002,
+          "elapsedSeconds" : 25.877655291638803,
+          "physicalFootprintBytes" : 26035136,
+          "rssBytes" : 85082112,
+          "wallSeconds" : 263587.70787779166
+        },
+        {
+          "cpuSeconds" : 6.8269419999999998,
+          "elapsedSeconds" : 26.878172374970745,
+          "physicalFootprintBytes" : 26002368,
+          "rssBytes" : 85082112,
+          "wallSeconds" : 263588.70839487499
+        },
+        {
+          "cpuSeconds" : 6.9109720000000001,
+          "elapsedSeconds" : 27.880528333305847,
+          "physicalFootprintBytes" : 26018752,
+          "rssBytes" : 85098496,
+          "wallSeconds" : 263589.71075083333
+        },
+        {
+          "cpuSeconds" : 7.0200699999999996,
+          "elapsedSeconds" : 28.94787037500646,
+          "physicalFootprintBytes" : 26002368,
+          "rssBytes" : 85213184,
+          "wallSeconds" : 263590.77809287503
+        },
+        {
+          "cpuSeconds" : 7.1315720000000002,
+          "elapsedSeconds" : 29.972650541632902,
+          "physicalFootprintBytes" : 26002368,
+          "rssBytes" : 85213184,
+          "wallSeconds" : 263591.80287304166
+        },
+        {
+          "cpuSeconds" : 7.1352469999999997,
+          "elapsedSeconds" : 30.002564666676335,
+          "physicalFootprintBytes" : 26002368,
+          "rssBytes" : 85213184,
+          "wallSeconds" : 263591.8327871667
+        },
+        {
+          "cpuSeconds" : 7.1352839999999995,
+          "elapsedSeconds" : 30.00260216667084,
+          "physicalFootprintBytes" : 26002368,
+          "rssBytes" : 85213184,
+          "wallSeconds" : 263591.83282466669
+        }
+      ],
+      "timeline" : {
+        "activeTicks" : 1069,
+        "firstElapsed" : 32.165539264678955,
+        "firstTickOffset" : 0.0099264166783541441,
+        "lastElapsed" : 62.132177472114563,
+        "lastTickOffset" : 29.976925583323464,
+        "lineChanges" : 3,
+        "maxInterval" : 0.044369541632477194,
+        "meanInterval" : 0.028058987983750103,
+        "minInterval" : 0.0010772499954327941,
+        "passiveTicks" : 0,
+        "roleTicks" : {
+          "active" : 1069
+        },
+        "wordChanges" : 2
+      }
+    },
+    {
+      "actualSeconds" : 15.011140541697387,
+      "display" : {
+        "arrivalMaxGap" : 0.017080041696317494,
+        "arrivalMeanGap" : 0.0083463762309547579,
+        "arrivalP50Gap" : 0.0083334583905525506,
+        "arrivalP95Gap" : 0.0089174166787415743,
+        "arrivalRateHz" : 119.81247577735996,
+        "callbacks" : 1795,
+        "definitions" : {
+          "arrivalGap" : "ProcessInfo.systemUptime sampled in the callback body (main-thread arrival, includes scheduling)",
+          "frames" : "neither value is a rendered\/composited frame count",
+          "timestampGap" : "difference between CADisplayLink sender.timestamp values (video-refresh clock)"
+        },
+        "note" : "CADisplayLink callbacks on the QA window; not rendered-frame count",
+        "timestampCallbacks" : 1795,
+        "timestampMaxGap" : 0.017615375050809234,
+        "timestampMeanGap" : 0.0083460711631438526,
+        "timestampP50Gap" : 0.0083333333604969084,
+        "timestampP95Gap" : 0.0083333333604969084
+      },
+      "name" : "opt-interaction-once",
+      "notes" : {
+        "finalElapsed" : 2.7893860340118408,
+        "finalLineStart" : 0,
+        "finalLineText" : "短句开头",
+        "screen" : {
+          "available" : true,
+          "frame" : "{{0, 0}, {1728, 1117}}",
+          "maxFramesPerSecond" : 120,
+          "name" : "Built-in Retina Display",
+          "scale" : 2
+        },
+        "steps" : [
+          {
+            "action" : "expand",
+            "at" : 0,
+            "elapsed" : 62.026275157928467
+          },
+          {
+            "action" : "volume-on",
+            "at" : 2,
+            "elapsed" : 64.026883125305176
+          },
+          {
+            "action" : "volume-off",
+            "at" : 4,
+            "elapsed" : 66.025701999664307
+          },
+          {
+            "action" : "collapse",
+            "at" : 5,
+            "elapsed" : 67.250555992126465
+          },
+          {
+            "action" : "fixture-seek-long-line",
+            "at" : 6,
+            "elapsed" : 6.0000820159912109
+          },
+          {
+            "action" : "fixture-seek-second-short",
+            "at" : 8,
+            "elapsed" : 21.000423908233643
+          },
+          {
+            "action" : "fixture-track-B",
+            "at" : 10,
+            "elapsed" : 0.0046341419219970703
+          },
+          {
+            "action" : "fixture-track-A",
+            "at" : 12,
+            "elapsed" : 0.0038669109344482422
+          }
+        ]
+      },
+      "requestedSeconds" : 15,
+      "resources" : {
+        "cpuPeakMinIntervalSeconds" : 0.80000000000000004,
+        "cpuPeakResolutionSeconds" : 1,
+        "cpuPeakSingleCore" : 32.382902881319012,
+        "cpuPercentSingleCore" : 14.348276828247283,
+        "cpuSeconds" : 2.1538399999999998,
+        "footprintFirstBytes" : 31310784,
+        "footprintLastBytes" : 29033408,
+        "footprintMaxBytes" : 31310784,
+        "footprintMeanBytes" : 29266639,
+        "footprintMinBytes" : 28902336,
+        "rssFirstBytes" : 87392256,
+        "rssLastBytes" : 91029504,
+        "rssMaxBytes" : 91029504,
+        "rssMeanBytes" : 90569788,
+        "rssMinBytes" : 87392256,
+        "sampleCount" : 17,
+        "sampleIntervalSeconds" : 1
+      },
+      "samples" : [
+        {
+          "cpuSeconds" : 7.1500770000000005,
+          "elapsedSeconds" : 0,
+          "physicalFootprintBytes" : 31310784,
+          "rssBytes" : 87392256,
+          "wallSeconds" : 263591.849807625
+        },
+        {
+          "cpuSeconds" : 7.500413,
+          "elapsedSeconds" : 1.0818548333481885,
+          "physicalFootprintBytes" : 29115328,
+          "rssBytes" : 90226688,
+          "wallSeconds" : 263592.93166245834
+        },
+        {
+          "cpuSeconds" : 7.6316980000000001,
+          "elapsedSeconds" : 2.0328230416635051,
+          "physicalFootprintBytes" : 29098944,
+          "rssBytes" : 90226688,
+          "wallSeconds" : 263593.88263066666
+        },
+        {
+          "cpuSeconds" : 7.7759070000000001,
+          "elapsedSeconds" : 3.0989283333765343,
+          "physicalFootprintBytes" : 29295552,
+          "rssBytes" : 90832896,
+          "wallSeconds" : 263594.94873595837
+        },
+        {
+          "cpuSeconds" : 7.8309559999999996,
+          "elapsedSeconds" : 4.0493103333283216,
+          "physicalFootprintBytes" : 29295552,
+          "rssBytes" : 90832896,
+          "wallSeconds" : 263595.89911795832
+        },
+        {
+          "cpuSeconds" : 7.8961229999999993,
+          "elapsedSeconds" : 5.0990391250234097,
+          "physicalFootprintBytes" : 29164480,
+          "rssBytes" : 90636288,
+          "wallSeconds" : 263596.94884675002
+        },
+        {
+          "cpuSeconds" : 8.0909359999999992,
+          "elapsedSeconds" : 6.0416088333586231,
+          "physicalFootprintBytes" : 29230016,
+          "rssBytes" : 90718208,
+          "wallSeconds" : 263597.89141645835
+        },
+        {
+          "cpuSeconds" : 8.2647399999999998,
+          "elapsedSeconds" : 7.0962944166967645,
+          "physicalFootprintBytes" : 29279168,
+          "rssBytes" : 90767360,
+          "wallSeconds" : 263598.94610204169
+        },
+        {
+          "cpuSeconds" : 8.4205590000000008,
+          "elapsedSeconds" : 8.0549365417100489,
+          "physicalFootprintBytes" : 29279168,
+          "rssBytes" : 90767360,
+          "wallSeconds" : 263599.90474416671
+        },
+        {
+          "cpuSeconds" : 8.5287180000000014,
+          "elapsedSeconds" : 9.0015032917144708,
+          "physicalFootprintBytes" : 29230016,
+          "rssBytes" : 90685440,
+          "wallSeconds" : 263600.85131091671
+        },
+        {
+          "cpuSeconds" : 8.6571750000000005,
+          "elapsedSeconds" : 10.050070625031367,
+          "physicalFootprintBytes" : 29230016,
+          "rssBytes" : 90685440,
+          "wallSeconds" : 263601.89987825003
+        },
+        {
+          "cpuSeconds" : 8.7800469999999997,
+          "elapsedSeconds" : 11.009275083371904,
+          "physicalFootprintBytes" : 28902336,
+          "rssBytes" : 90898432,
+          "wallSeconds" : 263602.85908270837
+        },
+        {
+          "cpuSeconds" : 8.9079440000000005,
+          "elapsedSeconds" : 12.059497041685972,
+          "physicalFootprintBytes" : 28902336,
+          "rssBytes" : 90898432,
+          "wallSeconds" : 263603.90930466668
+        },
+        {
+          "cpuSeconds" : 9.0721330000000009,
+          "elapsedSeconds" : 13.010745166684501,
+          "physicalFootprintBytes" : 29098944,
+          "rssBytes" : 91029504,
+          "wallSeconds" : 263604.86055279168
+        },
+        {
+          "cpuSeconds" : 9.2027260000000002,
+          "elapsedSeconds" : 14.059263916686177,
+          "physicalFootprintBytes" : 29033408,
+          "rssBytes" : 91029504,
+          "wallSeconds" : 263605.90907154168
+        },
+        {
+          "cpuSeconds" : 9.3038810000000005,
+          "elapsedSeconds" : 15.01110391668044,
+          "physicalFootprintBytes" : 29033408,
+          "rssBytes" : 91029504,
+          "wallSeconds" : 263606.86091154168
+        },
+        {
+          "cpuSeconds" : 9.3039170000000002,
+          "elapsedSeconds" : 15.011140541697387,
+          "physicalFootprintBytes" : 29033408,
+          "rssBytes" : 91029504,
+          "wallSeconds" : 263606.86094816669
+        }
+      ],
+      "timeline" : {
+        "activeTicks" : 597,
+        "firstElapsed" : 62.165510773658752,
+        "firstTickOffset" : 0.0018812500056810677,
+        "lastElapsed" : 2.9439176321029663,
+        "lastTickOffset" : 15.003596999973524,
+        "lineChanges" : 7,
+        "maxInterval" : 0.03605533333029598,
+        "meanInterval" : 0.025170664010013159,
+        "minInterval" : 0.00015350000467151403,
+        "passiveTicks" : 0,
+        "roleTicks" : {
+          "active" : 396,
+          "expanded" : 201
+        },
+        "wordChanges" : 8
+      }
+    },
+    {
+      "actualSeconds" : 30.048842166666873,
+      "display" : {
+        "arrivalMaxGap" : 0.025091833318583667,
+        "arrivalMeanGap" : 0.0083704185706325075,
+        "arrivalP50Gap" : 0.0083335416857153177,
+        "arrivalP95Gap" : 0.0085645000217482448,
+        "arrivalRateHz" : 119.46833859760436,
+        "callbacks" : 3590,
+        "definitions" : {
+          "arrivalGap" : "ProcessInfo.systemUptime sampled in the callback body (main-thread arrival, includes scheduling)",
+          "frames" : "neither value is a rendered\/composited frame count",
+          "timestampGap" : "difference between CADisplayLink sender.timestamp values (video-refresh clock)"
+        },
+        "note" : "CADisplayLink callbacks on the QA window; not rendered-frame count",
+        "timestampCallbacks" : 3590,
+        "timestampMaxGap" : 0.020600833347998559,
+        "timestampMeanGap" : 0.0083704935915170798,
+        "timestampP50Gap" : 0.0083333333604969084,
+        "timestampP95Gap" : 0.0083333333604969084
+      },
+      "name" : "opt-pause-30",
+      "notes" : {
+        "finalElapsed" : 2.9519119262695312,
+        "finalLineStart" : -1,
+        "finalLineText" : "",
+        "screen" : {
+          "available" : true,
+          "frame" : "{{0, 0}, {1728, 1117}}",
+          "maxFramesPerSecond" : 120,
+          "name" : "Built-in Retina Display",
+          "scale" : 2
+        }
+      },
+      "requestedSeconds" : 30,
+      "resources" : {
+        "cpuPeakMinIntervalSeconds" : 0.80000000000000004,
+        "cpuPeakResolutionSeconds" : 1,
+        "cpuPeakSingleCore" : 6.2066050458959472,
+        "cpuPercentSingleCore" : 4.4826885259965952,
+        "cpuSeconds" : 1.3469960000000025,
+        "footprintFirstBytes" : 28984256,
+        "footprintLastBytes" : 28689344,
+        "footprintMaxBytes" : 28984256,
+        "footprintMeanBytes" : 28870096,
+        "footprintMinBytes" : 28689344,
+        "rssFirstBytes" : 91176960,
+        "rssLastBytes" : 91176960,
+        "rssMaxBytes" : 91176960,
+        "rssMeanBytes" : 91176960,
+        "rssMinBytes" : 91176960,
+        "sampleCount" : 31,
+        "sampleIntervalSeconds" : 1
+      },
+      "samples" : [
+        {
+          "cpuSeconds" : 9.7497219999999984,
+          "elapsedSeconds" : 0,
+          "physicalFootprintBytes" : 28984256,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263612.65938254166
+        },
+        {
+          "cpuSeconds" : 9.7961339999999986,
+          "elapsedSeconds" : 1.0185684583266266,
+          "physicalFootprintBytes" : 28984256,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263613.67795099999
+        },
+        {
+          "cpuSeconds" : 9.8483099999999997,
+          "elapsedSeconds" : 2.0483480000402778,
+          "physicalFootprintBytes" : 28984256,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263614.7077305417
+        },
+        {
+          "cpuSeconds" : 9.8831539999999993,
+          "elapsedSeconds" : 3.0500003333436325,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263615.70938287501
+        },
+        {
+          "cpuSeconds" : 9.9168509999999994,
+          "elapsedSeconds" : 4.1167810416663997,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263616.77616358333
+        },
+        {
+          "cpuSeconds" : 9.9307020000000001,
+          "elapsedSeconds" : 5.1835895417025313,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263617.84297208337
+        },
+        {
+          "cpuSeconds" : 9.9444940000000006,
+          "elapsedSeconds" : 6.250397541676648,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263618.90978008334
+        },
+        {
+          "cpuSeconds" : 9.9862989999999989,
+          "elapsedSeconds" : 7.314789958356414,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263619.97417250002
+        },
+        {
+          "cpuSeconds" : 10.022829,
+          "elapsedSeconds" : 8.3372702916967683,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263620.99665283336
+        },
+        {
+          "cpuSeconds" : 10.053421999999999,
+          "elapsedSeconds" : 9.339593666663859,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263621.99897620833
+        },
+        {
+          "cpuSeconds" : 10.073983,
+          "elapsedSeconds" : 10.373351583373733,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263623.03273412504
+        },
+        {
+          "cpuSeconds" : 10.115008999999999,
+          "elapsedSeconds" : 11.439375750022009,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263624.09875829169
+        },
+        {
+          "cpuSeconds" : 10.162059000000001,
+          "elapsedSeconds" : 12.494856625038665,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263625.1542391667
+        },
+        {
+          "cpuSeconds" : 10.226063999999999,
+          "elapsedSeconds" : 13.548436041688547,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263626.20781858335
+        },
+        {
+          "cpuSeconds" : 10.281817999999999,
+          "elapsedSeconds" : 14.549161875038408,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263627.2085444167
+        },
+        {
+          "cpuSeconds" : 10.335595000000001,
+          "elapsedSeconds" : 15.551441083371174,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263628.21082362504
+        },
+        {
+          "cpuSeconds" : 10.395137999999999,
+          "elapsedSeconds" : 16.61445737502072,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263629.27383991668
+        },
+        {
+          "cpuSeconds" : 10.458273,
+          "elapsedSeconds" : 17.672747291682754,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263630.33212983335
+        },
+        {
+          "cpuSeconds" : 10.514825999999999,
+          "elapsedSeconds" : 18.739533083338756,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263631.398915625
+        },
+        {
+          "cpuSeconds" : 10.571368000000001,
+          "elapsedSeconds" : 19.764748458343092,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263632.42413100001
+        },
+        {
+          "cpuSeconds" : 10.637592,
+          "elapsedSeconds" : 20.831740791676566,
+          "physicalFootprintBytes" : 28951488,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263633.49112333334
+        },
+        {
+          "cpuSeconds" : 10.697240000000001,
+          "elapsedSeconds" : 21.872853041684721,
+          "physicalFootprintBytes" : 28689344,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263634.53223558335
+        },
+        {
+          "cpuSeconds" : 10.743724,
+          "elapsedSeconds" : 22.935517833335325,
+          "physicalFootprintBytes" : 28689344,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263635.594900375
+        },
+        {
+          "cpuSeconds" : 10.797217,
+          "elapsedSeconds" : 24.000678750046063,
+          "physicalFootprintBytes" : 28689344,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263636.66006129171
+        },
+        {
+          "cpuSeconds" : 10.844704999999999,
+          "elapsedSeconds" : 25.020828333334066,
+          "physicalFootprintBytes" : 28689344,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263637.680210875
+        },
+        {
+          "cpuSeconds" : 10.892836000000001,
+          "elapsedSeconds" : 26.048089958378114,
+          "physicalFootprintBytes" : 28689344,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263638.70747250004
+        },
+        {
+          "cpuSeconds" : 10.935463,
+          "elapsedSeconds" : 27.04881187499268,
+          "physicalFootprintBytes" : 28689344,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263639.70819441666
+        },
+        {
+          "cpuSeconds" : 10.990169,
+          "elapsedSeconds" : 28.050929374992847,
+          "physicalFootprintBytes" : 28689344,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263640.71031191666
+        },
+        {
+          "cpuSeconds" : 11.048794000000001,
+          "elapsedSeconds" : 29.051606041670311,
+          "physicalFootprintBytes" : 28689344,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263641.71098858333
+        },
+        {
+          "cpuSeconds" : 11.096658999999999,
+          "elapsedSeconds" : 30.048724541673437,
+          "physicalFootprintBytes" : 28689344,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263642.70810708334
+        },
+        {
+          "cpuSeconds" : 11.096718000000001,
+          "elapsedSeconds" : 30.048842166666873,
+          "physicalFootprintBytes" : 28689344,
+          "rssBytes" : 91176960,
+          "wallSeconds" : 263642.70822470833
+        }
+      ],
+      "timeline" : {
+        "activeTicks" : 0,
+        "firstElapsed" : 0,
+        "firstTickOffset" : 0,
+        "lastElapsed" : 0,
+        "lastTickOffset" : 0,
+        "lineChanges" : 0,
+        "maxInterval" : 0,
+        "meanInterval" : 0,
+        "minInterval" : 0,
+        "passiveTicks" : 0,
+        "roleTicks" : {
+
+        },
+        "wordChanges" : 0
+      }
+    }
+  ],
+  "schema" : 1,
+  "sourcePublishes" : 231
+}

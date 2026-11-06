@@ -225,25 +225,3 @@ extension CodexUsageSnapshot {
                   message: reading.hasQuotaWindows ? nil : "额度数据未提供")
     }
 }
-
-/// Injected samples for native QA / preview only. They never start a process.
-@MainActor
-enum PreviewCodexUsage {
-    nonisolated static func reading(now: Date = Date()) -> CodexRateLimits {
-        CodexRateLimits(
-            fiveHour: CodexQuotaWindow(usedPercent: 42, resetsAt: now.addingTimeInterval(3_600)),
-            week: CodexQuotaWindow(usedPercent: 68, resetsAt: now.addingTimeInterval(86_400 * 3)),
-            resetAvailableCount: 3,
-            resetCredits: [
-                CodexResetCredit(id: "preview-1", expiresAt: now.addingTimeInterval(86_400 * 2)),
-                CodexResetCredit(id: "preview-2", expiresAt: now.addingTimeInterval(86_400 * 9)),
-                CodexResetCredit(id: "preview-3", expiresAt: nil)
-            ],
-            observedAt: now)
-    }
-
-    static func provider(now: @escaping @Sendable () -> Date = Date.init) -> CodexUsageProvider {
-        CodexUsageProvider(readLimits: { reading(now: now()) }, now: now,
-                           refreshInterval: 3_600, freshnessInterval: 3_600)
-    }
-}

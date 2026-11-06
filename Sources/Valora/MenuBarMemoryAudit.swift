@@ -1,3 +1,4 @@
+#if VALORA_DEVELOPMENT
 import AppKit
 import Darwin
 import Foundation
@@ -21,10 +22,6 @@ enum MenuBarMemoryAudit {
         let sampleStarts: Int
         let sampleCompletions: Int
         let staleSamples: Int
-        let calendarEventStarts: Int
-        let calendarEventCompletions: Int
-        let calendarEventDiscards: Int
-        let calendarEvents: Int
         let calendarPanelVisible: Bool
         let monitorPanelVisible: Bool
         let readerCacheEntries: Int
@@ -45,7 +42,6 @@ enum MenuBarMemoryAudit {
                 let now = Date()
                 var calendar: CalmonCalendarModel? = CalmonCalendarModel(
                     calendar: .current, now: { now },
-                    eventProvider: PreviewCalendarEvents(),
                     readGate: { true }, preview: true)
 
                 let appItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
@@ -277,10 +273,6 @@ enum MenuBarMemoryAudit {
             sampleStarts: monitor.sampleStartCount,
             sampleCompletions: monitor.sampleCompletionCount,
             staleSamples: monitor.staleSampleDiscardCount,
-            calendarEventStarts: calendar.eventReadStartCount,
-            calendarEventCompletions: calendar.eventReadCompletionCount,
-            calendarEventDiscards: calendar.eventReadDiscardCount,
-            calendarEvents: calendar.events.count,
             calendarPanelVisible: controller.isCalendarPanelShown,
             monitorPanelVisible: controller.isMonitorPanelShown,
             readerCacheEntries: reader.iconCacheCount,
@@ -296,10 +288,6 @@ enum MenuBarMemoryAudit {
          "monitorRunning": point.monitorRunning, "monitorSampling": point.monitorSampling,
          "sampleStarts": point.sampleStarts, "sampleCompletions": point.sampleCompletions,
          "staleSamples": point.staleSamples,
-         "calendarEventStarts": point.calendarEventStarts,
-         "calendarEventCompletions": point.calendarEventCompletions,
-         "calendarEventDiscards": point.calendarEventDiscards,
-         "calendarEvents": point.calendarEvents,
          "calendarPanelVisible": point.calendarPanelVisible,
          "monitorPanelVisible": point.monitorPanelVisible,
          "readerCacheEntries": point.readerCacheEntries,
@@ -359,3 +347,4 @@ private final class AuditAppMemoryReader: AppMemoryReading {
     func purge() {}
     func trimCache() {}
 }
+#endif

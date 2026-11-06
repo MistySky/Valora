@@ -16,13 +16,45 @@ protocol SystemMediaProviding: AnyObject {
 
 extension SystemMediaSource: SystemMediaProviding {}
 
+/// One-shot timer seam so the 0.25s playback anchor can be observed without a
+/// real run loop in tests.
+@MainActor
+protocol MediaTickToken: AnyObject {
+    var isRunning: Bool { get }
+    func cancel()
+}
+
+@MainActor
+protocol MediaTickScheduling: AnyObject {
+    func schedule(_ action: @escaping @MainActor () -> Void) -> any MediaTickToken
+}
+
+@MainActor
+final class TimerMediaTickScheduler: MediaTickScheduling {
+    static let interval: TimeInterval = 0.25
+
+    private final class Token: MediaTickToken {
+        private let timer: Timer
+        init(_ timer: Timer) { self.timer = timer }
+        var isRunning: Bool { timer.isValid }
+        func cancel() { timer.invalidate() }
+    }
+
+    func schedule(_ action: @escaping @MainActor () -> Void) -> any MediaTickToken {
+        let timer = Timer.scheduledTimer(withTimeInterval: Self.interval, repeats: true) { _ in
+            MainActor.assumeIsolated { action() }
+        }
+        return Token(timer)
+    }
+}
+
 /// System-only media pipeline. The archived player-specific AppleScript / QQ
 /// branches are intentionally not migrated: this round has one source, the
 /// current macOS Now Playing session, read through the bundled adapter.
 @MainActor
 final class MediaController {
     unowned let model: AppModel
-    private var timer: Timer?
+    private var tickToken: (any MediaTickToken)?
     private let system: any SystemMediaProviding
     private var systemSnapshot: SystemMediaSnapshot?
     private var timeline = SystemMediaTimeline()
@@ -30,19 +62,23 @@ final class MediaController {
     private var isActive = false
     private var retryNotBefore: TimeInterval = 0
     private let retryInterval: TimeInterval
+    private let tickScheduler: any MediaTickScheduling
     private var subscriptions = Set<AnyCancellable>()
     private var tick = 0
     private var commandGeneration: UInt64 = 0
 
     init(_ model: AppModel,
          system: any SystemMediaProviding = SystemMediaSource(),
-         retryInterval: TimeInterval = 1.0) {
+         retryInterval: TimeInterval = 1.0,
+         tickScheduler: any MediaTickScheduling = TimerMediaTickScheduler()) {
         self.model = model
         self.system = system
         self.retryInterval = max(0, retryInterval)
+        self.tickScheduler = tickScheduler
     }
 
     func start() {
+        guard !isActive else { return }      // repeated start must not stack timers
         isActive = true
         commandGeneration &+= 1
         system.onSnapshot = { [weak self] snapshot in self?.applySystem(snapshot) }
@@ -54,11 +90,30 @@ final class MediaController {
             self.retryNotBefore = ProcessInfo.processInfo.systemUptime + self.retryInterval
             self.clearMedia(error: error)
         }
-        model.settings.$nowPlayingEnabled.removeDuplicates().dropFirst().receive(on: RunLoop.main).sink { [weak self] _ in
-            self?.invalidate(); self?.clearMedia(); self?.refresh()
+        model.settings.$nowPlayingEnabled.removeDuplicates().dropFirst().receive(on: RunLoop.main).sink { [weak self] enabled in
+            MainActor.assumeIsolated { self?.applyNowPlayingEnabled(enabled) }
         }.store(in: &subscriptions)
-        refresh()
-        timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
+        applyNowPlayingEnabled(model.settings.nowPlayingEnabled)
+    }
+
+    /// The playback anchor only exists while the module is enabled: turning the
+    /// music switch off cancels the tick immediately, turning it back on restores
+    /// exactly one.
+    private func applyNowPlayingEnabled(_ enabled: Bool) {
+        guard isActive else { return }
+        if enabled {
+            startTickIfNeeded()
+            refresh()
+        } else {
+            stopTick()
+            invalidate()
+            clearMedia()
+        }
+    }
+
+    private func startTickIfNeeded() {
+        guard isActive, tickToken == nil else { return }
+        tickToken = tickScheduler.schedule { [weak self] in
             MainActor.assumeIsolated {
                 guard let self, !self.model.previewMode else { return }
                 if self.systemSnapshot != nil {
@@ -72,11 +127,23 @@ final class MediaController {
         }
     }
 
+    private func stopTick() {
+        tickToken?.cancel()
+        tickToken = nil
+    }
+
     func stop() {
+        guard isActive else { return }   // repeated stop must not touch another cycle
         isActive = false
         commandGeneration &+= 1
-        timer?.invalidate(); timer = nil
+        stopTick()
         invalidate()
+        // A restarted controller registers a fresh preference subscription; the
+        // old one must be cancelled here or every cycle would process the same
+        // change again (one disable → two source stops, growing per restart).
+        subscriptions.removeAll()
+        system.onSnapshot = nil
+        system.onError = nil
     }
 
     func invalidate() {

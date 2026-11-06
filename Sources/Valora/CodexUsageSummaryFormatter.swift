@@ -22,12 +22,14 @@ enum CodexUsageSummaryFormatter {
         time(snapshot.week?.resetsAt, now: now, style: .dateAndTime, calendar: calendar, locale: locale)
     }
 
-    /// `重置卡 2张` — count only; the app never redeems a credit.
+    /// `重置卡 2 张` — count only; the app never redeems a credit. The single
+    /// space before the unit is deliberate: the user reads `2张` as too tight.
+    /// Unknown stays `重置卡 —`, and positive counts and zero share the unit.
     static func resetCredits(_ snapshot: CodexUsageSnapshot) -> String {
         guard let count = snapshot.resetAvailableCount, count >= 0 else {
             return "重置卡 \(placeholder)"
         }
-        return "重置卡 \(count)张"
+        return "重置卡 \(count) 张"
     }
 
     static func percent(_ value: Double?) -> String {
@@ -52,41 +54,5 @@ enum CodexUsageSummaryFormatter {
             formatter.dateFormat = "MM/dd HH:mm"
         }
         return formatter.string(from: date)
-    }
-}
-
-/// One line between the monitor summary and the calendar. Metrics, colour and
-/// margins are identical to `MonitorSummaryCard`; there is no title, icon, ring,
-/// hover or progress bar, and nothing here can redeem a credit.
-struct CodexUsageSummaryRow: View {
-    let snapshot: CodexUsageSnapshot
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Text(CodexUsageSummaryFormatter.fiveHour(snapshot, now: Date()))
-            Text(CodexUsageSummaryFormatter.week(snapshot, now: Date()))
-            Text(CodexUsageSummaryFormatter.resetCredits(snapshot))
-        }
-        .font(UIStyle.Fonts.caption)
-        .foregroundStyle(.secondary)
-        .lineLimit(1)
-        .frame(maxWidth: .infinity, alignment: .center)
-        .padding(UIStyle.Metrics.cardPadding)
-        .background(
-            RoundedRectangle(cornerRadius: UIStyle.Metrics.cardCorner, style: .continuous)
-                .fill(UIStyle.Colors.cardBackground)
-        )
-        .padding(UIStyle.Metrics.contentMargin)
-        .frame(width: UIStyle.Metrics.menuBarPopoverWidth)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(accessibilityText)
-    }
-
-    private var accessibilityText: String {
-        [
-            CodexUsageSummaryFormatter.fiveHour(snapshot, now: Date()),
-            CodexUsageSummaryFormatter.week(snapshot, now: Date()),
-            CodexUsageSummaryFormatter.resetCredits(snapshot)
-        ].joined(separator: "，")
     }
 }

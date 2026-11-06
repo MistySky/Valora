@@ -201,8 +201,7 @@ final class WindowCoordinator {
         }.store(in: &subscriptions)
         Publishers.MergeMany(
             model.settings.$hideWhileInFullscreen.map { _ in () }.eraseToAnyPublisher(),
-            model.settings.$hideWhileInMissionControl.map { _ in () }.eraseToAnyPublisher(),
-            model.settings.$hideWhileGaming.map { _ in () }.eraseToAnyPublisher()
+            model.settings.$hideWhileInMissionControl.map { _ in () }.eraseToAnyPublisher()
         ).sink { [weak self] _ in
             DispatchQueue.main.async {
                 MainActor.assumeIsolated {
@@ -250,9 +249,10 @@ final class WindowCoordinator {
 
     private func applyScreenState() {
         guard let monitor = screenStateMonitor else { return }
+        // Game hiding is fixed off in this product slice; the detection chain is
+        // gone, so only fullscreen and Mission Control can hide the surface.
         let hidden = (monitor.isFullscreen && model.settings.hideWhileInFullscreen)
             || (monitor.isMissionControl && model.settings.hideWhileInMissionControl)
-            || (monitor.isGaming && model.settings.hideWhileGaming)
         let wasHidden = model.screenHidden
         if hidden != model.screenHidden { model.screenHidden = hidden }
         if hidden && !wasHidden {

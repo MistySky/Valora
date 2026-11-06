@@ -1,0 +1,28 @@
+# V0106 isolation & cleanup
+
+## after-run processes (QA host exited)
+69159       38:01 /private/tmp/valora-v0105-calendar-holidays-only-candidate/Valora.app/Contents/MacOS/Valora
+
+## build15 untouched
+PID 69159 /private/tmp/valora-v0105-calendar-holidays-only-candidate/Valora.app/Contents/MacOS/Valora
+3b0284706ccdb881f19aaaf8cedce0d4013fee7535f7617dff01128affdd381f  /private/tmp/valora-v0105-calendar-holidays-only-candidate/Valora.app/Contents/MacOS/Valora
+
+## QA isolation
+- --audit-resources is a debug-only mode; Release rejects it before AppKit (exit 2).
+- QA preferences: com.wangqing.valora.qa (not user settings).
+- Media: AuditSilentMediaSource (no Now Playing read, no command, no network).
+- Lyrics: AuditLyricsProvider (local fixture, word timings).
+- No NSStatusItem, no NSApp.activate, no login item/permission/EventKit/device/lock operation.
+- One WindowCoordinator panel only; measurement ended with NSApp.terminate (exit 0).
+
+## evidence files
+baseline-run1-failed-onepause-tick.json
+baseline.json
+command.txt
+environment.txt
+isolation-cleanup.txt
+samples.csv
+stderr-run2.log
+stderr.log
+stdout-run2.log
+stdout.log

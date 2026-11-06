@@ -1,3 +1,4 @@
+#if VALORA_DEVELOPMENT
 import AppKit
 import SwiftUI
 import ReferenceCore
@@ -242,3 +243,4 @@ enum LyricsVerification {
         }
     }
 }
+#endif

@@ -309,11 +309,12 @@ static ARLockSpaceFunctions ARLoadLockSpaceFunctions(void) {
     NSArray<NSNumber *> *after=[self windowSpaceIDs:number];
     BOOL exclusive=after!=nil && after.count==1 && after.firstObject.unsignedLongLongValue==_s;
     if(!exclusive) {
+        // Roll back to exactly what this attempt found, not to "everything but
+        // the owned space": a repeated mount starts already-exclusive, so its
+        // entry snapshot contains the owned space and must be restored as-is.
         _f.remove(_c,(__bridge CFArrayRef)@[identifier],(__bridge CFArrayRef)@[@(_s)]);
         for(NSNumber *space in captured) {
-            if(space.unsignedLongLongValue!=_s) {
-                _f.add(_c,(__bridge CFArrayRef)@[identifier],(__bridge CFArrayRef)@[space]);
-            }
+            _f.add(_c,(__bridge CFArrayRef)@[identifier],(__bridge CFArrayRef)@[space]);
         }
         NSArray<NSNumber *> *restored=[self windowSpaceIDs:number];
         return @{@"ok":@NO,
@@ -322,7 +323,11 @@ static ARLockSpaceFunctions ARLoadLockSpaceFunctions(void) {
                  @"after":after ?: @"unknown",
                  @"restored":restored ?: @"unknown"};
     }
-    _originals[identifier]=captured;
+    // Keep the FIRST successful capture until detach. A repeated successful
+    // migration starts already-exclusive, so its own snapshot only contains the
+    // owned space; overwriting would lose the desktop memberships we have to
+    // restore on detach. An empty capture is a real value and must be stored.
+    if(_originals[identifier]==nil) _originals[identifier]=captured;
     [_windows addObject:identifier];
     return @{@"ok":@YES,@"space":@(_s),@"query":query,
              @"before":captured,@"after":after};

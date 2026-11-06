@@ -1,3 +1,4 @@
+#if VALORA_DEVELOPMENT
 import AppKit
 import SwiftUI
 import ReferenceCore
@@ -11,6 +12,7 @@ import ReferenceCore
 final class LockCardPreviewController {
     private let model: AppModel
     private var panel: NSPanel?
+    private let activationOwner = LockActivationOwner(registry: .shared)
 
 
     init(_ model: AppModel) { self.model = model }
@@ -59,18 +61,18 @@ final class LockCardPreviewController {
             origin = defaultOrigin
         }
         panel.setFrameOrigin(origin)
-        // The desktop simulation is a *focused* window on purpose: Liquid Glass
-        // only shows its active (refractive) material on the key window. An
-        // accessory (menu-bar) app cannot become active, so the simulation
-        // temporarily takes the regular activation policy; `stop()` restores it.
-        NSApp.setActivationPolicy(.regular)
+        // The desktop simulation is deliberately a focused window: with the
+        // current material, the refractive look appeared while the surface was
+        // key (an observation, not a proven system rule). The preview takes the
+        // regular policy through the shared activation lifetime and gives it
+        // back on `stop()`; the real lock behaviour still needs on-device checks.
+        activationOwner.acquire()
         panel.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
         self.panel = panel
     }
 
     func stop() {
-        if panel != nil { NSApp.setActivationPolicy(.accessory) }
+        if panel != nil { activationOwner.release() }
         panel?.orderOut(nil)
         panel?.contentView = nil
         panel?.close()
@@ -98,3 +100,4 @@ private struct LockCardPreviewRoot: View {
         .frame(width: 385, height: LockMusicCoordinator.canvasHeight, alignment: .top)
     }
 }
+#endif

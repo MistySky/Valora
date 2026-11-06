@@ -100,7 +100,6 @@ final class CalendarHolidayParityTests: XCTestCase {
             calendar: cal,
             now: { self.date(1, hour: 12) },
             timeZoneProvider: { cal.timeZone },
-            eventProvider: EmptyFixtureEvents(),
             readGate: { true }, preview: true)
         model.showMonth(date(1))
         model.select(date(1))
@@ -126,64 +125,27 @@ final class CalendarHolidayParityTests: XCTestCase {
         provider.applyFixture(records: [record("国庆节", from: 1, to: 2), record("国庆节（休）", from: 1, to: 2)],
                               range: DateInterval(start: date(1).addingTimeInterval(-20 * 86_400),
                                                   end: date(31).addingTimeInterval(20 * 86_400)))
-        let events = FixedCalendarEvents([])
         let model = CalmonCalendarModel(provider: provider, calendar: cal, now: { self.date(1, hour: 8) },
-                                        eventProvider: events, readGate: { allowed }, preview: true)
+                                        readGate: { allowed }, preview: true)
         model.start()
         model.select(date(1))
         model.setPanelVisibility(panel: true, calendarModule: true)
         try? await Task.sleep(for: .milliseconds(100))
         XCTAssertEqual(model.weeks.flatMap(\.days).first { cal.isDate($0.date, inSameDayAs: self.date(1)) }?.badge,
                        HolidayProvider.Marker.holiday)
-        let reads = model.eventReadStartCount
         allowed = false
-        model.refreshEvents()
+        model.refreshCalendarHolidays()
         try? await Task.sleep(for: .milliseconds(100))
         XCTAssertNil(model.weeks.flatMap(\.days).first { cal.isDate($0.date, inSameDayAs: self.date(1)) }?.badge,
                      "revoking the read gate must not leave cached holiday badges visible")
-        XCTAssertTrue(model.events.isEmpty)
-        XCTAssertEqual(model.eventReadStartCount, reads, "gate off must not start another event read")
+        XCTAssertTrue(model.detail?.festivals.isEmpty ?? false)
         model.stop()
     }
 
-    func testPersonalEventSameNameIsPreservedWhileSelectedHolidayEventIsExcluded() async {
-        let cal = calendar()
-        let provider = HolidayProvider(calendar: cal, authorizationCheck: { true })
-        provider.applyFixture(records: [record("国庆节", from: 1, to: 2)],
-                              range: DateInterval(start: date(1).addingTimeInterval(-20 * 86_400), end: date(31).addingTimeInterval(20 * 86_400)))
-        let events = FixedCalendarEvents([
-            CalendarEvent(id: "holiday-event", title: "国庆节", start: date(1), end: date(2),
-                          isAllDay: true, calendarIdentifier: "fixture-holiday", calendarTitle: "中国节假日"),
-            CalendarEvent(id: "personal-1", title: "国庆节", start: date(1, hour: 10), end: date(1, hour: 11),
-                          isAllDay: false, calendarIdentifier: "personal", calendarTitle: "个人"),
-            CalendarEvent(id: "personal-2", title: "国庆节", start: date(1, hour: 12), end: date(1, hour: 13),
-                          isAllDay: false, calendarIdentifier: "personal", calendarTitle: "个人")
-        ])
-        let model = CalmonCalendarModel(
-            provider: provider, calendar: cal, now: { self.date(1, hour: 8) },
-            eventProvider: events, readGate: { true }, preview: true)
-        model.start()
-        model.select(date(1))
-        model.setPanelVisibility(panel: true, calendarModule: true)
-        try? await Task.sleep(for: .milliseconds(120))
-        XCTAssertEqual(model.events.map(\.id), ["personal-1", "personal-2"],
-                       "selected holiday-source records are excluded; same-name personal events remain")
-        XCTAssertFalse(model.events.contains { $0.calendarIdentifier == "fixture-holiday" })
-        model.stop()
-    }
+
+
 }
 
-@MainActor
-private final class EmptyFixtureEvents: CalendarEventProviding {
-    func events(on day: Date, calendar: Calendar) async -> [CalendarEvent] { [] }
-}
-
-@MainActor
-private final class FixedCalendarEvents: CalendarEventProviding {
-    let values: [CalendarEvent]
-    init(_ values: [CalendarEvent]) { self.values = values }
-    func events(on day: Date, calendar: Calendar) async -> [CalendarEvent] { values }
-}
 
 @MainActor
 extension CalendarHolidayParityTests {

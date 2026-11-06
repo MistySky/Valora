@@ -1,0 +1,3 @@
+panel screen recorded by the audit:
+{"available": true, "frame": "{{0, 0}, {1728, 1117}}", "maxFramesPerSecond": 120, "name": "Built-in Retina Display", "scale": 2}
+[{"frame": "{{0, 0}, {1728, 1117}}", "maxFramesPerSecond": 120, "name": "Built-in Retina Display", "scale": 2}, {"frame": "{{1728, 37}, {1920, 1080}}", "maxFramesPerSecond": 60, "name": "U2701B", "scale": 2}]

@@ -128,12 +128,12 @@ final class SettingsReductionTests: XCTestCase {
         XCTAssertEqual(SettingsSidebar.groups.map { $0.pages.map(\.displayTitle) }, [
             ["通用"],
             ["音乐", "锁定屏幕", "设备连接"],
-            ["日历", "系统监控"],
+            ["日历", "系统监控", "Codex 用量"],
             ["关于"]
         ])
         XCTAssertEqual(SettingsPage.allCases.map(\.displayTitle),
                        ["通用", "音乐", "锁定屏幕", "设备连接",
-                        "日历", "系统监控", "关于"])
+                        "日历", "系统监控", "Codex 用量", "关于"])
         XCTAssertEqual(SettingsSidebar.orderedPages.count, Set(SettingsSidebar.orderedPages).count)
         XCTAssertFalse(SettingsPage.allCases.map(\.displayTitle).contains("刘海屏"))
         XCTAssertFalse(SettingsPage.allCases.map(\.displayTitle).contains("菜单栏"))

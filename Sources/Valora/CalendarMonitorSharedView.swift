@@ -94,6 +94,16 @@ struct MonitorSummaryCard: View {
     private var codexSnapshot: CodexUsageSnapshot { codex ?? .initial }
     private var now: Date { Date() }
 
+    private var accessibilityText: String {
+        MonitorSummaryAccessibility.label(
+            showsStats: showsStats,
+            codex: codex,
+            stats: MonitorSummaryAccessibility.Stats(
+                memoryTotal: memoryTotal, memoryRemaining: memoryRemaining,
+                diskTotal: diskTotal, diskRemaining: diskRemaining, uptime: uptime),
+            now: now)
+    }
+
     var body: some View {
         // One Grid so both rows share column widths: 内存/5H, 磁盘/WEEK and
         // 已运行/重置卡 line up instead of each row spacing itself.
@@ -125,7 +135,35 @@ struct MonitorSummaryCard: View {
         .padding(UIStyle.Metrics.contentMargin)
         .frame(width: UIStyle.Metrics.menuBarPopoverWidth)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("内存 \(memoryTotal)，剩余 \(memoryRemaining)，磁盘 \(diskTotal)，剩余 \(diskRemaining)，\(uptime)")
+        .accessibilityLabel(accessibilityText)
+    }
+}
+
+/// Accessibility text built from the rows that are really visible: the monitor
+/// row only when `showsStats`, the Codex row only when a snapshot exists. No
+/// fabricated monitor or quota text when a row is absent.
+enum MonitorSummaryAccessibility {
+    struct Stats: Equatable {
+        var memoryTotal: String
+        var memoryRemaining: String
+        var diskTotal: String
+        var diskRemaining: String
+        var uptime: String
+    }
+
+    static func label(showsStats: Bool, codex: CodexUsageSnapshot?, stats: Stats, now: Date) -> String {
+        var parts: [String] = []
+        if showsStats {
+            parts.append("内存 \(stats.memoryTotal)，剩余 \(stats.memoryRemaining)")
+            parts.append("磁盘 \(stats.diskTotal)，剩余 \(stats.diskRemaining)")
+            parts.append(stats.uptime)
+        }
+        if let codex {
+            parts.append(CodexUsageSummaryFormatter.fiveHour(codex, now: now))
+            parts.append(CodexUsageSummaryFormatter.week(codex, now: now))
+            parts.append(CodexUsageSummaryFormatter.resetCredits(codex))
+        }
+        return parts.joined(separator: "，")
     }
 }
 

@@ -270,7 +270,7 @@ struct SettingsView: View {
             SettingsToggleRow(title: "Calendar", value: calendarBinding,
                               symbol: "calendar.badge.clock",
                               blocked: permissions.calendarBlocked,
-                              info: "允许后续在日历中显示系统日程；基础月份和日期不需要此授权。")
+                              info: "允许读取日历中的节假日与休班；基础日期、农历和节气不需要此授权。")
         }
     }
 
@@ -308,7 +308,7 @@ struct SettingsView: View {
                 HStack {
                     Text("Valora").font(.system(size: 15, weight: .semibold))
                     Spacer()
-                    Text(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.2.0")
+                    Text(AppVersion.display)
                         .font(.system(size: 12, design: .monospaced))
                         .foregroundStyle(.secondary)
                 }

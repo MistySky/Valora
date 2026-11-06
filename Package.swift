@@ -28,6 +28,12 @@ let package = Package(
             dependencies: [
                 "NativeBridge", "ReferenceCore"
             ],
+            // Development-only verification suites, audits and preview surfaces
+            // are compiled out of release builds. The users' release app must
+            // not contain their implementations or executable entry points.
+            swiftSettings: [
+                .define("VALORA_DEVELOPMENT", .when(configuration: .debug))
+            ],
             linkerSettings: [
                 .linkedFramework("AppKit"),
                 .linkedFramework("SwiftUI"),

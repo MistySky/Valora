@@ -10,8 +10,8 @@ struct LockMusicCard: View {
     @ObservedObject var settings: RevivalSettings
     var active: Bool
     @Binding var showsVolume: Bool
-    /// Lock colour policy: light glass + wallpaper-dependent ink.
-    var appearance: LockCardAppearance = .standard
+    /// Lock ink palette (white ink on the dark glass surface).
+    var palette: LockCardPalette = .standard
 
     var body: some View {
         // Player first, then the optional lyric row, both inside one stack: the
@@ -20,7 +20,7 @@ struct LockMusicCard: View {
         VStack(spacing: 8) {
             MusicPlayerContent(model: model, settings: settings, width: 345,
                                compensatesForNotch: false, active: active,
-                               translucent: true, palette: appearance.palette,
+                               translucent: true, palette: palette,
                                showsVolume: $showsVolume)
             if settings.musicPreferences.showLyrics, model.lyrics.timeline != nil {
                 CompactLyricsView(model: model, width: max(1, 345 - 36))
@@ -30,7 +30,7 @@ struct LockMusicCard: View {
         }
         .padding(.horizontal, 18).padding(.top, 16).padding(.bottom, 14)
         .frame(width: 345)
-        .foregroundStyle(appearance.palette.primary)
+        .foregroundStyle(palette.primary)
         .background {
             LockGlassSurface(cornerRadius: LockGlassCorner.radius)
         }

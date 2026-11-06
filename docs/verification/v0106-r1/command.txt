@@ -1,0 +1,24 @@
+# V0106-R1 command evidence
+
+## optimized QA build (not shipping Release)
+rm -rf /private/tmp/valora-v0106-r1-scratch
+swift build -c release --scratch-path /private/tmp/valora-v0106-r1-scratch -Xswiftc -DVALORA_DEVELOPMENT
+binary sha256: dc421489b65e3e1aad967efeee6c7c1dafc9914e48e5838a0b5d3ddf23e6c031
+git rev: 9869890 (dirty working tree, uncommitted)
+
+## run (bounded short, ~105 s)
+/private/tmp/valora-v0106-r1-scratch/out/Products/Release/Valora --audit-resources-short docs/verification/v0106-r1
+exit 0; stderr: SHORT BASELINE PASSED
+
+## shipping Release gate (no development define)
+.build/out/Products/Release/Valora --audit-resources-short /tmp/x
+exit 2; development-only flag rejected before AppKit
+
+## shipping Release strip check
+nm ResourceBaselineAudit/AuditTickingMediaSource: 0
+
+## isolation
+- one WindowCoordinator panel on the main display; panel.screen recorded in short-baseline.json
+- AuditTickingMediaSource: local snapshots only, no player read/command/network
+- no NSStatusItem, no NSApp.activate, no permission/login item/EventKit/lock/device operation
+- QA preferences suite com.wangqing.valora.qa

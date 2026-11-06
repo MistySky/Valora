@@ -1,3 +1,4 @@
+#if VALORA_DEVELOPMENT
 import AppKit
 import Darwin
 import Foundation
@@ -19,9 +20,6 @@ enum CalendarPopoverAudit {
         let windowVisible: Bool
         let physical: UInt64
         let resident: UInt64
-        let eventStarts: Int
-        let eventCompletions: Int
-        let eventDiscards: Int
         let closeCount: Int
         let cacheEntries: Int
     }
@@ -45,7 +43,6 @@ enum CalendarPopoverAudit {
                     uptime: "已运行 1 天"))
                 let calendar = CalmonCalendarModel(
                     calendar: .current, now: Date.init,
-                    eventProvider: PreviewCalendarEvents(),
                     readGate: { true }, preview: true)
                 let appItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
                 appItem.button?.setAccessibilityLabel("Valora calendar audit")
@@ -176,9 +173,6 @@ enum CalendarPopoverAudit {
                       windowKey: window?.isKeyWindow ?? false,
                       windowVisible: window?.isVisible ?? false,
                       physical: memory.physical, resident: memory.resident,
-                      eventStarts: calendar.eventReadStartCount,
-                      eventCompletions: calendar.eventReadCompletionCount,
-                      eventDiscards: calendar.eventReadDiscardCount,
                       closeCount: controller.calendarPopoverCloseCount,
                       cacheEntries: 0)
     }
@@ -188,9 +182,6 @@ enum CalendarPopoverAudit {
          "appActive": sample.appActive, "windowKey": sample.windowKey,
          "windowVisible": sample.windowVisible,
          "physicalFootprint": sample.physical, "residentBytes": sample.resident,
-         "calendarEventStarts": sample.eventStarts,
-         "calendarEventCompletions": sample.eventCompletions,
-         "calendarEventDiscards": sample.eventDiscards,
          "calendarPopoverCloseCount": sample.closeCount,
          "cacheEntries": sample.cacheEntries]
     }
@@ -255,3 +246,4 @@ private final class CalendarAuditDiagnostics {
             window: controller.calendarPopoverWindow))
     }
 }
+#endif

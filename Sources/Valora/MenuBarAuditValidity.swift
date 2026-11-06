@@ -1,3 +1,4 @@
+#if VALORA_DEVELOPMENT
 import Foundation
 
 /// Pure validity rule for a continuous popover-memory segment.
@@ -70,3 +71,4 @@ struct ContinuousVisibilityTracker: Equatable {
          "lastSampleAt": lastSampleAt ?? -1]
     }
 }
+#endif

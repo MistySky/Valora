@@ -16,7 +16,7 @@ final class MenuBarModuleControllerTests: XCTestCase {
         let calendar = CalmonCalendarModel(
             calendar: Calendar(identifier: .gregorian),
             now: { Calendar(identifier: .gregorian).date(from: DateComponents(year: 2026, month: 10, day: 25, hour: 12))! },
-            eventProvider: PreviewCalendarEvents(), readGate: { true }, preview: true)
+            readGate: { true }, preview: true)
         let controller = MenuBarModuleController(monitor: monitor, calendar: calendar,
                                                  onSettings: {}, onQuit: {})
         return (monitor, calendar, controller)
@@ -35,7 +35,7 @@ final class MenuBarModuleControllerTests: XCTestCase {
         XCTAssertEqual(controller.makeBasicMenu().items.map(\.title),
                        [AppMenuCommands.versionText, AppMenuCommands.settingsTitle, "", AppMenuCommands.quitTitle])
         XCTAssertFalse(monitor.isRunning)
-        XCTAssertTrue(calendar.events.isEmpty)
+        XCTAssertTrue(calendar.detail?.festivals.isEmpty ?? true)
     }
 
     func testPanelsAreIndependentAndSwitchingClosesTheOther() {

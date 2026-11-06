@@ -91,9 +91,10 @@ final class LockMusicCoordinator: ObservableObject {
     @Published private(set) var visible = false
     @Published private(set) var appeared = false
     @Published var showsVolume = false
-    /// Whether the lock card currently holds the regular activation policy so
-    /// the glass renders in its active (refractive) state instead of the flat
-    /// inactive fallback.
+    /// Owns the temporary activation taken while the card is on screen. The
+    /// previous policy (and the previous frontmost app) are restored conservatively
+    /// on release; see `LockActivationOwner`.
+    private let activationOwner = LockActivationOwner(registry: .shared)
     private var glassActivated = false
 
     private var state = LockMusicState()
@@ -855,25 +856,25 @@ final class LockMusicCoordinator: ObservableObject {
             return
         }
         panel.orderFrontRegardless()
-        // Liquid Glass only renders its refractive (active) material on a key
-        // window; the lock card is the one surface that needs it. The app is an
-        // accessory agent, so it takes the regular policy while the card is up
-        // and gives it back as soon as the card is gone.
+        // In this implementation the material looked refractive only while the
+        // surface was key; that is an observation of this app, not a proven
+        // system rule, and the real lock remains to be verified on device. The
+        // card therefore takes the regular activation policy while it is up and
+        // gives it back through the shared activation lifetime when it leaves.
         activateGlassSurface()
     }
 
     private func activateGlassSurface() {
         guard usePresentationSpace, !glassActivated, NSApp != nil else { return }
         glassActivated = true
-        NSApp.setActivationPolicy(.regular)
-        NSApp.activate(ignoringOtherApps: true)
+        activationOwner.acquire()
         panel?.makeKey()
     }
 
     private func deactivateGlassSurface() {
         guard glassActivated else { return }
         glassActivated = false
-        NSApp?.setActivationPolicy(.accessory)
+        activationOwner.release()
     }
 
     private func cancelHideAndAppearance() {

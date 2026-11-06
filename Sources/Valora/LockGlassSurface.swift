@@ -14,10 +14,11 @@ import ReferenceCore
 /// second layout owner; the glass always receives the final content size.
 ///
 /// Known limitation (documented in
-/// docs/research/liquid-glass-inactive-window-2026-11-04.md): Liquid Glass only
-/// renders its refractive material on a key window, so once the login window
-/// takes focus the lock card falls back to the flat, inactive material. The
-/// reference has the same constraint; forcing a vibrancy material active
+/// docs/research/liquid-glass-inactive-window-2026-11-04.md): **in this
+/// implementation** the refractive material appears while the surface is the key
+/// window, and the flat material appears once the login window takes focus.
+/// That is an observation of this app's rendering, not a proven system rule, and
+/// the real lock state still needs on-device confirmation. Forcing a vibrancy material active
 /// (`NSVisualEffectView.state = .active`) keeps a stable look but is not the
 /// accepted glass, so the glass is used and the degradation is accepted.
 struct LockGlassSurface: NSViewRepresentable {

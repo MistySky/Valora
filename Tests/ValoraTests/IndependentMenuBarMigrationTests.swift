@@ -32,11 +32,17 @@ final class IndependentMenuBarMigrationTests: XCTestCase {
                         "Recreated metrics item must render before a later asynchronous sample")
     }
 
-    func testPublishedCalendarAuthorizationRefreshStartsReadAfterGrant() async {
+    /// The calendar reads only the trusted read-only holiday source. This uses
+    /// the production authorization subscription and a fixture transport; no
+    /// real EventKit store or personal calendar is touched.
+    func testPublishedCalendarAuthorizationRefreshStartsHolidayReadAfterGrant() async {
         let permissions = AppPermissions(bluetooth: .denied, loginItem: .notRegistered,
                                          calendar: .denied)
-        let provider = CountingEvents()
-        let model = CalmonCalendarModel(eventProvider: provider,
+        let transport = holidayTransport()
+        let provider = HolidayProvider(
+            authorizationCheck: { permissions.calendar == .fullAccess },
+            transportFactory: { transport })
+        let model = CalmonCalendarModel(provider: provider,
                                         readGate: { permissions.calendar == .fullAccess })
         model.start()
         model.setPanelVisibility(panel: true, calendarModule: true)
@@ -44,23 +50,14 @@ final class IndependentMenuBarMigrationTests: XCTestCase {
         // willSet, so reading permissions.calendar synchronously observes the
         // previous authorization instead of the emitted grant.
         let subscription = CalendarAuthorizationRefresh.subscribe(permissions) {
-            model.refreshEvents()
+            model.refreshCalendarHolidays()
         }
         permissions.verificationSet(calendar: .fullAccess)
-        for _ in 0..<20 { await Task.yield() }
-        XCTAssertEqual(provider.readCount, 1,
-                       "An already-open calendar must load after permission changes without another click")
+        await waitForRefresh()
+        XCTAssertEqual(transport.eventReadCount, 1,
+                       "An already-open calendar must load holidays after permission changes without another click")
         subscription.cancel()
         model.stop()
-    }
-}
-
-@MainActor
-private final class CountingEvents: CalendarEventProviding {
-    var readCount = 0
-    func events(on day: Date, calendar: Calendar) async -> [CalendarEvent] {
-        readCount += 1
-        return []
     }
 }
 
@@ -68,32 +65,41 @@ private final class CountingEvents: CalendarEventProviding {
 extension IndependentMenuBarMigrationTests {
     func testCalendarAuthorizationRevokeClearsAndStopsWithoutRevivingQueuedGrant() async {
         let permissions = AppPermissions(calendar: .denied)
-        let provider = CountingEvents()
-        let model = CalmonCalendarModel(eventProvider: provider,
+        let transport = holidayTransport()
+        let provider = HolidayProvider(
+            authorizationCheck: { permissions.calendar == .fullAccess },
+            transportFactory: { transport })
+        let model = CalmonCalendarModel(provider: provider,
                                         readGate: { permissions.calendar == .fullAccess })
         model.start()
         model.setPanelVisibility(panel: true, calendarModule: true)
         let subscription = CalendarAuthorizationRefresh.subscribe(permissions) {
-            model.refreshEvents()
+            model.refreshCalendarHolidays()
         }
         defer { subscription.cancel(); model.stop() }
 
         permissions.verificationSet(calendar: .fullAccess)
         await waitForRefresh()
-        XCTAssertEqual(provider.readCount, 1)
+        XCTAssertEqual(transport.eventReadCount, 1)
 
         permissions.verificationSet(calendar: .denied)
         await waitForRefresh()
-        XCTAssertEqual(provider.readCount, 1, "denied must not issue another provider read")
-        XCTAssertTrue(model.events.isEmpty)
-        XCTAssertEqual(model.eventState, .notAvailable)
+        XCTAssertEqual(transport.eventReadCount, 1, "denied must not issue another provider read")
+        XCTAssertTrue(model.detail?.festivals.isEmpty ?? false)
 
         // A stop must reject a queued grant callback rather than revive a closed
         // panel/session.
         model.stop()
         permissions.verificationSet(calendar: .fullAccess)
         await waitForRefresh()
-        XCTAssertEqual(provider.readCount, 1)
+        XCTAssertEqual(transport.eventReadCount, 1)
+    }
+
+    private func holidayTransport() -> FixtureHolidayTransport {
+        FixtureHolidayTransport(calendars: [
+            HolidayCalendarDescriptor(id: "fixture-holiday", title: "中国节假日",
+                                      sourceTitle: "Fixture", isReadOnly: true)
+        ], records: [])
     }
 
     private func waitForRefresh() async {

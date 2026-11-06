@@ -32,8 +32,11 @@ struct CompactLyricsView: View {
         let wordIndex = line.flatMap { line in
             metrics?.currentWord(at: elapsed, line: line)?.index
         }
+        #if VALORA_DEVELOPMENT
+        // Development-only frame probe; the release view has no audit hook.
         LyricsFrameProbe.record(role: auditRole, elapsed: elapsed,
                                 lineStart: line?.start, wordIndex: wordIndex)
+        #endif
         return HStack(spacing: 5) {
             if showsNote { noteIcon }
             if let line, let metrics {

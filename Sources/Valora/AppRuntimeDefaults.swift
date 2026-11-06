@@ -14,6 +14,8 @@ enum AppRuntimeDefaults {
         "--verify-lyrics",
         "--verify-connectivity",
         "--audit-fluidity",
+        "--audit-resources",
+        "--audit-resources-short",
         "--verify-menubar",
         "--verify-settings",
         "--verify-system-media",
@@ -24,7 +26,12 @@ enum AppRuntimeDefaults {
         "--audit-calendar-popover",
         "--audit-calendar-popover-fixed",
         "--audit-calendar-fixed-window",
-        "--verify-calendar-parity"
+        "--verify-calendar-parity",
+        // Development preview/inspection entries that are not part of the
+        // documented verify/audit suites but still must isolate preferences.
+        "--lock-card-preview",
+        "--expand-media",
+        "--preview-long-title"
     ]
 
     static func isQAMode(arguments: [String]) -> Bool {
@@ -38,6 +45,7 @@ enum AppRuntimeDefaults {
         case verifyLyrics
         case verifyConnectivity
         case auditFluidity
+        case auditResources
         case verifyMenuBar
         case verifySettings
         case verifySystemMedia
@@ -49,6 +57,11 @@ enum AppRuntimeDefaults {
         case auditCalendarPopoverFixed
         case auditCalendarFixedWindow
         case verifyCalendarParity
+        /// Desktop lock-card material/layout preview; isolated, no services.
+        case lockCardPreview
+        /// Auxiliary development flag that cannot run without its synthetic
+        /// parent (`--preview-music`); the associated value is the flag itself.
+        case invalidDevelopmentCombination(String)
 
         var isSyntheticPreview: Bool {
             self == .previewMusic || self == .previewSettings || self == .previewMenuBarModules
@@ -61,6 +74,8 @@ enum AppRuntimeDefaults {
         if arguments.contains("--verify-lyrics") { return .verifyLyrics }
         if arguments.contains("--verify-connectivity") { return .verifyConnectivity }
         if arguments.contains("--audit-fluidity") { return .auditFluidity }
+        if arguments.contains("--audit-resources")
+            || arguments.contains("--audit-resources-short") { return .auditResources }
         if arguments.contains("--verify-menubar") { return .verifyMenuBar }
         if arguments.contains("--verify-settings") { return .verifySettings }
         if arguments.contains("--verify-system-media") { return .verifySystemMedia }
@@ -72,6 +87,12 @@ enum AppRuntimeDefaults {
         if arguments.contains("--audit-calendar-popover") { return .auditCalendarPopover }
         if arguments.contains("--preview-settings") { return .previewSettings }
         if arguments.contains("--preview-music") { return .previewMusic }
+        // Standalone development extras. `--preview-music` wins when combined,
+        // because its synthetic preview already expands the panel; the extras
+        // only remain valid as modifiers of that parent.
+        if arguments.contains("--lock-card-preview") { return .lockCardPreview }
+        if arguments.contains("--expand-media") { return .invalidDevelopmentCombination("--expand-media") }
+        if arguments.contains("--preview-long-title") { return .invalidDevelopmentCombination("--preview-long-title") }
         return .production
     }
 

@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 """Package the locally built ARM64 Valora binary; no third-party downloads."""
 from pathlib import Path
-import plistlib, shutil, subprocess, datetime, json, hashlib, argparse
+import plistlib, shutil, subprocess, datetime, json, hashlib, argparse, sys
 
 ROOT = Path(__file__).resolve().parents[1]
-parser = argparse.ArgumentParser()
-parser.add_argument('--binary', required=True, type=Path, help='Binary produced by the current build')
-parser.add_argument('--version', default='0.2.0')
-parser.add_argument('--build', default='1')
-parser.add_argument('--output-dir', type=Path, default=ROOT / 'dist')
-parser.add_argument('--lock-diagnostic-path', default=None, help='Optional LSEnvironment diagnostic path for a single test candidate')
-args = parser.parse_args()
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import package_args  # noqa: E402  (local helper, no third-party code)
+
+# The real packaging entry: arguments plus exactly one monotonic build number.
+args, build_number = package_args.resolve(sys.argv[1:])
 
 binary = args.binary.resolve()
 dist = args.output_dir.resolve()
@@ -89,14 +88,14 @@ info = {
     'CFBundleDisplayName': 'Valora',
     'CFBundlePackageType': 'APPL',
     'CFBundleShortVersionString': args.version,
-    'CFBundleVersion': args.build,
+    'CFBundleVersion': build_number,
     'LSMinimumSystemVersion': '27.0',
     'LSUIElement': True,
     'NSHighResolutionCapable': True,
     # IOBluetooth reads connected accessories to show connection/battery
     # notifications; the key is required by macOS Bluetooth access control.
     'NSBluetoothAlwaysUsageDescription': 'Valora 需要访问蓝牙以检测已连接的 AirPods 并显示连接和电量提示。',
-    'NSCalendarsFullAccessUsageDescription': '用于在日历中显示你的日程。',
+    'NSCalendarsFullAccessUsageDescription': '用于读取日历中的节假日与休班信息。',
     'CFBundleIconFile': 'AppIcon',
 }
 if args.lock_diagnostic_path:

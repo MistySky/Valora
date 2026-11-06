@@ -47,7 +47,7 @@ final class CodexUsageSummaryTests: XCTestCase {
         let snap = snapshot(used5h: 0, reset5h: now, usedWeek: 100, resetWeek: now, credits: 0)
         XCTAssertEqual(CodexUsageSummaryFormatter.percent(snap.fiveHour?.remainingPercent), "100%")
         XCTAssertEqual(CodexUsageSummaryFormatter.percent(snap.week?.remainingPercent), "0%")
-        XCTAssertEqual(CodexUsageSummaryFormatter.resetCredits(snap), "重置卡 0张")
+        XCTAssertEqual(CodexUsageSummaryFormatter.resetCredits(snap), "重置卡 0 张")
     }
 
     // MARK: - Parser fixtures
@@ -106,7 +106,7 @@ final class CodexUsageSummaryTests: XCTestCase {
             CodexUsageSummaryFormatter.resetCredits(snap)
         ]
         // Worst realistic case: 100% and full timestamps.
-        let worst = ["5H 100% 12/31 23:59", "WEEK 100% 12/31 23:59", "重置卡 99张"]
+        let worst = ["5H 100% 12/31 23:59", "WEEK 100% 12/31 23:59", "重置卡 99 张"]
         for set in [tokens, worst] {
             let widths = set.map { text -> CGFloat in
                 (text as NSString).size(withAttributes: [.font: NSFont.systemFont(ofSize: 11)]).width
@@ -211,7 +211,7 @@ final class CodexUsageSummaryTests: XCTestCase {
             (text as NSString).size(withAttributes: [.font: font]).width
         }
         let row1 = ["内存 32 GB 9.0 GB", "磁盘 494.4 GB 263.7 GB", "已运行 2 天"]
-        let row2 = ["5H 100% 12/31 23:59", "WEEK 100% 12/31 23:59", "重置卡 99张"]
+        let row2 = ["5H 100% 12/31 23:59", "WEEK 100% 12/31 23:59", "重置卡 99 张"]
         let columns = (0..<3).map { max(width(row1[$0]), width(row2[$0])) }
         let total = columns.reduce(0, +) + 12 * 2
         // 400 panel - 2*16 content margin - 2*12 card padding = 344pt.

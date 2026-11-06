@@ -1,0 +1,21 @@
+# V0106 command evidence
+
+## build (debug instrumented)
+swift build
+
+debug binary sha256: c2012709143583eabdc657d46430d9dc79bf77bff7c6885275d5a2f16b7ae670
+git rev: 9869890 (dirty working tree)
+
+## run
+.build/out/Products/Debug/Valora --audit-resources docs/verification/v0106
+exit 0; stderr: RESOURCE BASELINE PASSED
+
+## release gate check
+.build/out/Products/Release/Valora --audit-resources /tmp/x
+exit 2; development-only flag rejected before AppKit
+
+## isolation
+- debug-only flag/mode; QA user defaults suite com.wangqing.valora.qa
+- AuditSilentMediaSource: no player read, no command, no network
+- no NSStatusItem, no NSApp.activate, no permission/login item/EventKit/lock/device operation
+- one WindowCoordinator panel on the selected main display

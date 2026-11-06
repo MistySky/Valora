@@ -339,6 +339,11 @@ final class HolidayProvider {
         }
         if let pending = pendingRange, selectedCalendarID != nil, authorizationCheck() {
             pendingRange = nil
+            // A rebuild triggered by this publication can queue the same range;
+            // it is already covered by the result that just landed.
+            if let covered = loadedRange, covered.start <= pending.start, covered.end >= pending.end {
+                return
+            }
             loadEvents(range: pending, calendarID: selectedCalendarID!)
         }
     }

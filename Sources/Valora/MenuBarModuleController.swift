@@ -405,7 +405,7 @@ final class MenuBarModuleController: NSObject, NSPopoverDelegate {
     @objc private func openSettingsFromMenu() { onSettings() }
     @objc private func quitFromMenu() { onQuit() }
 
-    func refreshCalendarEvents() { calendar.refreshEvents() }
+    func refreshCalendarHolidays() { calendar.refreshCalendarHolidays() }
 
     // MARK: - Rendering
 
