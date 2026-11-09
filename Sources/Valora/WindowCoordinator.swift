@@ -57,6 +57,50 @@ final class NotchPanel: NSPanel {
 }
 final class EdgeHostingView: NSHostingView<NotchView> {
     override var safeAreaInsets: NSEdgeInsets { NSEdgeInsetsZero }
+    var trackingSize: CGSize = .zero
+    var onPointerBoundary: (() -> Void)?
+    private var pointerTrackingArea: NSTrackingArea?
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        if let pointerTrackingArea { removeTrackingArea(pointerTrackingArea) }
+        guard trackingSize.width > 0, trackingSize.height > 0 else { return }
+        let rect = CGRect(x: (bounds.width - trackingSize.width) / 2, y: 0,
+                          width: trackingSize.width, height: trackingSize.height)
+        let area = NSTrackingArea(rect: rect,
+                                  options: [.mouseEnteredAndExited, .activeAlways],
+                                  owner: self, userInfo: nil)
+        addTrackingArea(area)
+        pointerTrackingArea = area
+    }
+
+    override func mouseEntered(with event: NSEvent) {
+        onPointerBoundary?()
+        super.mouseEntered(with: event)
+    }
+
+    override func mouseExited(with event: NSEvent) {
+        onPointerBoundary?()
+        super.mouseExited(with: event)
+    }
+}
+
+final class NotchHoverSensorView: NSView {
+    var onPointerEvent: (() -> Void)?
+    private var pointerTrackingArea: NSTrackingArea?
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        if let pointerTrackingArea { removeTrackingArea(pointerTrackingArea) }
+        let area = NSTrackingArea(rect: .zero,
+                                  options: [.mouseEnteredAndExited, .activeAlways, .inVisibleRect],
+                                  owner: self, userInfo: nil)
+        addTrackingArea(area)
+        pointerTrackingArea = area
+    }
+
+    override func mouseEntered(with event: NSEvent) { onPointerEvent?() }
+    override func mouseExited(with event: NSEvent) { onPointerEvent?() }
 }
 
 /// One NSPanel per enabled display. Media content is shared; geometry, pointer,
@@ -133,6 +177,7 @@ final class WindowCoordinator {
         /// AppKit; the coordinator updates the mirror at every place/order call.
         var surfaceFrame: CGRect
         var surfaceVisible = false
+        var hoverSensor: NSPanel?
         init(display: DisplayDescriptor, panel: NotchPanel, geometry: NotchGeometry) {
             self.id = display.id; self.display = display; self.panel = panel; self.geometry = geometry
             self.lastIgnoresMouseEvents = panel.ignoresMouseEvents
@@ -169,8 +214,6 @@ final class WindowCoordinator {
     private(set) var panel: NotchPanel!
     private var panels: [ScreenPanel] = []
     private var active: ScreenPanel!
-    private var globalMonitor: Any?
-    private var localMonitor: Any?
     private var applicationObserver: NSObjectProtocol?
     private var screenObserver: NSObjectProtocol?
     private var subscriptions = Set<AnyCancellable>()
@@ -207,13 +250,6 @@ final class WindowCoordinator {
                     self.model.frontmostBundleIdentifier = bundle
                     self.musicVisibilityChanged()
                 }
-            }
-            globalMonitor = NSEvent.addGlobalMonitorForEvents(matching:[.mouseMoved,.leftMouseDragged]) { [weak self] _ in
-                MainActor.assumeIsolated { self?.queuePointerUpdate() }
-            }
-            localMonitor = NSEvent.addLocalMonitorForEvents(matching:[.mouseMoved,.leftMouseDragged]) { [weak self] event in
-                MainActor.assumeIsolated { self?.queuePointerUpdate() }
-                return event
             }
         }
         screenObserver = NotificationCenter.default.addObserver(forName:NSApplication.didChangeScreenParametersNotification,object:nil,queue:.main) { [weak self] _ in
@@ -373,9 +409,15 @@ final class WindowCoordinator {
                                                        compactOnly:true, geometryOverride:geom,
                                                        allowsDynamic:false))
         host.sizingOptions = []
+        host.onPointerBoundary = { [weak self] in
+            self?.trackMouse(at: NSEvent.mouseLocation)
+        }
         window.contentView = host
         let record = ScreenPanel(display: display, panel: window, geometry: geom)
         record.surfaceFrame = window.frame
+        let sensor = makeHoverSensor(for: record)
+        record.hoverSensor = sensor
+        window.addChildWindow(sensor, ordered: .below)
         record.moveObserver = NotificationCenter.default.addObserver(
             forName: NSWindow.didMoveNotification, object: window, queue: .main) { [weak self, weak window] _ in
                 guard let self, let window,
@@ -389,9 +431,70 @@ final class WindowCoordinator {
     /// is a content/activity swap inside that panel, not a separate full-screen
     /// window or a lower bar. The frame stays screen-top anchored.
     private func panelFrame(for record: ScreenPanel) -> NSRect {
+        // Rendering/animation keeps the accepted 624x320 canvas. Input comes
+        // from the small exact-notch sensor below, so this transparent canvas
+        // does not need to accept desktop mouse events.
         NSRect(x: record.display.frame.midX - 312,
                y: record.display.frame.maxY - 320,
                width: 624, height: 320)
+    }
+
+    private func hoverSensorFrame(for record: ScreenPanel) -> NSRect {
+        let size = trackingSize(for: record)
+        return NSRect(x: record.display.frame.midX - size.width / 2,
+                      y: record.display.frame.maxY - size.height,
+                      width: max(1, size.width), height: max(1, size.height))
+    }
+
+    private func makeHoverSensor(for record: ScreenPanel) -> NSPanel {
+        let frame = hoverSensorFrame(for: record)
+        let sensor = NSPanel(contentRect: frame,
+                             styleMask: [.borderless, .nonactivatingPanel],
+                             backing: .buffered, defer: false)
+        sensor.isOpaque = false
+        sensor.backgroundColor = .clear
+        sensor.hasShadow = false
+        sensor.isMovable = false
+        sensor.isReleasedWhenClosed = false
+        sensor.hidesOnDeactivate = false
+        sensor.canBecomeVisibleWithoutLogin = true
+        sensor.ignoresMouseEvents = false
+        sensor.animationBehavior = .none
+        sensor.level = record.panel.level
+        sensor.collectionBehavior = record.panel.collectionBehavior
+        let view = NotchHoverSensorView(frame: NSRect(origin: .zero, size: frame.size))
+        view.onPointerEvent = { [weak self] in self?.trackMouse(at: NSEvent.mouseLocation) }
+        sensor.contentView = view
+        return sensor
+    }
+
+    private func updateHoverSensor(for record: ScreenPanel) {
+        let frame = hoverSensorFrame(for: record)
+        record.hoverSensor?.setFrame(frame, display: false)
+    }
+
+    private func trackingSize(for record: ScreenPanel) -> CGSize {
+        if record === active {
+            if model.expanded || model.presentation.phase != .collapsed {
+                let visible = model.visibleSize
+                let expanded = model.expandedSize
+                return CGSize(width: max(visible.width, expanded.width),
+                              height: max(visible.height, expanded.height))
+            }
+            return model.visibleSize
+        }
+        return PresentationMetrics.stationarySize(
+            geometry: record.geometry,
+            simulated: model.settings.forceSimulatedNotch,
+            expanded: .none, hasOutput: false, notification: .none,
+            liveActivity: model.showsMusicActivity ? .playing : .none,
+            quickPeek: .none, tuning: .zero)
+    }
+
+    private func updateTrackingSize(for record: ScreenPanel) {
+        guard let host = record.panel.contentView as? EdgeHostingView else { return }
+        host.trackingSize = trackingSize(for: record)
+        host.updateTrackingAreas()
     }
 
     /// Reassert the panel's screen-top edge after ordering, when WindowServer
@@ -478,6 +581,10 @@ final class WindowCoordinator {
                     record.moveObserver = nil
                 }
                 record.panel.orderOut(nil)
+                record.hoverSensor?.orderOut(nil)
+                record.hoverSensor?.contentView = nil
+                record.hoverSensor?.close()
+                record.hoverSensor = nil
                 record.panel.contentView = nil
                 record.panel.close()
             }
@@ -492,6 +599,8 @@ final class WindowCoordinator {
                 record.panel.identifier = NSUserInterfaceItemIdentifier(id)
                 record.panel.setFrame(panelFrame(for: record), display:true)
                 record.surfaceFrame = record.panel.frame
+                updateTrackingSize(for: record)
+                updateHoverSensor(for: record)
             } else {
                 panels.append(makeScreenPanel(display))
             }
@@ -603,13 +712,17 @@ final class WindowCoordinator {
                 continue
             }
             if visible {
-                // The panel is created click-through and only becomes an event
-                // target when the pointer actually enters the notch. Re-arming
-                // accept-events here on every visibility update used to undo the
-                // pointer leave state and make the transparent 624x320 host
-                // receive unrelated desktop mouse traffic.
-                // The child sensor is ordered first so it is present after a
-                // previous orderOut; the parent is then brought above it.
+                // The small exact-notch sensor receives re-entry while the
+                // panel is click-through; the full 624x320 canvas remains for
+                // the accepted animation, but only becomes an event target
+                // while the pointer is actually inside the notch.
+                record.panel.ignoresMouseEvents = !record.pointerInside
+                record.lastIgnoresMouseEvents = !record.pointerInside
+                record.panel.setFrame(panelFrame(for: record), display: false)
+                record.surfaceFrame = record.panel.frame
+                updateTrackingSize(for: record)
+                updateHoverSensor(for: record)
+                record.hoverSensor?.orderFrontRegardless()
                 record.panel.orderFrontRegardless()
                 record.surfaceVisible = true
                 anchorPanelTop(record)
@@ -847,7 +960,8 @@ final class WindowCoordinator {
         guard model.notchSurfaceOnScreen || model.isSessionLocked else { return }
         if model.isSessionLocked {
             for record in panels {
-                record.setIgnoresMouseEvents(true)
+                record.panel.ignoresMouseEvents = true
+                record.lastIgnoresMouseEvents = true
                 record.pointerInside = false
                 cancelPendingHover(record)
             }
@@ -1022,12 +1136,13 @@ final class WindowCoordinator {
                 record.moveObserver = nil
             }
             record.panel.orderOut(nil)
+            record.hoverSensor?.orderOut(nil)
+            record.hoverSensor?.contentView = nil
+            record.hoverSensor?.close()
             record.panel.contentView = nil
             record.panel.close()
         }
         if let applicationObserver { NSWorkspace.shared.notificationCenter.removeObserver(applicationObserver) }
-        if let globalMonitor { NSEvent.removeMonitor(globalMonitor) }
-        if let localMonitor { NSEvent.removeMonitor(localMonitor) }
         if let screenObserver { NotificationCenter.default.removeObserver(screenObserver) }
         screenStateMonitor?.stop()
     }
