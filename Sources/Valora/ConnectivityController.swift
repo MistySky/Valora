@@ -339,8 +339,14 @@ final class ConnectivityController {
         }
         lastActiveAirPodsIDs = rawActiveAirPodsIDs
         lastActiveAudioID = activeAudioID
-        model.devices = devices
-        model.audioOutput = snapshot.output
+        // Display data is only re-published when the rendered row actually
+        // changes. The 3s poll returns the same devices/output most of the
+        // time, and every assignment above invalidates the shared summary,
+        // the lock coordinator and the notch. Business decisions below always
+        // run on the fresh snapshot, so arrivals, pending connections, low
+        // battery edges and disconnect cleanup keep their existing timing.
+        if model.devices != devices { model.devices = devices }
+        if model.audioOutput != snapshot.output { model.audioOutput = snapshot.output }
         let preferences = model.settings.connectivityPreferences
 
         var lowDevice: AudioDevice?

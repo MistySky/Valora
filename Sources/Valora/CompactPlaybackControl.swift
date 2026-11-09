@@ -259,17 +259,27 @@ final class CompactWaveformView: NSView {
         super.viewDidMoveToWindow()
         synchronizeTimer()
     }
+    /// `window != nil` is not visibility: the notch panel is ordered out for
+    /// fullscreen/Mission Control hiding while this view keeps its window.
+    /// AppKit posts no reliable order/occlusion notification for these
+    /// borderless panels (verified: the occlusion notification never fired in
+    /// an isolated window test), so visibility is re-checked by the mount path
+    /// and by the clock itself instead of an observer.
+    private var windowOnScreen: Bool { window?.isVisible == true }
     func stop() {
         registered = false
         WaveformClock.shared.unregister(self)
     }
     private func synchronizeTimer() {
-        guard window != nil,playing,!reducedMotion,!suspended else { stop(); return }
+        guard windowOnScreen,playing,!reducedMotion,!suspended else { stop(); return }
         registered = true
         WaveformClock.shared.register(self,duration:CompactWaveformMetrics.duration)
     }
     fileprivate func clockTick() {
         guard registered,playing,!reducedMotion,!suspended else { return }
+        // Self-healing: a panel ordered out without a notification must stop
+        // at the next tick instead of animating an invisible surface.
+        guard windowOnScreen else { stop(); return }
         let tick = UInt64(max(0,(CACurrentMediaTime()-WaveformClock.epoch)/CompactWaveformMetrics.duration))
         guard tick != lastTick else { return }
         lastTick = tick

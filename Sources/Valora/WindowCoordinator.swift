@@ -62,6 +62,52 @@ final class EdgeHostingView: NSHostingView<NotchView> {
 /// One NSPanel per enabled display. Media content is shared; geometry, pointer,
 /// hover and panel ownership are per screen. Only the active screen renders the
 /// dynamic player surface; passive screens stay compact but remain interactive.
+#if VALORA_DEVELOPMENT
+/// Debug seam: proves the conservative prefilter actually skipped the expensive
+/// `NotchShape.path(in:)` construction, and that near points still use it.
+@MainActor
+enum NotchHitTestDiagnostics {
+    private(set) static var pathConstructions = 0
+    private(set) static var prefilterExclusions = 0
+    private(set) static var coarseExclusions = 0
+    static func reset() {
+        pathConstructions = 0
+        prefilterExclusions = 0
+        coarseExclusions = 0
+    }
+    static func recordPathConstruction() { pathConstructions += 1 }
+    static func recordPrefilterExclusion() { prefilterExclusions += 1 }
+    static func recordCoarseExclusion() { coarseExclusions += 1 }
+}
+
+/// Debug observability: counts real `ignoresMouseEvents` window assignments at
+/// the dedup helper site. `assignments` can only increase when the NSWindow
+/// setter was actually invoked; `skippedUnchanged` counts events whose target
+/// already matched the window's live property.
+@MainActor
+enum PointerStateDiagnostics {
+    private(set) static var assignments = 0
+    private(set) static var skippedUnchanged = 0
+    static func reset() {
+        assignments = 0
+        skippedUnchanged = 0
+    }
+    static func recordAssignment() { assignments += 1 }
+    static func recordSkipped() { skippedUnchanged += 1 }
+}
+#endif
+
+/// Stable key for the exact hit-test path. CGFloat values compare exactly
+/// because they are derived from the same geometry model that supplies the
+/// path; a changed shape must rebuild the path.
+private struct HoverPathKey: Equatable {
+    let width: CGFloat
+    let height: CGFloat
+    let topRadius: CGFloat
+    let bottomRadius: CGFloat
+    let style: Int
+}
+
 @MainActor
 final class WindowCoordinator {
     private final class ScreenPanel {
@@ -73,8 +119,48 @@ final class WindowCoordinator {
         var pendingHover: DispatchWorkItem?
         var hoverGeneration = 0
         var moveObserver: NSObjectProtocol?
+        /// Cache the exact notch path for the current geometry. The path is
+        /// only rebuilt when size/radii/style change, not on every mouse move.
+        var hoverPathKey: HoverPathKey?
+        var hoverPath: CGPath?
+        /// Cached target of `panel.ignoresMouseEvents`. All coordinator paths
+        /// that change it update this value; explicitly marked dirty when a
+        /// test/other path writes the real window property behind our back.
+        var lastIgnoresMouseEvents = true
+        var ignoresMouseEventsDirty = false
+        /// Hot-path mirror of the window frame/visibility. Reading these two
+        /// NSPanel properties on every global mouse event still crosses into
+        /// AppKit; the coordinator updates the mirror at every place/order call.
+        var surfaceFrame: CGRect
+        var surfaceVisible = false
         init(display: DisplayDescriptor, panel: NotchPanel, geometry: NotchGeometry) {
             self.id = display.id; self.display = display; self.panel = panel; self.geometry = geometry
+            self.lastIgnoresMouseEvents = panel.ignoresMouseEvents
+            self.surfaceFrame = panel.frame
+        }
+
+        @MainActor
+        func markIgnoresMouseEventsDirty() {
+            ignoresMouseEventsDirty = true
+        }
+
+        @MainActor
+        func setIgnoresMouseEvents(_ value: Bool) {
+            if ignoresMouseEventsDirty {
+                lastIgnoresMouseEvents = panel.ignoresMouseEvents
+                ignoresMouseEventsDirty = false
+            }
+            guard lastIgnoresMouseEvents != value else {
+                #if VALORA_DEVELOPMENT
+                PointerStateDiagnostics.recordSkipped()
+                #endif
+                return
+            }
+            lastIgnoresMouseEvents = value
+            panel.ignoresMouseEvents = value
+            #if VALORA_DEVELOPMENT
+            PointerStateDiagnostics.recordAssignment()
+            #endif
         }
     }
 
@@ -123,10 +209,10 @@ final class WindowCoordinator {
                 }
             }
             globalMonitor = NSEvent.addGlobalMonitorForEvents(matching:[.mouseMoved,.leftMouseDragged]) { [weak self] _ in
-                MainActor.assumeIsolated { self?.trackMouse() }
+                MainActor.assumeIsolated { self?.queuePointerUpdate() }
             }
             localMonitor = NSEvent.addLocalMonitorForEvents(matching:[.mouseMoved,.leftMouseDragged]) { [weak self] event in
-                MainActor.assumeIsolated { self?.trackMouse() }
+                MainActor.assumeIsolated { self?.queuePointerUpdate() }
                 return event
             }
         }
@@ -289,6 +375,7 @@ final class WindowCoordinator {
         host.sizingOptions = []
         window.contentView = host
         let record = ScreenPanel(display: display, panel: window, geometry: geom)
+        record.surfaceFrame = window.frame
         record.moveObserver = NotificationCenter.default.addObserver(
             forName: NSWindow.didMoveNotification, object: window, queue: .main) { [weak self, weak window] _ in
                 guard let self, let window,
@@ -316,6 +403,7 @@ final class WindowCoordinator {
         if record.panel.frame != target {
             record.panel.setFrame(target, display: false)
         }
+        record.surfaceFrame = record.panel.frame
         recordDiagnostic(record, reason: "anchor", panelBefore: before)
     }
 
@@ -403,6 +491,7 @@ final class WindowCoordinator {
                 record.geometry = geom
                 record.panel.identifier = NSUserInterfaceItemIdentifier(id)
                 record.panel.setFrame(panelFrame(for: record), display:true)
+                record.surfaceFrame = record.panel.frame
             } else {
                 panels.append(makeScreenPanel(display))
             }
@@ -472,7 +561,10 @@ final class WindowCoordinator {
     }
 
     private func updateVisibility() {
-        guard !panels.isEmpty else { return }
+        guard !panels.isEmpty else {
+            if model.notchSurfaceOnScreen { model.notchSurfaceOnScreen = false }
+            return
+        }
         let lockVisible = model.showsLockActivity
         // During the lock-collapse stage the ordinary surface remains visible
         // while it animates closed. Hiding here would make the notch disappear
@@ -483,6 +575,10 @@ final class WindowCoordinator {
             && (!model.settings.hideWhenIdle || model.showsMusicActivity
                 || model.expanded || model.connectionToast != nil || lockVisible
                 || model.isLockTransitioning || model.isLockNeutralGeometry)
+        // Continuous content (compact lyrics timeline, waveform) checks this to
+        // avoid animating an ordered-out panel. Published only on change so it
+        // never becomes a per-refresh invalidation source itself.
+        if model.notchSurfaceOnScreen != visible { model.notchSurfaceOnScreen = visible }
         for record in panels {
             record.panel.sharingType = model.settings.hideFromScreenCapture ? .none : .readOnly
             if model.isSessionLocked, model.lockNotchMounted,
@@ -490,6 +586,8 @@ final class WindowCoordinator {
                record.id != LockDisplayPolicy.select(from: displayProvider())?.id {
                 record.panel.orderOut(nil)
                 record.panel.ignoresMouseEvents = true
+                record.lastIgnoresMouseEvents = true
+                record.surfaceVisible = false
                 continue
             }
             // The dedicated lock overlay owns the top surface while the real
@@ -500,11 +598,20 @@ final class WindowCoordinator {
                 record.pointerInside = false
                 record.panel.orderOut(nil)
                 record.panel.ignoresMouseEvents = true
+                record.lastIgnoresMouseEvents = true
+                record.surfaceVisible = false
                 continue
             }
             if visible {
-                record.panel.ignoresMouseEvents = model.isSessionLocked
+                // The panel is created click-through and only becomes an event
+                // target when the pointer actually enters the notch. Re-arming
+                // accept-events here on every visibility update used to undo the
+                // pointer leave state and make the transparent 624x320 host
+                // receive unrelated desktop mouse traffic.
+                // The child sensor is ordered first so it is present after a
+                // previous orderOut; the parent is then brought above it.
                 record.panel.orderFrontRegardless()
+                record.surfaceVisible = true
                 anchorPanelTop(record)
                 if record === active { recordDiagnostic(record, reason: "visibility") }
             } else {
@@ -512,6 +619,8 @@ final class WindowCoordinator {
                 record.pointerInside = false
                 record.panel.orderOut(nil)
                 record.panel.ignoresMouseEvents = true
+                record.lastIgnoresMouseEvents = true
+                record.surfaceVisible = false
             }
         }
         if !visible || model.isSessionLocked {
@@ -521,8 +630,28 @@ final class WindowCoordinator {
 
     // MARK: - Pointer / hover
 
+    /// Screen-space superset of the visible shape. Checking this before asking
+    /// the model for its presentation size/contour keeps the common case (the
+    /// pointer is anywhere else on the desktop) independent of SwiftUI geometry
+    /// and path construction. The margin covers the notch shoulders/hover scale
+    /// and only makes the prefilter more permissive.
+    static let coarseHoverMargin: CGFloat = 96
+
+    static func coarseHoverBounds(for panelFrame: CGRect) -> CGRect? {
+        guard !panelFrame.isNull, !panelFrame.isEmpty,
+              panelFrame.width.isFinite, panelFrame.height.isFinite else { return nil }
+        return panelFrame.insetBy(dx: -coarseHoverMargin, dy: -coarseHoverMargin)
+    }
+
     private func containsMouse(_ record: ScreenPanel, point: NSPoint) -> Bool {
-        guard record.panel.isVisible else { return false }
+        guard record.surfaceVisible else { return false }
+        if let bounds = Self.coarseHoverBounds(for: record.surfaceFrame),
+           !bounds.contains(point) {
+            #if VALORA_DEVELOPMENT
+            NotchHitTestDiagnostics.recordCoarseExclusion()
+            #endif
+            return false
+        }
         let size: CGSize
         let contour: NotchContour
         let scale: CGSize
@@ -540,8 +669,52 @@ final class WindowCoordinator {
                 visibleHeight:size.height)
             scale = CGSize(width:1,height:1)
         }
-        return Self.containsMouse(point:point, panelFrame:record.panel.frame,
-                                  size:size, contour:contour, scale:scale)
+        let local = NotchHoverMetrics.localPoint(
+            centeredX: point.x - record.surfaceFrame.midX,
+            topY: record.surfaceFrame.maxY - point.y - contour.topInset,
+            size: size, scale: scale)
+        let validScale = scale.width.isFinite && scale.height.isFinite
+            && scale.width > 0 && scale.height > 0
+        guard validScale else {
+            return exactCachedContainsMouse(localPoint: local, size: size,
+                                            contour: contour, record: record)
+        }
+        if let bounds = Self.conservativeHoverBounds(size: size, contour: contour),
+           Self.isStrictlyOutside(bounds, local) {
+            #if VALORA_DEVELOPMENT
+            NotchHitTestDiagnostics.recordPrefilterExclusion()
+            #endif
+            return false
+        }
+        return exactCachedContainsMouse(localPoint: local, size: size,
+                                        contour: contour, record: record)
+    }
+
+    private func exactCachedContainsMouse(localPoint: CGPoint, size: CGSize,
+                                          contour: NotchContour,
+                                          record: ScreenPanel) -> Bool {
+        let key = HoverPathKey(width: size.width, height: size.height,
+                               topRadius: contour.topRadius,
+                               bottomRadius: contour.bottomRadius,
+                               style: contour.style == .pill ? 0 : 1)
+        let path: CGPath
+        if let cached = record.hoverPath, record.hoverPathKey == key {
+            path = cached
+        } else {
+            #if VALORA_DEVELOPMENT
+            NotchHitTestDiagnostics.recordPathConstruction()
+            #endif
+            path = NotchShape(topRadius: contour.topRadius,
+                              bottomRadius: contour.bottomRadius,
+                              style: contour.style)
+                .path(in: CGRect(origin: .zero, size: size)).cgPath
+            record.hoverPathKey = key
+            record.hoverPath = path
+        }
+        // CoreGraphics' cached CGPath contains is substantially cheaper than
+        // SwiftUI's Path.contains/RenderBox bridge, and keeps the same nonzero
+        // winding rule used by the SwiftUI path here.
+        return path.contains(localPoint, using: .winding)
     }
 
     static func containsMouse(point: CGPoint, panelFrame: CGRect, size: CGSize,
@@ -550,22 +723,131 @@ final class WindowCoordinator {
             centeredX:point.x-panelFrame.midX,
             topY:panelFrame.maxY-point.y-contour.topInset,
             size:size,scale:scale)
-        return NotchShape(topRadius: contour.topRadius, bottomRadius: contour.bottomRadius, style: contour.style)
-            .path(in: CGRect(origin: .zero, size: size)).contains(local)
+        // A non-finite/non-positive hover scale is abnormal input: skip the
+        // prefilter and keep the original exact path decision.
+        let validScale = scale.width.isFinite && scale.height.isFinite
+            && scale.width > 0 && scale.height > 0
+        guard validScale else {
+            return preciseContainsMouse(localPoint: local, size: size, contour: contour)
+        }
+        return Self.containsMouse(localPoint: local, size: size, contour: contour)
     }
 
     static func containsMouse(localPoint: CGPoint, size: CGSize, contour: NotchContour) -> Bool {
-        NotchShape(topRadius: contour.topRadius, bottomRadius: contour.bottomRadius, style: contour.style)
+        // ±∞ satisfies a strict `<`/`>` comparison and NaN can let the other
+        // coordinate decide, so non-finite points must never be prefiltered.
+        guard localPoint.x.isFinite, localPoint.y.isFinite else {
+            return preciseContainsMouse(localPoint: localPoint, size: size, contour: contour)
+        }
+        if let bounds = conservativeHoverBounds(size: size, contour: contour),
+           isStrictlyOutside(bounds, localPoint) {
+            #if VALORA_DEVELOPMENT
+            NotchHitTestDiagnostics.recordPrefilterExclusion()
+            #endif
+            return false
+        }
+        return preciseContainsMouse(localPoint: localPoint, size: size, contour: contour)
+    }
+
+    /// The expensive branch: building `NotchShape.path(in:)` and evaluating
+    /// `Path.contains`. Only reached for points inside the conservative range
+    /// or when the geometry is abnormal.
+    private static func preciseContainsMouse(localPoint: CGPoint, size: CGSize,
+                                             contour: NotchContour) -> Bool {
+        #if VALORA_DEVELOPMENT
+        NotchHitTestDiagnostics.recordPathConstruction()
+        #endif
+        return NotchShape(topRadius: contour.topRadius, bottomRadius: contour.bottomRadius, style: contour.style)
             .path(in: CGRect(origin: .zero, size: size)).contains(localPoint)
+    }
+
+    /// Conservative axis-aligned superset of `NotchShape.path(in:)` for the
+    /// same rect. Returns nil for non-finite or implausible geometry so the
+    /// caller always falls back to the exact path.
+    private static func conservativeHoverBounds(size: CGSize, contour: NotchContour) -> CGRect? {
+        let width = size.width, height = size.height
+        guard width.isFinite, height.isFinite, width > 0, height > 0,
+              width <= 1_000_000, height <= 1_000_000,
+              contour.topRadius.isFinite, contour.bottomRadius.isFinite,
+              contour.topRadius >= 0, contour.bottomRadius >= 0 else { return nil }
+        switch contour.style {
+        case .pill:
+            // Continuous rounded rect: always inside its own rect.
+            return CGRect(origin: .zero, size: size)
+        case .notch:
+            // Mirrors NotchShape's own clamping, without building the path.
+            let b = max(0, min(contour.bottomRadius, min(width / 2, height)))
+            let t = max(0, min(contour.topRadius, min(24, height - b)))
+            guard b.isFinite, t.isFinite else { return nil }
+            // Body [0,width]x[0,height] plus each top shoulder rect extending
+            // 2*t sideways and 2*t down from the top edge.
+            let extensionX = 2 * t
+            return CGRect(x: -extensionX, y: 0,
+                          width: width + 2 * extensionX,
+                          height: max(height, extensionX))
+        }
+    }
+
+    /// Strictly outside only: the shoulder/body boundary itself still goes
+    /// through the original path check.
+    private static func isStrictlyOutside(_ bounds: CGRect, _ point: CGPoint) -> Bool {
+        point.x < bounds.minX || point.x > bounds.maxX
+            || point.y < bounds.minY || point.y > bounds.maxY
     }
 
     private func trackMouse() { trackMouse(at: NSEvent.mouseLocation) }
 
+    private var pointerUpdateScheduled = false
+    private var pointerUpdateWork: DispatchWorkItem?
+    private var lastPointerUpdate: TimeInterval = 0
+    private static let pointerUpdateInterval: TimeInterval = 1.0 / 120.0
+
+    /// Coalesce the high-frequency global/local mouse stream to one update per
+    /// display-refresh interval. The event callback stays tiny; the latest
+    /// NSEvent.mouseLocation is read only when the update actually runs.
+    private func queuePointerUpdate() {
+        guard !pointerUpdateScheduled else { return }
+        pointerUpdateScheduled = true
+        let now = ProcessInfo.processInfo.systemUptime
+        let delay = max(0, Self.pointerUpdateInterval - (now - lastPointerUpdate))
+        let work = DispatchWorkItem { [weak self] in
+            guard let self else { return }
+            self.pointerUpdateScheduled = false
+            self.pointerUpdateWork = nil
+            self.lastPointerUpdate = ProcessInfo.processInfo.systemUptime
+            self.trackMouse(at: NSEvent.mouseLocation)
+        }
+        pointerUpdateWork = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)
+    }
+
+    /// Idempotent window-state write used by the per-event pointer path: read
+    /// the window's live `ignoresMouseEvents` and assign only when it would
+    /// actually change, so repeated mouse moves no longer re-issue identical
+    /// `SLSSetWindowEventMask` calls. There is no cached shadow value — paths
+    /// outside this helper may assign directly, and the next event reads the
+    /// real property again and corrects it if needed.
+    @discardableResult
+    static func setIgnoresMouseEvents(of panel: NSPanel, _ value: Bool) -> Bool {
+        if panel.ignoresMouseEvents == value {
+            #if VALORA_DEVELOPMENT
+            PointerStateDiagnostics.recordSkipped()
+            #endif
+            return false
+        }
+        panel.ignoresMouseEvents = value
+        #if VALORA_DEVELOPMENT
+        PointerStateDiagnostics.recordAssignment()
+        #endif
+        return true
+    }
+
     private func trackMouse(at point: NSPoint) {
         guard !model.pointerInteractionActive else { return }
+        guard model.notchSurfaceOnScreen || model.isSessionLocked else { return }
         if model.isSessionLocked {
             for record in panels {
-                record.panel.ignoresMouseEvents = true
+                record.setIgnoresMouseEvents(true)
                 record.pointerInside = false
                 cancelPendingHover(record)
             }
@@ -574,7 +856,7 @@ final class WindowCoordinator {
         }
         for record in panels {
             let inside = containsMouse(record, point: point)
-            record.panel.ignoresMouseEvents = !inside
+            record.setIgnoresMouseEvents(!inside)
             if inside {
                 if record !== active { activate(record) }
                 if !record.pointerInside {
@@ -677,6 +959,17 @@ final class WindowCoordinator {
     }
     func verificationTrackChanged(identity: String?) { handleTrackChanged(identity) }
     func verificationTrackMouse(at point: CGPoint) { trackMouse(at: point) }
+    /// Real window property reads/writes for the mouse-receive-state dedup:
+    /// the setter here bypasses the idempotent helper to mimic another path.
+    func verificationIgnoresMouseEvents(screenID: String) -> Bool? {
+        guard let record = panels.first(where: { $0.id == screenID }) else { return nil }
+        return record.panel.ignoresMouseEvents
+    }
+    func verificationSetIgnoresMouseEvents(screenID: String, _ value: Bool) {
+        guard let record = panels.first(where: { $0.id == screenID }) else { return }
+        record.panel.ignoresMouseEvents = value
+        record.markIgnoresMouseEventsDirty()
+    }
     func verificationPanelIsActive(_ id: String) -> Bool { active?.id == id }
     func verificationContains(screenID: String, point: CGPoint) -> Bool {
         guard let record = panels.first(where: { $0.id == screenID }) else { return false }
@@ -719,6 +1012,8 @@ final class WindowCoordinator {
     }
 
     isolated deinit {
+        pointerUpdateWork?.cancel()
+        pointerUpdateWork = nil
         model.trackChangedHandler = nil
         for record in panels {
             record.pendingHover?.cancel()

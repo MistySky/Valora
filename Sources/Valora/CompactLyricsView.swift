@@ -19,50 +19,52 @@ struct CompactLyricsView: View {
     /// QA-only role tag; production views use the default active role.
     var auditRole: String = "active"
     @State private var metricsCache = LyricMetricsCache()
+    @State private var frameCache = LyricsLineFrameCache()
 
     private var availableWidth: CGFloat { max(1, width - (showsNote ? 22 : 0)) }
 
-    private func lineEnd(for line: LyricLine) -> TimeInterval {
-        let timeline = model.lyrics.timeline
-        let next = timeline?.lines.first(where: { $0.start > line.start })?.start
-        if let next { return next }
-        return max(line.start + 8, model.duration > line.start ? model.duration : line.start + 8)
-    }
+    /// Built once instead of once per 30Hz frame.
+    private static let lineTransition: AnyTransition = .asymmetric(
+        insertion: .offset(y: 26).combined(with: .opacity),
+        removal: .offset(y: -26).combined(with: .opacity))
 
     private func lineView(_ line: LyricLine?, elapsed: TimeInterval) -> some View {
-        let metrics = line.map { metricsCache.metrics(for: $0, identity: model.lyrics.identity) }
-        let isLong = (metrics?.totalWidth ?? 0) > availableWidth
-        let wordIndex = line.flatMap { line in
-            metrics?.currentWord(at: elapsed, line: line)?.index
+        // Everything except the interpolated word progress is identical for
+        // every frame of this line; the cache prepares it once and the 30Hz
+        // frame only reads it.
+        let frame = frameCache.frame(for: line, duration: model.duration,
+                                     identity: model.lyrics.identity,
+                                     timeline: model.lyrics.timeline,
+                                     width: availableWidth, metricsCache: metricsCache)
+        let current = line.flatMap { line in
+            frame.metrics?.currentWord(at: elapsed, line: line)
         }
         #if VALORA_DEVELOPMENT
         // Development-only frame probe; the release view has no audit hook.
         LyricsFrameProbe.record(role: auditRole, elapsed: elapsed,
-                                lineStart: line?.start, wordIndex: wordIndex)
+                                lineStart: line?.start, wordIndex: current?.index)
         #endif
         return HStack(spacing: 5) {
             if showsNote { noteIcon }
-            if let line, let metrics {
+            if let line, let metrics = frame.metrics {
                 LyricsLineContent(line: line, metrics: metrics, availableWidth: availableWidth,
                                   accent: model.lyricsAccentColor, elapsed: elapsed,
-                                  lineEnd: lineEnd(for: line),
-                                  fillContainer: isLong)
-                    .id("\(line.start)-\(line.text)")
-                    .transition(.asymmetric(
-                        insertion: .offset(y: 26).combined(with: .opacity),
-                        removal: .offset(y: -26).combined(with: .opacity)))
+                                  current: current, lineEnd: frame.lineEnd,
+                                  fillContainer: frame.isLong)
+                    .id(frame.key)
+                    .transition(Self.lineTransition)
             } else if !centersNoteWhenEmpty {
                 Color.clear.frame(width: availableWidth, height: 17)
             }
         }
         .foregroundStyle(.gray)
-        .frame(width: max(1, width), height: rowHeight, alignment: isLong ? .leading : .center)
+        .frame(width: max(1, width), height: rowHeight, alignment: frame.isLong ? .leading : .center)
         .padding(.horizontal, horizontalInset)
         .clipped()
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(line.map { "歌词，\($0.text)" } ?? "歌词")
+        .accessibilityLabel(frame.label)
         .accessibilityIdentifier("compact.lyrics")
-        .animation(.easeInOut(duration: 0.2), value: line.map { "\($0.start)-\($0.text)" })
+        .animation(.easeInOut(duration: 0.2), value: frame.key)
     }
 
     private var noteIcon: some View {
@@ -144,18 +146,106 @@ final class LyricMetricsCache {
     }
 }
 
+/// Prepared per-line display data. The 30Hz lyric frame only interpolates the
+/// word progress; the measured widths, the line end, the accessibility label
+/// and the transition identity are the same for every frame of the line, so
+/// they are rebuilt only when the line (or its inputs) actually changes.
+///
+/// The successor boundary is re-derived from the *current* timeline on every
+/// call: an earlier/later inserted line can change the line end without
+/// changing the line count or the old successor slot, so those local features
+/// cannot prove the boundary is unchanged. The lookup is a binary search, not
+/// a per-frame scan or string/hash build.
+final class LyricsLineFrameCache {
+    struct Frame {
+        let metrics: LyricsLineMetrics?
+        let isLong: Bool
+        let lineEnd: TimeInterval
+        let label: String
+        let key: String
+    }
+
+    private struct Entry {
+        let line: LyricLine?
+        let identity: LyricsTrackIdentity?
+        let duration: Double
+        let width: CGFloat
+        /// Real first line start after the current line in this timeline.
+        let nextStart: TimeInterval?
+        let frame: Frame
+    }
+
+    private var entry: Entry?
+    /// Test seams: how many times the expensive work actually ran.
+    private(set) var metricsRebuilds = 0
+    private(set) var frameRebuilds = 0
+
+    func frame(for line: LyricLine?, duration: Double, identity: LyricsTrackIdentity?,
+               timeline: LyricTimeline?, width: CGFloat,
+               metricsCache: LyricMetricsCache) -> Frame {
+        let nextStart = line.flatMap { Self.nextStart(in: timeline?.lines ?? [], after: $0.start) }
+        if let entry, entry.line == line, entry.identity == identity,
+           entry.duration == duration, entry.width == width,
+           entry.nextStart == nextStart {
+            return entry.frame
+        }
+        frameRebuilds += 1
+        let metrics: LyricsLineMetrics?
+        if let entry, let line, entry.line == line, entry.identity == identity {
+            // Only the successor boundary or the width changed; keep the
+            // measured widths instead of re-measuring the line.
+            metrics = entry.frame.metrics
+        } else {
+            metrics = line.map { metricsCache.metrics(for: $0, identity: identity) }
+            if line != nil { metricsRebuilds += 1 }
+        }
+        var lineEnd: TimeInterval = 0
+        if let line {
+            if let nextStart {
+                lineEnd = nextStart
+            } else {
+                lineEnd = max(line.start + 8,
+                              duration > line.start ? duration : line.start + 8)
+            }
+        }
+        let isLong = (metrics?.totalWidth ?? 0) > width
+        let label = line.map { "歌词，\($0.text)" } ?? "歌词"
+        let key = line.map { "\($0.start)-\($0.text)" } ?? ""
+        let frame = Frame(metrics: metrics, isLong: isLong, lineEnd: lineEnd,
+                          label: label, key: key)
+        entry = Entry(line: line, identity: identity, duration: duration, width: width,
+                      nextStart: nextStart, frame: frame)
+        return frame
+    }
+
+    /// First line whose start is strictly greater than `start` (upper bound).
+    /// Ties keep the existing `line(at:)` semantics: a line with the same start
+    /// is never its own successor.
+    static func nextStart(in lines: [LyricLine], after start: TimeInterval) -> TimeInterval? {
+        guard !lines.isEmpty else { return nil }
+        var low = 0
+        var high = lines.count
+        while low < high {
+            let mid = (low + high) / 2
+            if lines[mid].start > start {
+                high = mid
+            } else {
+                low = mid + 1
+            }
+        }
+        return low < lines.count ? lines[low].start : nil
+    }
+}
+
 private struct LyricsLineContent: View {
     let line: LyricLine
     let metrics: LyricsLineMetrics
     let availableWidth: CGFloat
     let accent: NSColor
     let elapsed: TimeInterval
+    let current: (index: Int, fraction: Double)?
     let lineEnd: TimeInterval
     let fillContainer: Bool
-
-    private var current: (index: Int, fraction: Double)? {
-        metrics.currentWord(at: elapsed, line: line)
-    }
 
     private var fillWidth: CGFloat {
         guard let current, current.index < metrics.prefixes.count,

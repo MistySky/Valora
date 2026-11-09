@@ -64,6 +64,7 @@
 
 ## 7. 交付与替换
 
+- 用户于 2026-11-09 明确要求：此后每次为用户生成新的可运行候选，都应在完成构建、签名与必要验证后自动替换当前运行实例，无需为每一轮重复询问；始终保证最多一个 Valora 实例。内部 `swift build`、单元测试等中间构建不作为交付候选，不反复关闭或启动用户正在使用的 App。此授权不包括覆盖 `/Applications`、发布、Git 提交或推送。
 - 每个正式候选：一次 Release 构建到新的 `/private/tmp/...` 目录，构建号自动 +1；核验 `Info.plist`、`build-verification.json`、`codesign --verify --strict --deep`、binary SHA-256。
 - 替换运行版：先正常退出旧实例（AppleScript quit 等），确认 **0 个** `Valora` 进程，再启动唯一新包，最后确认仅 1 个进程且路径对应本轮候选。**禁止 pkill/强退**；无法正常退出就保留候选交 Codex 接续，不得以源码变更冒称已替换。
 - 不覆盖正在运行/`dist`/`/Applications` 的包；不安装发布；不 Git 提交/推送，除用户当次明确授权。

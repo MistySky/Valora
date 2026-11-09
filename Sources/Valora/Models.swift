@@ -164,6 +164,11 @@ final class AppModel: ObservableObject {
     let settings: RevivalSettings
     @Published var presentation = NotchTransitionState()
     @Published var screenHidden = false
+    /// Whether the ordinary notch panel is actually ordered in. `screenHidden`
+    /// only covers fullscreen/Mission Control; this also covers `showNotch`
+    /// off, idle hiding and any other order-out. Continuous content uses it to
+    /// stop animating an off-screen surface (the lock overlay has its own).
+    @Published var notchSurfaceOnScreen = true
     var expanded: Bool { presentation.expanded }
     @Published var title = "暂无播放"
     var displayTitle: String {

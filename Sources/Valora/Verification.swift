@@ -101,8 +101,13 @@ enum MusicPresentationVerification {
                 let waveformHost = NSView(frame:waveform.frame)
                 let waveformWindow = NSWindow(contentRect:waveform.frame,styleMask:.borderless,backing:.buffered,defer:false)
                 waveformWindow.isReleasedWhenClosed = false
+                // Keep the QA window off-screen; ordering it in is only needed
+                // so `isVisible` reflects a real on-screen surface.
+                waveformWindow.setFrameOrigin(NSPoint(x:-20000,y:-20000))
                 waveformWindow.contentView = waveformHost
                 waveformHost.addSubview(waveform); waveform.layout()
+                waveformWindow.orderFrontRegardless()
+                await settle(0.05)
                 check("compact native waveform uses five centered two point bars", waveform.bars.count == 5
                     && waveform.bars.allSatisfy { $0.bounds.width == 2 }
                     && waveform.bars.map { $0.position.x } == [3,6.5,10,13.5,17])
@@ -131,6 +136,17 @@ enum MusicPresentationVerification {
                 check("retained inactive player suspends waveform clock", !waveform.isTicking)
                 waveform.configure(image:nil,color:.blue,playing:true,reducedMotion:false,identity:"fixture",profile:.expanded)
                 check("reopened expanded player resumes native clock", waveform.isTicking)
+                waveformWindow.orderOut(nil)
+                // The clock stops itself on its next tick; there is no AppKit
+                // order/occlusion notification for these borderless panels.
+                await settle(0.4)
+                check("ordered-out panel stops the waveform clock", !waveform.isTicking)
+                waveformWindow.orderFrontRegardless()
+                // Production resumes through the SwiftUI mount/update path; the
+                // isolated native harness has no SwiftUI update to emulate it.
+                waveform.configure(image:nil,color:.blue,playing:true,reducedMotion:false,
+                                   identity:"fixture",profile:.expanded)
+                check("ordered-in panel resumes the waveform clock", waveform.isTicking)
                 waveform.removeFromSuperview()
                 check("dismantled waveform releases animation clock", !waveform.isTicking)
                 waveformWindow.close()

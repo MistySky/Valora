@@ -1,0 +1,25 @@
+{
+  "sessionId": "ses_e60ad9e4bffekz1hsfhtNOnPtJ",
+  "taskFile": "docs/opencode-tasks/v0042-lock-music-glass-source-parity.md",
+  "sha256": "022087419e74d314c129aa849b990e53e21b9e8b9a2332a1bfe9b8e1645b0098",
+  "observedEvents": [
+    [
+      "agent-switched",
+      3362
+    ],
+    [
+      "system",
+      3365
+    ],
+    [
+      "user",
+      3366
+    ],
+    [
+      "assistant",
+      3367
+    ]
+  ],
+  "status": "received",
+  "localOutput": "/private/tmp/valora-opencode-v0042-dispatch.jsonl"
+}

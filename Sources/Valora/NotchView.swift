@@ -117,9 +117,9 @@ struct NotchView: View {
                         if allowsDynamic, !expanded, !model.isLockStage, model.showsMusicActivity,
                            model.showsCompactLyrics
                             || (!settings.musicPreferences.showLyrics && model.songPeek.visible) {
-                            if model.showsCompactLyrics {
-                                CompactLyricsView(model:model, width:max(1, width-36),
-                                                  auditRole:compactOnly ? "passive" : "active")
+                            if model.showsCompactLyrics, model.notchSurfaceOnScreen, !lockSurface {
+                                DesktopLyricsRow(model:model, width:max(1, width-36),
+                                                 auditRole:compactOnly ? "passive" : "active")
                             } else {
                                 HStack(spacing:5) {
                                     Image(systemName:"music.note").font(.system(size:11,weight:.semibold))
@@ -199,9 +199,9 @@ struct NotchView: View {
                 } else { Color.clear }
             }.frame(width:max(0,(width-nativeNotchSize.width)/2))
             Group {
-                if !lockSurface, allowsDynamic, model.showsInlineLyrics {
-                    CompactLyricsView(model: model, width: max(1, nativeNotchSize.width - 20),
-                                      rowHeight: nativeNotchSize.height, showsNote: false, horizontalInset: 10)
+                if !lockSurface, allowsDynamic, model.showsInlineLyrics, model.notchSurfaceOnScreen {
+                    DesktopLyricsRow(model: model, width: max(1, nativeNotchSize.width - 20),
+                                     rowHeight: nativeNotchSize.height, showsNote: false, horizontalInset: 10)
                 } else {
                     Color.clear
                 }
@@ -215,7 +215,7 @@ struct NotchView: View {
                         ConnectionBatteryRing(percent: battery, notch: hasNotch)
                             .accessibilityLabel("耳机电量 \(battery)%")
                     } else { Color.clear }
-                } else if !expanded, model.showsCompactWaveform {
+                } else if !expanded, model.showsCompactWaveform, model.notchSurfaceOnScreen {
                     CompactPlaybackControl(model:model, settings:settings)
                 } else { Color.clear }
             }.frame(width:max(0,(width-nativeNotchSize.width)/2))
@@ -230,9 +230,15 @@ struct NotchView: View {
                 compensatesForNotch:model.notchGeometry.hasPhysicalNotch,
                 active:model.presentation.acceptsExpandedInteraction,showsVolume:$model.showsOutputVolume)
             if model.showsLyricsInExpanded {
-                CompactLyricsView(model:model, width:max(1, model.expandedSize.width-36),
-                                  auditRole:compactOnly ? "passive" : "expanded")
-                    .padding(.bottom,4)
+                if lockSurface {
+                    CompactLyricsView(model:model, width:max(1, model.expandedSize.width-36),
+                                      auditRole:compactOnly ? "passive" : "expanded")
+                        .padding(.bottom,4)
+                } else {
+                    DesktopLyricsRow(model:model, width:max(1, model.expandedSize.width-36),
+                                     auditRole:compactOnly ? "passive" : "expanded")
+                        .padding(.bottom,4)
+                }
             }
         }
     }

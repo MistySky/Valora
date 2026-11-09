@@ -1,0 +1,13 @@
+{
+  "sessionId": "ses_e60ad9e4bffekz1hsfhtNOnPtJ",
+  "directory": "/Users/wangqing/code/Valora",
+  "checkpoint": "9b2953e",
+  "taskFile": "docs/opencode-tasks/v0040-lock-settings-single-source.md",
+  "sha256": "2988a8a4286848df7be3111b42f17e65010e9d8bab0077f0b08dcda219b092a3",
+  "confirmedUserMessageSequence": 948,
+  "observedAssistantSequence": 949,
+  "transport": "opencode run --session (existing background service)",
+  "status": "received-and-started",
+  "localOutput": "/private/tmp/valora-opencode-v0040-dispatch.jsonl",
+  "remotePush": false
+}
