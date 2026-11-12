@@ -119,7 +119,7 @@ struct NotchView: View {
                             || (!settings.musicPreferences.showLyrics && model.songPeek.visible) {
                             if model.showsCompactLyrics, model.notchSurfaceOnScreen, !lockSurface {
                                 DesktopLyricsRow(model:model, width:max(1, width-36),
-                                                 auditRole:compactOnly ? "passive" : "active")
+                                                 auditRole:compactOnly ? "desktop-passive" : "desktop-active")
                             } else {
                                 HStack(spacing:5) {
                                     Image(systemName:"music.note").font(.system(size:11,weight:.semibold))
@@ -201,7 +201,8 @@ struct NotchView: View {
             Group {
                 if !lockSurface, allowsDynamic, model.showsInlineLyrics, model.notchSurfaceOnScreen {
                     DesktopLyricsRow(model: model, width: max(1, nativeNotchSize.width - 20),
-                                     rowHeight: nativeNotchSize.height, showsNote: false, horizontalInset: 10)
+                                     rowHeight: nativeNotchSize.height, showsNote: false,
+                                     horizontalInset: 10, auditRole: "desktop-inline")
                 } else {
                     Color.clear
                 }
@@ -232,11 +233,11 @@ struct NotchView: View {
             if model.showsLyricsInExpanded {
                 if lockSurface {
                     CompactLyricsView(model:model, width:max(1, model.expandedSize.width-36),
-                                      auditRole:compactOnly ? "passive" : "expanded")
+                                      auditRole:compactOnly ? "desktop-passive" : "desktop-expanded")
                         .padding(.bottom,4)
                 } else {
                     DesktopLyricsRow(model:model, width:max(1, model.expandedSize.width-36),
-                                     auditRole:compactOnly ? "passive" : "expanded")
+                                     auditRole:compactOnly ? "desktop-passive" : "desktop-expanded")
                         .padding(.bottom,4)
                 }
             }

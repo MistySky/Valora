@@ -40,6 +40,7 @@ final class IndependentLyricsTransitionClockTests: XCTestCase {
         -> LyricsRowExperimentHost {
         let host = LyricsRowExperimentHost()
         host.debugMonotonicClock = { [clock] in clock.now }
+        host.debugUsesTimer = true
         host.begin(identity: "a")
         host.reportLine(first, outgoing: nil, generation: host.generation, identity: "a")
         XCTAssertEqual(host.displayedLine, first, "fixture: the row must mount on the first line")

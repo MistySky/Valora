@@ -9,6 +9,9 @@ struct LockMusicCard: View {
     @ObservedObject var model: AppModel
     @ObservedObject var settings: RevivalSettings
     var active: Bool
+    /// Whether the lock row is actually presenting. Kept separate from the
+    /// desktop notch flag so the native lyrics clock has one clear owner.
+    var lyricsActive: Bool = true
     @Binding var showsVolume: Bool
     /// Lock ink palette (white ink on the dark glass surface).
     var palette: LockCardPalette = .standard
@@ -16,7 +19,7 @@ struct LockMusicCard: View {
 
     /// The row stays mounted while paused (user-confirmed: keep it expanded).
     /// It only disappears when the lyrics switch is off.
-    private var showsLyricRow: Bool { settings.musicPreferences.showLyrics }
+    private var showsLyricRow: Bool { settings.musicPreferences.showsLockScreenLyrics }
 
     var body: some View {
         // Player first, then the optional lyric row, both inside one stack: the
@@ -31,8 +34,8 @@ struct LockMusicCard: View {
             // between lines, CompactLyricsView renders only the note, centered
             // (centersNoteWhenEmpty) instead of the left-aligned blank row.
             if showsLyricRow {
-                CompactLyricsView(model: model, width: max(1, 345 - 36),
-                                  centersNoteWhenEmpty: true)
+                LockLyricsRow(model: model, width: max(1, 345 - 36),
+                              active: lyricsActive)
                     .padding(.bottom, 4)
                     .transition(.opacity.combined(with: .offset(y: -6)))
             }
@@ -52,6 +55,27 @@ struct LockMusicCard: View {
     }
 }
 
+/// Lock-card lyric row. Reuses the same native experiment renderer as the
+/// desktop row when that experiment is compiled, with its own presentation
+/// active flag; normal Release uses the shipped CompactLyricsView.
+private struct LockLyricsRow: View {
+    @ObservedObject var model: AppModel
+    let width: CGFloat
+    let active: Bool
+
+    var body: some View {
+        #if VALORA_LYRICS_EXPERIMENT
+        ExperimentalDesktopLyricsView(model: model, width: width, rowHeight: 32,
+                                      centersNoteWhenEmpty: true,
+                                      auditRole: "lock", active: active,
+                                      transitionStrategy: .legacyTimer)
+        #else
+        CompactLyricsView(model: model, width: width,
+                          centersNoteWhenEmpty: true)
+        #endif
+    }
+}
+
 struct LockMusicView: View {
     @ObservedObject var model: AppModel
     @ObservedObject var settings: RevivalSettings
@@ -61,6 +85,7 @@ struct LockMusicView: View {
     private var card: some View {
         LockMusicCard(model: model, settings: settings,
                       active: coordinator.appeared,
+                      lyricsActive: coordinator.lyricsActive,
                       showsVolume: $coordinator.showsVolume)
     }
 

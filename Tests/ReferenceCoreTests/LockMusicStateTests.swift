@@ -272,6 +272,48 @@ final class LockCardLayoutTests: XCTestCase {
         XCTAssertEqual(layout.panelOriginY + LockCardLayout.canvasHeight, layout.cardTop, accuracy: 0.001)
     }
 
+    func testLockLyricsOffShiftsCardDownAndKeepsBottomAligned() {
+        let noLyrics = LockCardLayout(screenMinY: 0, screenHeight: 1117,
+                                      showsLockLyrics: false)
+        for volume in [false, true] {
+            let withBottom = layout.cardTop - layout.cardHeight(volume: volume, lyrics: true)
+            let withoutBottom = noLyrics.cardTop - noLyrics.cardHeight(volume: volume, lyrics: false)
+            XCTAssertEqual(withoutBottom, withBottom, accuracy: 0.001,
+                           "lyrics off must preserve the same bottom at volume=\(volume)")
+        }
+        XCTAssertEqual(layout.cardTop - noLyrics.cardTop,
+                       LockCardLayout.lyricBlock, accuracy: 0.001)
+    }
+
+    func testLockLyricsOffAlignsAcrossExternalOriginAndOffset() {
+        for external in [false, true] {
+            for minY in [0.0, 300.0] {
+                for offset in [0.0, 40.0] {
+                    let common = (screenMinY: minY, screenHeight: 1080.0,
+                                  verticalOffset: offset,
+                                  reserveFullExpansion: external)
+                    let on = LockCardLayout(screenMinY: common.screenMinY,
+                                            screenHeight: common.screenHeight,
+                                            verticalOffset: common.verticalOffset,
+                                            reserveFullExpansion: common.reserveFullExpansion,
+                                            showsLockLyrics: true)
+                    let off = LockCardLayout(screenMinY: common.screenMinY,
+                                             screenHeight: common.screenHeight,
+                                             verticalOffset: common.verticalOffset,
+                                             reserveFullExpansion: common.reserveFullExpansion,
+                                             showsLockLyrics: false)
+                    for volume in [false, true] {
+                        XCTAssertEqual(on.cardTop - on.cardHeight(volume: volume, lyrics: true),
+                                       off.cardTop - off.cardHeight(volume: volume, lyrics: false),
+                                       accuracy: 0.001)
+                    }
+                    XCTAssertEqual(on.cardTop - off.cardTop,
+                                   LockCardLayout.lyricBlock, accuracy: 0.001)
+                }
+            }
+        }
+    }
+
     func testShortScreenConflictIsReportedInsteadOfSilentlyShrinking() {
         // Anchored from the collapsed card, the top only needs to fit on screen;
         // the expanded bottom is allowed to run low and is reported separately.

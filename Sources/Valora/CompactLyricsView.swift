@@ -18,8 +18,23 @@ struct CompactLyricsView: View {
     var centersNoteWhenEmpty: Bool = false
     /// QA-only role tag; production views use the default active role.
     var auditRole: String = "active"
+    @ObservedObject private var playback: PlaybackProgress
     @State private var metricsCache = LyricMetricsCache()
     @State private var frameCache = LyricsLineFrameCache()
+
+    init(model: AppModel, width: CGFloat, rowHeight: CGFloat = 32,
+         showsNote: Bool = true, horizontalInset: CGFloat = 18,
+         centersNoteWhenEmpty: Bool = false, auditRole: String = "active",
+         playback: PlaybackProgress? = nil) {
+        self.model = model
+        self.width = width
+        self.rowHeight = rowHeight
+        self.showsNote = showsNote
+        self.horizontalInset = horizontalInset
+        self.centersNoteWhenEmpty = centersNoteWhenEmpty
+        self.auditRole = auditRole
+        self._playback = ObservedObject(wrappedValue: playback ?? model.progress)
+    }
 
     private var availableWidth: CGFloat { max(1, width - (showsNote ? 22 : 0)) }
 

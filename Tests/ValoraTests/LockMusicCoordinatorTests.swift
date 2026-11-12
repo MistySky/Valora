@@ -175,7 +175,9 @@ final class LockMusicCoordinatorTests: XCTestCase {
                       "allowNowPlayingWidgetWhenLocked": true,
                       "allowConnectivityWidgetWhenLocked": true,
                       "playSoundOnLock": true,
-                      "playSoundOnUnlock": true],
+                      "playSoundOnUnlock": true,
+                      "showLyrics": true,
+                      "lockScreenLyrics": true],
                      forKey: "referenceSettingsUI")
         settings = RevivalSettings(defaults: defaults)
         // The device module's own switch is now the only source for the lock
@@ -643,6 +645,77 @@ final class LockMusicCoordinatorTests: XCTestCase {
         coordinator.refresh()
         XCTAssertFalse(coordinator.visible, "off keeps the lock music card hidden")
         coordinator.stop()
+    }
+
+    func testLockLyricsToggleRepositionsPanelAndKeepsBottomAligned() async {
+        sessionLocked = true
+        let coordinator = makeCoordinator()
+        coordinator.setEnabled(true)
+        await drain()
+        fireDelay(0.032)
+        let withLyricsTop = coordinator.panel.frame.minY
+        defaults.set(["showLyrics": true, "lockScreenLyrics": false],
+                     forKey: "referenceSettingsUI")
+        settings.reloadPreferences()
+        await drain()
+        let withoutLyricsTop = coordinator.panel.frame.minY
+        XCTAssertEqual(withoutLyricsTop - withLyricsTop,
+                       -LockCardLayout.lyricBlock, accuracy: 0.001)
+        defaults.set(["showLyrics": true, "lockScreenLyrics": true],
+                     forKey: "referenceSettingsUI")
+        settings.reloadPreferences()
+        await drain()
+        XCTAssertEqual(coordinator.panel.frame.minY, withLyricsTop, accuracy: 0.001)
+        coordinator.stop()
+    }
+
+    func testLockLyricsActiveIsIndependentAndEndsAfterExit() async {
+        sessionLocked = true
+        let coordinator = makeCoordinator()
+        coordinator.setEnabled(true)
+        await drain()
+        fireDelay(0.032)
+        XCTAssertTrue(coordinator.visible)
+        XCTAssertTrue(coordinator.lyricsActive,
+                      "the lock lyric row is active while the card is presented")
+        model.notchSurfaceOnScreen = false
+        await drain()
+        XCTAssertTrue(coordinator.lyricsActive,
+                      "desktop notch visibility must not control the lock lyric clock")
+        model.settings.nowPlayingEnabled = false
+        await drain()
+        XCTAssertFalse(coordinator.visible)
+        XCTAssertTrue(coordinator.lyricsActive,
+                      "the row stays alive through the card exit animation")
+        fireDelay(0.85)
+        XCTAssertFalse(coordinator.lyricsActive,
+                       "the lyric clock/session is released only after the card exits")
+        coordinator.stop()
+    }
+
+    func testBeginUnlockClearsLockLyricsActive() async {
+        sessionLocked = true
+        let coordinator = makeCoordinator()
+        coordinator.setEnabled(true)
+        await drain()
+        fireDelay(0.032)
+        XCTAssertTrue(coordinator.lyricsActive)
+        events.deliverLocked(false)
+        await drain()
+        XCTAssertFalse(coordinator.lyricsActive,
+                       "the direct beginUnlock orderOut path must clear the row clock")
+        coordinator.stop()
+    }
+
+    func testStopClearsLockLyricsActiveImmediately() async {
+        sessionLocked = true
+        let coordinator = makeCoordinator()
+        coordinator.setEnabled(true)
+        await drain()
+        fireDelay(0.032)
+        XCTAssertTrue(coordinator.lyricsActive)
+        coordinator.stop()
+        XCTAssertFalse(coordinator.lyricsActive)
     }
 
     func testInformationDeviceToNilAndGlobalOff() async {

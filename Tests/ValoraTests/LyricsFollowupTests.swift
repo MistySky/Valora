@@ -159,7 +159,7 @@ final class LyricsAnchorInterpolationTests: XCTestCase {
         controller.start()
         scheduler.fire()
         var publishes = 0
-        let token = model.$elapsed.dropFirst().sink { _ in publishes += 1 }
+        let token = model.progress.$snapshot.dropFirst().sink { _ in publishes += 1 }
         let anchor = model.elapsed
         try? await Task.sleep(for: .milliseconds(400))
         XCTAssertEqual(publishes, 0, "no extra progress sample inside the 1Hz window")

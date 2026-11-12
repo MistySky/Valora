@@ -6,6 +6,7 @@ import ReferenceCore
 struct MediaProgressView: View {
     @ObservedObject var model: AppModel
     @ObservedObject var settings: RevivalSettings
+    @ObservedObject var playback: PlaybackProgress
     var trackWidth:CGFloat? = nil
     var translucent=false
     /// Lock-card ink palette; only consulted in the translucent branch.
@@ -14,7 +15,7 @@ struct MediaProgressView: View {
     @GestureState private var isDragging = false
     @Environment(\.accessibilityReduceMotion) private var reducedMotion
     private var durationIsValid: Bool { MediaProgressState.validDuration(model.duration) }
-    private var elapsed: Double { progress.dragValue ?? MediaProgressState.clamp(model.elapsed,duration:model.duration) }
+    private var elapsed: Double { progress.dragValue ?? MediaProgressState.clamp(playback.elapsed,duration:model.duration) }
     private var fraction: Double { durationIsValid ? elapsed / model.duration : 0 }
     private var textColor: Color {
         if isDragging { return .white }
@@ -64,11 +65,11 @@ struct MediaProgressView: View {
                         if durationIsValid, model.previewMode || model.mediaCanSeek {
                             model.beginPointerInteraction()
                         }
-                        _ = progress.drag(elapsed:model.elapsed,duration:model.duration,
+                        _ = progress.drag(elapsed:playback.elapsed,duration:model.duration,
                             translation:value.translation.width,trackWidth:geometry.size.width)
                     }
                     .onEnded { value in
-                        _ = progress.drag(elapsed:model.elapsed,duration:model.duration,
+                        _ = progress.drag(elapsed:playback.elapsed,duration:model.duration,
                             translation:value.translation.width,trackWidth:geometry.size.width)
                         if let target = progress.endDrag(at:ProcessInfo.processInfo.systemUptime) { model.media.seek(target) }
                         model.endPointerInteraction()

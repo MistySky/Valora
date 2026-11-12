@@ -98,7 +98,7 @@ final class DesktopIdleMediaPublishTests: XCTestCase {
             XCTAssertEqual(model.elapsed, 12, accuracy: 0.001)
             var publishes = 0
             var invalidations = 0
-            let token = model.$elapsed.dropFirst().sink { _ in publishes += 1 }
+            let token = model.progress.$snapshot.dropFirst().sink { _ in publishes += 1 }
             let invalidated = model.objectWillChange.sink { _ in invalidations += 1 }
             for _ in 0..<8 { scheduler.fire() }
             XCTAssertEqual(publishes, 0, "a paused tick must not invalidate views with an identical value")
@@ -120,7 +120,7 @@ final class DesktopIdleMediaPublishTests: XCTestCase {
             controller.start()
             XCTAssertTrue(model.playing)
             var values: [Double] = []
-            let token = model.$elapsed.dropFirst().sink { values.append($0) }
+            let token = model.progress.$snapshot.dropFirst().sink { values.append($0.elapsed) }
             for _ in 0..<4 { scheduler.fire() }
             XCTAssertEqual(values.count, 1, "collapsed playback publishes one anchor per second")
             XCTAssertTrue(values.allSatisfy { $0 >= 20 })
@@ -144,7 +144,7 @@ final class DesktopIdleMediaPublishTests: XCTestCase {
                            "resume publishes the source anchor immediately, not on the next tick")
             // The collapsed surface then samples at 1Hz; four ticks publish once.
             var publishes = 0
-            let token = model.$elapsed.dropFirst().sink { _ in publishes += 1 }
+            let token = model.progress.$snapshot.dropFirst().sink { _ in publishes += 1 }
             for _ in 0..<4 { scheduler.fire() }
             XCTAssertEqual(publishes, 1)
             XCTAssertGreaterThanOrEqual(model.elapsed, 30)
@@ -161,7 +161,7 @@ final class DesktopIdleMediaPublishTests: XCTestCase {
             system.push(snapshot(playing: false, elapsed: 45))
             XCTAssertEqual(model.elapsed, 45, accuracy: 0.01, "the seek result still lands immediately")
             var publishes = 0
-            let token = model.$elapsed.dropFirst().sink { _ in publishes += 1 }
+            let token = model.progress.$snapshot.dropFirst().sink { _ in publishes += 1 }
             for _ in 0..<4 { scheduler.fire() }
             XCTAssertEqual(publishes, 0)
             XCTAssertEqual(model.elapsed, 45, accuracy: 0.01)
@@ -178,7 +178,7 @@ final class DesktopIdleMediaPublishTests: XCTestCase {
             system.push(snapshot(playing: false, elapsed: 0, identity: "next-track"))
             XCTAssertEqual(model.mediaRevisionIdentity, "com.test.player\u{0}next-track")
             var publishes = 0
-            let token = model.$elapsed.dropFirst().sink { _ in publishes += 1 }
+            let token = model.progress.$snapshot.dropFirst().sink { _ in publishes += 1 }
             scheduler.fire()
             XCTAssertEqual(publishes, 0)
             token.cancel()
@@ -196,7 +196,7 @@ final class DesktopIdleMediaPublishTests: XCTestCase {
             XCTAssertEqual(model.elapsed, 0, accuracy: 0.001)
             XCTAssertFalse(model.playing)
             var publishes = 0
-            let token = model.$elapsed.dropFirst().sink { _ in publishes += 1 }
+            let token = model.progress.$snapshot.dropFirst().sink { _ in publishes += 1 }
             for _ in 0..<3 { scheduler.fire() }
             XCTAssertEqual(publishes, 0, "no snapshot means nothing to publish")
             // The existing 1s refresh (every fourth tick) reconnects the dead

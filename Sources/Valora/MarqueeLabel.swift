@@ -16,8 +16,8 @@ struct MarqueeLabel: NSViewRepresentable {
     var cycleStart: CFTimeInterval = 0
     var onDoubleClick: (() -> Void)? = nil
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    static func measure(_ text:String,size:CGFloat,weight:NSFont.Weight)->CGSize {
-        (text as NSString).size(withAttributes:[.font:NSFont.systemFont(ofSize:size,weight:weight),.kern:0.05])
+    nonisolated static func measure(_ text:String,size:CGFloat,weight:NSFont.Weight)->CGSize {
+        MarqueeMeasurementCache.shared.size(text: text, size: size, weight: weight)
     }
     func makeNSView(context:Context)->MarqueeLabelView { MarqueeLabelView(frame:.zero) }
     func updateNSView(_ view:MarqueeLabelView,context:Context) {
@@ -31,6 +31,66 @@ struct MarqueeLabel: NSViewRepresentable {
     static func dismantleNSView(_ view:MarqueeLabelView,coordinator:()) {
         view.onDoubleClick = nil
         view.stop()
+    }
+}
+
+/// Bounded shared cache for the exact NSString/font/kern measurement used by
+/// the marquee. The cache is thread-safe because the existing nonisolated
+/// metrics helper also calls `measure`; the measured formula is unchanged.
+final class MarqueeMeasurementCache: @unchecked Sendable {
+    static let shared = MarqueeMeasurementCache()
+    static let capacity = 128
+
+    private struct Key: Hashable {
+        let text: String
+        let size: Double
+        let weight: Double
+    }
+
+    private let lock = NSLock()
+    private var entries: [Key: CGSize] = [:]
+    private var order: [Key] = []
+    private(set) var hits = 0
+    private(set) var misses = 0
+
+    var count: Int {
+        lock.lock(); defer { lock.unlock() }
+        return entries.count
+    }
+
+    func size(text: String, size: CGFloat, weight: NSFont.Weight) -> CGSize {
+        let key = Key(text: text, size: Double(size), weight: Double(weight.rawValue))
+        lock.lock()
+        if let value = entries[key] {
+            hits += 1
+            lock.unlock()
+            return value
+        }
+        misses += 1
+        lock.unlock()
+        let value = (text as NSString).size(withAttributes: [
+            .font: NSFont.systemFont(ofSize: size, weight: weight),
+            .kern: 0.05
+        ])
+        lock.lock()
+        if entries[key] == nil {
+            entries[key] = value
+            order.append(key)
+            if order.count > Self.capacity {
+                let old = order.removeFirst()
+                entries.removeValue(forKey: old)
+            }
+        }
+        lock.unlock()
+        return value
+    }
+
+    func resetForTesting() {
+        lock.lock(); defer { lock.unlock() }
+        entries.removeAll()
+        order.removeAll()
+        hits = 0
+        misses = 0
     }
 }
 
@@ -203,9 +263,10 @@ struct MusicMarqueePair: View {
             MarqueeLabel.measure(artist,size:13,weight:.medium).width)
     }
     var body:some View {
+        let longest = longestWidth
         VStack(alignment:.leading,spacing:0.5) {
-            MarqueeLabel(text:title,size:13.5,weight:.semibold,color:.white,longestTextWidth:longestWidth,active:active,cycleStart:cycleStart,onDoubleClick:onDoubleClick)
-            MarqueeLabel(text:artist,size:13,weight:.medium,color:artistColor,longestTextWidth:longestWidth,active:active,cycleStart:cycleStart,onDoubleClick:onDoubleClick)
+            MarqueeLabel(text:title,size:13.5,weight:.semibold,color:.white,longestTextWidth:longest,active:active,cycleStart:cycleStart,onDoubleClick:onDoubleClick)
+            MarqueeLabel(text:artist,size:13,weight:.medium,color:artistColor,longestTextWidth:longest,active:active,cycleStart:cycleStart,onDoubleClick:onDoubleClick)
         }.onChange(of:active) { _,value in
             if value { cycleStart=CACurrentMediaTime() }
         }.onChange(of:reduceMotion) { _,value in

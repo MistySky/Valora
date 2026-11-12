@@ -1,0 +1,141 @@
+{
+  "baseline": "6c98d2be683e035fdaab9f29dcbd795236748655",
+  "review_utc": "2026-11-12T01:25:29.592132+00:00",
+  "files": [
+    {
+      "path": "Package.swift",
+      "untracked": false,
+      "sha256": "785a2461dbd48c9487332e227fce9cedde781385ac0acf8ccbfff00f5645bc2d"
+    },
+    {
+      "path": "Sources/ReferenceCore/LockMusicState.swift",
+      "untracked": false,
+      "sha256": "16db25c133a53d8e3feff75a6acb6bb0dd45b60b535405ac3d5713530bcb0ea4"
+    },
+    {
+      "path": "Sources/ReferenceCore/MusicPreferences.swift",
+      "untracked": false,
+      "sha256": "df26b7ff90f3ad111e6271d209adf2af87f461c35c312b5a3f33e1e99f830ebb"
+    },
+    {
+      "path": "Sources/Valora/AppDelegate.swift",
+      "untracked": false,
+      "sha256": "490f0aabd4c34c409ef32cf1d71003622fe7becd8fbeb6c7338ffbe064bdf7c4"
+    },
+    {
+      "path": "Sources/Valora/ArtworkImage.swift",
+      "untracked": true,
+      "sha256": "2f5e84288972f651159a98f313e11d5db737a5a79c2dfd391e80e88864f26d03"
+    },
+    {
+      "path": "Sources/Valora/ArtworkPalette.swift",
+      "untracked": false,
+      "sha256": "fe5ab092580d6b88c55b9d490dd9fa234e88416cb55f7b6dadb0614197289813"
+    },
+    {
+      "path": "Sources/Valora/CompactLyricsView.swift",
+      "untracked": false,
+      "sha256": "88b775358c09b87c6a23c040d694d4e3c94a5214fe89b30094b0942cc13ee107"
+    },
+    {
+      "path": "Sources/Valora/CompactPlaybackControl.swift",
+      "untracked": false,
+      "sha256": "659ff22a8d129ef7d66719766dd014f4c708dd845e6f8c399c1dd063bc48652b"
+    },
+    {
+      "path": "Sources/Valora/ConnectivityController.swift",
+      "untracked": false,
+      "sha256": "8c87b09bcf487bd6fdd40cecf981781430e0cb5f4213ddbc56f3b5e858d4103a"
+    },
+    {
+      "path": "Sources/Valora/Controllers.swift",
+      "untracked": false,
+      "sha256": "ccbe15a6e5e60276503739a1fe1c67277530a99dda053b9be7d7cc5ed9a105bf"
+    },
+    {
+      "path": "Sources/Valora/LockCardPreview.swift",
+      "untracked": false,
+      "sha256": "efa22cac1bf4294dee73e403c18d77a73389d2df3e515fc08ece4da36bd7067c"
+    },
+    {
+      "path": "Sources/Valora/LockMusicCoordinator.swift",
+      "untracked": false,
+      "sha256": "2fd8abf7fb0c3b5d00b8bc332020f3374895f691765cd13b7e94501fce9d2fb0"
+    },
+    {
+      "path": "Sources/Valora/LockMusicView.swift",
+      "untracked": false,
+      "sha256": "fc2a55c480909135b54e9d8e0f524d521c0f9eaf18a5c2b4d3d889abb35f1671"
+    },
+    {
+      "path": "Sources/Valora/LyricsController.swift",
+      "untracked": false,
+      "sha256": "1d1ebcad1f37c09f31e54af897059afe9bb8b3bf47b6d046684ec9f926caedce"
+    },
+    {
+      "path": "Sources/Valora/LyricsDiagnostics.swift",
+      "untracked": true,
+      "sha256": "185b199040a28fec8fc87c002015fa05a3f292f87db7bc9d36d5421052b48bb3"
+    },
+    {
+      "path": "Sources/Valora/LyricsRowExperiment.swift",
+      "untracked": false,
+      "sha256": "8396b0312399481d694865f10e3ddef1136f15abe621eb64e15e3843591646c0"
+    },
+    {
+      "path": "Sources/Valora/MarqueeLabel.swift",
+      "untracked": false,
+      "sha256": "b34fda394d96098033ce27063d1e5f157f795f2afc23d6cd582b10eab08c56f2"
+    },
+    {
+      "path": "Sources/Valora/MediaProgressView.swift",
+      "untracked": false,
+      "sha256": "b0f1297c8270653ac0a8ddbbaad96ed38d6fc935461bec812edd68aefc1071de"
+    },
+    {
+      "path": "Sources/Valora/Models.swift",
+      "untracked": false,
+      "sha256": "b8c5481c2b02276934c3388d0befe6bb053777eb84e42e42d5fa03ed0c491819"
+    },
+    {
+      "path": "Sources/Valora/MusicPlayerContent.swift",
+      "untracked": false,
+      "sha256": "eeb98cb5759ccaecaf5cfa94875c48028736733500a1181620f3a8d80000a45c"
+    },
+    {
+      "path": "Sources/Valora/NativeLyricsRow.swift",
+      "untracked": false,
+      "sha256": "50e194b0ffde246cbb69715869b7167168546f54496c1e64bc6103d55bbcf188"
+    },
+    {
+      "path": "Sources/Valora/NotchView.swift",
+      "untracked": false,
+      "sha256": "3d70efc68e83478c77d91ea489f8a15a98fe0f5f93d4b8478e31654cf5f321d5"
+    },
+    {
+      "path": "Sources/Valora/PlaybackProgress.swift",
+      "untracked": true,
+      "sha256": "ba623ad313ae5a4e332f10619a3ee333e6ad0e5b2cfe004e2f908e7412da3f58"
+    },
+    {
+      "path": "Sources/Valora/SettingsLocalization.swift",
+      "untracked": false,
+      "sha256": "d846e4e0b5401f1abf2ef753e8f2152bfcdab24a2998129701d90700501b2a08"
+    },
+    {
+      "path": "Sources/Valora/SettingsView.swift",
+      "untracked": false,
+      "sha256": "2e2ec52a317d79a5aeec70a201811067a825d6a7c3fc1830ed2ae3800db0c144"
+    },
+    {
+      "path": "Sources/Valora/Verification.swift",
+      "untracked": false,
+      "sha256": "56896e044147ac950f61bf738b945871ea47fa3181af449440e7c9b84c6e27b0"
+    },
+    {
+      "path": "Sources/Valora/WindowCoordinator.swift",
+      "untracked": false,
+      "sha256": "75f67859d37dff6ced3429311697f58855efa7b7023a39de6a59c4e822352b70"
+    }
+  ]
+}

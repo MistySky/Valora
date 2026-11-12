@@ -22,6 +22,20 @@ final class MusicPreferencesTests: XCTestCase {
         XCTAssertFalse(options.hidesActivity(source:"",frontmost:""))
         XCTAssertFalse(MusicPreferences().hidesActivity(source:"player",frontmost:"player"))
     }
+    func testLockScreenLyricsDefaultAndMasterComposition() {
+        let defaults = MusicPreferences()
+        XCTAssertFalse(defaults.lockScreenLyrics)
+        XCTAssertFalse(defaults.showsLockScreenLyrics)
+        let lockOnly = MusicPreferences(values: ["lockScreenLyrics": true])
+        XCTAssertTrue(lockOnly.lockScreenLyrics)
+        XCTAssertFalse(lockOnly.showsLockScreenLyrics,
+                       "the master lyrics switch must govern the lock-specific choice")
+        let both = MusicPreferences(values: ["showLyrics": true, "lockScreenLyrics": true])
+        XCTAssertTrue(both.showsLockScreenLyrics)
+        let masterOff = MusicPreferences(values: ["showLyrics": false, "lockScreenLyrics": true])
+        XCTAssertFalse(masterOff.showsLockScreenLyrics)
+    }
+
     func testDurationCannotCrashTaskSleepOrEscapeSliderBounds() {
         for invalid in [Double.nan, .infinity, -.infinity] {
             XCTAssertEqual(MusicPreferences(values:["peekDuration":invalid]).peekDuration, 2)

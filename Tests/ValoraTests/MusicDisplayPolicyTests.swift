@@ -98,6 +98,25 @@ final class MusicDisplayPolicyTests: XCTestCase {
         XCTAssertFalse(MusicPreferences().inlineLyrics)
     }
 
+    func testLyricsSettingsIsASiblingCardWithConditionalSubrows() throws {
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+            .deletingLastPathComponent().deletingLastPathComponent()
+        let source = try String(contentsOf: root.appendingPathComponent("Sources/Valora/SettingsView.swift"), encoding: .utf8)
+        let musicStart = try XCTUnwrap(source.range(of: "@ViewBuilder private var music:"))
+        let lyricsStart = try XCTUnwrap(source.range(of: "private var lyricsSettings:"))
+        let aboutStart = try XCTUnwrap(source.range(of: "private var aboutPage:"))
+        let music = String(source[musicStart.lowerBound..<lyricsStart.lowerBound])
+        let lyrics = String(source[lyricsStart.lowerBound..<aboutStart.lowerBound])
+        XCTAssertTrue(music.contains("lyricsSettings\n"))
+        XCTAssertFalse(music.contains("Show lyrics"))
+        XCTAssertFalse(music.contains("Inline lyrics"))
+        XCTAssertTrue(lyrics.contains("toggle(\"Lyrics\", \"showLyrics\")"))
+        XCTAssertTrue(lyrics.contains("if draft.value(\"showLyrics\", false)"))
+        XCTAssertTrue(lyrics.contains("toggle(\"Inline lyrics\", \"inlineLyrics\")"))
+        XCTAssertTrue(lyrics.contains("toggle(\"Lock screen lyrics\", \"lockScreenLyrics\")"))
+        XCTAssertLessThan(lyricsStart.lowerBound, aboutStart.lowerBound)
+    }
+
     func testInlinePreferencePersistsWithoutStartingAnotherLyricsRequest() async throws {
         let suite = "valora.inline-request.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!

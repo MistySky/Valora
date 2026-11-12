@@ -95,6 +95,7 @@ final class CompactWaveformView: NSView {
     private var positionedSize=CGSize.zero
     private var positionedProfile:WaveformProfile?
     private var positionedArtwork=false
+    private var visibilityObservation: NSKeyValueObservation?
     private(set) var textureRenderCount=0
     var hasArtworkTexture:Bool { texture.contents != nil }
     var isTicking: Bool { registered }
@@ -257,7 +258,23 @@ final class CompactWaveformView: NSView {
     }
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
+        observeWindowVisibility()
         synchronizeTimer()
+    }
+
+    /// Borderless panels do not deliver a reliable public order/occlusion
+    /// notification. KVO on the owning window's `isVisible` is the smallest
+    /// event-driven seam: orderOut stops the clock, orderFront resumes it with
+    /// the latest playing/reducedMotion/suspended state. No polling and no
+    /// dependency on another configure call.
+    private func observeWindowVisibility() {
+        visibilityObservation = nil
+        guard let window else { return }
+        visibilityObservation = window.observe(\.isVisible, options: [.new]) { [weak self] _, _ in
+            MainActor.assumeIsolated {
+                self?.synchronizeTimer()
+            }
+        }
     }
     /// `window != nil` is not visibility: the notch panel is ordered out for
     /// fullscreen/Mission Control hiding while this view keeps its window.

@@ -308,7 +308,7 @@ final class MediaController {
         systemSnapshot = snapshot
         if changed && snapshot.artwork == nil { model.artwork = nil }
         if let data = snapshot.artwork, changed || model.artwork == nil || data != previousSystemArtwork {
-            model.artwork = NSImage(data: data)
+            model.artwork = ArtworkImage.prepare(data)
         }
         previousSystemArtwork = snapshot.artwork
         model.title = snapshot.title; model.artist = snapshot.artist; model.album = snapshot.album

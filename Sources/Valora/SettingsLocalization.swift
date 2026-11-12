@@ -31,7 +31,7 @@ enum SettingsText {
         "Idle duration": "空闲时长",
         "Monochrome": "单色", "Colored": "彩色", "Gradient": "渐变",
         "Enable Lock Screen": "启用锁定屏幕", "Show lyrics": "显示歌词", "Disable compact waveform": "停用紧凑波形",
-        "Inline lyrics": "内嵌歌词",
+        "Inline lyrics": "内嵌歌词", "Lyrics": "歌词", "Lock screen lyrics": "锁屏歌词",
         "Disable artwork flip": "停用封面翻转", "Hide while source app is active": "来源应用在前台时隐藏",
         "Hide media title extras": "隐藏标题附加信息",
         "Automatic  ∙ System": "自动 · 系统", "Music app": "音乐应用", "System": "系统",

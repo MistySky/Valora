@@ -143,27 +143,31 @@ final class LaunchPolicyTests: XCTestCase {
             .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
         let delegate = try String(contentsOf: root.appendingPathComponent("Sources/Valora/AppDelegate.swift"),
                                   encoding: .utf8)
-        var depth = 0
-        var regions: [(line: String, depth: Int)] = []
+        // Track every conditional so an unrelated lyrics/platform #endif does
+        // not consume a development region or make the depth negative.
+        var developmentConditions: [Bool] = []
+        var sharedLines: [String] = []
         for line in delegate.split(separator: "\n", omittingEmptySubsequences: false) {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
-            if trimmed.hasPrefix("#if VALORA_DEVELOPMENT") || trimmed.hasPrefix("#if !VALORA_DEVELOPMENT") {
-                depth += 1
+            if trimmed.hasPrefix("#if ") {
+                developmentConditions.append(trimmed.contains("VALORA_DEVELOPMENT"))
                 continue
             }
             if trimmed.hasPrefix("#endif") {
-                depth -= 1
+                XCTAssertFalse(developmentConditions.isEmpty, "unmatched #endif")
+                if !developmentConditions.isEmpty { developmentConditions.removeLast() }
                 continue
             }
-            if depth == 0 { regions.append((String(line), depth)) }
+            if !developmentConditions.contains(true) { sharedLines.append(String(line)) }
         }
+        XCTAssertTrue(developmentConditions.isEmpty, "unclosed compile condition")
         let shared = ["model.media = MediaController(model)",
                       "model.audio = AudioOutputController(model)",
                       "model.bluetooth = ConnectivityController(model",
                       "coordinator = WindowCoordinator(model)",
                       "lockMusic = LockMusicCoordinator("]
         for needle in shared {
-            XCTAssertTrue(regions.contains { $0.line.contains(needle) },
+            XCTAssertTrue(sharedLines.contains { $0.contains(needle) },
                           "shared launch code is inside a development region: \(needle)")
         }
     }

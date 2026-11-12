@@ -31,10 +31,11 @@ private final class RecordingLyricsProvider: LyricsProviding, @unchecked Sendabl
 
 @MainActor
 final class LockLyricsTrackChangeTests: XCTestCase {
-    private func makeModel(showLyrics: Bool = true) -> (AppModel, RevivalSettings, String) {
+    private func makeModel(showLyrics: Bool = true,
+                           lockScreenLyrics: Bool = true) -> (AppModel, RevivalSettings, String) {
         let suite = "com.wangqing.valora.lock-lyrics.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!
-        defaults.set(["showLyrics": showLyrics], forKey: "referenceSettingsUI")
+        defaults.set(["showLyrics": showLyrics, "lockScreenLyrics": lockScreenLyrics], forKey: "referenceSettingsUI")
         let settings = RevivalSettings(defaults: defaults)
         let model = AppModel(settings: settings)
         model.title = "A"; model.artist = "Artist"; model.duration = 200
@@ -106,6 +107,24 @@ final class LockLyricsTrackChangeTests: XCTestCase {
         try? await Task.sleep(nanoseconds: 250_000_000)
         XCTAssertEqual(provider.count, 1, "lock card keeps its demand while the desktop is hidden")
         XCTAssertNotNil(model.lyrics.timeline)
+        controller.cancel()
+    }
+
+    func testLockCardWithLockLyricsOffDoesNotRequestLyrics() async {
+        let (model, _, suite) = makeModel(showLyrics: true, lockScreenLyrics: false)
+        defer { cleanup(suite) }
+        // Start with no desktop lyric surface, so only the lock-card policy is
+        // under test; otherwise the normal desktop notch would legitimately
+        // request the first song before the lock flag is set.
+        model.screenHidden = true
+        let provider = RecordingLyricsProvider()
+        let controller = LyricsController(model: model, provider: provider, budget: 2)
+        controller.start()
+        model.lockMusicCardVisible = true
+        model.isSessionLocked = true
+        try? await Task.sleep(nanoseconds: 250_000_000)
+        XCTAssertEqual(provider.requestedTitles, [])
+        XCTAssertNil(model.lyrics.timeline)
         controller.cancel()
     }
 

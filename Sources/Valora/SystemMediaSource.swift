@@ -59,6 +59,56 @@ final class SystemMediaSource: @unchecked Sendable {
         return task
     }
 
+    /// Reads the permanent adapter stream in bounded iterations. The caller's
+    /// buffer survives chunks; every blocking read and its JSON/snapshot
+    /// temporaries are inside one autoreleasepool so Foundation objects from
+    /// this iteration are released before the next blocking read.
+    static let streamBufferLimit = 16_000_000
+
+    enum StreamEnd: Equatable {
+        case eof
+        case bufferLimit
+    }
+
+    /// Internal seam used by production and finite tests. It deliberately
+    /// keeps the exact original parse/filter/eof/limit semantics while making
+    /// the per-read autorelease boundary explicit.
+    static func readStream(
+        readChunk: () -> Data,
+        bufferLimit: Int = streamBufferLimit,
+        didExceedLimit: () -> Void = {},
+        emit: (SystemMediaSnapshot?) -> Void
+    ) -> StreamEnd {
+        var buffer = Data()
+        var exceededLimit = false
+        while true {
+            let keepReading = autoreleasepool {
+                let chunk = readChunk()
+                if chunk.isEmpty { return false }
+                buffer.append(chunk)
+                if buffer.count > bufferLimit {
+                    exceededLimit = true
+                    didExceedLimit()
+                    return false
+                }
+                while let newline = buffer.firstIndex(of: 10) {
+                    let line = Data(buffer[..<newline])
+                    buffer.removeSubrange(...newline)
+                    guard let event = try? JSONSerialization.jsonObject(with: line) as? [String: Any],
+                          event["type"] as? String == "data",
+                          event["diff"] as? Bool == false,
+                          let payload = event["payload"] as? [String: Any] else { continue }
+                    // Optional snapshot is intentional: invalid payloads still
+                    // emit a nil event in the original order.
+                    emit(SystemMediaSnapshot(payload))
+                }
+                return true
+            }
+            if !keepReading { break }
+        }
+        return exceededLimit ? .bufferLimit : .eof
+    }
+
     @MainActor
     func start() {
         guard process == nil else { return }
@@ -71,19 +121,12 @@ final class SystemMediaSource: @unchecked Sendable {
             try task.run()
             reader.async { [weak self] in
                 guard let self else { return }
-                var buffer = Data()
-                while true {
-                    let chunk = output.fileHandleForReading.availableData
-                    if chunk.isEmpty { break }
-                    buffer.append(chunk)
-                    if buffer.count > 16_000_000 { task.terminate(); break }
-                    while let newline = buffer.firstIndex(of: 10) {
-                        let line = Data(buffer[..<newline])
-                        buffer.removeSubrange(...newline)
-                        guard let event = try? JSONSerialization.jsonObject(with: line) as? [String: Any],
-                              event["type"] as? String == "data", event["diff"] as? Bool == false,
-                              let payload = event["payload"] as? [String: Any] else { continue }
-                        let snapshot = SystemMediaSnapshot(payload)
+                _ = Self.readStream(
+                    readChunk: { output.fileHandleForReading.availableData },
+                    didExceedLimit: { task.terminate() },
+                    emit: { snapshot in
+                        // The main-hop closure owns the snapshot strongly; the
+                        // reader's per-iteration pool may drain immediately.
                         DispatchQueue.main.async { [weak self] in
                             MainActor.assumeIsolated {
                                 guard let self, self.isCurrent(token) else { return }
@@ -91,7 +134,7 @@ final class SystemMediaSource: @unchecked Sendable {
                             }
                         }
                     }
-                }
+                )
                 task.waitUntilExit()
                 DispatchQueue.main.async { [weak self] in
                     MainActor.assumeIsolated {

@@ -43,7 +43,7 @@ final class DesktopPlayingCadenceTests: XCTestCase {
         withExtendedLifetime(model) {
             controller.start()
             var values: [Double] = []
-            let token = model.$elapsed.dropFirst().sink { values.append($0) }
+            let token = model.progress.$snapshot.map(\.elapsed).dropFirst().sink { values.append($0) }
             for _ in 0..<8 { scheduler.fire() }
             XCTAssertEqual(values.count, 2, "collapsed playback samples at 1Hz, not 4Hz")
             token.cancel()
@@ -59,7 +59,7 @@ final class DesktopPlayingCadenceTests: XCTestCase {
             _ = model.presentation.begin(expanding: true)
             XCTAssertTrue(model.presentation.retainsExpandedContent)
             var values: [Double] = []
-            let token = model.$elapsed.dropFirst().sink { values.append($0) }
+            let token = model.progress.$snapshot.map(\.elapsed).dropFirst().sink { values.append($0) }
             for _ in 0..<4 { scheduler.fire() }
             XCTAssertEqual(values.count, 4, "the visible progress bar keeps its existing 4Hz update")
             token.cancel()
@@ -74,7 +74,7 @@ final class DesktopPlayingCadenceTests: XCTestCase {
             controller.start()
             model.lockMusicCardVisible = true
             var values: [Double] = []
-            let token = model.$elapsed.dropFirst().sink { values.append($0) }
+            let token = model.progress.$snapshot.map(\.elapsed).dropFirst().sink { values.append($0) }
             for _ in 0..<4 { scheduler.fire() }
             XCTAssertEqual(values.count, 4, "the lock card progress bar keeps 4Hz")
             token.cancel()
@@ -90,7 +90,7 @@ final class DesktopPlayingCadenceTests: XCTestCase {
             scheduler.fire()                 // collapsed anchor
             let before = model.elapsed
             var values: [Double] = []
-            let token = model.$elapsed.dropFirst().sink { values.append($0) }
+            let token = model.progress.$snapshot.map(\.elapsed).dropFirst().sink { values.append($0) }
             _ = model.presentation.begin(expanding: true)
             XCTAssertEqual(values.count, 1, "expanding must not wait up to a second for the next sample")
             XCTAssertGreaterThanOrEqual(values.first ?? 0, before)
@@ -111,7 +111,7 @@ final class DesktopPlayingCadenceTests: XCTestCase {
             XCTAssertEqual(model.presentation.phase, .collapsed)
             scheduler.fire()
             var values: [Double] = []
-            let token = model.$elapsed.dropFirst().sink { values.append($0) }
+            let token = model.progress.$snapshot.map(\.elapsed).dropFirst().sink { values.append($0) }
             for _ in 0..<4 { scheduler.fire() }
             XCTAssertEqual(values.count, 1, "after collapsing only the 1Hz anchor remains")
             token.cancel()
@@ -126,7 +126,7 @@ final class DesktopPlayingCadenceTests: XCTestCase {
             controller.start()
             _ = model.presentation.begin(expanding: true)
             var values = 0
-            let token = model.$elapsed.dropFirst().sink { _ in values += 1 }
+            let token = model.progress.$snapshot.map(\.elapsed).dropFirst().sink { _ in values += 1 }
             for _ in 0..<6 { scheduler.fire() }
             XCTAssertEqual(values, 0, "a paused expanded player still has nothing new to draw")
             token.cancel()

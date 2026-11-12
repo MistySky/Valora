@@ -90,6 +90,9 @@ final class LockMusicCoordinator: ObservableObject {
     @Published private(set) var informationAirPods: AudioDevice?
     @Published private(set) var visible = false
     @Published private(set) var appeared = false
+    /// Independent lock-row presentation state: true through the card's
+    /// entrance/exit, false only after the panel is actually removed.
+    @Published private(set) var lyricsActive = false
     @Published var showsVolume = false
     /// Owns the temporary activation taken while the card is on screen. The
     /// previous policy (and the previous frontmost app) are restored conservatively
@@ -230,7 +233,8 @@ final class LockMusicCoordinator: ObservableObject {
             model.$mediaBundleIdentifier.map { _ in () }.eraseToAnyPublisher(),
             model.settings.$nowPlayingEnabled.map { _ in () }.eraseToAnyPublisher(),
             model.settings.$bluetoothEnabled.map { _ in () }.eraseToAnyPublisher(),
-            model.settings.$lockPreferences.map { _ in () }.eraseToAnyPublisher()
+            model.settings.$lockPreferences.map { _ in () }.eraseToAnyPublisher(),
+            model.settings.$musicPreferences.map { _ in () }.eraseToAnyPublisher()
         ).sink { [weak self] _ in
             Task { @MainActor [weak self] in self?.refresh(epoch: epoch) }
         }.store(in: &subscriptions)
@@ -352,6 +356,7 @@ final class LockMusicCoordinator: ObservableObject {
             cancelHideAndAppearance()
             visible = false
             appeared = false
+            lyricsActive = false
             showsVolume = false
             if let panel {
                 panel.orderOut()
@@ -369,6 +374,7 @@ final class LockMusicCoordinator: ObservableObject {
             cancelHideAndAppearance()
             visible = false
             appeared = false
+            lyricsActive = false
             showsVolume = false
             if let panel {
                 panel.orderOut()
@@ -384,6 +390,7 @@ final class LockMusicCoordinator: ObservableObject {
             cancelHideAndAppearance()
             visible = false
             appeared = false
+            lyricsActive = false
             showsVolume = false
             if let panel {
                 panel.orderOut()
@@ -810,7 +817,8 @@ final class LockMusicCoordinator: ObservableObject {
         let layout = LockCardLayout(screenMinY: frame.minY,
                                     screenHeight: frame.height,
                                     verticalOffset: model.settings.lockPreferences.offset,
-                                    reserveFullExpansion: !(target?.isBuiltIn ?? false))
+                                    reserveFullExpansion: !(target?.isBuiltIn ?? false),
+                                    showsLockLyrics: model.settings.musicPreferences.showsLockScreenLyrics)
         panel.setFrameOrigin(NSPoint(x: frame.midX - 192.5,
                                      y: CGFloat(layout.panelOriginY)))
     }
@@ -834,11 +842,14 @@ final class LockMusicCoordinator: ObservableObject {
             showsVolume = false
             appearanceTask?.cancel()
             appeared = false
+            lyricsActive = false
             present()
             visible = true
             appearanceTask = scheduler.schedule(after: 0.032) { [weak self] in
-                guard let self, self.isCurrent(epoch), self.state.visible, self.model.isSessionLocked else { return }
+                guard let self, self.isCurrent(epoch), self.state.visible,
+                      self.model.isSessionLocked, self.panel.isVisible else { return }
                 self.appeared = true
+                self.lyricsActive = true
             }
         } else {
             appearanceTask?.cancel()
@@ -850,6 +861,7 @@ final class LockMusicCoordinator: ObservableObject {
                 self.panel.orderOut()
                 self.lockSpace?.detachWindowNumber(self.panel.windowNumber)
                 self.showsVolume = false
+                self.lyricsActive = false
             }
         }
     }
@@ -914,6 +926,7 @@ final class LockMusicCoordinator: ObservableObject {
         lockSpace = nil
         visible = false
         appeared = false
+        lyricsActive = false
         showsVolume = false
         model.lockMusicCardVisible = false
         model.isSessionLocked = false

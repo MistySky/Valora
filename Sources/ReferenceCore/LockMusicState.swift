@@ -75,7 +75,10 @@ public struct LockMusicState: Equatable, Sendable {
 /// extend it downwards.
 ///
 /// Blocks include the vertical spacing that precedes them, so the four possible
-/// states are exactly `H`, `H+V`, `H+L` and `H+V+L` with an unchanged top.
+/// states are exactly `H`, `H+V`, `H+L` and `H+V+L` with an unchanged top
+/// *within a chosen lyric mode*. Toggling the lock lyric row is a product mode
+/// switch: the whole card is re-anchored by one lyric block so its bottom edge
+/// stays aligned; it is not an in-place top change.
 public struct LockCardLayout: Equatable, Sendable {
     /// Player block (padding included). Measured from the real lock card.
     public static let playerHeight: Double = 164
@@ -108,13 +111,19 @@ public struct LockCardLayout: Equatable, Sendable {
     /// guaranteeing the avatar is never covered. The built-in screen keeps the
     /// accepted anchor, where the volume-expanded state sits exactly on the line.
     public var reserveFullExpansion: Bool
+    /// Whether the effective lock lyric row is showing. Switching this mode
+    /// re-anchors the whole card so its bottom edge stays aligned; within one
+    /// mode the volume row still expands downwards from a fixed top.
+    public var showsLockLyrics: Bool
 
     public init(screenMinY: Double = 0, screenHeight: Double,
-                verticalOffset: Double = 0, reserveFullExpansion: Bool = false) {
+                verticalOffset: Double = 0, reserveFullExpansion: Bool = false,
+                showsLockLyrics: Bool = true) {
         self.screenMinY = screenMinY
         self.screenHeight = screenHeight
         self.verticalOffset = verticalOffset
         self.reserveFullExpansion = reserveFullExpansion
+        self.showsLockLyrics = showsLockLyrics
     }
 
     /// The original 21% clearance line. V0091 note: this is **not** a measured
@@ -140,16 +149,20 @@ public struct LockCardLayout: Equatable, Sendable {
     /// trade-off rather than something compensated with a guessed offset.
     public static let volumeClearance: Double = volumeBlock
 
-    /// Fixed top edge of the card (screen coordinates, origin bottom-left).
-    /// Anchored from the **collapsed** card plus `volumeClearance`.
+    /// Top edge of the card (screen coordinates, origin bottom-left). Within a
+    /// lyric mode it is fixed; switching `showsLockLyrics` re-anchors the whole
+    /// card by exactly one lyric block so the bottom stays on the same line.
     ///
     /// Consequences, reported and not silently compensated:
     /// - collapsed card sits `volumeClearance` (32pt) above the old 21% line;
     /// - volume-expanded card's bottom sits on that line;
     /// - adding the lyric row still publishes 44pt below it.
     public var cardTop: Double {
-        reservedBottom + (reserveFullExpansion ? Self.maxCardHeight
-                                               : Self.playerHeight + Self.volumeClearance)
+        let base = reservedBottom + (reserveFullExpansion ? Self.maxCardHeight
+                                                          : Self.playerHeight + Self.volumeClearance)
+        // With no lyric row the card is shifted down by exactly one lyric
+        // block, so its bottom matches the lyric-on card at the same volume.
+        return base - (showsLockLyrics ? 0 : Self.lyricBlock)
     }
 
     /// Height of the visible card for a given set of expanded blocks.

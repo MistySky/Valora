@@ -294,11 +294,24 @@ struct SettingsView: View {
     @ViewBuilder private var music: some View {
         SettingsCard {
             toggle("Now Playing", "enableNowPlaying", true, symbol: "play.fill"); SettingsRule()
-            choices("progressStyle", "Monochrome", [("Monochrome", ""), ("Colored", ""), ("Gradient", "")], style: "progress", height: 36); SettingsRule()
-            toggle("Show lyrics", "showLyrics"); SettingsRule()
-            toggle("Inline lyrics", "inlineLyrics")
+            choices("progressStyle", "Monochrome", [("Monochrome", ""), ("Colored", ""), ("Gradient", "")], style: "progress", height: 36)
         }
+        lyricsSettings
         musicDisplaySettings
+    }
+
+    /// A sibling card, not a new sidebar page. Sub-options are mounted only
+    /// while the master lyric switch is on; their stored values survive off/on.
+    private var lyricsSettings: some View {
+        SettingsCard {
+            toggle("Lyrics", "showLyrics")
+            if draft.value("showLyrics", false) {
+                SettingsRule()
+                toggle("Inline lyrics", "inlineLyrics")
+                SettingsRule()
+                toggle("Lock screen lyrics", "lockScreenLyrics")
+            }
+        }
     }
 
 

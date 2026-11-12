@@ -229,6 +229,7 @@ final class LyricsRowTransitionStaticFrameTests: XCTestCase {
                                                                         rowHeight: 32,
                                                                         showsNote: true,
                                                                         horizontalInset: 18,
+                                                                        transitionStrategy: .legacyTimer,
                                                                         host: hostModel)),
                                   width: 236, height: 32)
             RunLoop.main.run(until: Date().addingTimeInterval(0.3))
@@ -289,6 +290,7 @@ final class LyricsRowTransitionStaticFrameTests: XCTestCase {
                                                                         rowHeight: 32,
                                                                         showsNote: true,
                                                                         horizontalInset: 18,
+                                                                        transitionStrategy: .legacyTimer,
                                                                         host: hostModel)),
                                   width: 236, height: 32)
             waitUntil(1.0) { hostModel.displayedLine != nil }

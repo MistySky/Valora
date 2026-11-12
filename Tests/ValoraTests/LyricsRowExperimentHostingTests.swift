@@ -12,6 +12,15 @@ final class LyricsRowExperimentHostTests: XCTestCase {
     private let lineA = LyricLine(start: 0, text: "第一句")
     private let lineB = LyricLine(start: 1, text: "第二句")
 
+    private func staticLineForStrategy() -> NativeLyricsStaticLine {
+        let image = NSImage(size: NSSize(width: 1, height: 1))
+        image.lockFocus(); NSColor.black.setFill(); NSBezierPath(rect: NSRect(x: 0, y: 0, width: 1, height: 1)).fill(); image.unlockFocus()
+        let cg = image.cgImage(forProposedRect: nil, context: nil, hints: nil)!
+        return NativeLyricsStaticLine(lineKey: "0-", base: cg, accent: cg,
+                                      pointSize: CGSize(width: 20, height: 17), maskWidth: 20,
+                                      viewportWidth: 20, positionX: 0, positionY: 0, imageScale: 2)
+    }
+
     func testCurrentCallbacksAreAccepted() {
         let host = LyricsRowExperimentHost()
         host.begin(identity: "a")
@@ -19,6 +28,31 @@ final class LyricsRowExperimentHostTests: XCTestCase {
         XCTAssertEqual(host.displayedLine, lineA)
         host.reportFailure(generation: host.generation, identity: "a")
         XCTAssertTrue(host.failed)
+    }
+
+    func testProductionStrategiesAreTypedAndIsolated() {
+        let desktop = LyricsRowExperimentHost()
+        desktop.transitionStrategy = .build26SwiftUI
+        desktop.begin(identity: "desktop")
+        desktop.reportLine(LyricLine(start: 0, text: "第一句"), outgoing: nil,
+                           generation: desktop.generation, identity: "desktop")
+        desktop.reportLine(LyricLine(start: 1, text: "第二句"),
+                           outgoing: staticLineForStrategy(), generation: desktop.generation,
+                           identity: "desktop")
+        XCTAssertFalse(desktop.debugTransitionTimerActive,
+                       "desktop build26 strategy must not start the legacy timer")
+
+        let lock = LyricsRowExperimentHost()
+        lock.transitionStrategy = .legacyTimer
+        lock.begin(identity: "lock")
+        lock.reportLine(LyricLine(start: 0, text: "第一句"), outgoing: nil,
+                        generation: lock.generation, identity: "lock")
+        lock.reportLine(LyricLine(start: 1, text: "第二句"),
+                        outgoing: staticLineForStrategy(), generation: lock.generation,
+                        identity: "lock")
+        XCTAssertTrue(lock.debugTransitionTimerActive,
+                      "lock strategy retains the build49 timer path")
+        lock.invalidate()
     }
 
     func testStaleGenerationAndIdentityAreIgnored() {
@@ -166,12 +200,14 @@ final class LyricsRowExperimentHostingTests: XCTestCase {
 
     private func makeHostedExperiment(model: AppModel, host: LyricsRowExperimentHost,
                                       rowHeight: CGFloat, showsNote: Bool,
-                                      inset: CGFloat, width: CGFloat)
+                                      inset: CGFloat, width: CGFloat,
+                                      transitionStrategy: LyricsTransitionStrategy = .legacyTimer)
         -> (NSHostingView<AnyView>, NSWindow) {
         self.host(AnyView(ExperimentalDesktopLyricsView(model: model, width: width,
                                                         rowHeight: rowHeight,
                                                         showsNote: showsNote,
                                                         horizontalInset: inset,
+                                                        transitionStrategy: transitionStrategy,
                                                         host: host)),
                   height: rowHeight)
     }
@@ -319,6 +355,116 @@ final class LyricsRowExperimentHostingTests: XCTestCase {
         return (note.lowerBound, text)
     }
 
+    func testDesktopKeyedNoteDoesNotJumpOrReverseAtLineChange() throws {
+        let (model, suite) = model(elapsed: 0.2, lines: [
+            LyricLine(start: 0, text: "短句"),
+            LyricLine(start: 1, text: String(repeating: "长歌词内容", count: 6))
+        ])
+        defer { UserDefaults().removePersistentDomain(forName: suite) }
+        model.playing = false
+        let owner = LyricsRowExperimentHost()
+        let (view, window) = makeHostedExperiment(
+            model: model, host: owner, rowHeight: 32, showsNote: true,
+            inset: 18, width: width, transitionStrategy: .build26SwiftUI)
+        defer { stopNativeRows(view); window.close() }
+        RunLoop.main.run(until: Date().addingTimeInterval(0.35))
+        func noteX() throws -> Int {
+            let rep = try XCTUnwrap(bitmap(of: view))
+            let pixels = try XCTUnwrap(px(rep))
+            let w = try XCTUnwrap(rep.cgImage).width
+            let h = rep.pixelsHigh
+            var left = w
+            for y in 0..<h {
+                for x in 0..<w {
+                    let i = (y * w + x) * 4
+                    if pixels[i] > 100 && Double(pixels[i]) > Double(pixels[i+1]) * 1.6
+                        && Double(pixels[i]) > Double(pixels[i+2]) * 1.6 && pixels[i+3] > 30 {
+                        left = min(left, x)
+                    }
+                }
+            }
+            XCTAssertLessThan(left, w, "fixture must show the accent note")
+            return left
+        }
+        let before = try noteX()
+        let start = Date()
+        model.setElapsed(1.1, sampledAt: start)
+        var samples: [Int] = []
+        for delay in [0.001, 0.05, 0.10, 0.15, 0.25] {
+            let target = start.addingTimeInterval(delay)
+            if target > Date() { RunLoop.main.run(until: target) }
+            samples.append(try noteX())
+        }
+        print("NOTE_CONTINUITY before=\(before) samples=\(samples)")
+        stopNativeRows(view)
+        model.setElapsed(0.2, sampledAt: Date())
+        view.rootView = AnyView(CompactLyricsView(model: model, width: width,
+                                                  rowHeight: 32, showsNote: true,
+                                                  horizontalInset: 18))
+        RunLoop.main.run(until: Date().addingTimeInterval(0.35))
+        let referenceBefore = try noteX()
+        let referenceStart = Date()
+        model.setElapsed(1.1, sampledAt: referenceStart)
+        var reference: [Int] = []
+        for delay in [0.001, 0.05, 0.10, 0.15, 0.25] {
+            let target = referenceStart.addingTimeInterval(delay)
+            if target > Date() { RunLoop.main.run(until: target) }
+            reference.append(try noteX())
+        }
+        print("NOTE_REFERENCE before=\(referenceBefore) samples=\(reference)")
+        XCTAssertLessThanOrEqual(abs(before - referenceBefore), 2,
+                                 "stable short-line note position must match the reference")
+        XCTAssertLessThanOrEqual(abs(samples[0] - before), 8,
+                                 "note must not snap before the 0.2s layout transition starts")
+        for index in 1..<samples.count {
+            XCTAssertLessThanOrEqual(samples[index], samples[index-1] + 2,
+                                     "short-to-long note movement must not reverse direction")
+        }
+    }
+
+    /// Natural playback clock crossing the next line, without a seek after the
+    /// sample starts. This is the path the real media tick uses.
+    func testDesktopKeyedNaturalTickNoteDoesNotReverse() throws {
+        let anchor = Date()
+        let short = LyricLine(start: 0, text: "短句")
+        let long = LyricLine(start: 1, text: String(repeating: "长歌词内容", count: 6))
+        let (model, suite) = model(elapsed: 0.0, lines: [short, long])
+        defer { UserDefaults().removePersistentDomain(forName: suite) }
+        model.playing = true
+        model.playbackRate = 1
+        model.setElapsed(0.0, sampledAt: anchor)
+        let owner = LyricsRowExperimentHost()
+        owner.transitionStrategy = .build26SwiftUI
+        let (view, window) = makeHostedExperiment(model: model, host: owner,
+                                                  rowHeight: 32, showsNote: true,
+                                                  inset: 18, width: width,
+                                                  transitionStrategy: .build26SwiftUI)
+        defer { stopNativeRows(view); window.close() }
+        waitUntil { owner.displayedLine?.start == 0 }
+        RunLoop.main.run(until: Date().addingTimeInterval(0.12))
+        func noteX() throws -> Int {
+            let rep = try XCTUnwrap(bitmap(of: view))
+            return try XCTUnwrap(noteAndTextStart(rep, showsNote: true).note)
+        }
+        let before = try noteX()
+        XCTAssertEqual(before, 200, "stable short note must match the reference x")
+        var samples: [(Double, Int)] = []
+        let start = Date()
+        for delay in [0.2, 0.4, 0.6, 0.8, 1.0, 1.2] {
+            let target = start.addingTimeInterval(delay)
+            if target > Date() { RunLoop.main.run(until: target) }
+            samples.append((Date().timeIntervalSince(start), try noteX()))
+        }
+        print("NOTE_NATURAL before=\(before) samples=\(samples)")
+        XCTAssertLessThanOrEqual(samples[0].1, before + 2,
+                                 "natural tick must not snap the note right")
+        for index in 1..<samples.count {
+            XCTAssertLessThanOrEqual(samples[index].1, samples[index-1].1 + 2,
+                                     "natural tick note movement must not reverse")
+        }
+        XCTAssertEqual(owner.displayedLine?.start, 1)
+    }
+
     func testNoteAndTextPositionsMatchProduction() {
         let anchor = Date()
         func compare(caseName: String, elapsed: Double, lines: [LyricLine], rowHeight: CGFloat,
@@ -327,13 +473,15 @@ final class LyricsRowExperimentHostingTests: XCTestCase {
             defer { UserDefaults().removePersistentDomain(forName: suite) }
             model.setElapsed(elapsed, sampledAt: anchor)
             let host = LyricsRowExperimentHost()
+            host.transitionStrategy = .build26SwiftUI
             let production = self.host(AnyView(CompactLyricsView(model: model, width: width,
                                                                  rowHeight: rowHeight,
                                                                  showsNote: showsNote,
                                                                  horizontalInset: inset)),
                                        height: rowHeight)
             let experiment = makeHostedExperiment(model: model, host: host, rowHeight: rowHeight,
-                                                  showsNote: showsNote, inset: inset, width: width)
+                                                  showsNote: showsNote, inset: inset, width: width,
+                                                  transitionStrategy: .build26SwiftUI)
             RunLoop.main.run(until: Date().addingTimeInterval(0.35))
             defer {
                 stopNativeRows(experiment.0)
@@ -383,7 +531,7 @@ final class LyricsRowExperimentHostingTests: XCTestCase {
     /// the same wall-clock offsets after the same trigger. The experiment must
     /// keep exactly one live renderer during the transition.
     func testSwitchKeyFrames() {
-        let delays: [TimeInterval] = [0, 0.05, 0.10, 0.15, 0.20]
+        let delays: [TimeInterval] = [0, 0.05, 0.10, 0.15, 0.25]
         let short = LyricLine(start: 0, text: "短句")
         let long = LyricLine(start: 1, text: String(repeating: "长歌词内容", count: 6))
         let anchor = Date()
@@ -400,11 +548,13 @@ final class LyricsRowExperimentHostingTests: XCTestCase {
                                                                 horizontalInset: 18)), height: 32)
             RunLoop.main.run(until: Date().addingTimeInterval(0.3))
             model.setElapsed(1.0, sampledAt: Date())
+            let productionStart = Date()
             for delay in delays {
-                RunLoop.main.run(until: Date().addingTimeInterval(delay == 0 ? 0.001 : delay))
+                let target = productionStart.addingTimeInterval(max(0.001, delay))
+                if target > Date() { RunLoop.main.run(until: target) }
                 if let rep = bitmap(of: view) {
-                    productionFrames.append((delay, inkBounds(rep),
-                                             statsAlpha(rep)))
+                    productionFrames.append((target.timeIntervalSince(productionStart),
+                                             inkBounds(rep), statsAlpha(rep)))
                 }
             }
             window.close()
@@ -434,15 +584,18 @@ final class LyricsRowExperimentHostingTests: XCTestCase {
             XCTAssertEqual(hostModel.displayedLine?.start, 0, "the row must mount on the short line")
             let trigger = mount.addingTimeInterval(0.95)
             row.debugNow = { trigger }
+            let experimentStart = Date()
             row.render(at: trigger)
             for delay in delays {
-                RunLoop.main.run(until: Date().addingTimeInterval(delay == 0 ? 0.001 : delay))
+                let target = experimentStart.addingTimeInterval(max(0.001, delay))
+                if target > Date() { RunLoop.main.run(until: target) }
                 let liveRows = countNativeRows(view)
                 XCTAssertEqual(liveRows, 1, "exactly one live renderer during the switch")
                 if hostModel.outgoing != nil { sawOutgoing = true }
                 print("STATE t=\(delay) outgoing=\(hostModel.outgoing != nil) offset=\(hostModel.incomingOffset) opacity=\(hostModel.incomingOpacity) line=\(hostModel.displayedLine?.start ?? -1) width=\(hostModel.contentWidth ?? -1) settled=\(hostModel.isSettled)")
                 if let rep = bitmap(of: view) {
-                    experimentFrames.append((delay, inkBounds(rep), statsAlpha(rep)))
+                    experimentFrames.append((target.timeIntervalSince(experimentStart),
+                                             inkBounds(rep), statsAlpha(rep)))
                 }
             }
             XCTAssertTrue(sawOutgoing, "the real host must enter the viewport transition")
@@ -474,6 +627,192 @@ final class LyricsRowExperimentHostingTests: XCTestCase {
         }
     }
 
+    /// R3 production path: the desktop row is a keyed SwiftUI child. A real
+    /// model/playback line change must freeze the old native presentation and
+    /// mount exactly one live successor through the asymmetric transition.
+    func testDesktopKeyedHandoffFreezesOldAndMountsOneLiveClock() {
+        let anchor = Date()
+        let short = LyricLine(start: 0, text: "短句")
+        let long = LyricLine(start: 1, text: String(repeating: "长歌词内容", count: 6))
+        let (model, suite) = model(elapsed: 0.2, lines: [short, long])
+        defer { UserDefaults().removePersistentDomain(forName: suite) }
+        model.playing = true
+        model.playbackRate = 1
+        model.setElapsed(0.2, sampledAt: anchor)
+        let hostModel = LyricsRowExperimentHost()
+        hostModel.transitionStrategy = .build26SwiftUI
+        let (view, window) = makeHostedExperiment(model: model, host: hostModel,
+                                                  rowHeight: 32, showsNote: true,
+                                                  inset: 18, width: width,
+                                                  transitionStrategy: .build26SwiftUI)
+        defer {
+            stopNativeRows(view)
+            window.close()
+        }
+        waitUntil { hostModel.displayedLine?.start == 0 }
+        let initialID = hostModel.presentationID
+        let trigger = Date()
+        model.setElapsed(1.0, sampledAt: trigger)
+
+        // Sample from the trigger origin itself; do not wait for handoff first,
+        // otherwise the nominal t=0 frame is already mid-transition.
+        var evidence: [(TimeInterval, CGRect?, Int)] = []
+        for delay in [0.0, 0.05, 0.10, 0.15, 0.25] {
+            let target = trigger.addingTimeInterval(delay)
+            if target > Date() { RunLoop.main.run(until: target) }
+            guard let rep = bitmap(of: view) else { continue }
+            evidence.append((Date().timeIntervalSince(trigger), inkBounds(rep), statsAlpha(rep)))
+            savePNG(rep, "r3-keyed-\(Int(delay * 100)).png")
+        }
+        for e in evidence {
+            print(String(format: "R3KEY t=%.3f ink=%d y=%.1f", e.0, e.2,
+                         Double(e.1?.minY ?? -1)))
+        }
+        waitUntil { hostModel.presentationID > initialID }
+        XCTAssertEqual(hostModel.displayedLine?.start, 1, "handoff publishes the new line")
+        XCTAssertNil(hostModel.outgoing, "frozen old line is released after the transition")
+
+        let during = nativeRows(view)
+        XCTAssertEqual(during.count, 1, "only the keyed successor owns a native view")
+        XCTAssertEqual(during.filter(\.debugIsClockRunning).count, 1,
+                       "exactly one live native clock during keyed handoff")
+        XCTAssertFalse(during.contains { $0.diagnosticRetired },
+                       "the old native view is retired before the frozen image takes over")
+
+        waitUntil { self.countNativeRows(view) == 1 }
+        XCTAssertEqual(countNativeRows(view), 1, "retired child is released after transition")
+        let finalRows = nativeRows(view)
+        XCTAssertEqual(finalRows.count, 1)
+        XCTAssertFalse(finalRows[0].diagnosticRetired)
+        XCTAssertEqual(finalRows[0].debugLine?.start, 1)
+        XCTAssertEqual(hostModel.displayedLine?.start, 1)
+        XCTAssertNil(hostModel.outgoing)
+    }
+
+    func testDesktopKeyedShortShortAndLongShortLifecycle() {
+        func run(_ name: String, old: String, new: String) {
+            let anchor = Date()
+            let lines = [LyricLine(start: 0, text: old), LyricLine(start: 1, text: new)]
+            let (model, suite) = model(elapsed: 0.2, lines: lines)
+            defer { UserDefaults().removePersistentDomain(forName: suite) }
+            model.playing = true
+            model.playbackRate = 1
+            model.setElapsed(0.2, sampledAt: anchor)
+            let hostModel = LyricsRowExperimentHost()
+            hostModel.transitionStrategy = .build26SwiftUI
+            let (view, window) = makeHostedExperiment(model: model, host: hostModel,
+                                                      rowHeight: 32, showsNote: true,
+                                                      inset: 18, width: width,
+                                                      transitionStrategy: .build26SwiftUI)
+            defer {
+                stopNativeRows(view)
+                window.close()
+            }
+            waitUntil { hostModel.displayedLine?.start == 0 }
+            let initialID = hostModel.presentationID
+            model.setElapsed(1.2, sampledAt: Date())
+            waitUntil { hostModel.presentationID > initialID }
+            XCTAssertEqual(hostModel.displayedLine?.start, 1, "\(name): new line published")
+            waitUntil { self.countNativeRows(view) == 1 }
+            XCTAssertEqual(countNativeRows(view), 1, "\(name): old native released")
+            let rows = nativeRows(view)
+            XCTAssertEqual(rows.count, 1)
+            XCTAssertEqual(rows[0].debugLine?.start, 1, "\(name): live row is new line")
+            XCTAssertFalse(rows[0].diagnosticRetired)
+        }
+        run("short-to-short", old: "上一句", new: "下一句")
+        run("long-to-short", old: String(repeating: "长歌词内容", count: 6), new: "下一句")
+    }
+
+    func testDesktopKeyedSharedPreparationAndSingleOldVisual() {
+        let anchor = Date()
+        let lines = [LyricLine(start: 0, text: "第一句"),
+                     LyricLine(start: 1, text: "第二句"),
+                     LyricLine(start: 2, text: "第三句")]
+        let (model, suite) = model(elapsed: 0.2, lines: lines)
+        defer { UserDefaults().removePersistentDomain(forName: suite) }
+        model.playing = true
+        model.playbackRate = 1
+        model.setElapsed(0.2, sampledAt: anchor)
+        let hostModel = LyricsRowExperimentHost()
+        hostModel.transitionStrategy = .build26SwiftUI
+        let (view, window) = makeHostedExperiment(model: model, host: hostModel,
+                                                  rowHeight: 32, showsNote: true,
+                                                  inset: 18, width: width,
+                                                  transitionStrategy: .build26SwiftUI)
+        waitUntil { hostModel.displayedLine?.start == 0 }
+        XCTAssertEqual(hostModel.textPreparer.windowCreations, 1,
+                       "the owner prepares in one shared window")
+
+        model.setElapsed(1.2, sampledAt: Date())
+        waitUntil { hostModel.displayedLine?.start == 1 }
+        let oldRows = nativeRows(view).filter { $0.diagnosticRetired }
+        XCTAssertEqual(oldRows.count, 1, "one retired native row is retained")
+        XCTAssertTrue(oldRows[0].diagnosticHiddenForTransition,
+                      "retired native is hidden so the frozen image is the only old visual")
+        XCTAssertEqual(hostModel.textPreparer.windowCreations, 1,
+                       "second line must not create another capture window")
+        waitUntil { hostModel.outgoing == nil }
+
+        model.setElapsed(2.2, sampledAt: Date())
+        waitUntil { hostModel.displayedLine?.start == 2 }
+        XCTAssertEqual(hostModel.textPreparer.windowCreations, 1,
+                       "third line still uses the same capture window")
+        waitUntil { hostModel.outgoing == nil }
+
+        stopNativeRows(view)
+        window.close()
+        hostModel.invalidate()
+        XCTAssertEqual(hostModel.textPreparer.windowCloses, 1,
+                       "owner teardown releases the shared capture window")
+    }
+
+    func testInvalidatedOwnerDropsLateBridgeAndReactivatesSameIdentity() {
+        let anchor = Date()
+        let lines = [LyricLine(start: 0, text: "第一句")]
+        let (model, suite) = model(elapsed: 0.2, lines: lines)
+        defer { UserDefaults().removePersistentDomain(forName: suite) }
+        model.playing = false
+        model.setElapsed(0.2, sampledAt: anchor)
+        let host = LyricsRowExperimentHost()
+        host.transitionStrategy = .build26SwiftUI
+        let (view, window) = makeHostedExperiment(model: model, host: host,
+                                                  rowHeight: 32, showsNote: true,
+                                                  inset: 18, width: width,
+                                                  transitionStrategy: .build26SwiftUI)
+        waitUntil { host.displayedLine != nil }
+        let oldGeneration = host.generation
+        let oldIdentity = host.identity
+        host.invalidate()
+        XCTAssertFalse(host.isActiveOwner)
+        XCTAssertFalse(host.textPreparer.isAvailable)
+        let windowsBefore = host.textPreparer.windowCreations
+
+        // A bridge callback from the retired lease must not revive the owner,
+        // prepare an image, or publish a fallback.
+        host.reportLine(lines[0], outgoing: nil, generation: oldGeneration,
+                        identity: oldIdentity)
+        host.reportFailure(generation: oldGeneration, identity: oldIdentity)
+        XCTAssertFalse(host.failed)
+        XCTAssertEqual(host.displayedLine, lines[0],
+                       "late callback must not replace the last published line")
+        XCTAssertEqual(host.textPreparer.windowCreations, windowsBefore)
+
+        // Re-appearance with the same identity is a new legal lease, not a
+        // permanent "same identity" lockout; it must restore a native row.
+        host.begin(identity: oldIdentity)
+        view.rootView = AnyView(ExperimentalDesktopLyricsView(
+            model: model, width: width, rowHeight: 32, showsNote: true,
+            horizontalInset: 18, transitionStrategy: .build26SwiftUI, host: host))
+        waitUntil { host.isActiveOwner && host.displayedLine != nil }
+        waitUntil { countNativeRows(view) == 1 }
+        XCTAssertFalse(host.failed)
+        XCTAssertEqual(countNativeRows(view), 1)
+        XCTAssertEqual(nativeRows(view).first?.diagnosticRetired, false)
+        stopNativeRows(view)
+        window.close()
+    }
+
     private func statsAlpha(_ rep: NSBitmapImageRep) -> Int {
         guard let data = px(rep) else { return -1 }
         var count = 0
@@ -489,9 +828,13 @@ final class LyricsRowExperimentHostingTests: XCTestCase {
     }
 
     private func countNativeRows(_ view: NSView) -> Int {
-        var count = view is NativeLyricsRowView ? 1 : 0
-        for subview in view.subviews { count += countNativeRows(subview) }
-        return count
+        nativeRows(view).count
+    }
+
+    private func nativeRows(_ view: NSView) -> [NativeLyricsRowView] {
+        var rows: [NativeLyricsRowView] = view is NativeLyricsRowView ? [view as! NativeLyricsRowView] : []
+        for subview in view.subviews { rows.append(contentsOf: nativeRows(subview)) }
+        return rows
     }
 
     func testNormalEmptyNormalKeepsTheRendererAndAdvances() {
@@ -741,6 +1084,74 @@ final class LyricsRowExperimentHostingTests: XCTestCase {
                      caseName, d.differing, a.pixelsWide * a.pixelsHigh,
                      Double(d.differing) / Double(a.pixelsWide * a.pixelsHigh) * 100, d.mean))
         XCTAssertGreaterThan(a.pixelsWide, 0)
+    }
+
+    func testRepeatedShellUpdateWithSameInputSkipsNativeApply() {
+        let (model, suite) = model(elapsed: 0.5, lines: [LyricLine(start: 0, text: "第一句")])
+        defer { UserDefaults().removePersistentDomain(forName: suite) }
+        model.playing = false
+        let host = LyricsRowExperimentHost()
+        let (view, window) = makeHostedExperiment(model: model, host: host, rowHeight: 32,
+                                                  showsNote: true, inset: 18, width: width)
+        defer { stopNativeRows(view); window.close() }
+        RunLoop.main.run(until: Date().addingTimeInterval(0.2))
+        guard let row = nativeRow(view) else { XCTFail("native row missing"); return }
+        // Let the first shell pass report the real text width, then take the
+        // baseline; the next identical shell update is the actual duplicate.
+        view.rootView = AnyView(ExperimentalDesktopLyricsView(
+            model: model, width: width, rowHeight: 32, showsNote: true,
+            horizontalInset: 18, transitionStrategy: .legacyTimer, host: host))
+        RunLoop.main.run(until: Date().addingTimeInterval(0.1))
+        let applied = row.applyCount
+        let requests = row.applyRequestCount
+        // This is the real shell transition update (offset changes, snapshot
+        // does not): SwiftUI must re-evaluate the representable, but the
+        // native apply should be skipped.
+        host.debugViewportOffsetY = 1
+        RunLoop.main.run(until: Date().addingTimeInterval(0.1))
+        XCTAssertGreaterThan(row.applyRequestCount, requests,
+                             "the shell transition must still request an input check")
+        XCTAssertEqual(row.applyCount, applied,
+                       "identical shell input must not execute another native apply")
+    }
+
+    func testNewProgressAnchorStillApplies() {
+        let (model, suite) = model(elapsed: 0.5, lines: [LyricLine(start: 0, text: "第一句")])
+        defer { UserDefaults().removePersistentDomain(forName: suite) }
+        model.playing = false
+        let host = LyricsRowExperimentHost()
+        let (view, window) = makeHostedExperiment(model: model, host: host, rowHeight: 32,
+                                                  showsNote: true, inset: 18, width: width)
+        defer { stopNativeRows(view); window.close() }
+        RunLoop.main.run(until: Date().addingTimeInterval(0.2))
+        guard let row = nativeRow(view) else { XCTFail("native row missing"); return }
+        let applied = row.applyCount
+        model.setElapsed(1.25, sampledAt: Date())
+        RunLoop.main.run(until: Date().addingTimeInterval(0.1))
+        XCTAssertGreaterThan(row.applyCount, applied,
+                             "a real progress anchor must be applied immediately")
+    }
+
+    func testSameIdentityLyricsReplacementStillApplies() {
+        let (model, suite) = model(elapsed: 0.5, lines: [LyricLine(start: 0, text: "第一句")])
+        defer { UserDefaults().removePersistentDomain(forName: suite) }
+        let host = LyricsRowExperimentHost()
+        let (view, window) = makeHostedExperiment(model: model, host: host, rowHeight: 32,
+                                                  showsNote: true, inset: 18, width: width)
+        defer { stopNativeRows(view); window.close() }
+        RunLoop.main.run(until: Date().addingTimeInterval(0.2))
+        guard let row = nativeRow(view) else { XCTFail("native row missing"); return }
+        let applied = row.applyCount
+        model.lyrics = LyricsDisplayState(
+            status: .ready,
+            timeline: LyricTimeline(lines: [LyricLine(start: 0, text: "替换后的同 identity 歌词")]),
+            identity: nil)
+        view.rootView = AnyView(ExperimentalDesktopLyricsView(
+            model: model, width: width, rowHeight: 32, showsNote: true,
+            horizontalInset: 18, transitionStrategy: .legacyTimer, host: host))
+        RunLoop.main.run(until: Date().addingTimeInterval(0.1))
+        XCTAssertGreaterThan(row.applyCount, applied,
+                             "same identity/content replacement must not be skipped")
     }
 
     func testHostedShortLineMatchesProduction() {

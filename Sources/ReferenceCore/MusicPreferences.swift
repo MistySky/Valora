@@ -13,6 +13,7 @@ public struct MusicPreferences: Equatable, Sendable {
     public var hideSongTitleExtras: Bool
     public var showLyrics: Bool
     public var inlineLyrics: Bool
+    public var lockScreenLyrics: Bool
 
     public init(values: [String: Any] = [:]) {
         disableArtworkFlip = values["disableAlbumArtFlip"] as? Bool ?? false
@@ -28,6 +29,13 @@ public struct MusicPreferences: Equatable, Sendable {
         hideSongTitleExtras = values["hideSongTitleExtras"] as? Bool ?? false
         showLyrics = values["showLyrics"] as? Bool ?? false
         inlineLyrics = values["inlineLyrics"] as? Bool ?? false
+        lockScreenLyrics = values["lockScreenLyrics"] as? Bool ?? false
+    }
+
+    /// Single effective lock-card lyric policy. The master switch always wins;
+    /// the lock-specific choice remains stored while the master is off.
+    public var showsLockScreenLyrics: Bool {
+        showLyrics && lockScreenLyrics
     }
 
     public func hidesActivity(source: String, frontmost: String) -> Bool {

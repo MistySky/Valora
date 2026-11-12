@@ -32,6 +32,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             }
         }
         modelWasLoaded = true
+        #if VALORA_LYRICS_EXPERIMENT
+        LyricsDiagnostics.shared.bind(model: model)
+        #endif
         return model
     }()
     private var statusItem: NSStatusItem?

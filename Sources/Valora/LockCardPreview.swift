@@ -48,7 +48,8 @@ final class LockCardPreviewController {
         // Optional inspection position, so the card can be parked over a
         // colourful part of the wallpaper instead of a white window.
         let layout = LockCardLayout(screenMinY: screen.frame.minY,
-                                    screenHeight: screen.frame.height)
+                                    screenHeight: screen.frame.height,
+                                    showsLockLyrics: model.settings.musicPreferences.showsLockScreenLyrics)
         let defaultOrigin = NSPoint(x: screen.frame.midX - 192.5,
                                     y: CGFloat(layout.panelOriginY))
         let origin: NSPoint

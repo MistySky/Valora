@@ -188,25 +188,23 @@ final class AppModel: ObservableObject {
     @Published private(set) var artworkIdentity = ""
     @Published private(set) var artworkColors: [NSColor] = []
     @Published var duration: Double = 0
-    @Published var elapsed: Double = 0 {
-        didSet {
-            if !settingElapsedWithSampleDate { elapsedSampleDate = Date() }
-        }
+    /// The 4Hz playback anchor lives outside AppModel so a pure progress tick
+    /// does not invalidate every view that observes the broad model.
+    let progress = PlaybackProgress()
+    var elapsed: Double {
+        get { progress.elapsed }
+        set { progress.set(newValue, sampledAt: Date()) }
     }
-    private(set) var elapsedSampleDate = Date()
-    private var settingElapsedWithSampleDate = false
+    var elapsedSampleDate: Date { progress.sampledAt }
 
     /// MediaController records the same wall-clock instant used to derive the
     /// elapsed sample, so a lyric view mounted later can account for its age.
     func setElapsed(_ value: Double, sampledAt date: Date) {
-        settingElapsedWithSampleDate = true
-        elapsedSampleDate = date
-        elapsed = value
-        settingElapsedWithSampleDate = false
+        progress.set(value, sampledAt: date)
     }
 
     func lyricsElapsed(at date: Date) -> TimeInterval {
-        LyricsPlaybackClock(anchorElapsed: elapsed, anchorDate: elapsedSampleDate,
+        LyricsPlaybackClock(anchorElapsed: progress.elapsed, anchorDate: progress.sampledAt,
                             rate: playbackRate, playing: playing).elapsed(at: date)
     }
     @Published var source = "系统"
@@ -223,7 +221,15 @@ final class AppModel: ObservableObject {
     @Published var isPointerInside = false
     @Published var mediaIdle = MediaIdleState()
     @Published var songPeek = SongPeekState()
-    @Published var lyrics = LyricsDisplayState()
+    /// Monotonic content revision for the native lyric adapter. It is not
+    /// published separately; the existing lyrics publication already updates
+    /// the owning view, and the revision must not create a second broadcast.
+    private(set) var lyricsRevision: UInt64 = 0
+    @Published var lyrics = LyricsDisplayState() {
+        didSet {
+            if oldValue != lyrics { lyricsRevision &+= 1 }
+        }
+    }
     @Published var devices: [AudioDevice] = []
     @Published var connectionToast: AudioDevice?
     @Published var connectionLowBattery = false
@@ -305,13 +311,13 @@ final class AppModel: ObservableObject {
             liveActivity: showsLockActivity ? .locked
                 : (neutral ? .none : ((connectionToast == nil && showsMusicActivity) ? .playing : .none)),
             quickPeek: (showsLockActivity || isLockTransitioning || neutral) ? .none
-                : ((connectionToast == nil && ((!settings.musicPreferences.showLyrics && songPeek.visible) || showsCompactLyrics)) ? .playing : .none),
+                : ((connectionToast == nil && ((!settings.musicPreferences.showLyrics && songPeek.visible) || reservesCompactLyricsSlot)) ? .playing : .none),
             tuning: .zero)
         if expandedForMetrics, showsLyricsInExpanded {
             // 32pt lyric row plus the existing 8pt player stack spacing.
             return CGSize(width: size.width, height: size.height + 40)
         }
-        if !lockStage, !expandedForMetrics, showsInlineLyrics {
+        if !lockStage, !expandedForMetrics, reservesInlineLyricsSlot {
             return CGSize(width: size.width + inlineLyricsWidthAddition, height: size.height)
         }
         return size
@@ -353,7 +359,21 @@ final class AppModel: ObservableObject {
         settings.musicPreferences.inlineLyrics && inlineLyricsDisplayEligible && !notchGeometry.hasPhysicalNotch
     }
     var showsInlineLyrics: Bool { compactLyricsVisible && usesInlineLyrics }
-    var inlineLyricsWidthAddition: CGFloat { showsInlineLyrics ? 16 : 0 }
+    /// The compact/inline lyric slot is a presentation geometry decision, not
+    /// a content-availability decision. It stays reserved while the lyrics
+    /// master switch is on and the ordinary music surface is visible, even if
+    /// lyrics are loading, missing, failed or between lines. Content remains
+    /// gated by `showsCompactLyrics` / `showsInlineLyrics`.
+    private var compactLyricsSlotVisible: Bool {
+        settings.nowPlayingEnabled && settings.musicPreferences.showLyrics
+            && showsMusicActivity
+            && (!isSessionLocked || isLockTransitioning)
+            && !expanded
+            && settings.showNotch && !screenHidden && connectionToast == nil
+    }
+    var reservesCompactLyricsSlot: Bool { compactLyricsSlotVisible && !usesInlineLyrics }
+    var reservesInlineLyricsSlot: Bool { compactLyricsSlotVisible && usesInlineLyrics }
+    var inlineLyricsWidthAddition: CGFloat { reservesInlineLyricsSlot ? 16 : 0 }
     var showsCompactLyrics: Bool { compactLyricsVisible && !usesInlineLyrics }
     var showsLyricsInExpanded: Bool { lyricsAvailable && settings.showNotch && !screenHidden }
     var currentLyricLine: LyricLine? {

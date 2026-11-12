@@ -16,6 +16,7 @@ enum NativeLyricsTextBackend: String, Equatable {
 /// changes lyric state.
 struct NativeLyricsRowSnapshot {
     var identity: LyricsTrackIdentity?
+    var contentRevision: UInt64 = 0
     var timeline: LyricTimeline?
     var elapsed: Double
     var sampledAt: Date
@@ -70,6 +71,94 @@ private struct StaticLyricText: View {
     }
 }
 
+/// Owner-held desktop text preparation host. One NSHostingView and one
+/// offscreen NSWindow live for the row owner's lifetime; each real line only
+/// produces its two immutable images. Keyed children borrow the results and
+/// never create their own capture window.
+@MainActor
+final class NativeLyricsTextPreparer {
+    private let textHost = NSHostingView(rootView: StaticLyricText(text: "", color: .gray))
+    private var textHostWindow: NSWindow?
+    private var textHostContainer: NSView?
+    var isAvailable = true
+    private(set) var windowCreations = 0
+    private(set) var windowCloses = 0
+    private(set) var imageBuilds = 0
+    private(set) var hostingLayouts = 0
+    var debugFailImageRender: Set<Int> = []
+
+    func prepare(text: String, rowHeight: CGFloat, accent: NSColor,
+                 scale: CGFloat) -> (CGImage, CGImage, CGSize)? {
+        guard isAvailable else { return nil }
+        prepareWindow()
+        textHost.rootView = StaticLyricText(text: text, color: .gray)
+        textHost.frame = CGRect(x: 0, y: 0, width: 900, height: max(1, rowHeight))
+        textHost.layoutSubtreeIfNeeded()
+        hostingLayouts += 1
+        let measured = textHost.fittingSize
+        guard measured.width > 0, measured.height > 0 else { return nil }
+        let imageSize = CGSize(width: measured.width, height: rowHeight)
+        guard let base = render(StaticLyricText(text: text, color: .gray,
+                                                rowHeight: rowHeight),
+                                size: imageSize, scale: scale, call: 1),
+              let accentImage = render(StaticLyricText(text: text,
+                                                       color: Color(nsColor: accent),
+                                                       rowHeight: rowHeight),
+                                       size: imageSize, scale: scale, call: 2) else {
+            return nil
+        }
+        return (base, accentImage, imageSize)
+    }
+
+    func close() {
+        guard let window = textHostWindow else { return }
+        textHost.removeFromSuperview()
+        window.contentView = nil
+        window.close()
+        textHostWindow = nil
+        textHostContainer = nil
+        windowCloses += 1
+        NativeLyricsRowView.noteSharedCaptureWindowClosed()
+    }
+
+    private func prepareWindow() {
+        guard textHostWindow == nil else { return }
+        let container = NSView(frame: NSRect(x: 0, y: 0, width: 1000, height: 40))
+        container.addSubview(textHost)
+        let window = NSWindow(contentRect: container.frame, styleMask: .borderless,
+                              backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        window.setFrameOrigin(NSPoint(x: -20000, y: -20000))
+        window.contentView = container
+        window.orderFrontRegardless()
+        textHostWindow = window
+        textHostContainer = container
+        windowCreations += 1
+        NativeLyricsRowView.noteSharedCaptureWindowCreated()
+    }
+
+    private func render(_ view: StaticLyricText, size: CGSize,
+                        scale: CGFloat, call: Int) -> CGImage? {
+        if debugFailImageRender.contains(call) { return nil }
+        prepareWindow()
+        textHost.rootView = view
+        textHost.frame = CGRect(origin: .zero, size: size)
+        textHost.layoutSubtreeIfNeeded()
+        hostingLayouts += 1
+        let w = Int(ceil(size.width * scale))
+        let h = Int(ceil(size.height * scale))
+        guard w > 0, h > 0,
+              let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: w, pixelsHigh: h,
+                                         bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true,
+                                         isPlanar: false, colorSpaceName: .deviceRGB,
+                                         bytesPerRow: 0, bitsPerPixel: 0) else { return nil }
+        rep.size = size
+        textHost.cacheDisplay(in: CGRect(origin: .zero, size: size), to: rep)
+        imageBuilds += 1
+        return rep.cgImage
+    }
+}
+
 /// Native prototype of the visible lyric row. Not wired into production.
 @MainActor
 final class NativeLyricsRowView: NSView {
@@ -110,6 +199,8 @@ final class NativeLyricsRowView: NSView {
     private var contentOriginX: CGFloat = 0
     private var lastRenderDate = Date(timeIntervalSince1970: 0)
     private var injectedScale: CGFloat?
+    /// Desktop keyed children borrow the owner's stable preparation host.
+    var textPreparer: NativeLyricsTextPreparer?
     var debugNow: (() -> Date)?
     var debugOffsetOverride: CGFloat?
     /// Geometry probe: vertical offset applied to the content container, used
@@ -120,10 +211,16 @@ final class NativeLyricsRowView: NSView {
 
     private var active = false
     private var stopped = false
+    private var retired = false
+    private var hasRenderedLine = false
     private var boundaryWake: Timer?
     private var boundaryDeadlineUptime: TimeInterval?
     private var lastContinuous: Bool?
     var onLineChange: ((LyricLine?) -> Void)?
+    /// Desktop keyed presentation: called before this view rewrites the old
+    /// line. Returning true means the owner has frozen this view and will
+    /// publish a new keyed child; this view must not switch/draw again.
+    var onLineChangeWillApply: ((LyricLine?, NativeLyricsStaticLine?) -> Bool)?
     var onRenderFailure: (() -> Void)?
     var onContentWidthChange: ((CGFloat) -> Void)?
     var onSwitchOutgoing: ((NativeLyricsStaticLine?) -> Void)?
@@ -188,8 +285,33 @@ final class NativeLyricsRowView: NSView {
     private(set) var rootViewUpdates = 0
     private(set) var captureWindowCreations = 0
     private(set) var captureWindowCloses = 0
+    /// Diagnostics-only counters; cheap integers, no rendering work.
+    var diagnosticRole = "unknown"
+    #if VALORA_LYRICS_EXPERIMENT
+    var lastAppliedInput: NativeLyricsAppliedKey?
+    #endif
+    var diagnosticActive: Bool { active }
+    var diagnosticStopped: Bool { stopped }
+    var diagnosticPlaying: Bool { snapshot?.playing ?? false }
+    var diagnosticRate: Double { snapshot?.rate ?? 0 }
+    var diagnosticRetired: Bool { retired }
+    var diagnosticHiddenForTransition: Bool { isHidden }
+    private(set) var applyCount = 0
+    private(set) var applyRequestCount = 0
+    private(set) var applySkippedCount = 0
+    private(set) var clockTickCount = 0
+    private(set) var offsetChangeCount = 0
+    private(set) var caTransactionAttempts = 0
+    private(set) var caTransactionCommits = 0
+    private(set) var stopCount = 0
+    private(set) var resumeCount = 0
+    private(set) var switchCount = 0
     static private(set) var liveCaptureWindows = 0
     static var debugLiveCaptureWindows: Int { liveCaptureWindows }
+    static func noteSharedCaptureWindowCreated() { liveCaptureWindows += 1 }
+    static func noteSharedCaptureWindowClosed() {
+        liveCaptureWindows = max(0, liveCaptureWindows - 1)
+    }
 
     override var isFlipped: Bool { true }
 
@@ -226,15 +348,26 @@ final class NativeLyricsRowView: NSView {
     required init?(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 
     func setActive(_ value: Bool) {
+        guard !retired else { return }
         let wasActive = active
         active = value
         stopped = !value
+        if value {
+            if !wasActive { resumeCount += 1 }
+        } else {
+            stopCount += 1
+        }
         guard value else { shutDownClocks(); return }
         if !wasActive { update(at: currentDisplayTime()) }
         synchronizeClock(force: !wasActive)
     }
 
+    func noteApplyRequest() { applyRequestCount += 1 }
+    func noteApplySkipped() { applySkippedCount += 1 }
+
     func apply(_ snapshot: NativeLyricsRowSnapshot) {
+        guard !retired else { return }
+        applyCount += 1
         let previous = self.snapshot
         self.snapshot = snapshot
         stopped = false
@@ -247,6 +380,27 @@ final class NativeLyricsRowView: NSView {
     }
 
     func render(at date: Date) { update(at: date) }
+
+    /// Freeze this presentation for a SwiftUI removal transition. Layer
+    /// contents/highlight/offset stay exactly where they were; all clocks and
+    /// future applies are stopped. The owner keeps the view alive through the
+    /// keyed child transition and releases it afterwards.
+    func retireForTransition() {
+        guard !retired else { return }
+        retired = true
+        active = false
+        stopped = true
+        boundaryWake?.invalidate()
+        boundaryWake = nil
+        boundaryDeadlineUptime = nil
+        NativeLyricsRowClock.shared.unregister(self)
+        onLineChange = nil
+        onSwitchOutgoing = nil
+        onContentWidthChange = nil
+        onRenderFailure = nil
+        onLineChangeWillApply = nil
+    }
+
 
     /// Geometry probe: move the content container and redraw immediately.
     func debugSetContainerYOffset(_ value: CGFloat) {
@@ -269,6 +423,7 @@ final class NativeLyricsRowView: NSView {
     }
 
     private func update(at date: Date) {
+        guard !retired else { return }
         lastRenderDate = date
         guard let snapshot else { return }
         frameTicks += 1
@@ -278,7 +433,12 @@ final class NativeLyricsRowView: NSView {
                                           playing: snapshot.playing).elapsed(at: date)
         let nextLine = snapshot.timeline?.line(at: elapsed)
         if nextLine != line {
+            if hasRenderedLine, let handoff = onLineChangeWillApply,
+               handoff(nextLine, frozenImageLine()) {
+                return
+            }
             switchLine(to: nextLine, snapshot: snapshot)
+            hasRenderedLine = true
         }
         synchronizeDrawing(snapshot)
         refreshLineEnd(snapshot)
@@ -287,6 +447,7 @@ final class NativeLyricsRowView: NSView {
     }
 
     private func switchLine(to nextLine: LyricLine?, snapshot: NativeLyricsRowSnapshot) {
+        switchCount += 1
         let outgoingStatic = snapshot.switchAnimation ? nil : frozenImageLine()
         let outgoing: CALayer? = snapshot.switchAnimation && (line != nil && nextLine != nil)
             ? snapshotOfLine() : nil
@@ -339,6 +500,7 @@ final class NativeLyricsRowView: NSView {
             offset = 0
         }
         let renderOffset = debugOffsetOverride ?? offset
+        caTransactionAttempts += 1
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         if fill != appliedFill {
@@ -356,7 +518,9 @@ final class NativeLyricsRowView: NSView {
             appliedOffset = renderOffset
             appliedOriginX = contentOriginX
             appliedYOffset = debugContainerYOffset
+            offsetChangeCount += 1
         }
+        caTransactionCommits += 1
         CATransaction.commit()
     }
 
@@ -481,6 +645,22 @@ final class NativeLyricsRowView: NSView {
     private func buildTextImages(_ snapshot: NativeLyricsRowSnapshot) {
         let text = line?.text ?? ""
         let scale = injectedScale ?? window?.backingScaleFactor ?? 2
+        if let textPreparer {
+            // An invalidated owner must not turn a late apply into a visible
+            // failure/fallback or reopen the shared capture window.
+            guard textPreparer.isAvailable else { return }
+            textPreparer.debugFailImageRender = debugFailImageRender
+            guard let prepared = textPreparer.prepare(text: text,
+                                                      rowHeight: snapshot.rowHeight,
+                                                      accent: snapshot.accent,
+                                                      scale: scale) else {
+                failTextImages(snapshot, reason: "shared image capture failed")
+                return
+            }
+            installTextImages(base: prepared.0, accent: prepared.1, imageSize: prepared.2,
+                              scale: scale, snapshot: snapshot)
+            return
+        }
         prepareTextHostWindow()
         textHost.rootView = StaticLyricText(text: text, color: .gray)
         rootViewUpdates += 1
@@ -505,29 +685,35 @@ final class NativeLyricsRowView: NSView {
             failTextImages(snapshot, reason: "image capture failed")
             return
         }
+        installTextImages(base: baseImage, accent: accentImage, imageSize: imageSize,
+                          scale: scale, snapshot: snapshot)
+    }
+
+    private func installTextImages(base: CGImage, accent: CGImage, imageSize: CGSize,
+                                   scale: CGFloat, snapshot: NativeLyricsRowSnapshot) {
         baseLayer.isHidden = true
         accentLayer.isHidden = true
         baseImageLayer.isHidden = false
         accentImageLayer.isHidden = false
         accentLayer.mask = nil
         accentImageLayer.mask = maskLayer
-        preparedBaseImage = baseImage
-        preparedAccentImage = accentImage
-        baseImageLayer.contents = baseImage
+        preparedBaseImage = base
+        preparedAccentImage = accent
+        baseImageLayer.contents = base
         baseImageLayer.contentsScale = scale
         baseImageLayer.bounds = CGRect(origin: .zero, size: imageSize)
-        accentImageLayer.contents = accentImage
+        accentImageLayer.contents = accent
         accentImageLayer.contentsScale = scale
         accentImageLayer.bounds = CGRect(origin: .zero, size: imageSize)
         maskLayer.contentsScale = scale
         imageScale = scale
-        textSize = CGSize(width: measured.width, height: rowHeight)
-        onContentWidthChange?(measured.width)
+        textSize = imageSize
+        onContentWidthChange?(imageSize.width)
         imagePointSize = imageSize
         imagePixelSize = CGSize(width: ceil(imageSize.width * scale),
                                 height: ceil(imageSize.height * scale))
         preparedScale = scale
-        preparedText = text
+        preparedText = line?.text ?? ""
         preparedKern = snapshot.textKern
         preparedAccent = snapshot.accent
         imageRenderFailed = false
@@ -873,9 +1059,13 @@ final class NativeLyricsRowView: NSView {
         return low < lines.count ? lines[low].start : nil
     }
 
+    func frozenTransitionLine() -> NativeLyricsStaticLine? { frozenImageLine() }
+
     func stop() {
+        retireForTransition()
         active = false
         stopped = true
+        stopCount += 1
         shutDownClocks()
         baseImageLayer.contents = nil
         accentImageLayer.contents = nil
@@ -887,6 +1077,11 @@ final class NativeLyricsRowView: NSView {
         preparedKern = nil
         preparedBackend = nil
         releaseCaptureWindow()
+        // `stop()` is also the explicit teardown used by isolated tests; a
+        // later setActive/apply may legitimately prepare this view again.
+        // Transition retirement remains irreversible until this teardown.
+        retired = false
+        isHidden = false
     }
 
     isolated deinit {
@@ -897,6 +1092,7 @@ final class NativeLyricsRowView: NSView {
     }
 
     fileprivate func clockTick() {
+        clockTickCount += 1
         guard active, !stopped, needsContinuousFrames else { return }
         update(at: currentDisplayTime())
     }

@@ -35,7 +35,7 @@ struct MusicPlayerContent:View {
                         .padding(.top,compensatesForNotch ? 16:8)
                         .padding(.leading,4).padding(.trailing,6)
                 }.padding(.bottom,translucent ? 0:4)
-                MediaProgressView(model:model,settings:settings,trackWidth:width-42,translucent:translucent,palette:palette).id(model.mediaBundleIdentifier+"\u{0}"+model.title+"\u{0}"+model.artist+"\u{0}"+model.album)
+                MediaProgressView(model:model,settings:settings,playback:model.progress,trackWidth:width-42,translucent:translucent,palette:palette).id(model.mediaBundleIdentifier+"\u{0}"+model.title+"\u{0}"+model.artist+"\u{0}"+model.album)
                 ZStack(alignment:.trailing) {
                   HStack(spacing:32){
                     MediaButton(symbol:"backward.fill",label:"上一首",size:23){model.media.command(5)}.disabled(!model.previewMode && !model.mediaCanSkip)

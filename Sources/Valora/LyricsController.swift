@@ -85,7 +85,9 @@ final class LyricsController {
     /// selection, simulated-notch settings or the notch being on screen.
     private var surfaceNeedsLyrics: Bool {
         let notch = model.settings.showNotch && !model.screenHidden && model.showsMusicActivity
-        return notch || model.lockMusicCardVisible
+        let lock = model.lockMusicCardVisible
+            && model.settings.musicPreferences.showsLockScreenLyrics
+        return notch || lock
     }
 
     private func visibilityChanged() {
