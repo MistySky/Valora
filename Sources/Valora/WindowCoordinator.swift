@@ -671,6 +671,7 @@ final class WindowCoordinator {
 
     private func updateVisibility() {
         guard !panels.isEmpty else {
+            clearPointerOwnership()
             if model.notchSurfaceOnScreen { model.notchSurfaceOnScreen = false }
             return
         }
@@ -737,7 +738,9 @@ final class WindowCoordinator {
             }
         }
         if !visible || model.isSessionLocked {
-            model.presenter.pointerEntered(false)
+            clearPointerOwnership()
+        } else {
+            syncHoverExitMonitors()
         }
     }
 
@@ -914,6 +917,12 @@ final class WindowCoordinator {
     private var pointerUpdateWork: DispatchWorkItem?
     private var lastPointerUpdate: TimeInterval = 0
     private static let pointerUpdateInterval: TimeInterval = 1.0 / 120.0
+    /// Hover-only fallback: sensor/panel exit events can be lost when the
+    /// interactive 624x320 canvas takes ownership. These monitors exist only
+    /// while at least one panel has pointerInside; they do not recreate the
+    /// permanent desktop-wide mouse stream.
+    private var hoverExitLocalMonitor: Any?
+    private var hoverExitGlobalMonitor: Any?
 
     /// Coalesce the high-frequency global/local mouse stream to one update per
     /// display-refresh interval. The event callback stays tiny; the latest
@@ -955,17 +964,59 @@ final class WindowCoordinator {
         return true
     }
 
+    private func syncHoverExitMonitors() {
+        let needed = panels.contains { $0.pointerInside }
+        if needed {
+            if hoverExitLocalMonitor == nil {
+                hoverExitLocalMonitor = NSEvent.addLocalMonitorForEvents(
+                    matching: [.mouseMoved, .leftMouseDragged]
+                ) { [weak self] event in
+                    MainActor.assumeIsolated { self?.queuePointerUpdate() }
+                    return event
+                }
+            }
+            if hoverExitGlobalMonitor == nil {
+                hoverExitGlobalMonitor = NSEvent.addGlobalMonitorForEvents(
+                    matching: [.mouseMoved, .leftMouseDragged]
+                ) { [weak self] _ in
+                    MainActor.assumeIsolated { self?.queuePointerUpdate() }
+                }
+            }
+        } else {
+            removeHoverExitMonitors()
+        }
+    }
+
+    private func removeHoverExitMonitors() {
+        if let hoverExitLocalMonitor {
+            NSEvent.removeMonitor(hoverExitLocalMonitor)
+            self.hoverExitLocalMonitor = nil
+        }
+        if let hoverExitGlobalMonitor {
+            NSEvent.removeMonitor(hoverExitGlobalMonitor)
+            self.hoverExitGlobalMonitor = nil
+        }
+    }
+
+    private func clearPointerOwnership() {
+        for record in panels {
+            record.pointerInside = false
+            cancelPendingHover(record)
+            record.panel.ignoresMouseEvents = true
+            record.lastIgnoresMouseEvents = true
+        }
+        removeHoverExitMonitors()
+        model.presenter.pointerEntered(false)
+    }
+
     private func trackMouse(at point: NSPoint) {
         guard !model.pointerInteractionActive else { return }
-        guard model.notchSurfaceOnScreen || model.isSessionLocked else { return }
+        guard model.notchSurfaceOnScreen || model.isSessionLocked else {
+            clearPointerOwnership()
+            return
+        }
         if model.isSessionLocked {
-            for record in panels {
-                record.panel.ignoresMouseEvents = true
-                record.lastIgnoresMouseEvents = true
-                record.pointerInside = false
-                cancelPendingHover(record)
-            }
-            model.presenter.pointerEntered(false)
+            clearPointerOwnership()
             return
         }
         for record in panels {
@@ -990,6 +1041,7 @@ final class WindowCoordinator {
                 }
             }
         }
+        syncHoverExitMonitors()
     }
 
     private func scheduleHover(_ record: ScreenPanel) {
@@ -1026,6 +1078,7 @@ final class WindowCoordinator {
         guard let active, !model.isSessionLocked else { return }
         if inside == active.pointerInside { return }
         active.pointerInside = inside
+        active.setIgnoresMouseEvents(!inside)
         if inside {
             model.presenter.pointerEntered(true)
             scheduleHover(active)
@@ -1037,6 +1090,7 @@ final class WindowCoordinator {
                 updateVisibility()
             }
         }
+        syncHoverExitMonitors()
     }
 
     var verificationSecondaryPanels: [(view: NSView?, frame: NSRect, visible: Bool, identifier: String)] {
@@ -1070,9 +1124,14 @@ final class WindowCoordinator {
                 }
             }
         }
+        syncHoverExitMonitors()
     }
     func verificationTrackChanged(identity: String?) { handleTrackChanged(identity) }
     func verificationTrackMouse(at point: CGPoint) { trackMouse(at: point) }
+    func verificationUpdateVisibility() { updateVisibility() }
+    var verificationHoverExitMonitorsInstalled: Bool {
+        hoverExitLocalMonitor != nil && hoverExitGlobalMonitor != nil
+    }
     /// Real window property reads/writes for the mouse-receive-state dedup:
     /// the setter here bypasses the idempotent helper to mimic another path.
     func verificationIgnoresMouseEvents(screenID: String) -> Bool? {
@@ -1126,6 +1185,8 @@ final class WindowCoordinator {
     }
 
     isolated deinit {
+        if let hoverExitLocalMonitor { NSEvent.removeMonitor(hoverExitLocalMonitor) }
+        if let hoverExitGlobalMonitor { NSEvent.removeMonitor(hoverExitGlobalMonitor) }
         pointerUpdateWork?.cancel()
         pointerUpdateWork = nil
         model.trackChangedHandler = nil
