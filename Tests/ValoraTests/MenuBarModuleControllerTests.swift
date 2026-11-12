@@ -31,6 +31,10 @@ final class MenuBarModuleControllerTests: XCTestCase {
         XCTAssertFalse(controller.monitorItem === controller.calendarItem)
         XCTAssertTrue(controller.monitorStatusButton?.target === controller)
         XCTAssertTrue(controller.calendarStatusButton?.target === controller)
+        XCTAssertEqual(controller.monitorItem?.autosaveName, "Valora.SystemMonitor")
+        XCTAssertEqual(controller.calendarItem?.autosaveName, "Valora.Calendar")
+        XCTAssertTrue(controller.monitorItem?.isVisible == true)
+        XCTAssertTrue(controller.calendarItem?.isVisible == true)
         XCTAssertEqual(controller.calendarStatusText, "10月25日 周日")
         XCTAssertEqual(controller.makeBasicMenu().items.map(\.title),
                        [AppMenuCommands.versionText, AppMenuCommands.settingsTitle, "", AppMenuCommands.quitTitle])
@@ -74,6 +78,39 @@ final class MenuBarModuleControllerTests: XCTestCase {
         XCTAssertNotEqual(ObjectIdentifier(controller.monitorItem!), firstMonitor)
         XCTAssertNotEqual(ObjectIdentifier(controller.calendarItem!), firstCalendar)
         XCTAssertEqual(controller.calendarStatusText, "10月25日 周日")
+    }
+
+    func testHiddenInheritedStatusItemIsRepairedWithStableAutosaveName() {
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        defer { NSStatusBar.system.removeStatusItem(item) }
+        item.isVisible = false
+        MenuBarModuleController.ensureStatusItemVisible(item, autosaveName: "Valora.Calendar")
+        XCTAssertEqual(item.autosaveName, "Valora.Calendar")
+        XCTAssertTrue(item.isVisible,
+                      "a pre-existing hidden Item-0 status item must be explicitly repaired")
+    }
+
+    func testReenablingCalendarRepairsAnExistingHiddenItem() {
+        let (_, _, controller) = fixture()
+        controller.start(startSampling: false)
+        defer { controller.stop() }
+        let calendar = controller.calendarItem
+        calendar?.isVisible = false
+        controller.setCalendarVisible(true)
+        XCTAssertEqual(controller.calendarItem?.autosaveName, "Valora.Calendar")
+        XCTAssertTrue(controller.calendarItem?.isVisible == true)
+    }
+
+    func testVApplicationItemUsesStableAutosaveNameAndIsVisible() {
+        let delegate = AppDelegate(arguments: ["Valora", "--preview-menu-modules"])
+        defer {
+            delegate.menuBarModulesForVerification?.stop()
+            delegate.removeApplicationStatusItemForVerification()
+        }
+        delegate.setupMenuForVerification()
+        let item = delegate.applicationStatusItemForVerification
+        XCTAssertEqual(item?.autosaveName, "Valora.Application")
+        XCTAssertTrue(item?.isVisible == true)
     }
 
     func testStopRemovesStatusItemsAndProviders() {

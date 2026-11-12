@@ -141,7 +141,11 @@ final class MenuBarModuleController: NSObject, NSPopoverDelegate {
         visibility.monitorVisible = visible
         guard started else { return }
         if visible {
-            if monitorItem == nil { monitorItem = makeStatusItem(autosaveName: "Valora.SystemMonitor") }
+            if monitorItem == nil {
+                monitorItem = makeStatusItem(autosaveName: "Valora.SystemMonitor")
+            } else {
+                Self.ensureStatusItemVisible(monitorItem, autosaveName: "Valora.SystemMonitor")
+            }
             if samplingEnabled { monitor.start() }
             updateMonitorImage()
             observeMonitor()
@@ -162,7 +166,11 @@ final class MenuBarModuleController: NSObject, NSPopoverDelegate {
         visibility.calendarVisible = visible
         guard started else { return }
         if visible {
-            if calendarItem == nil { calendarItem = makeStatusItem(autosaveName: "Valora.Calendar") }
+            if calendarItem == nil {
+                calendarItem = makeStatusItem(autosaveName: "Valora.Calendar")
+            } else {
+                Self.ensureStatusItemVisible(calendarItem, autosaveName: "Valora.Calendar")
+            }
             calendar.start()
             calendar.handleWake()
             updateCalendarImage()
@@ -183,12 +191,24 @@ final class MenuBarModuleController: NSObject, NSPopoverDelegate {
 
     private func makeStatusItem(autosaveName: String) -> NSStatusItem {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        item.autosaveName = autosaveName
+        Self.ensureStatusItemVisible(item, autosaveName: autosaveName)
         item.button?.imagePosition = .imageOnly
         item.button?.target = self
         item.button?.action = #selector(statusItemClicked(_:))
         item.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])
         return item
+    }
+
+    /// StatusBar's generic Item-0 autosave slot can carry a persisted hidden
+    /// state into a newly created item. A stable per-module name is assigned
+    /// first, then the current product intent explicitly makes the item
+    /// visible; an existing item is repaired the same way on re-enable.
+    static func ensureStatusItemVisible(_ item: NSStatusItem?, autosaveName: String) {
+        guard let item else { return }
+        if item.autosaveName != autosaveName {
+            item.autosaveName = autosaveName
+        }
+        item.isVisible = true
     }
 
     private func removeStatusItems() {

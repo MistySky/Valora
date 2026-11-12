@@ -68,6 +68,9 @@ final class FeatureSwitchTests: XCTestCase {
         delegate.setupMenuForVerification()
         XCTAssertNil(delegate.applicationStatusItemForVerification)
         XCTAssertNotNil(delegate.menuBarModulesForVerification?.monitorItem)
+        XCTAssertEqual(delegate.menuBarModulesForVerification?.calendarItem?.isVisible, true,
+                       "a persisted-off V icon must leave the date entry actually visible")
+        XCTAssertEqual(delegate.menuBarModulesForVerification?.monitorItem?.isVisible, true)
         delegate.settingsDraft.binding("showApplicationMenuBarIcon", true).wrappedValue = true
         delegate.applyFeatureSettingsForVerification()
         XCTAssertNotNil(delegate.applicationStatusItemForVerification)
@@ -94,6 +97,8 @@ final class FeatureSwitchTests: XCTestCase {
         delegate.applyFeatureSettingsForVerification()
         XCTAssertFalse(original.isVisible)
         XCTAssertEqual(ObjectIdentifier(try XCTUnwrap(delegate.applicationStatusItemForVerification)), identity)
+        XCTAssertEqual(delegate.menuBarModulesForVerification?.calendarItem?.isVisible, true)
+        XCTAssertEqual(delegate.menuBarModulesForVerification?.monitorItem?.isVisible, true)
 
         delegate.settingsDraft.binding("showApplicationMenuBarIcon", true).wrappedValue = true
         delegate.applyFeatureSettingsForVerification()

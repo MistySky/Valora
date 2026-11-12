@@ -563,10 +563,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private func installApplicationStatusItemIfNeeded() {
         if let statusItem {
+            statusItem.autosaveName = "Valora.Application"
             statusItem.isVisible = true
             return
         }
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        item.autosaveName = "Valora.Application"
+        item.isVisible = true
         item.button?.image = statusBarImage()
         item.button?.imageScaling = .scaleProportionallyDown
         item.button?.imagePosition = .imageOnly
