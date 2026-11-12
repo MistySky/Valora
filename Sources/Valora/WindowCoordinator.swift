@@ -63,10 +63,18 @@ final class EdgeHostingView: NSHostingView<NotchView> {
 
     override func updateTrackingAreas() {
         super.updateTrackingAreas()
-        if let pointerTrackingArea { removeTrackingArea(pointerTrackingArea) }
-        guard trackingSize.width > 0, trackingSize.height > 0 else { return }
+        guard trackingSize.width > 0, trackingSize.height > 0 else {
+            if let pointerTrackingArea { removeTrackingArea(pointerTrackingArea) }
+            pointerTrackingArea = nil
+            return
+        }
         let rect = CGRect(x: (bounds.width - trackingSize.width) / 2, y: 0,
                           width: trackingSize.width, height: trackingSize.height)
+        // Keep the live area when its geometry is unchanged. Check membership
+        // as well: AppKit/remounting may have removed a previously stored area.
+        if let pointerTrackingArea, pointerTrackingArea.rect == rect,
+           trackingAreas.contains(where: { $0 === pointerTrackingArea }) { return }
+        if let pointerTrackingArea { removeTrackingArea(pointerTrackingArea) }
         let area = NSTrackingArea(rect: rect,
                                   options: [.mouseEnteredAndExited, .activeAlways],
                                   owner: self, userInfo: nil)
@@ -211,6 +219,7 @@ final class WindowCoordinator {
 
     unowned let model: AppModel
     private let displayProvider: () -> [DisplayDescriptor]
+    private let pointerLocationProvider: () -> NSPoint
     private(set) var panel: NotchPanel!
     private var panels: [ScreenPanel] = []
     private var active: ScreenPanel!
@@ -222,9 +231,11 @@ final class WindowCoordinator {
     /// screen reconciliation/activation can replace the panel after startup.
     let activeNotchWindowNumber = CurrentValueSubject<Int?, Never>(nil)
 
-    init(_ model: AppModel, displayProvider: (() -> [DisplayDescriptor])? = nil) {
+    init(_ model: AppModel, displayProvider: (() -> [DisplayDescriptor])? = nil,
+         pointerLocationProvider: @escaping () -> NSPoint = { NSEvent.mouseLocation }) {
         self.model = model
         self.displayProvider = displayProvider ?? { NSScreen.screens.map(DisplayDescriptor.init(screen:)) }
+        self.pointerLocationProvider = pointerLocationProvider
     }
 
     func start(trackPointer: Bool = true) {
@@ -470,7 +481,9 @@ final class WindowCoordinator {
 
     private func updateHoverSensor(for record: ScreenPanel) {
         let frame = hoverSensorFrame(for: record)
-        record.hoverSensor?.setFrame(frame, display: false)
+        if let sensor = record.hoverSensor, sensor.frame != frame {
+            sensor.setFrame(frame, display: false)
+        }
     }
 
     private func trackingSize(for record: ScreenPanel) -> CGSize {
@@ -690,7 +703,8 @@ final class WindowCoordinator {
         // never becomes a per-refresh invalidation source itself.
         if model.notchSurfaceOnScreen != visible { model.notchSurfaceOnScreen = visible }
         for record in panels {
-            record.panel.sharingType = model.settings.hideFromScreenCapture ? .none : .readOnly
+            let sharingType: NSWindow.SharingType = model.settings.hideFromScreenCapture ? .none : .readOnly
+            if record.panel.sharingType != sharingType { record.panel.sharingType = sharingType }
             if model.isSessionLocked, model.lockNotchMounted,
                model.lockIndicator.phase != .locking,
                record.id != LockDisplayPolicy.select(from: displayProvider())?.id {
@@ -719,7 +733,8 @@ final class WindowCoordinator {
                 // while the pointer is actually inside the notch.
                 record.panel.ignoresMouseEvents = !record.pointerInside
                 record.lastIgnoresMouseEvents = !record.pointerInside
-                record.panel.setFrame(panelFrame(for: record), display: false)
+                let targetFrame = panelFrame(for: record)
+                if record.panel.frame != targetFrame { record.panel.setFrame(targetFrame, display: false) }
                 record.surfaceFrame = record.panel.frame
                 updateTrackingSize(for: record)
                 updateHoverSensor(for: record)
@@ -740,7 +755,7 @@ final class WindowCoordinator {
         if !visible || model.isSessionLocked {
             clearPointerOwnership()
         } else {
-            syncHoverExitMonitors()
+            syncHoverExitTracking()
         }
     }
 
@@ -911,37 +926,13 @@ final class WindowCoordinator {
             || point.y < bounds.minY || point.y > bounds.maxY
     }
 
-    private func trackMouse() { trackMouse(at: NSEvent.mouseLocation) }
-
-    private var pointerUpdateScheduled = false
-    private var pointerUpdateWork: DispatchWorkItem?
-    private var lastPointerUpdate: TimeInterval = 0
     private static let pointerUpdateInterval: TimeInterval = 1.0 / 120.0
     /// Hover-only fallback: sensor/panel exit events can be lost when the
-    /// interactive 624x320 canvas takes ownership. These monitors exist only
-    /// while at least one panel has pointerInside; they do not recreate the
-    /// permanent desktop-wide mouse stream.
-    private var hoverExitLocalMonitor: Any?
-    private var hoverExitGlobalMonitor: Any?
-
-    /// Coalesce the high-frequency global/local mouse stream to one update per
-    /// display-refresh interval. The event callback stays tiny; the latest
-    /// NSEvent.mouseLocation is read only when the update actually runs.
-    private func queuePointerUpdate() {
-        guard !pointerUpdateScheduled else { return }
-        pointerUpdateScheduled = true
-        let now = ProcessInfo.processInfo.systemUptime
-        let delay = max(0, Self.pointerUpdateInterval - (now - lastPointerUpdate))
-        let work = DispatchWorkItem { [weak self] in
-            guard let self else { return }
-            self.pointerUpdateScheduled = false
-            self.pointerUpdateWork = nil
-            self.lastPointerUpdate = ProcessInfo.processInfo.systemUptime
-            self.trackMouse(at: NSEvent.mouseLocation)
-        }
-        pointerUpdateWork = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)
-    }
+    /// interactive 624x320 canvas takes ownership. Read the current position
+    /// only while a panel owns the pointer, at the existing 120Hz processing
+    /// cadence. Outside the notch there is no timer or global event monitor;
+    /// the small tracking-area sensor remains responsible for re-entry.
+    private var hoverExitTimer: Timer?
 
     /// Idempotent window-state write used by the per-event pointer path: read
     /// the window's live `ignoresMouseEvents` and assign only when it would
@@ -964,38 +955,29 @@ final class WindowCoordinator {
         return true
     }
 
-    private func syncHoverExitMonitors() {
+    private func syncHoverExitTracking() {
         let needed = panels.contains { $0.pointerInside }
-        if needed {
-            if hoverExitLocalMonitor == nil {
-                hoverExitLocalMonitor = NSEvent.addLocalMonitorForEvents(
-                    matching: [.mouseMoved, .leftMouseDragged]
-                ) { [weak self] event in
-                    MainActor.assumeIsolated { self?.queuePointerUpdate() }
-                    return event
-                }
-            }
-            if hoverExitGlobalMonitor == nil {
-                hoverExitGlobalMonitor = NSEvent.addGlobalMonitorForEvents(
-                    matching: [.mouseMoved, .leftMouseDragged]
-                ) { [weak self] _ in
-                    MainActor.assumeIsolated { self?.queuePointerUpdate() }
-                }
-            }
-        } else {
-            removeHoverExitMonitors()
+        guard needed else { stopHoverExitTracking(); return }
+        guard hoverExitTimer == nil else { return }
+        let timer = Timer(timeInterval: Self.pointerUpdateInterval, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated { self?.checkHoverExit() }
         }
+        // Common modes retain the existing drag/menu-tracking responsiveness.
+        RunLoop.main.add(timer, forMode: .common)
+        hoverExitTimer = timer
     }
 
-    private func removeHoverExitMonitors() {
-        if let hoverExitLocalMonitor {
-            NSEvent.removeMonitor(hoverExitLocalMonitor)
-            self.hoverExitLocalMonitor = nil
+    private func checkHoverExit() {
+        guard panels.contains(where: { $0.pointerInside }) else {
+            stopHoverExitTracking()
+            return
         }
-        if let hoverExitGlobalMonitor {
-            NSEvent.removeMonitor(hoverExitGlobalMonitor)
-            self.hoverExitGlobalMonitor = nil
-        }
+        trackMouse(at: pointerLocationProvider())
+    }
+
+    private func stopHoverExitTracking() {
+        hoverExitTimer?.invalidate()
+        hoverExitTimer = nil
     }
 
     private func clearPointerOwnership() {
@@ -1005,7 +987,7 @@ final class WindowCoordinator {
             record.panel.ignoresMouseEvents = true
             record.lastIgnoresMouseEvents = true
         }
-        removeHoverExitMonitors()
+        stopHoverExitTracking()
         model.presenter.pointerEntered(false)
     }
 
@@ -1041,7 +1023,7 @@ final class WindowCoordinator {
                 }
             }
         }
-        syncHoverExitMonitors()
+        syncHoverExitTracking()
     }
 
     private func scheduleHover(_ record: ScreenPanel) {
@@ -1090,7 +1072,7 @@ final class WindowCoordinator {
                 updateVisibility()
             }
         }
-        syncHoverExitMonitors()
+        syncHoverExitTracking()
     }
 
     var verificationSecondaryPanels: [(view: NSView?, frame: NSRect, visible: Bool, identifier: String)] {
@@ -1124,14 +1106,13 @@ final class WindowCoordinator {
                 }
             }
         }
-        syncHoverExitMonitors()
+        syncHoverExitTracking()
     }
     func verificationTrackChanged(identity: String?) { handleTrackChanged(identity) }
     func verificationTrackMouse(at point: CGPoint) { trackMouse(at: point) }
     func verificationUpdateVisibility() { updateVisibility() }
-    var verificationHoverExitMonitorsInstalled: Bool {
-        hoverExitLocalMonitor != nil && hoverExitGlobalMonitor != nil
-    }
+    var verificationHoverExitTrackingActive: Bool { hoverExitTimer?.isValid == true }
+    func verificationFireHoverExitCheck() { hoverExitTimer?.fire() }
     /// Real window property reads/writes for the mouse-receive-state dedup:
     /// the setter here bypasses the idempotent helper to mimic another path.
     func verificationIgnoresMouseEvents(screenID: String) -> Bool? {
@@ -1185,10 +1166,7 @@ final class WindowCoordinator {
     }
 
     isolated deinit {
-        if let hoverExitLocalMonitor { NSEvent.removeMonitor(hoverExitLocalMonitor) }
-        if let hoverExitGlobalMonitor { NSEvent.removeMonitor(hoverExitGlobalMonitor) }
-        pointerUpdateWork?.cancel()
-        pointerUpdateWork = nil
+        hoverExitTimer?.invalidate()
         model.trackChangedHandler = nil
         for record in panels {
             record.pendingHover?.cancel()

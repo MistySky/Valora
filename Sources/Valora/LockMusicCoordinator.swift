@@ -796,17 +796,21 @@ final class LockMusicCoordinator: ObservableObject {
     private func place() {
         let target = LockDisplayPolicy.select(from: displayProvider())
         targetDisplay = target
-        model.lockNotchGeometry = target.map {
+        let geometry = target.map {
             LockDisplayPolicy.geometry(for: $0, simulated: model.settings.forceSimulatedNotch)
         }
+        if model.lockNotchGeometry != geometry { model.lockNotchGeometry = geometry }
         guard let frame = lockDisplayFrame, panel != nil else {
             panel?.orderOut()
             informationPanel?.orderOut()
             releaseOverlay()
             return
         }
-        informationPanel?.setFrameOrigin(NSPoint(x: frame.midX - 180,
-                                                 y: frame.maxY - frame.height * 0.265 - 94))
+        let informationOrigin = NSPoint(x: frame.midX - 180,
+                                        y: frame.maxY - frame.height * 0.265 - 94)
+        if let informationPanel, informationPanel.frame.origin != informationOrigin {
+            informationPanel.setFrameOrigin(informationOrigin)
+        }
         // Fixed top edge from the shared layout model: the host window keeps its
         // size, so the card's top and all existing content stay put while the
         // optional volume/lyrics blocks extend it downwards.
@@ -819,8 +823,10 @@ final class LockMusicCoordinator: ObservableObject {
                                     verticalOffset: model.settings.lockPreferences.offset,
                                     reserveFullExpansion: !(target?.isBuiltIn ?? false),
                                     showsLockLyrics: model.settings.musicPreferences.showsLockScreenLyrics)
-        panel.setFrameOrigin(NSPoint(x: frame.midX - 192.5,
-                                     y: CGFloat(layout.panelOriginY)))
+        let musicOrigin = NSPoint(x: frame.midX - 192.5, y: CGFloat(layout.panelOriginY))
+        // Compare the real frame, so a WindowServer/Space move is still
+        // corrected on refresh instead of being hidden by a cached target.
+        if panel.frame.origin != musicOrigin { panel.setFrameOrigin(musicOrigin) }
     }
 
     private var lockDisplayFrame: CGRect? {

@@ -501,18 +501,24 @@ final class NativeLyricsRowView: NSView {
         }
         let renderOffset = debugOffsetOverride ?? offset
         caTransactionAttempts += 1
+        let fillChanged = fill != appliedFill
+        let opacityChanged = lineContainer.opacity != Float(debugContentOpacity)
+        let positionChanged = renderOffset != appliedOffset || contentOriginX != appliedOriginX
+            || debugContainerYOffset != appliedYOffset
+        // Keep the clock and all frame calculations unchanged. When none of
+        // this draw's layer writes would run, there is no transaction to submit.
+        guard fillChanged || opacityChanged || positionChanged else { return }
         CATransaction.begin()
         CATransaction.setDisableActions(true)
-        if fill != appliedFill {
+        if fillChanged {
             maskLayer.bounds = CGRect(x: 0, y: 0, width: max(0, fill), height: textSize.height)
             appliedFill = fill
             maskUpdates += 1
         }
-        if lineContainer.opacity != Float(debugContentOpacity) {
+        if opacityChanged {
             lineContainer.opacity = Float(debugContentOpacity)
         }
-        if renderOffset != appliedOffset || contentOriginX != appliedOriginX
-            || debugContainerYOffset != appliedYOffset {
+        if positionChanged {
             lineContainer.position = CGPoint(x: contentOriginX - renderOffset,
                                              y: debugContainerYOffset)
             appliedOffset = renderOffset

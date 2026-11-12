@@ -311,18 +311,26 @@ final class MediaController {
             model.artwork = ArtworkImage.prepare(data)
         }
         previousSystemArtwork = snapshot.artwork
-        model.title = snapshot.title; model.artist = snapshot.artist; model.album = snapshot.album
-        model.playing = snapshot.playing; model.playbackRate = snapshot.rate
-        model.duration = snapshot.duration
+        // A full source event often only updates the playback anchor. Avoid
+        // republishing unchanged metadata to every view/window coordinator.
+        // Compare the live model (not the previous snapshot), so authoritative
+        // state still corrects optimistic play/pause feedback immediately.
+        if model.title != snapshot.title { model.title = snapshot.title }
+        if model.artist != snapshot.artist { model.artist = snapshot.artist }
+        if model.album != snapshot.album { model.album = snapshot.album }
+        if model.playing != snapshot.playing { model.playing = snapshot.playing }
+        if model.playbackRate != snapshot.rate { model.playbackRate = snapshot.rate }
+        if model.duration != snapshot.duration { model.duration = snapshot.duration }
         if !stalePreSeekSnapshot {
             model.setElapsed(timeline.position(at: now.timeIntervalSince1970), sampledAt: now)
         }
-        model.source = "系统"; model.mediaBundleIdentifier = snapshot.bundleIdentifier
-        model.mediaRevisionIdentity = snapshot.revisionIdentity
-        model.mediaCanSeek = snapshot.duration > 0
-        model.mediaCanSkip = !snapshot.prohibitsSkip
-        model.mediaCanControl = true
-        model.mediaError = nil
+        if model.source != "系统" { model.source = "系统" }
+        if model.mediaBundleIdentifier != snapshot.bundleIdentifier { model.mediaBundleIdentifier = snapshot.bundleIdentifier }
+        if model.mediaRevisionIdentity != snapshot.revisionIdentity { model.mediaRevisionIdentity = snapshot.revisionIdentity }
+        if model.mediaCanSeek != (snapshot.duration > 0) { model.mediaCanSeek = snapshot.duration > 0 }
+        if model.mediaCanSkip != !snapshot.prohibitsSkip { model.mediaCanSkip = !snapshot.prohibitsSkip }
+        if !model.mediaCanControl { model.mediaCanControl = true }
+        if model.mediaError != nil { model.mediaError = nil }
         model.lyricsController?.mediaMetadataChanged()
         updateSongPeek()
     }

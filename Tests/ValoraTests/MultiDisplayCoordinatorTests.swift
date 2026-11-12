@@ -289,32 +289,32 @@ extension MultiDisplayCoordinatorTests {
         let active = ids[0]
 
         coordinator.pointerChanged(true)
-        XCTAssertTrue(coordinator.verificationHoverExitMonitorsInstalled,
-                      "hover ownership must install a bounded local/global move fallback")
+        XCTAssertTrue(coordinator.verificationHoverExitTrackingActive,
+                      "hover ownership must arm the hover-only exit fallback")
         XCTAssertFalse(coordinator.verificationIgnoresMouseEvents(screenID: active) ?? true,
                        "inside hover intentionally owns the canvas")
 
         // Desktop movement is outside the contour: the fallback must clear the
         // interactive canvas without requiring a sensor exit event.
         coordinator.verificationTrackMouse(at: CGPoint(x: 200, y: 500))
-        XCTAssertFalse(coordinator.verificationHoverExitMonitorsInstalled)
+        XCTAssertFalse(coordinator.verificationHoverExitTrackingActive)
         XCTAssertTrue(coordinator.verificationIgnoresMouseEvents(screenID: active) ?? false,
                       "leaving hover restores click-through")
 
         // Re-entry works again and changing screen/hiding cleans up.
         coordinator.pointerChanged(true)
-        XCTAssertTrue(coordinator.verificationHoverExitMonitorsInstalled)
+        XCTAssertTrue(coordinator.verificationHoverExitTrackingActive)
         model.screenHidden = true
         coordinator.verificationUpdateVisibility()
-        XCTAssertFalse(coordinator.verificationHoverExitMonitorsInstalled)
+        XCTAssertFalse(coordinator.verificationHoverExitTrackingActive)
         XCTAssertFalse(coordinator.verificationContains(screenID: active,
                                                        point: CGPoint(x: 200, y: 500)))
         model.screenHidden = false
         coordinator.verificationUpdateVisibility()
         coordinator.pointerChanged(true)
-        XCTAssertTrue(coordinator.verificationHoverExitMonitorsInstalled)
+        XCTAssertTrue(coordinator.verificationHoverExitTrackingActive)
         coordinator.pointerChanged(false)
-        XCTAssertFalse(coordinator.verificationHoverExitMonitorsInstalled)
+        XCTAssertFalse(coordinator.verificationHoverExitTrackingActive)
         XCTAssertTrue(coordinator.verificationIgnoresMouseEvents(screenID: active) ?? false)
     }
 }

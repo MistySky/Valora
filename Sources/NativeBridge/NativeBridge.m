@@ -34,10 +34,17 @@ static BOOL audioSet(AudioDeviceID device, AudioObjectPropertySelector selector,
     AudioObjectPropertyAddress a={selector,kAudioDevicePropertyScopeOutput,element};
     return device && AudioObjectSetPropertyData(device,&a,0,NULL,size,value)==noErr;
 }
-static NSArray<NSNumber *> *volumeChannels(AudioDeviceID device) {
+// Snapshot callers can reuse the values read while validating the channels.
+// Publish the peak only after the complete channel set is known writable;
+// a partial failure must still produce an empty capability and zero volume.
+static NSArray<NSNumber *> *volumeChannels(AudioDeviceID device, Float32 *maximum) {
+    if(maximum)*maximum=0;
     Float32 value=0;
     if(audioGet(device,kAudioDevicePropertyVolumeScalar,0,&value,sizeof(value)) &&
-       audioWritable(device,kAudioDevicePropertyVolumeScalar,0)) return @[@0];
+       audioWritable(device,kAudioDevicePropertyVolumeScalar,0)) {
+        if(maximum)*maximum=fmaxf(0,value);
+        return @[@0];
+    }
     AudioObjectPropertyAddress a={kAudioDevicePropertyStreamConfiguration,kAudioDevicePropertyScopeOutput,0};
     UInt32 size=0;
     if(AudioObjectGetPropertyDataSize(device,&a,0,NULL,&size)!=noErr || !size)return @[];
@@ -45,18 +52,20 @@ static NSArray<NSNumber *> *volumeChannels(AudioDeviceID device) {
     if(AudioObjectGetPropertyData(device,&a,0,NULL,&size,list)==noErr)
         for(UInt32 i=0;i<list->mNumberBuffers;i++)channels+=list->mBuffers[i].mNumberChannels;
     free(list);
-    NSMutableArray *result=[NSMutableArray array];
+    NSMutableArray *result=[NSMutableArray array]; Float32 peak=0;
     for(UInt32 channel=1;channel<=channels;channel++) {
         if(!audioGet(device,kAudioDevicePropertyVolumeScalar,channel,&value,sizeof(value)) ||
            !audioWritable(device,kAudioDevicePropertyVolumeScalar,channel))return @[];
+        if(maximum)peak=fmaxf(peak,value);
         [result addObject:@(channel)];
     }
+    if(maximum)*maximum=peak;
     return result;
 }
 NSDictionary *ARAudioOutputSnapshot(void) {
     AudioDeviceID device=outputDevice(); if(!device)return @{};
-    NSArray<NSNumber *> *channels=volumeChannels(device); Float32 volume=0;
-    for(NSNumber *channel in channels) { Float32 v=0; audioGet(device,kAudioDevicePropertyVolumeScalar,channel.unsignedIntValue,&v,sizeof(v)); volume=fmaxf(volume,v); }
+    Float32 volume=0;
+    NSArray<NSNumber *> *channels=volumeChannels(device,&volume);
     UInt32 muted=0; BOOL canMute=audioGet(device,kAudioDevicePropertyMute,0,&muted,sizeof(muted)) && audioWritable(device,kAudioDevicePropertyMute,0);
     UInt32 transport=0; UInt32 size=sizeof(transport);
     AudioObjectPropertyAddress a={kAudioDevicePropertyTransportType,kAudioObjectPropertyScopeGlobal,0};
@@ -76,7 +85,7 @@ NSDictionary *ARAudioOutputSnapshot(void) {
 BOOL ARSetOutputVolume(NSString *expectedUID,double volume) {
     AudioDeviceID device=outputDevice();
     if(!isfinite(volume) || !expectedUID.length || ![audioString(device,kAudioDevicePropertyDeviceUID) isEqual:expectedUID])return NO;
-    NSArray<NSNumber *> *channels=volumeChannels(device); if(!channels.count)return NO;
+    NSArray<NSNumber *> *channels=volumeChannels(device,NULL); if(!channels.count)return NO;
     NSMutableArray<NSNumber *> *values=[NSMutableArray array]; Float32 maximum=0;
     for(NSNumber *channel in channels) { Float32 v=0; if(!audioGet(device,kAudioDevicePropertyVolumeScalar,channel.unsignedIntValue,&v,sizeof(v)))return NO; [values addObject:@(v)];maximum=fmaxf(maximum,v); }
     Float32 target=fmax(0,fmin(1,volume)); BOOL ok=YES;

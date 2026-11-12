@@ -16,6 +16,7 @@ final class LockMusicCoordinatorTests: XCTestCase {
         var rootView: AnyView?
         var closed = false
         var sharingType: NSWindow.SharingType = .readOnly
+        var originWrites = 0
         init(size: CGSize) {
             self.size = size
             frame = CGRect(origin: .zero, size: size)
@@ -23,7 +24,7 @@ final class LockMusicCoordinatorTests: XCTestCase {
         var windowNumber: Int { 100 + Int(size.width) }
         func setRootView(_ view: AnyView) { rootView = view }
         func clearRootView() { rootView = nil }
-        func setFrameOrigin(_ origin: CGPoint) { frame.origin = origin }
+        func setFrameOrigin(_ origin: CGPoint) { originWrites += 1; frame.origin = origin }
         func setSharingType(_ type: NSWindow.SharingType) { sharingType = type }
         func orderFrontRegardless() { isVisible = true }
         func orderOut() { isVisible = false }
@@ -225,6 +226,49 @@ final class LockMusicCoordinatorTests: XCTestCase {
             clock: { [weak self] in self?.now ?? 0 },
             sessionLocked: { [weak self] in self?.sessionLocked ?? false },
             sound: sound)
+    }
+
+    func testUnchangedRefreshDoesNotRepublishGeometryOrRepositionHiddenCards() async {
+        let display = DisplayDescriptor(id: "test", name: "Test",
+            frame: CGRect(x: 0, y: 0, width: 1728, height: 1117), safeAreaTop: 32,
+            auxiliaryLeftWidth: 600, auxiliaryRightWidth: 600, menuBarHeight: 32,
+            isBuiltIn: true)
+        let coordinator = makeCoordinator(displays: { [display] })
+        coordinator.setEnabled(true)
+        defer { coordinator.stop() }
+        await drain()
+        let writes = factory.windows.map(\.originWrites)
+        var geometryPublications = 0
+        let token = model.$lockNotchGeometry.dropFirst().sink { _ in geometryPublications += 1 }
+        coordinator.refresh()
+        coordinator.refresh()
+        XCTAssertEqual(geometryPublications, 0)
+        XCTAssertEqual(factory.windows.map(\.originWrites), writes)
+        XCTAssertFalse(coordinator.visible)
+        token.cancel()
+    }
+
+    func testPlacementCorrectsLiveFrameDriftAndRespondsToDisplayChange() async {
+        var display = DisplayDescriptor(id: "test", name: "Test",
+            frame: CGRect(x: 0, y: 0, width: 1728, height: 1117), safeAreaTop: 32,
+            auxiliaryLeftWidth: 600, auxiliaryRightWidth: 600, menuBarHeight: 32,
+            isBuiltIn: true)
+        let coordinator = makeCoordinator(displays: { [display] })
+        coordinator.setEnabled(true)
+        defer { coordinator.stop() }
+        await drain()
+        let card = factory.windows[0]
+        let expected = card.frame.origin
+        card.frame.origin.x += 23
+        coordinator.refresh()
+        XCTAssertEqual(card.frame.origin, expected, "live frame drift must not be hidden by a stale target cache")
+        let oldGeometry = model.lockNotchGeometry
+        display = DisplayDescriptor(id: "external", name: "External",
+            frame: CGRect(x: -1920, y: -100, width: 1920, height: 1080), safeAreaTop: 0,
+            auxiliaryLeftWidth: nil, auxiliaryRightWidth: nil, menuBarHeight: 24)
+        coordinator.refresh()
+        XCTAssertNotEqual(card.frame.origin, expected)
+        XCTAssertNotEqual(model.lockNotchGeometry, oldGeometry)
     }
 
     private func drain() async {
