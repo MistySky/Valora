@@ -69,7 +69,10 @@ final class AppPermissions: ObservableObject {
         self.refreshStateProvider = refreshStateProvider
         self.bluetooth = bluetooth ?? Self.currentBluetooth
         self.loginItem = loginItem ?? Self.currentLoginItem
-        self.calendar = calendar ?? (calendarProvider?.status ?? .unknown)
+        // Read the resolved provider, including the production default. A
+        // synthetic .unknown here lets SettingsView's first appearance erase
+        // a persisted enabled preference before the activation refresh runs.
+        self.calendar = calendar ?? self.calendarProvider.status
         self.bluetoothRequest = bluetoothRequest
         self.openBluetoothSettings = openBluetoothSettings
         self.loginRegister = loginRegister

@@ -13,6 +13,36 @@ private final class IndependentCalendarSource: CalendarAuthorizationProviding {
 
 @MainActor
 final class IndependentCalendarPermissionTests: XCTestCase {
+    func testDefaultProviderLoadsAuthorizationBeforeAnyRefresh() {
+        // Status-only read: no permission request, event query or window.
+        let expected = EventKitCalendarAuthorization().status
+        XCTAssertNotEqual(expected, .unknown)
+        let permissions = AppPermissions()
+        XCTAssertEqual(permissions.calendar, expected,
+                       "production must not expose a synthetic unknown before settings appears")
+    }
+
+    func testRecreatedSettingsPreserveExplicitOnAndOffWithExistingAuthorization() {
+        let suite = "com.wangqing.valora.calendar-relaunch.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let source = IndependentCalendarSource()
+        source.status = .fullAccess
+        for enabled in [true, false] {
+            SettingsDraft(defaults: defaults).binding("enableCalendar", false).wrappedValue = enabled
+            let restored = SettingsDraft(defaults: UserDefaults(suiteName: suite)!)
+            let permissions = AppPermissions(calendarProvider: source)
+            let binding = PermissionToggleRouting.make(
+                value: restored.binding("enableCalendar", false),
+                authorized: permissions.calendar.canReadEvents, pending: false,
+                begin: { XCTFail("restoring settings must not request authorization") },
+                cancel: {})
+            XCTAssertEqual(binding.wrappedValue, enabled)
+            XCTAssertEqual(restored.value("enableCalendar", false), enabled)
+            XCTAssertTrue(source.callbacks.isEmpty)
+        }
+    }
+
     func testOldCalendarRequestCannotCompleteNewToggleIntent() {
         let source = IndependentCalendarSource()
         let permissions = AppPermissions(calendarProvider: source)

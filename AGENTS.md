@@ -132,3 +132,7 @@
 ## 2026-11-12 1.0.7 发布覆盖
 
 用户明确授权将本轮已验收改动提交、构建1.0.7并上传；在codex/resource-idle-render-dedup分支提交推送并发布v1.0.7，禁止合入main（保持6c98d2be683e035fdaab9f29dcbd795236748655）。显式VALORA_LYRICS_EXPERIMENT=1，固定Valora Self-Signed签名，构建号由现有分配器自动递增；不另改动画、交互或内存策略。本次不替换或重启本地实例、不覆盖Applications，继续由用户Brew管理；不删除历史发布或启动定时任务。
+
+## 2026-11-13 1.0.8 发布覆盖
+
+用户授权提交日历开关启动恢复修复，构建并上传1.0.8；沿用codex/resource-idle-render-dedup，不合并main。发布保留VALORA_LYRICS_EXPERIMENT=1与Valora Self-Signed签名，构建号自动分配。本地由用户Brew更新，不退出、重启、替换实例或覆盖Applications。歌词高亮与重复显示反馈尚未定位，本次不宣称修复、不改其动画或交互。
