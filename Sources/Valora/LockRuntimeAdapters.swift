@@ -19,9 +19,7 @@ protocol LockPresentationWindow: AnyObject {
     func orderFrontRegardless()
     func orderOut()
     func close()
-    /// Bring the surface up as the key window so the system renders the
-    /// *active* glass material (Liquid Glass degrades to a flat frosted panel on
-    /// an inactive window).
+    /// Request keyboard focus separately from ordering a surface on screen.
     func makeKey()
 }
 
@@ -46,9 +44,7 @@ final class LockFirstMouseHostingView<Content: View>: NSHostingView<Content> {
 }
 
 final class LockMusicPanel: NSPanel {
-    /// The music card is the only lock surface that needs to be key: the active
-    /// window state is what makes Liquid Glass render its refractive material
-    /// instead of the inactive frosted fallback.
+    /// The music card accepts focus when the user interacts with it.
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
 }

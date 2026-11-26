@@ -24,6 +24,56 @@ final class MusicDisplayPolicyTests: XCTestCase {
                           menuBarHeight: 32, isBuiltIn: builtIn, isActive: active)
     }
 
+    func testLockDisplayMenuAndResolverUseDistinctKeysForSameNamedDisplays() {
+        let main = display("internal", builtIn: true)
+        func external(_ id: String, active: Bool = true) -> DisplayDescriptor {
+            DisplayDescriptor(id: id, name: "Studio Display", frame: .zero, safeAreaTop: 0,
+                auxiliaryLeftWidth: nil, auxiliaryRightWidth: nil, menuBarHeight: 24, isActive: active)
+        }
+        let left = external("left"), right = external("right")
+        let displays = [left, main, right, external("offline", active: false)]
+        let menu = SettingsDisplayCatalog.menuChoices(for: displays, forLock: true)
+        let music = SettingsDisplayCatalog.menuChoices(for: displays, forLock: false)
+        XCTAssertEqual(menu.map(\.title), music.map(\.title))
+        XCTAssertEqual(Array(menu.prefix(3).map(\.key)), ["Built-in display", "Main display", "All displays"])
+        XCTAssertEqual(LockDisplayPolicy.targets(from: displays, preference: "All displays").map(\.id), ["left", "internal", "right"])
+        let keys = menu.filter { $0.title.hasPrefix("Studio Display") }
+        XCTAssertEqual(keys.map(\.title), ["Studio Display (1)", "Studio Display (2)"])
+        XCTAssertEqual(keys.count, 2)
+        let saved = LockDisplayPolicy.selectionKey(for: right)
+        let reconnected = SettingsDisplayCatalog.menuChoices(for: [right], forLock: false, selection: saved)
+        XCTAssertEqual(reconnected.last?.key, saved)
+        XCTAssertEqual(reconnected.last?.title, "Studio Display")
+        XCTAssertEqual(LockDisplayPolicy.select(from: displays, preference: keys.last?.key ?? "")?.id, right.id)
+        XCTAssertEqual(LockDisplayPolicy.select(from: displays, preference: LockDisplayPolicy.mainDisplay)?.id, left.id)
+        XCTAssertEqual(LockDisplayPolicy.select(from: displays)?.id, main.id)
+        XCTAssertEqual(LockDisplayPolicy.select(from: [left, main], preference: LockDisplayPolicy.selectionKey(for: right))?.id, main.id)
+    }
+
+    func testReopenedDisplayMenuHasItsFinalIconAndTitleBeforeAnyRefresh() {
+        let builtIn = display("internal", builtIn: true)
+        let external = display("external")
+        let screens = [external, builtIn]
+        let automatic = LockMusicPreferences.automaticDisplay
+        let fixed = LockDisplayPolicy.selectionKey(for: external)
+        for (forLock, stored, icon, title) in [
+            (true, automatic, "laptopcomputer", "内建显示器"),
+            (true, fixed, "display", external.name),
+            (false, "All displays", "display.2", "全部显示器")
+        ] {
+            let menu = SettingsDisplayMenu(forLock: forLock, selection: stored, displays: screens)
+            let key = menu.displayedSelection(stored)
+            XCTAssertEqual(SettingsDisplayCatalog.symbol(for: key), icon)
+            XCTAssertEqual(menu.choices.first { $0.key == key }?.title, title)
+            menu.refresh(selection: stored, displays: screens)
+            XCTAssertEqual(menu.displayedSelection(stored), key)
+        }
+        let menu = SettingsDisplayMenu(forLock: true, selection: automatic, displays: [external])
+        XCTAssertEqual(menu.displayedSelection(automatic), "Main display")
+        menu.refresh(selection: automatic, displays: screens)
+        XCTAssertEqual(menu.displayedSelection(automatic), "Built-in display")
+    }
+
     func testLockPrefersOnlineBuiltInEvenWhenExternalIsMain() {
         XCTAssertEqual(LockDisplayPolicy.select(from: [display("external"), display("internal", builtIn: true)])?.id,
                        "internal")

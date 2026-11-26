@@ -1,12 +1,6 @@
 import SwiftUI
 
-/// Lock card ink palette.
-///
-/// Every observed lock capture is white ink on dark glass, and `LockGlassSurface`
-/// pins the dark appearance (`.darkAqua` + private variant 5) for the material.
-/// The near-white-wallpaper branch (`_isWallpaperNearlyWhite`) has no input in
-/// Valora, so the light palette and its scheme plumbing are gone rather than kept
-/// as unreachable experiment state.
+/// White playback controls shared by the refractive and system lock materials.
 struct LockCardPalette: Equatable {
     var primary: Color
     var secondary: Color

@@ -1,4 +1,5 @@
 import SwiftUI
+import ReferenceCore
 
 // Settings pages requested for this candidate. Names/order follow
 // reference-ui/settings-ax.json (Alcove 1.7.9); the archived page inventory is
@@ -78,6 +79,7 @@ enum SettingsLayout {
 /// and listed in the delivery report instead of pretending to work.
 @MainActor
 final class SettingsDraft: ObservableObject {
+    static let lockGlassIntensityChanged = Notification.Name("ValoraLockGlassIntensityChanged")
     let defaults: UserDefaults
     @Published private var values: [String: Any]
     init(defaults: UserDefaults = .standard) {
@@ -87,7 +89,22 @@ final class SettingsDraft: ObservableObject {
     func value<T>(_ key: String, _ fallback: T) -> T { values[key] as? T ?? fallback }
     var snapshot: [String: Any] { values }
     func binding<T>(_ key: String, _ fallback: T) -> Binding<T> {
-        Binding(get: { self.value(key, fallback) }, set: { self.values[key] = $0; self.defaults.set(self.values, forKey: "referenceSettingsUI"); NotificationCenter.default.post(name:Notification.Name("ValoraSettingsDraftChanged"),object:self.defaults) })
+        Binding(get: { self.value(key, fallback) }, set: {
+            self.store($0, forKey: key, notification: Notification.Name("ValoraSettingsDraftChanged"))
+        })
+    }
+
+    var lockGlassIntensity: Binding<Double> {
+        Binding(get: { LockGlassIntensity.normalized(self.values[LockGlassIntensity.key]) }, set: { value in
+            let normalized = LockGlassIntensity.normalized(value)
+            self.store(normalized, forKey: LockGlassIntensity.key, notification: Self.lockGlassIntensityChanged)
+        })
+    }
+
+    private func store<T>(_ value: T, forKey key: String, notification: Notification.Name) {
+        values[key] = value
+        defaults.set(values, forKey: "referenceSettingsUI")
+        NotificationCenter.default.post(name: notification, object: defaults)
     }
 }
 

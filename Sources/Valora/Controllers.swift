@@ -63,6 +63,8 @@ final class MediaController {
     private var retryNotBefore: TimeInterval = 0
     private let retryInterval: TimeInterval
     private let tickScheduler: any MediaTickScheduling
+    var refreshDisplayPower: (() -> Void)?
+    private var allDisplaysAsleep = false
     private var subscriptions = Set<AnyCancellable>()
     private var tick = 0
     private var commandGeneration: UInt64 = 0
@@ -142,26 +144,39 @@ final class MediaController {
         tickToken = tickScheduler.schedule { [weak self] in
             MainActor.assumeIsolated {
                 guard let self, !self.model.previewMode else { return }
-                if self.systemSnapshot != nil {
-                    // Paused playback cannot advance the timeline (`rate` is
-                    // stored in the snapshot), so re-publishing an identical
-                    // value four times a second only invalidates every view
-                    // that observes the model.
-                    if !self.model.playing {
-                        self.publishProgressIfChanged()
-                    } else if self.progressSurfaceVisible || self.tick % 4 == 0 {
-                        // The 4Hz sample is only rendered while a progress bar
-                        // is on screen (expanded player or lock card). The
-                        // collapsed notch shows no progress and its lyrics
-                        // interpolate locally from this anchor, so a 1Hz anchor
-                        // is enough there. Expanding the player publishes
-                        // immediately through the subscription below.
-                        self.publishProgressNow()
-                    }
-                }
+                self.updateProgressOnTick()
                 self.tick += 1
                 if self.tick % 4 == 0 { self.refresh() }
             }
+        }
+    }
+
+    func setAllDisplaysAsleep(_ asleep: Bool) {
+        guard asleep != allDisplaysAsleep else { return }
+        allDisplaysAsleep = asleep
+        if !asleep { publishProgressNow() }
+    }
+
+    private func updateProgressOnTick() {
+        // Display notifications can be missed on the lock screen. Reuse the
+        // existing playback tick to confirm power once a second while playing,
+        // and on each tick until a sleeping display comes back.
+        let wasAsleep = allDisplaysAsleep
+        if wasAsleep || (systemSnapshot != nil && model.playing && tick % 4 == 0) {
+            refreshDisplayPower?()
+        }
+        if allDisplaysAsleep {
+            // A seek confirmation deadline still applies while the UI is dark.
+            if pendingSeek != nil { expirePendingSeekIfNeeded(at: Date()) }
+            return
+        }
+        // A wake discovered by this tick already published the current anchor.
+        guard !wasAsleep, systemSnapshot != nil else { return }
+        if !model.playing {
+            publishProgressIfChanged()
+        } else if progressSurfaceVisible || tick % 4 == 0 {
+            // 4 Hz for visible progress bars, 1 Hz for collapsed lyric anchors.
+            publishProgressNow()
         }
     }
 
@@ -173,10 +188,10 @@ final class MediaController {
     }
 
     private func publishProgressNow() {
-        guard systemSnapshot != nil, !model.previewMode else { return }
+        guard !allDisplaysAsleep, systemSnapshot != nil, !model.previewMode else { return }
         let now = Date()
         expirePendingSeekIfNeeded(at: now)
-        model.setElapsed(currentPosition(at: now), sampledAt: now)
+        model.setElapsed(currentPosition(at: now), sampledAt: now, correctionHold: activeCorrection(at: now))
     }
 
     private func publishProgressIfChanged() {
@@ -185,7 +200,7 @@ final class MediaController {
         expirePendingSeekIfNeeded(at: now)
         let position = currentPosition(at: now)
         if position != model.elapsed {
-            model.setElapsed(position, sampledAt: now)
+            model.setElapsed(position, sampledAt: now, correctionHold: activeCorrection(at: now))
         }
     }
 
@@ -200,6 +215,11 @@ final class MediaController {
         return timeline.position(at: date.timeIntervalSince1970)
     }
 
+    private func activeCorrection(at date: Date) -> DateInterval? {
+        guard pendingSeek == nil, let hold = timeline.correctionHold, date < hold.end else { return nil }
+        return hold
+    }
+
     private func expirePendingSeekIfNeeded(at date: Date) {
         guard let pending = pendingSeek,
               ProcessInfo.processInfo.systemUptime >= pending.deadline else { return }
@@ -212,7 +232,7 @@ final class MediaController {
 
     private func republishAuthoritativePosition(at date: Date) {
         guard let snapshot = systemSnapshot else { return }
-        timeline.update(snapshot, at: date.timeIntervalSince1970)
+        timeline.update(snapshot, at: date.timeIntervalSince1970, seek: .restoreSource)
         model.setElapsed(timeline.position(at: date.timeIntervalSince1970), sampledAt: date)
     }
 
@@ -292,6 +312,7 @@ final class MediaController {
         // A snapshot that still carries the pre-seek position must not rewind
         // the thumb; only the confirmed position (or a new track) replaces it.
         var stalePreSeekSnapshot = false
+        let hadPendingSeek = pendingSeek != nil
         if let pending = pendingSeek {
             let sameTrack = snapshot.identity == pending.identity
             let confirmed = sameTrack
@@ -303,7 +324,7 @@ final class MediaController {
             }
         }
         if !stalePreSeekSnapshot {
-            timeline.update(snapshot, at: now.timeIntervalSince1970)
+            timeline.update(snapshot, at: now.timeIntervalSince1970, seek: hadPendingSeek ? .confirmed : nil)
         }
         systemSnapshot = snapshot
         if changed && snapshot.artwork == nil { model.artwork = nil }
@@ -322,7 +343,7 @@ final class MediaController {
         if model.playbackRate != snapshot.rate { model.playbackRate = snapshot.rate }
         if model.duration != snapshot.duration { model.duration = snapshot.duration }
         if !stalePreSeekSnapshot {
-            model.setElapsed(timeline.position(at: now.timeIntervalSince1970), sampledAt: now)
+            model.setElapsed(timeline.position(at: now.timeIntervalSince1970), sampledAt: now, correctionHold: activeCorrection(at: now))
         }
         if model.source != "系统" { model.source = "系统" }
         if model.mediaBundleIdentifier != snapshot.bundleIdentifier { model.mediaBundleIdentifier = snapshot.bundleIdentifier }

@@ -49,11 +49,13 @@ struct NotchView: View {
     var lockSurface = false
     var onActivate: (() -> Void)? = nil
     @Environment(\.accessibilityReduceMotion) var reducedMotion
+    private var showsLockActivity: Bool { lockSurface ? model.lockIndicator.showsBadge : model.showsLockActivity }
     private var usesLockGeometry: Bool {
         lockSurface || (model.isSessionLocked && model.lockNotchMounted
                         && model.lockIndicator.phase != .locking)
     }
     private var geometry: NotchGeometry {
+        if lockSurface, let geometryOverride { return geometryOverride }
         if usesLockGeometry, let lockGeometry = model.lockNotchGeometry { return lockGeometry }
         return geometryOverride ?? model.notchGeometry
     }
@@ -71,7 +73,7 @@ struct NotchView: View {
             return PresentationMetrics.stationarySize(geometry:geometry, simulated:simulated,
                 expanded:.none, hasOutput:false,
                 notification:.none,
-                liveActivity: model.showsLockActivity ? .locked : (model.showsMusicActivity ? .playing : .none),
+                liveActivity: showsLockActivity ? .locked : (model.showsMusicActivity ? .playing : .none),
                 quickPeek:.none,
                 tuning:.zero)
         }
@@ -84,7 +86,7 @@ struct NotchView: View {
             return .stationary(geometry:geometry, simulated:simulated,
                 expanded:expanded && !model.isLockNeutralGeometry,
                 expandedCorners:!compactOnly && model.presentation.usesExpandedCornerRadius && !model.isLockNeutralGeometry,
-                active:!model.isLockNeutralGeometry && (model.showsMusicActivity || model.showsLockActivity),
+                active:!model.isLockNeutralGeometry && (model.showsMusicActivity || showsLockActivity),
                 visibleHeight:localSize.height)
         }
         return model.contour
@@ -174,7 +176,7 @@ struct NotchView: View {
     @ViewBuilder private var topStrip: some View {
         HStack(spacing:0) {
             Group {
-                if model.showsLockActivity {
+                if showsLockActivity {
                     LockActivityGlyph(unlocking: model.lockIndicator.phase == .unlocking)
                         .font(.system(size: 14, weight: .medium))
                         .transition(.opacity)
@@ -208,7 +210,7 @@ struct NotchView: View {
                 }
             }.frame(width:nativeNotchSize.width)
             Group {
-                if model.showsLockActivity {
+                if showsLockActivity {
                     Color.clear
                 } else if allowsDynamic, !expanded, !model.isLockStage,
                           let device = model.connectionToast {

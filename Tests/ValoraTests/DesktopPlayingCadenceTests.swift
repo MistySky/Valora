@@ -82,6 +82,43 @@ final class DesktopPlayingCadenceTests: XCTestCase {
         }
     }
 
+    func testDisplayPowerFallbackSuppressesTicksAndWakesWithOneCurrentAnchor() {
+        let (model, controller, scheduler, suite) = make()
+        defer { controller.stop(); UserDefaults().removePersistentDomain(forName: suite) }
+        controller.start()
+        model.lockMusicCardVisible = true
+        var asleep = false
+        var probes = 0
+        controller.refreshDisplayPower = { [weak controller] in
+            probes += 1
+            controller?.setAllDisplaysAsleep(asleep)
+        }
+        let base = model.progress.snapshot
+        var samples: [PlaybackProgress.Snapshot] = []
+        let subscription = model.progress.$snapshot.dropFirst().sink { samples.append($0) }
+        defer { subscription.cancel() }
+
+        for _ in 0..<4 { scheduler.fire() }
+        XCTAssertEqual(probes, 1)
+        XCTAssertEqual(samples.count, 4)
+        asleep = true
+        for _ in 0..<4 { scheduler.fire() }
+        model.lockMusicCardVisible = false
+        model.lockMusicCardVisible = true
+        XCTAssertEqual(probes, 5)
+        XCTAssertEqual(samples.count, 4)
+
+        asleep = false
+        scheduler.fire()
+        XCTAssertEqual(samples.count, 5)
+        let first = model.progress.snapshot
+        XCTAssertEqual(first.elapsed - base.elapsed, first.sampledAt.timeIntervalSince(base.sampledAt), accuracy: 0.001)
+        controller.setAllDisplaysAsleep(false)
+        XCTAssertEqual(samples.count, 5)
+        scheduler.fire()
+        XCTAssertEqual(samples.count, 6)
+    }
+
     func testExpandingPublishesAFreshAnchorImmediately() {
         let (model, controller, scheduler, suite) = make()
         defer { UserDefaults().removePersistentDomain(forName: suite) }
@@ -124,11 +161,14 @@ final class DesktopPlayingCadenceTests: XCTestCase {
         defer { UserDefaults().removePersistentDomain(forName: suite) }
         withExtendedLifetime(model) {
             controller.start()
+            var probes = 0
+            controller.refreshDisplayPower = { probes += 1 }
             _ = model.presentation.begin(expanding: true)
             var values = 0
             let token = model.progress.$snapshot.map(\.elapsed).dropFirst().sink { _ in values += 1 }
             for _ in 0..<6 { scheduler.fire() }
             XCTAssertEqual(values, 0, "a paused expanded player still has nothing new to draw")
+            XCTAssertEqual(probes, 0)
             token.cancel()
             controller.stop()
         }

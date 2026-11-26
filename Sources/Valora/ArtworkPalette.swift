@@ -83,13 +83,11 @@ enum ArtworkPalette {
         guard rendered else { return "" }
         // Exact stride, deterministic zero-initialized buffer, full bounded
         // pixels and dimensions. No TIFF serialization or original-size copy.
-        var payload = Data()
-        var w = UInt32(width).littleEndian
-        var h = UInt32(height).littleEndian
-        withUnsafeBytes(of: &w) { payload.append(contentsOf: $0) }
-        withUnsafeBytes(of: &h) { payload.append(contentsOf: $0) }
-        payload.append(contentsOf: pixels)
-        return SHA256.hash(data: payload).map { String(format: "%02x", $0) }.joined()
+        var hasher = SHA256()
+        withUnsafeBytes(of: UInt32(width).littleEndian) { hasher.update(bufferPointer: $0) }
+        withUnsafeBytes(of: UInt32(height).littleEndian) { hasher.update(bufferPointer: $0) }
+        pixels.withUnsafeBytes { hasher.update(bufferPointer: $0) }
+        return hasher.finalize().map { String(format: "%02x", $0) }.joined()
     }
 
     static func luminance(_ color: NSColor) -> Double {

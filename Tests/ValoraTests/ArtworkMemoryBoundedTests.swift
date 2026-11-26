@@ -126,6 +126,15 @@ final class ArtworkMemoryBoundedTests: XCTestCase {
         XCTAssertLessThanOrEqual(max(width, height), ArtworkImage.maxPixel)
     }
 
+    func testIdentityPreservesKnownDigestForNonSquareCover() {
+        let red = NSColor(srgbRed: 1, green: 0, blue: 0, alpha: 1)
+        let cg = cgImage(width: 3, height: 2, color: red)
+        let cover = NSImage(cgImage: cg, size: NSSize(width: 3, height: 2))
+        // Two little-endian UInt32 dimensions followed by six opaque red RGBA pixels.
+        XCTAssertEqual(ArtworkPalette.extract(cover).identity,
+                       "4d0c5be6b81ba40cc25baaae996e9bcae87c0eab0397f220fd5045d07ce76579")
+    }
+
     func testSameVisualDifferentLosslessEncodingKeepsIdentity() throws {
         let source = cgImage(width: 320, height: 180,
                              color: NSColor(srgbRed: 0.2, green: 0.6, blue: 0.9, alpha: 1))

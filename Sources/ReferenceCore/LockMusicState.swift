@@ -1,9 +1,24 @@
 import Foundation
+import CoreFoundation
+
+public enum LockGlassIntensity {
+    public static let key = "lockGlassIntensity"
+    public static let defaultValue = 0.5
+
+    public static func normalized(_ raw: Any?) -> Double {
+        guard let number = raw as? NSNumber,
+              CFGetTypeID(number) != CFBooleanGetTypeID(),
+              number.doubleValue.isFinite else { return defaultValue }
+        return min(1, max(0, number.doubleValue))
+    }
+}
 
 /// Selected lock-screen policy. Battery/focus/keep-awake are intentionally
-/// absent from this product slice, and so is the card's material choice: the
-/// card has a single fixed material now.
+/// absent. The card observes its glass intensity separately from this policy.
 public struct LockMusicPreferences: Equatable, Sendable {
+    public static let displayKey = "lockScreenDisplay"
+    public static let automaticDisplay = "Automatic"
+    public var display: String
     public var enabled: Bool
     public var musicEnabled: Bool
     public var showVolume: Bool
@@ -13,9 +28,9 @@ public struct LockMusicPreferences: Equatable, Sendable {
     public var offset: Double
 
     public init(values: [String: Any] = [:]) {
+        display = values[Self.displayKey] as? String ?? Self.automaticDisplay
         enabled = values["enableLockScreen"] as? Bool ?? true
-        // The lock page exposes only the master switch and the two sounds. The
-        // music card follows the Now Playing module switch, which the lock
+        // The music card follows the Now Playing module switch, which the lock
         // coordinator supplies; the archived lock-only preference is no longer
         // read, so a stale `allowNowPlayingWidgetWhenLocked=false` cannot
         // silently veto the module's own switch.

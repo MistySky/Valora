@@ -13,7 +13,7 @@ struct LockMusicCard: View {
     /// desktop notch flag so the native lyrics clock has one clear owner.
     var lyricsActive: Bool = true
     @Binding var showsVolume: Bool
-    /// Lock ink palette (white ink on the dark glass surface).
+    /// White ink shared by the lock card materials.
     var palette: LockCardPalette = .standard
     @Environment(\.accessibilityReduceMotion) private var reducedMotion
 
@@ -50,7 +50,7 @@ struct LockMusicCard: View {
                    value: showsLyricRow)
         .foregroundStyle(palette.primary)
         .background {
-            LockGlassSurface(cornerRadius: LockGlassCorner.radius)
+            LockGlassSurface(intensity: settings.lockGlassIntensity)
         }
     }
 }
@@ -106,9 +106,6 @@ struct LockMusicView: View {
         // Top-aligned inside a fixed-height panel: the card's top never moves,
         // content (volume bar, lyric row) extends downwards only.
         .frame(width: 385, height: LockMusicCoordinator.canvasHeight, alignment: .top)
-        // No root colour scheme override: it used to reach the glass background
-        // and forced the liquid glass into its dark variant. The card content
-        // sets its own `.colorScheme(.dark)` above.
         .animation(reducedMotion ? .easeOut(duration: 0.12)
                    : .spring(duration: 0.6, bounce: 0.3).delay(0.075),
                    value: coordinator.appeared)

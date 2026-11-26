@@ -28,6 +28,7 @@ let package = Package(
                 .linkedFramework("CoreAudio"),
                 .linkedFramework("IOKit"),
                 .linkedFramework("IOBluetooth"),
+                .linkedFramework("QuartzCore"),
                 .linkedFramework("AppKit")
             ]
         ),

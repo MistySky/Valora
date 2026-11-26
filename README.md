@@ -9,7 +9,7 @@ lyrics feature.
   migration and lock/device plumbing), `Valora` (AppKit/SwiftUI app)
 - Media source: the system Now Playing session only, read through the bundled
   adapter. No per-player branches.
-- Release version: `1.0.6`, published from `codex/lock-screen-idle-cpu`; this branch has not been merged into `main`. Build numbers remain monotonic. Local DMG distribution uses the fixed `Valora Self-Signed` identity (not notarized).
+- [Valora 1.0.9](https://github.com/MistySky/Valora/releases/tag/v1.0.9) ships build 81 from `codex/performance-preserve-motion`. The arm64 DMG uses the `Valora Self-Signed` identity and is distributed without Apple notarization.
 
 - Includes the accepted notch input ownership fix and restoration of calendar/menu-bar item visibility after relaunch.
 
@@ -33,7 +33,7 @@ Codex Usage, About. See `AGENTS.md` for the current per-page contract.
 ## Build
 
 ```sh
-VALORA_LYRICS_EXPERIMENT=1 ./scripts/build.sh --version 1.0.6 --output-dir /private/tmp/valora-candidate
+VALORA_LYRICS_EXPERIMENT=1 ./scripts/build.sh --version 1.0.9 --output-dir /private/tmp/valora-candidate
 ```
 
 This builds the pinned MediaRemote adapter, the SwiftPM release binary and a
@@ -41,8 +41,7 @@ signed `.app` in the given output directory. The build number is allocated
 automatically (`scripts/build_number.py`) and is monotonic; `--build` overrides
 are rejected. No network access, no install, no publishing.
 
-The explicit lyrics flag selects the native renderer used by the accepted
-1.0.4–1.0.6 builds. Omitting it selects the original SwiftUI renderer instead.
+The explicit lyrics flag selects the native renderer shipped in 1.0.9.
 
 ## Run
 

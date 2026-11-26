@@ -71,6 +71,9 @@ final class LockMusicCoordinator: ObservableObject {
     private let overlayFrameProvider: (@MainActor () -> CGRect?)?
     private let displayProvider: @MainActor () -> [DisplayDescriptor]
     private var targetDisplay: DisplayDescriptor?
+    /// Extra lock screens share this coordinator's one session, media source and
+    /// animation driver. Their windows exist only for the active lock session.
+    private var additionalScreens: [String: LockScreenWindows] = [:]
     private let spaceFactory: () -> (any LockPresentationSpace)?
     private let eventSource: any LockSystemEventSource
     private let scheduler: any LockScheduling
@@ -206,15 +209,35 @@ final class LockMusicCoordinator: ObservableObject {
     }
 
     private func createPanels() {
-        let level = NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()))
-        panel = windowFactory.makeWindow(size: CGSize(width: 385, height: Self.canvasHeight),
-                                         level: level, ignoresMouseEvents: false)
-        panel.setRootView(AnyView(LockMusicView(model: model, settings: model.settings, coordinator: self)))
-        informationPanel = windowFactory.makeWindow(size: CGSize(width: 360, height: 94),
-                                                    level: level, ignoresMouseEvents: true)
-        informationPanel.setRootView(AnyView(LockInformationView(model: model, coordinator: self)))
+        (panel, informationPanel) = makeCardWindows()
         if usePresentationSpace { lockSpace = spaceFactory() }
         applySharingType()
+    }
+
+    private func makeCardWindows() -> (any LockPresentationWindow, any LockPresentationWindow) {
+        let level = NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()))
+        let music = windowFactory.makeWindow(size: CGSize(width: 385, height: Self.canvasHeight),
+                                             level: level, ignoresMouseEvents: false)
+        music.setRootView(AnyView(LockMusicView(model: model, settings: model.settings, coordinator: self)))
+        let information = windowFactory.makeWindow(size: CGSize(width: 360, height: 94),
+                                                   level: level, ignoresMouseEvents: true)
+        information.setRootView(AnyView(LockInformationView(model: model, coordinator: self)))
+        return (music, information)
+    }
+
+    private var musicWindows: [any LockPresentationWindow] {
+        [panel].compactMap { $0 } + additionalScreens.values.map(\.music)
+    }
+
+    private var informationWindows: [any LockPresentationWindow] {
+        [informationPanel].compactMap { $0 } + additionalScreens.values.map(\.information)
+    }
+
+    private func hideMusicWindows() {
+        for window in musicWindows {
+            window.orderOut()
+            lockSpace?.detachWindowNumber(window.windowNumber)
+        }
     }
 
     private func bindModel(epoch: UInt64) {
@@ -358,10 +381,7 @@ final class LockMusicCoordinator: ObservableObject {
             appeared = false
             lyricsActive = false
             showsVolume = false
-            if let panel {
-                panel.orderOut()
-                lockSpace?.detachWindowNumber(panel.windowNumber)
-            }
+            hideMusicWindows()
             refresh(epoch: epoch)
         case .neutralizing:
             neutralTask?.cancel(); neutralTask = nil
@@ -376,10 +396,7 @@ final class LockMusicCoordinator: ObservableObject {
             appeared = false
             lyricsActive = false
             showsVolume = false
-            if let panel {
-                panel.orderOut()
-                lockSpace?.detachWindowNumber(panel.windowNumber)
-            }
+            hideMusicWindows()
             refresh(epoch: epoch)
         case .locked:
             var indicator = model.lockIndicator
@@ -392,10 +409,7 @@ final class LockMusicCoordinator: ObservableObject {
             appeared = false
             lyricsActive = false
             showsVolume = false
-            if let panel {
-                panel.orderOut()
-                lockSpace?.detachWindowNumber(panel.windowNumber)
-            }
+            hideMusicWindows()
             refresh(epoch: epoch)
             unlockTask?.cancel()
             unlockTask = scheduler.schedule(after: 0.8) { [weak self] in
@@ -466,7 +480,7 @@ final class LockMusicCoordinator: ObservableObject {
         guard isCurrent(epoch) else { return }
         overlayFailureAttempt = nil
         overlayFailureFrameKey = nil
-        place()
+        for screen in additionalScreens.values { screen.failedOverlayFrame = nil }
         refresh(epoch: epoch)
     }
 
@@ -559,28 +573,9 @@ final class LockMusicCoordinator: ObservableObject {
         if overlayFailureAttempt == lockAttemptGeneration, overlayFailureFrameKey == frameKey {
             return false
         }
-        let window = overlayWindowFactory.makeWindow(
-            size: CGSize(width: 624, height: 320),
-            level: NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()) + 1),
-            ignoresMouseEvents: true)
-        window.setRootView(AnyView(NotchView(model: model, settings: model.settings,
-                                             compactOnly: false, allowsDynamic: false, lockSurface: true)))
-        window.setFrameOrigin(NSPoint(x: screenFrame.midX - 312,
-                                      y: screenFrame.maxY - 320))
-        // A not-yet-ordered NSWindow has no Space membership for the conservative
-        // migration precheck. Order it transparently so it joins the normal
-        // desktop Space, migrate it, then reveal only after verification. It is
-        // never visible alongside primary before `lockOverlayReady`.
-        window.setAlphaValue(0)
-        window.orderFrontRegardless()
-        let number = window.windowNumber
-        // A freshly ordered window has no Space membership yet, which is a legal
-        // starting point rather than a failure. The exclusive migration adds the
-        // owned Space and drops any user-session membership so the surface does
-        // not ride the lock/unlock zoom of the ordinary desktop.
-        let migration: [String: Any] = number > 0
-            ? lockSpace.migrateWindowNumberExclusively(number)
-            : ["ok": false, "reason": "no-window-number"]
+        let (window, migration) = prepareOverlay(frame: screenFrame, contents: AnyView(
+            NotchView(model: model, settings: model.settings, compactOnly: false, allowsDynamic: false, lockSurface: true)),
+            space: lockSpace)
         let verified = (migration["ok"] as? Bool) == true
         guard verified else {
             let reason = migration["reason"] as? String ?? "unknown"
@@ -615,6 +610,32 @@ final class LockMusicCoordinator: ObservableObject {
             visible: window.isVisible, sessionLocked: model.isSessionLocked,
             windowNumber: window.windowNumber, space: diagnosticSpaceSnapshot(windowNumber: window.windowNumber))
         return true
+    }
+
+    private func prepareOverlay(frame screenFrame: CGRect, contents: AnyView, space: any LockPresentationSpace)
+        -> (any LockPresentationWindow, [String: Any]) {
+        let window = overlayWindowFactory.makeWindow(
+            size: CGSize(width: 624, height: 320),
+            level: NSWindow.Level(rawValue: Int(CGShieldingWindowLevel()) + 1),
+            ignoresMouseEvents: true)
+        window.setRootView(contents)
+        window.setFrameOrigin(NSPoint(x: screenFrame.midX - 312,
+                                      y: screenFrame.maxY - 320))
+        // A not-yet-ordered NSWindow has no Space membership for the conservative
+        // migration precheck. Order it transparently so it joins the normal
+        // desktop Space, migrate it, then reveal only after verification. It is
+        // never visible alongside primary before `lockOverlayReady`.
+        window.setAlphaValue(0)
+        window.orderFrontRegardless()
+        let number = window.windowNumber
+        // A freshly ordered window has no Space membership yet, which is a legal
+        // starting point rather than a failure. The exclusive migration adds the
+        // owned Space and drops any user-session membership so the surface does
+        // not ride the lock/unlock zoom of the ordinary desktop.
+        let migration: [String: Any] = number > 0
+            ? space.migrateWindowNumberExclusively(number)
+            : ["ok": false, "reason": "no-window-number"]
+        return (window, migration)
     }
 
     private func repositionOverlay() {
@@ -778,38 +799,109 @@ final class LockMusicCoordinator: ObservableObject {
         let identity = next.map { $0.id + "\u{0}" + $0.name + "\u{0}" + $0.modelUID + "\u{0}" + ($0.battery.map(String.init) ?? "") }
         let changed = identity != lastInformationIdentity
         lastInformationIdentity = identity
-        guard let informationPanel else { return }
-        if wanted, !usePresentationSpace || lockSpace?.attachWindowNumber(informationPanel.windowNumber) == true {
-            if changed || !informationPanel.isVisible { informationPanel.orderFrontRegardless() }
-        } else {
-            informationPanel.orderOut()
-            lockSpace?.detachWindowNumber(informationPanel.windowNumber)
+        for window in informationWindows {
+            if wanted, !usePresentationSpace || lockSpace?.attachWindowNumber(window.windowNumber) == true {
+                if changed || !window.isVisible { window.orderFrontRegardless() }
+            } else if window.isVisible || window === informationPanel {
+                window.orderOut()
+                lockSpace?.detachWindowNumber(window.windowNumber)
+            }
         }
     }
 
     private func applySharingType() {
         let type: NSWindow.SharingType = model.settings.hideFromScreenCapture ? .none : .readOnly
-        panel?.setSharingType(type)
-        informationPanel?.setSharingType(type)
+        for window in musicWindows + informationWindows { window.setSharingType(type) }
     }
 
     private func place() {
-        let target = LockDisplayPolicy.select(from: displayProvider())
+        let targets = LockDisplayPolicy.targets(from: displayProvider(), preference: model.settings.lockPreferences.display)
+        let target = targets.first
         targetDisplay = target
         let geometry = target.map {
             LockDisplayPolicy.geometry(for: $0, simulated: model.settings.forceSimulatedNotch)
         }
         if model.lockNotchGeometry != geometry { model.lockNotchGeometry = geometry }
+        let showAdditional = model.isSessionLocked && !sleeping && model.lockIndicator.phase != .hidden
+            && model.lockIndicator.phase != .locking
+        reconcileAdditionalScreens(showAdditional ? Array(targets.dropFirst()) : [])
         guard let frame = lockDisplayFrame, panel != nil else {
             panel?.orderOut()
             informationPanel?.orderOut()
             releaseOverlay()
             return
         }
+        positionCards(music: panel, information: informationPanel, frame: frame, builtIn: target?.isBuiltIn ?? false)
+    }
+
+    private func reconcileAdditionalScreens(_ displays: [DisplayDescriptor]) {
+        if displays.isEmpty && additionalScreens.isEmpty { return }
+        let wanted = Set(displays.map(\.id))
+        for id in additionalScreens.keys.filter({ !wanted.contains($0) }) {
+            additionalScreens.removeValue(forKey: id)?.close(in: lockSpace)
+        }
+        for display in displays {
+            let geometry = LockDisplayPolicy.geometry(for: display, simulated: model.settings.forceSimulatedNotch)
+            let screen: LockScreenWindows
+            if let current = additionalScreens[display.id] {
+                screen = current
+                if current.geometry != geometry { current.geometry = geometry }
+            } else {
+                let (music, information) = makeCardWindows()
+                screen = LockScreenWindows(music: music, information: information, geometry: geometry)
+                additionalScreens[display.id] = screen
+                let sharing: NSWindow.SharingType = model.settings.hideFromScreenCapture ? .none : .readOnly
+                music.setSharingType(sharing)
+                information.setSharingType(sharing)
+            }
+            positionCards(music: screen.music, information: screen.information, frame: display.frame, builtIn: display.isBuiltIn)
+            placeAdditionalOverlay(screen, frame: display.frame)
+        }
+    }
+
+    private func placeAdditionalOverlay(_ screen: LockScreenWindows, frame: CGRect) {
+        if let overlay = screen.overlay {
+            let origin = NSPoint(x: frame.midX - 312, y: frame.maxY - 320)
+            if overlay.frame.origin != origin { overlay.setFrameOrigin(origin) }
+            return
+        }
+        guard let lockSpace, screen.failedOverlayFrame != frame else { return }
+        let contents = AdditionalLockNotch(model: model, screen: screen)
+        let (window, migration) = prepareOverlay(frame: frame, contents: AnyView(contents), space: lockSpace)
+        let exclusive = migration["ok"] as? Bool == true
+        guard exclusive || lockSpace.attachWindowNumber(window.windowNumber) else {
+            screen.failedOverlayFrame = frame
+            window.orderOut()
+            lockSpace.detachWindowNumber(window.windowNumber)
+            window.clearRootView()
+            window.close()
+            return
+        }
+        screen.overlay = window
+        window.setAlphaValue(1)
+        window.orderFrontRegardless()
+        if exclusive {
+            screen.compositingCheck = scheduler.schedule(after: 0.25) { [weak self, weak screen] in
+                guard let screen, let overlay = screen.overlay, let space = self?.lockSpace,
+                      NotchWindowDiagnostic.isWindowComposited(overlay.windowNumber) == false else { return }
+                space.detachWindowNumber(overlay.windowNumber)
+                if !space.attachWindowNumber(overlay.windowNumber) {
+                    screen.failedOverlayFrame = frame
+                    overlay.orderOut()
+                    overlay.clearRootView()
+                    overlay.close()
+                    screen.overlay = nil
+                }
+            }
+        }
+    }
+
+    private func positionCards(music: any LockPresentationWindow, information: any LockPresentationWindow,
+                               frame: CGRect, builtIn: Bool) {
         let informationOrigin = NSPoint(x: frame.midX - 180,
                                         y: frame.maxY - frame.height * 0.265 - 94)
-        if let informationPanel, informationPanel.frame.origin != informationOrigin {
-            informationPanel.setFrameOrigin(informationOrigin)
+        if information.frame.origin != informationOrigin {
+            information.setFrameOrigin(informationOrigin)
         }
         // Fixed top edge from the shared layout model: the host window keeps its
         // size, so the card's top and all existing content stay put while the
@@ -821,12 +913,12 @@ final class LockMusicCoordinator: ObservableObject {
         let layout = LockCardLayout(screenMinY: frame.minY,
                                     screenHeight: frame.height,
                                     verticalOffset: model.settings.lockPreferences.offset,
-                                    reserveFullExpansion: !(target?.isBuiltIn ?? false),
+                                    reserveFullExpansion: !builtIn,
                                     showsLockLyrics: model.settings.musicPreferences.showsLockScreenLyrics)
         let musicOrigin = NSPoint(x: frame.midX - 192.5, y: CGFloat(layout.panelOriginY))
         // Compare the real frame, so a WindowServer/Space move is still
         // corrected on refresh instead of being hidden by a cached target.
-        if panel.frame.origin != musicOrigin { panel.setFrameOrigin(musicOrigin) }
+        if music.frame.origin != musicOrigin { music.setFrameOrigin(musicOrigin) }
     }
 
     private var lockDisplayFrame: CGRect? {
@@ -839,7 +931,10 @@ final class LockMusicCoordinator: ObservableObject {
         let next = state.visible
         if model.lockMusicCardVisible != next { model.lockMusicCardVisible = next }
         guard next != visible else {
-            if next, !panel.isVisible { present() }
+            if next, !panel.isVisible || additionalScreens.values.contains(where: { !$0.music.isVisible }) {
+                present(onlyHidden: true)
+                if !appeared, appearanceTask == nil { scheduleAppearance(epoch: epoch) }
+            }
             return
         }
         hideTask?.cancel()
@@ -851,12 +946,7 @@ final class LockMusicCoordinator: ObservableObject {
             lyricsActive = false
             present()
             visible = true
-            appearanceTask = scheduler.schedule(after: 0.032) { [weak self] in
-                guard let self, self.isCurrent(epoch), self.state.visible,
-                      self.model.isSessionLocked, self.panel.isVisible else { return }
-                self.appeared = true
-                self.lyricsActive = true
-            }
+            scheduleAppearance(epoch: epoch)
         } else {
             appearanceTask?.cancel()
             appearanceTask = nil
@@ -864,25 +954,34 @@ final class LockMusicCoordinator: ObservableObject {
             visible = false
             hideTask = scheduler.schedule(after: 0.85) { [weak self] in
                 guard let self, self.isCurrent(epoch), !self.visible else { return }
-                self.panel.orderOut()
-                self.lockSpace?.detachWindowNumber(self.panel.windowNumber)
+                self.hideMusicWindows()
                 self.showsVolume = false
                 self.lyricsActive = false
             }
         }
     }
 
-    private func present() {
-        guard state.visible, model.isSessionLocked, !sleeping, lockDisplayFrame != nil else { return }
-        guard !usePresentationSpace || lockSpace?.attachWindowNumber(panel.windowNumber) == true else {
-            panel.orderOut()
-            return
+    private func scheduleAppearance(epoch: UInt64) {
+        appearanceTask = scheduler.schedule(after: 0.032) { [weak self] in
+            guard let self, self.isCurrent(epoch) else { return }
+            self.appearanceTask = nil
+            guard self.state.visible, self.model.isSessionLocked,
+                  self.musicWindows.contains(where: \.isVisible) else { return }
+            self.appeared = true
+            self.lyricsActive = true
         }
-        panel.orderFrontRegardless()
-        // Deliberately no makeKey/activation here. The accepted dark material is
-        // the unfocused rendering (the login window keeps focus on the real lock);
-        // forcing a regular activation policy only made the desktop preview
-        // darker than the card users actually approved.
+    }
+
+    private func present(onlyHidden: Bool = false) {
+        guard state.visible, model.isSessionLocked, !sleeping, lockDisplayFrame != nil else { return }
+        for window in musicWindows where !onlyHidden || !window.isVisible {
+            guard !usePresentationSpace || lockSpace?.attachWindowNumber(window.windowNumber) == true else {
+                window.orderOut()
+                continue
+            }
+            window.orderFrontRegardless()
+        }
+        // Ordering the cards preserves keyboard focus in the login window.
     }
 
     private func cancelHideAndAppearance() {
@@ -915,6 +1014,7 @@ final class LockMusicCoordinator: ObservableObject {
         lastInformationIdentity = nil
         informationAirPods = nil
         sound.stop()
+        reconcileAdditionalScreens([])
         informationPanel?.orderOut()
         if let informationPanel {
             lockSpace?.detachWindowNumber(informationPanel.windowNumber)
@@ -948,5 +1048,44 @@ final class LockMusicCoordinator: ObservableObject {
         unlockTask?.cancel(); neutralTask?.cancel()
         overlayCheckTask?.cancel(); notchCheckTask?.cancel()
         eventSource.stop()
+    }
+}
+
+/// Per-screen window ownership only. Playback commands, lock phases, sounds and
+/// appearance transitions continue to have exactly one owner.
+@MainActor
+private final class LockScreenWindows: ObservableObject {
+    let music: any LockPresentationWindow
+    let information: any LockPresentationWindow
+    var overlay: (any LockPresentationWindow)?
+    var compositingCheck: (any LockScheduledTask)?
+    var failedOverlayFrame: CGRect?
+    @Published var geometry: NotchGeometry
+
+    init(music: any LockPresentationWindow, information: any LockPresentationWindow, geometry: NotchGeometry) {
+        self.music = music
+        self.information = information
+        self.geometry = geometry
+    }
+
+    func close(in space: (any LockPresentationSpace)?) {
+        compositingCheck?.cancel()
+        compositingCheck = nil
+        for window in [music, information] + [overlay].compactMap({ $0 }) {
+            window.orderOut()
+            space?.detachWindowNumber(window.windowNumber)
+            window.clearRootView()
+            window.close()
+        }
+        overlay = nil
+    }
+}
+
+private struct AdditionalLockNotch: View {
+    let model: AppModel
+    @ObservedObject var screen: LockScreenWindows
+    var body: some View {
+        NotchView(model: model, settings: model.settings, compactOnly: true,
+                  geometryOverride: screen.geometry, allowsDynamic: false, lockSurface: true)
     }
 }

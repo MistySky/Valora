@@ -293,6 +293,7 @@ struct SettingsScrollBackground: NSViewRepresentable {
 struct SettingsNativeMenu: View {
     @Binding var value: String
     let options: [String]
+    var optionTitle: (String) -> String = SettingsText.localized
     final class Action: NSObject {
         let body: () -> Void
         init(_ body: @escaping () -> Void) { self.body = body }
@@ -304,18 +305,18 @@ struct SettingsNativeMenu: View {
             var actions: [Action] = []
             for option in options {
                 let action = Action { value = option }; actions.append(action)
-                let item = NSMenuItem(title: SettingsText.localized(option), action: #selector(Action.invoke), keyEquivalent: "")
+                let item = NSMenuItem(title: optionTitle(option), action: #selector(Action.invoke), keyEquivalent: "")
                 item.target = action; item.state = option == value ? .on : .off; menu.addItem(item)
             }
             _ = withExtendedLifetime(actions) { menu.popUp(positioning: nil, at: NSEvent.mouseLocation, in: nil) }
         } label: {
             HStack(spacing: 10) {
-                Text(SettingsText.localized(value)).foregroundStyle(.primary)
+                Text(optionTitle(value)).foregroundStyle(.primary)
                 Image(systemName: "chevron.up.chevron.down").font(.system(size: 10, weight: .semibold)).foregroundStyle(.secondary)
                     .frame(width: 17, height: 20).background(Color.primary.opacity(0.025), in: Capsule())
                     .overlay(Capsule().stroke(Color.primary.opacity(0.09), lineWidth: 1))
             }
-        }.buttonStyle(.plain).fixedSize().accessibilityLabel(SettingsText.localized("Display on")).accessibilityValue(SettingsText.localized(value))
+        }.buttonStyle(.plain).fixedSize().accessibilityLabel(SettingsText.localized("Display on")).accessibilityValue(optionTitle(value))
     }
 }
 

@@ -98,7 +98,10 @@ final class CompactWaveformView: NSView {
     private var visibilityObservation: NSKeyValueObservation?
     private(set) var textureRenderCount=0
     var hasArtworkTexture:Bool { texture.contents != nil }
-    var isTicking: Bool { registered }
+    var isTicking: Bool { registered && WaveformClock.shared.hasScheduledTick }
+    static func setDisplaysAsleep(_ asleep: Bool) {
+        WaveformClock.shared.setDisplaysAsleep(asleep)
+    }
     override init(frame:NSRect) {
         super.init(frame:frame)
         wantsLayer = true
@@ -135,14 +138,20 @@ final class CompactWaveformView: NSView {
         self.profile=profile
         if geometryChanged { rebuildBars(); textureSize = .zero; needsLayout=true }
         self.playing = playing; self.reducedMotion = reducedMotion; revision = nextRevision
-        CATransaction.begin(); CATransaction.setDisableActions(true)
-        texture.backgroundColor = color.cgColor
-        if previousImage !== image {
-            previousImage = image
-            textureSize = .zero
-            needsLayout=true
+        let backgroundColor = color.cgColor
+        let colorChanged = texture.backgroundColor != backgroundColor
+        let imageChanged = previousImage !== image
+        if colorChanged || imageChanged {
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
+            if colorChanged { texture.backgroundColor = backgroundColor }
+            if imageChanged {
+                previousImage = image
+                textureSize = .zero
+                needsLayout = true
+            }
+            CATransaction.commit()
         }
-        CATransaction.commit()
         if changed {
             if geometryChanged || revisionChanged { lastTick = nil }
             refresh(animated:!reducedMotion)
@@ -289,22 +298,36 @@ final class CompactWaveformView: NSView {
     }
     private func synchronizeTimer() {
         guard windowOnScreen,playing,!reducedMotion,!suspended else { stop(); return }
+        if !registered && WaveformClock.shared.displaysAsleep { lastTick = nil }
         registered = true
         WaveformClock.shared.register(self,duration:CompactWaveformMetrics.duration)
     }
-    fileprivate func clockTick() {
+    fileprivate func clockTick(resumingAt time: CFTimeInterval? = nil) {
         guard registered,playing,!reducedMotion,!suspended else { return }
         // Self-healing: a panel ordered out without a notification must stop
         // at the next tick instead of animating an invisible surface.
         guard windowOnScreen else { stop(); return }
-        let tick = UInt64(max(0,(CACurrentMediaTime()-WaveformClock.epoch)/CompactWaveformMetrics.duration))
+        let now = time ?? CACurrentMediaTime()
+        let tick = UInt64(max(0, (now - WaveformClock.epoch) / CompactWaveformMetrics.duration))
         guard tick != lastTick else { return }
         lastTick = tick
-        refresh(animated:true)
+        refresh(animated:true, resumingAt: time)
     }
-    private func refresh(animated:Bool) {
-        let tick = UInt64(max(0,(CACurrentMediaTime()-WaveformClock.epoch)/CompactWaveformMetrics.duration))
+    private func refresh(animated:Bool, resumingAt time: CFTimeInterval? = nil) {
+        let asleep = WaveformClock.shared.displaysAsleep
+        if asleep && playing && !reducedMotion && !suspended && windowOnScreen {
+            // The clock retains this row weakly and catches up when a display wakes.
+            lastTick = nil
+            return
+        }
+        let now = time ?? CACurrentMediaTime()
+        let tick = UInt64(max(0, (now - WaveformClock.epoch) / CompactWaveformMetrics.duration))
         lastTick = tick
+        // All bars share a tick. Group their model writes while keeping each
+        // explicit bounds animation, even when successive heights coincide.
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        defer { CATransaction.commit() }
         for (i,bar) in bars.enumerated() {
             let height = playing ? CompactWaveformMetrics.amplitude(bar:i,tick:reducedMotion ? 0 : tick,seed:Self.seed,revision:revision,maximumHeight:Int(profile.height)) : 2
             let target = CGRect(x:0,y:0,width:profile.width,height:height)
@@ -317,13 +340,15 @@ final class CompactWaveformView: NSView {
             } else {
                 from = bar.presentation()?.bounds ?? bar.bounds
             }
-            CATransaction.begin(); CATransaction.setDisableActions(true)
             bar.bounds = target
-            CATransaction.commit()
-            guard animated else { bar.removeAllAnimations(); continue }
+            guard animated && !asleep else { bar.removeAllAnimations(); continue }
             let animation: CABasicAnimation = playing ? CASpringAnimation(keyPath:"bounds") : CABasicAnimation(keyPath:"bounds")
             animation.fromValue = NSValue(rect:from); animation.toValue = NSValue(rect:target)
             animation.duration = playing ? CompactWaveformMetrics.duration : CompactWaveformMetrics.pauseDuration
+            if time != nil {
+                let boundary = WaveformClock.epoch + Double(tick) * CompactWaveformMetrics.duration
+                animation.beginTime = bar.convertTime(boundary, from: nil)
+            }
             animation.preferredFrameRateRange=CAFrameRateRange(minimum:24,maximum:120,preferred:120)
             if !playing { animation.timingFunction = CAMediaTimingFunction(name:.easeOut) }
             bar.add(animation,forKey:"bounds")
@@ -342,6 +367,17 @@ private final class WaveformClock {
     private struct Entry { weak var view: CompactWaveformView?; var duration: Double }
     private var entries: [Entry] = []
     private var timer: Timer?
+    var hasScheduledTick: Bool { timer != nil }
+    private(set) var displaysAsleep = false
+    func setDisplaysAsleep(_ asleep: Bool) {
+        guard displaysAsleep != asleep else { return }
+        displaysAsleep = asleep
+        if !asleep {
+            let now = CACurrentMediaTime()
+            for view in entries.compactMap(\.view) { view.clockTick(resumingAt: now) }
+        }
+        schedule()
+    }
     func register(_ view: CompactWaveformView, duration: Double) {
         let interval = max(0.001,duration)
         if let index = entries.firstIndex(where:{ $0.view === view }) {
@@ -361,7 +397,7 @@ private final class WaveformClock {
     private func schedule() {
         timer?.invalidate(); timer = nil
         entries.removeAll { $0.view == nil }
-        guard let duration = entries.map(\.duration).min() else { return }
+        guard !displaysAsleep, let duration = entries.map(\.duration).min() else { return }
         let now = CACurrentMediaTime()
         let phase = (now - Self.epoch).truncatingRemainder(dividingBy: duration)
         let delay = max(0.001, duration - phase)

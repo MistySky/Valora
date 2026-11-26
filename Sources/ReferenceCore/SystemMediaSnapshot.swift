@@ -55,16 +55,66 @@ public struct SystemMediaTimeline: Sendable {
     private var last: SystemMediaSnapshot?
     private var anchorPosition = 0.0
     private var anchorEpoch = 0.0
+    public private(set) var correctionHold: DateInterval?
     public init() {}
-    public mutating func update(_ snapshot: SystemMediaSnapshot, at epoch: Double) {
-        if let last, last.identity == snapshot.identity,
-           last.elapsed == snapshot.elapsed, last.timestamp == snapshot.timestamp {
-            anchorPosition = position(at: epoch)
-        } else { anchorPosition = snapshot.position(at: epoch) }
-        anchorEpoch = epoch; last = snapshot
+
+    public enum SeekEvent: Sendable {
+        case confirmed, restoreSource
+    }
+
+    public mutating func update(_ snapshot: SystemMediaSnapshot, at epoch: Double, seek: SeekEvent? = nil) {
+        let previous = last
+        let presented = position(at: epoch)
+        let oldHold = correctionHold
+        let source = snapshot.position(at: epoch)
+        let date = Date(timeIntervalSince1970: epoch)
+        last = snapshot
+        // A failed seek can fall back to the very same timeless report. Its
+        // existing interpolated (or state-only paused) anchor is still valid.
+        let reuseSameAnchor = seek == nil || (seek == .restoreSource && oldHold == nil)
+        if reuseSameAnchor, let previous, previous.identity == snapshot.identity,
+           previous.elapsed == snapshot.elapsed, previous.timestamp == snapshot.timestamp {
+            if previous.playing == snapshot.playing, previous.rate == snapshot.rate,
+               previous.duration == snapshot.duration {
+                return // Metadata-only packet. It must never extend an existing correction.
+            }
+            // A state-only pause/resume retains the position reached by the old rate.
+            correctionHold = nil
+            anchorPosition = presented
+            anchorEpoch = epoch
+            return
+        }
+        anchorEpoch = epoch
+        anchorPosition = source
+        correctionHold = nil
+        guard seek == nil, let previous, previous.identity == snapshot.identity,
+              previous.rate == 1, snapshot.rate == 1, previous.duration == snapshot.duration,
+              previous.elapsed.rounded() == previous.elapsed, snapshot.elapsed.rounded() == snapshot.elapsed,
+              snapshot.elapsed > previous.elapsed,
+              let priorTime = previous.timestamp, let time = snapshot.timestamp,
+              time > priorTime, time <= epoch else { return }
+
+        // At 1x some sources report an advancing whole-second counter one
+        // second behind, then catch up in the following packet. Keep drawing
+        // normally for that packet. If it never arrives, briefly hold the
+        // displayed position until the authoritative clock catches up.
+        let lag = presented - source
+        if let oldHold, date < oldHold.end, lag > 0 {
+            let start = max(oldHold.start, date)
+            let remaining = oldHold.end.timeIntervalSince(start)
+            guard lag <= remaining + 0.02 else { return }
+            let duration = min(lag, remaining)
+            correctionHold = DateInterval(start: start, duration: duration)
+            anchorPosition = source + duration
+        } else if abs(lag - 1) <= 0.02 {
+            correctionHold = DateInterval(start: date.addingTimeInterval(1.25), duration: lag)
+            anchorPosition = presented
+        }
     }
     public func position(at epoch: Double) -> Double {
         guard let last else { return 0 }
-        return MediaProgressState.clamp(anchorPosition + max(0, epoch-anchorEpoch)*last.rate, duration:last.duration)
+        let clock = LyricsPlaybackClock(anchorElapsed: anchorPosition, anchorDate: Date(timeIntervalSince1970: anchorEpoch),
+                                       rate: last.rate, playing: last.playing, correctionHold: correctionHold)
+        return MediaProgressState.clamp(clock.elapsed(at: Date(timeIntervalSince1970: epoch)), duration: last.duration)
     }
 }

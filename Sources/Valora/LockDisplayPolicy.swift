@@ -1,13 +1,36 @@
 import AppKit
+import ColorSync
 import ReferenceCore
 
 /// Lock surfaces follow available hardware, independently of music targets.
 /// NSScreen order supplies the main-display fallback; inactive/offline built-in
 /// displays (including clamshell mode) are not eligible.
 enum LockDisplayPolicy {
-    static func select(from displays: [DisplayDescriptor]) -> DisplayDescriptor? {
+    static let mainDisplay = "Main display"
+
+    /// Store the hardware UUID independently of its name and current arrangement.
+    static func selectionKey(for display: DisplayDescriptor) -> String {
+        if let id = UInt32(display.id),
+           let uuid = CGDisplayCreateUUIDFromDisplayID(id)?.takeRetainedValue() {
+            return "display:" + (CFUUIDCreateString(nil, uuid) as String)
+        }
+        return "display:" + display.id
+    }
+
+    static func select(from displays: [DisplayDescriptor],
+                       preference: String = LockMusicPreferences.automaticDisplay) -> DisplayDescriptor? {
         let available = displays.filter(\.isActive)
+        if preference == mainDisplay || preference == "All displays" { return available.first }
+        if preference.hasPrefix("display:"),
+           let chosen = available.first(where: { selectionKey(for: $0) == preference }) {
+            return chosen
+        }
         return available.first(where: \.isBuiltIn) ?? available.first
+    }
+
+    static func targets(from displays: [DisplayDescriptor], preference: String) -> [DisplayDescriptor] {
+        if preference == "All displays" { return displays.filter(\.isActive) }
+        return select(from: displays, preference: preference).map { [$0] } ?? []
     }
 
     static func availableDisplays() -> [DisplayDescriptor] {

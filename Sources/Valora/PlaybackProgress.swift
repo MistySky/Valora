@@ -9,6 +9,7 @@ final class PlaybackProgress: ObservableObject {
     struct Snapshot: Equatable, Sendable {
         var elapsed: Double
         var sampledAt: Date
+        var correctionHold: DateInterval?
     }
 
     @Published private(set) var snapshot: Snapshot
@@ -20,8 +21,8 @@ final class PlaybackProgress: ObservableObject {
     var elapsed: Double { snapshot.elapsed }
     var sampledAt: Date { snapshot.sampledAt }
 
-    func set(_ elapsed: Double, sampledAt: Date) {
-        let next = Snapshot(elapsed: elapsed, sampledAt: sampledAt)
+    func set(_ elapsed: Double, sampledAt: Date, correctionHold: DateInterval? = nil) {
+        let next = Snapshot(elapsed: elapsed, sampledAt: sampledAt, correctionHold: correctionHold)
         guard next != snapshot else { return }
         snapshot = next
     }

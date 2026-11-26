@@ -186,17 +186,36 @@ public struct LyricsPlaybackClock: Sendable, Equatable {
     public let anchorDate: Date
     public let rate: Double
     public let playing: Bool
+    public let correctionHold: DateInterval?
 
     public init(anchorElapsed: TimeInterval, anchorDate: Date,
-                rate: Double, playing: Bool) {
+                rate: Double, playing: Bool, correctionHold: DateInterval? = nil) {
         self.anchorElapsed = anchorElapsed
         self.anchorDate = anchorDate
         self.rate = rate
         self.playing = playing
+        self.correctionHold = correctionHold
     }
 
     public func elapsed(at date: Date) -> TimeInterval {
         guard playing, rate.isFinite, rate > 0 else { return anchorElapsed }
-        return anchorElapsed + max(0, date.timeIntervalSince(anchorDate)) * rate
+        var elapsed = max(0, date.timeIntervalSince(anchorDate))
+        if let hold = correctionHold {
+            let overlap = min(date, hold.end).timeIntervalSince(max(anchorDate, hold.start))
+            elapsed -= max(0, overlap)
+        }
+        return anchorElapsed + elapsed * rate
+    }
+
+    /// A static lyric line needs a single wake at its boundary, including any
+    /// time during which a whole-second source correction holds the playhead.
+    public func delay(until target: TimeInterval, from now: Date) -> TimeInterval? {
+        guard playing, rate > 0 else { return nil }
+        let remaining = (target - elapsed(at: now)) / rate
+        guard remaining > 0 else { return nil }
+        if let hold = correctionHold, now < hold.end, now.addingTimeInterval(remaining) > hold.start {
+            return remaining + hold.end.timeIntervalSince(max(now, hold.start))
+        }
+        return remaining
     }
 }

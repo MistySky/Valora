@@ -479,6 +479,7 @@ struct ExperimentalDesktopLyricsView: View {
                                 timeline: model.lyrics.timeline,
                                 elapsed: playback.snapshot.elapsed,
                                 sampledAt: playback.snapshot.sampledAt,
+                                correctionHold: playback.snapshot.correctionHold,
                                 rate: model.playbackRate,
                                 playing: model.playing,
                                 duration: model.duration,
@@ -755,6 +756,7 @@ struct NativeLyricsAppliedKey: Equatable {
     let contentRevision: UInt64
     let elapsed: Double
     let sampledAt: Date
+    let correctionHold: DateInterval?
     let rate: Double
     let playing: Bool
     let duration: Double
@@ -777,6 +779,7 @@ struct NativeLyricsAppliedKey: Equatable {
         self.contentRevision = snapshot.contentRevision
         self.elapsed = snapshot.elapsed
         self.sampledAt = snapshot.sampledAt
+        self.correctionHold = snapshot.correctionHold
         self.rate = snapshot.rate
         self.playing = snapshot.playing
         self.duration = snapshot.duration
@@ -799,6 +802,7 @@ struct NativeLyricsAppliedKey: Equatable {
             && lhs.contentRevision == rhs.contentRevision
             && lhs.elapsed == rhs.elapsed
             && lhs.sampledAt == rhs.sampledAt
+            && lhs.correctionHold == rhs.correctionHold
             && lhs.rate == rhs.rate
             && lhs.playing == rhs.playing
             && lhs.duration == rhs.duration

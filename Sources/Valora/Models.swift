@@ -67,6 +67,7 @@ final class RevivalSettings: ObservableObject {
     @Published private(set) var musicPreferences: MusicPreferences
     @Published private(set) var connectivityPreferences: ConnectivityPreferences
     @Published private(set) var lockPreferences: LockMusicPreferences
+    @Published private(set) var lockGlassIntensity: Double
     @Published private(set) var hideFromScreenCapture = false
     @Published private(set) var selectedDisplay: String
     @Published private(set) var hideWhileInFullscreen = true
@@ -91,6 +92,7 @@ final class RevivalSettings: ObservableObject {
         musicPreferences = MusicPreferences(values: Self.sanitizedMusicValues(values))
         connectivityPreferences = ConnectivityPreferences(values: values)
         lockPreferences = LockMusicPreferences(values: values)
+        lockGlassIntensity = LockGlassIntensity.normalized(values[LockGlassIntensity.key])
         selectedDisplay = values["showOnDisplay"] as? String ?? "Main display"
         showNotch = defaults.object(forKey: "showNotch") as? Bool ?? true
         hoverEnabled = defaults.object(forKey: "hoverEnabled") as? Bool ?? false
@@ -103,7 +105,8 @@ final class RevivalSettings: ObservableObject {
         bluetoothEnabled = defaults.object(forKey: "bluetoothEnabled") as? Bool ?? false
         // 0x100348004 registers showRemainingTime with a true default.
         showRemainingTime = defaults.object(forKey: "showRemainingTime") as? Bool ?? true
-        for name in [UserDefaults.didChangeNotification, Notification.Name("ValoraSettingsDraftChanged")] {
+        for name in [UserDefaults.didChangeNotification, Notification.Name("ValoraSettingsDraftChanged"),
+                     SettingsDraft.lockGlassIntensityChanged] {
             preferenceObservers.append(NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
                 MainActor.assumeIsolated { self?.reloadPreferences() }
             })
@@ -123,6 +126,8 @@ final class RevivalSettings: ObservableObject {
         if connection != connectivityPreferences { connectivityPreferences = connection }
         let lock = LockMusicPreferences(values: values)
         if lock != lockPreferences { lockPreferences = lock }
+        let intensity = LockGlassIntensity.normalized(values[LockGlassIntensity.key])
+        if intensity != lockGlassIntensity { lockGlassIntensity = intensity }
         let display = values["showOnDisplay"] as? String ?? "Main display"
         if display != selectedDisplay { selectedDisplay = display }
         let rawHoverDelay = (values["hoverDelay"] as? NSNumber)?.doubleValue ?? 0
@@ -199,13 +204,13 @@ final class AppModel: ObservableObject {
 
     /// MediaController records the same wall-clock instant used to derive the
     /// elapsed sample, so a lyric view mounted later can account for its age.
-    func setElapsed(_ value: Double, sampledAt date: Date) {
-        progress.set(value, sampledAt: date)
+    func setElapsed(_ value: Double, sampledAt date: Date, correctionHold: DateInterval? = nil) {
+        progress.set(value, sampledAt: date, correctionHold: correctionHold)
     }
 
     func lyricsElapsed(at date: Date) -> TimeInterval {
         LyricsPlaybackClock(anchorElapsed: progress.elapsed, anchorDate: progress.sampledAt,
-                            rate: playbackRate, playing: playing).elapsed(at: date)
+                            rate: playbackRate, playing: playing, correctionHold: progress.snapshot.correctionHold).elapsed(at: date)
     }
     @Published var source = "系统"
     @Published var mediaError: String?

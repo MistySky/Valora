@@ -51,6 +51,24 @@ final class SystemMediaStreamAutoreleaseTests: XCTestCase {
         XCTAssertEqual(snapshots.compactMap { $0?.artwork }.count, 0)
     }
 
+    func testArtworkSplitAcrossReadsWithAdjacentLinesAndUnterminatedTail() throws {
+        let cover = Data((0..<1024).map { UInt8(truncatingIfNeeded: $0) })
+        let first = event(title: "黄梅戏", artwork: cover.base64EncodedString())
+        let next = event(title: "下一首")
+        let input = Data([10]) + first + next + next.dropLast()
+        var start = input.startIndex
+        var emitted: [SystemMediaSnapshot?] = []
+        let end = SystemMediaSource.readStream(readChunk: {
+            let stop = min(start + 73, input.endIndex)
+            defer { start = stop }
+            return input[start..<stop]
+        }, emit: { emitted.append($0) })
+        XCTAssertEqual(end, .eof)
+        XCTAssertEqual(emitted.count, 2)
+        XCTAssertEqual(emitted.compactMap { $0?.title }, ["黄梅戏", "下一首"])
+        XCTAssertEqual(try XCTUnwrap(emitted.first ?? nil).artwork, cover)
+    }
+
     func testInvalidPayloadEmitsNilInOrderAndArtworkIsOwned() {
         let valid = event(title: "valid", artwork: Data("cover".utf8).base64EncodedString())
         let invalidPayload = (try! JSONSerialization.data(withJSONObject: [

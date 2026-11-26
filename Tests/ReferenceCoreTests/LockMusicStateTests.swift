@@ -16,6 +16,16 @@ final class LockMusicStateTests: XCTestCase {
         XCTAssertFalse(p.showVolume)
     }
 
+    func testLockGlassIntensityOnlyAcceptsFiniteNumbers() {
+        let invalidValues: [Any?] = [nil, true, NSNumber(value: false), "0.4", Double.infinity, -Double.infinity, Double.nan]
+        for value in invalidValues {
+            XCTAssertEqual(LockGlassIntensity.normalized(value), 0.5)
+        }
+        XCTAssertEqual(LockGlassIntensity.normalized(NSNumber(value: 0)), 0)
+        XCTAssertEqual(LockGlassIntensity.normalized(NSNumber(value: 1)), 1)
+        XCTAssertEqual(LockGlassIntensity.normalized(0.37), 0.37)
+    }
+
     /// The desktop simulation is a visible switch; it defaults off and never
     /// turns itself on from an archived dictionary.
     func testArchivedLockOnlyPreferencesDoNotVetoModuleSwitches() {

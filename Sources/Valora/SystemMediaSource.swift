@@ -79,21 +79,31 @@ final class SystemMediaSource: @unchecked Sendable {
         didExceedLimit: () -> Void = {},
         emit: (SystemMediaSnapshot?) -> Void
     ) -> StreamEnd {
-        var buffer = Data()
+        var partialLine = Data()
         var exceededLimit = false
         while true {
             let keepReading = autoreleasepool {
                 let chunk = readChunk()
                 if chunk.isEmpty { return false }
-                buffer.append(chunk)
-                if buffer.count > bufferLimit {
+                if partialLine.count + chunk.count > bufferLimit {
                     exceededLimit = true
                     didExceedLimit()
                     return false
                 }
-                while let newline = buffer.firstIndex(of: 10) {
-                    let line = Data(buffer[..<newline])
-                    buffer.removeSubrange(...newline)
+                // Only the new bytes can contain an unseen newline. A line
+                // wholly inside this read can go straight to the JSON parser.
+                var remaining = chunk[...]
+                while let newline = remaining.firstIndex(of: 10) {
+                    let prefix = remaining[..<newline]
+                    remaining = remaining[remaining.index(after: newline)...]
+                    let line: Data
+                    if partialLine.isEmpty {
+                        line = prefix
+                    } else {
+                        partialLine.append(prefix)
+                        line = partialLine
+                        partialLine = Data()
+                    }
                     guard let event = try? JSONSerialization.jsonObject(with: line) as? [String: Any],
                           event["type"] as? String == "data",
                           event["diff"] as? Bool == false,
@@ -102,6 +112,7 @@ final class SystemMediaSource: @unchecked Sendable {
                     // emit a nil event in the original order.
                     emit(SystemMediaSnapshot(payload))
                 }
+                if !remaining.isEmpty { partialLine.append(remaining) }
                 return true
             }
             if !keepReading { break }

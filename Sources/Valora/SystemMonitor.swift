@@ -297,6 +297,7 @@ final class SystemMonitor {
         var info = host_cpu_load_info_data_t()
         var count = mach_msg_type_number_t(MemoryLayout<host_cpu_load_info_data_t>.size / MemoryLayout<integer_t>.size)
         let host = mach_host_self()
+        defer { mach_port_deallocate(mach_task_self_, host) }
         let result = withUnsafeMutablePointer(to: &info) {
             $0.withMemoryRebound(to: integer_t.self, capacity: Int(count)) {
                 host_statistics(host, HOST_CPU_LOAD_INFO, $0, &count)
@@ -383,6 +384,7 @@ final class SystemMonitor {
 
     nonisolated static func readVMStatistics() -> VMRaw? {
         let host = mach_host_self()
+        defer { mach_port_deallocate(mach_task_self_, host) }
         var pageSize: vm_size_t = 0
         guard host_page_size(host, &pageSize) == KERN_SUCCESS else { return nil }
         var stats = vm_statistics64_data_t()

@@ -1,0 +1,81 @@
+{
+  "scenario": "Two active displays, desktop unlocked throughout. Separate one-minute natural windows, restarted app. No player controls or media sampling.",
+  "desktop": {
+    "before": {
+      "seconds": 60.16,
+      "sample_count": 61,
+      "main_cpu_pct_one_core": 4.435,
+      "main_physical_MiB": [
+        73.798,
+        76.564
+      ],
+      "media_helper_cpu_pct_one_core": 0.049,
+      "main_plus_media_physical_MiB": [
+        81.142,
+        87.799
+      ],
+      "samples_with_other_direct_children": 0
+    },
+    "after": {
+      "seconds": 60.208,
+      "sample_count": 61,
+      "main_cpu_pct_one_core": 4.563,
+      "main_physical_MiB": [
+        28.595,
+        40.86
+      ],
+      "media_helper_cpu_pct_one_core": 0.045,
+      "main_plus_media_physical_MiB": [
+        35.971,
+        50.673
+      ],
+      "samples_with_other_direct_children": 0
+    }
+  },
+  "lyrics": {
+    "layer_model_samples": 644,
+    "sampled_text_image_pairs": 22,
+    "matching_model_and_sampled_bitmap_series_sha256": "5f6b3ef024d743eeac6ab632137af03f60bc9bc2e27c57197a9375fe7aaff211",
+    "before": [
+      "swiftUI callbacks=362 draw=194 layouts=70 textBuilds=46 switches=7",
+      "coreText callbacks=362 draw=194 layouts=32 textBuilds=8 switches=7"
+    ],
+    "after": [
+      "swiftUI callbacks=362 draw=194 layouts=12 textBuilds=10 switches=7",
+      "coreText callbacks=362 draw=194 layouts=10 textBuilds=8 switches=7"
+    ]
+  },
+  "waveform": {
+    "matched_animation_state_samples": 132,
+    "matching_animation_states_sha256": "c5f113ad0401580c125edf124850c7bc348946e137b827f79ae40aa5e6739e4a",
+    "before": [
+      "counts compact-120-identical-configures transactions 120 colors 120 bounds 0 animations 0",
+      "counts compact sameColorKVONotifications 0",
+      "counts compact-60-ticks-each-delivered-twice transactions 300 colors 0 bounds 300 animations 300",
+      "counts compact changedThenRepeatedColorKVONotifications 1",
+      "counts compact-palette-pause-reduced-resume-asleep-change-wake transactions 26 colors 6 bounds 20 animations 15",
+      "counts compact appearanceSwap ok sameTintArtworkAddRepeatRemove ok",
+      "counts expanded-120-identical-configures transactions 120 colors 120 bounds 0 animations 0",
+      "counts expanded sameColorKVONotifications 0",
+      "counts expanded-60-ticks-each-delivered-twice transactions 360 colors 0 bounds 360 animations 360",
+      "counts expanded changedThenRepeatedColorKVONotifications 1",
+      "counts expanded-palette-pause-reduced-resume-asleep-change-wake transactions 30 colors 6 bounds 24 animations 18",
+      "counts expanded appearanceSwap ok sameTintArtworkAddRepeatRemove ok"
+    ],
+    "after": [
+      "counts compact-120-identical-configures transactions 0 colors 0 bounds 0 animations 0",
+      "counts compact sameColorKVONotifications 0",
+      "counts compact-60-ticks-each-delivered-twice transactions 60 colors 0 bounds 300 animations 300",
+      "counts compact changedThenRepeatedColorKVONotifications 1",
+      "counts compact-palette-pause-reduced-resume-asleep-change-wake transactions 5 colors 1 bounds 20 animations 15",
+      "counts compact appearanceSwap ok sameTintArtworkAddRepeatRemove ok",
+      "counts expanded-120-identical-configures transactions 0 colors 0 bounds 0 animations 0",
+      "counts expanded sameColorKVONotifications 0",
+      "counts expanded-60-ticks-each-delivered-twice transactions 60 colors 0 bounds 360 animations 360",
+      "counts expanded changedThenRepeatedColorKVONotifications 1",
+      "counts expanded-palette-pause-reduced-resume-asleep-change-wake transactions 5 colors 1 bounds 24 animations 18",
+      "counts expanded appearanceSwap ok sameTintArtworkAddRepeatRemove ok"
+    ]
+  },
+  "regression_test_cases_passed": 58
+}

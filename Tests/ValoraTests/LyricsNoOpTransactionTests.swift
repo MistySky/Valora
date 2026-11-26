@@ -78,4 +78,76 @@ final class LyricsNoOpTransactionTests: XCTestCase {
         view.render(at: anchor)
         XCTAssertEqual(view.caTransactionCommits, initial + 2)
     }
+
+    func testRepeatedLayoutLeavesHighlightAndScrollAtTheSamePlaybackFrame() throws {
+        let view = NativeLyricsRowView(frame: NSRect(x: 0, y: 0, width: 20, height: 17))
+        defer { view.stop() }
+        var now = anchor.addingTimeInterval(5)
+        view.debugNow = { now }
+        var snapshot = input(playing: true)
+        snapshot.width = 20
+        view.apply(snapshot)
+        let clip = try XCTUnwrap(view.layer?.sublayers?.first)
+        let fill = view.debugFill
+        let position = view.debugContainerPosition
+        let layouts = view.layoutPasses
+        view.needsLayout = true
+        view.layoutSubtreeIfNeeded()
+        XCTAssertEqual(view.layoutPasses, layouts)
+        XCTAssertEqual(view.debugFill, fill)
+        XCTAssertEqual(view.debugContainerPosition, position)
+
+        now = now.addingTimeInterval(1.0 / 30)
+        view.needsLayout = true
+        view.layoutSubtreeIfNeeded()
+        XCTAssertGreaterThan(view.debugFill, fill)
+        XCTAssertNotEqual(view.debugContainerPosition.x, position.x)
+        XCTAssertEqual(view.layoutPasses, layouts)
+        snapshot.width = 260
+        view.apply(snapshot)
+        XCTAssertEqual(clip.frame.width, 260)
+        XCTAssertGreaterThan(view.debugContainerPosition.x, 0)
+    }
+
+    func testLayoutRestoresMaskHeightAndVerticalPositionWhenTheGeometryActuallyDiffers() throws {
+        let view = NativeLyricsRowView(frame: NSRect(x: 0, y: 0, width: 260, height: 5))
+        defer { view.stop() }
+        view.debugNow = { self.anchor.addingTimeInterval(3) }
+        var snapshot = input(playing: true)
+        snapshot.rowHeight = 5
+        view.apply(snapshot)
+        let container = try XCTUnwrap(view.layer?.sublayers?.first?.sublayers?.first)
+        let mask = try XCTUnwrap(container.sublayers?[1].mask)
+        let fill = mask.bounds.width
+        XCTAssertGreaterThan(mask.bounds.height, snapshot.rowHeight)
+        view.debugSetContainerYOffset(3)
+        XCTAssertEqual(container.position.y, 3)
+        let layouts = view.layoutPasses
+        view.needsLayout = true
+        view.layoutSubtreeIfNeeded()
+        XCTAssertEqual(view.layoutPasses, layouts + 1)
+        XCTAssertEqual(container.position.y, 0)
+        XCTAssertEqual(mask.bounds.height, snapshot.rowHeight)
+        XCTAssertEqual(mask.bounds.width, fill)
+    }
+
+    func testEmptyImageRowSkipsScaleRebuildsAcrossPlaybackUpdates() {
+        let view = NativeLyricsRowView(frame: .zero)
+        defer { view.stop() }
+        view.debugNow = { self.anchor }
+        var snapshot = input(playing: true, backend: .swiftUI)
+        snapshot.timeline = LyricTimeline(lines: [LyricLine(start: 5, text: "")])
+        view.apply(snapshot)
+        for elapsed in [0.0, 5.0] {
+            let date = anchor.addingTimeInterval(elapsed)
+            view.render(at: date)
+            let layouts = view.layoutPasses, builds = view.textBuilds
+            view.debugSetBackingScale(1)
+            view.render(at: date.addingTimeInterval(1))
+            XCTAssertEqual(view.layoutPasses, layouts)
+            XCTAssertEqual(view.textBuilds, builds)
+        }
+        XCTAssertEqual(view.imageBuilds, 0)
+        XCTAssertEqual(view.captureWindowCreations, 0)
+    }
 }

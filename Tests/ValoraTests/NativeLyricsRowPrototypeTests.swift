@@ -196,6 +196,47 @@ final class NativeLyricsRowPrototypeTests: XCTestCase {
 
     // MARK: - Clock / boundary transitions
 
+    func testCorrectionKeepsNativeWordFillMonotonicAcrossHostAnchorCadences() {
+        let base = Date(timeIntervalSince1970: 1055.064)
+        let hold = DateInterval(start: base.addingTimeInterval(1.25), duration: 1.000164)
+        let lyrics = LyricTimeline(lines: [
+            LyricLine(start: 124.66, text: "示例", words: [LyricWord(text: "示例", start: 124.66, duration: 6)]),
+            LyricLine(start: 140, text: "下一句")
+        ])
+        let clock = LyricsPlaybackClock(anchorElapsed: 125.064, anchorDate: base,
+                                       rate: 1, playing: true, correctionHold: hold)
+        // A collapsed row receives 1Hz anchors, the lock/expanded player 4Hz.
+        for hostFrames in [30.0, 7.5] {
+            var now = base
+            var input = snapshot(elapsed: 125.064, playing: true, width: 260, sampledAt: base)
+            input.timeline = lyrics
+            input.correctionHold = hold
+            let row = NativeLyricsRowView(frame: NSRect(x: 0, y: 0, width: 260, height: 17))
+            defer { row.stop() }
+            row.debugNow = { now }
+            row.apply(input)
+            var lastFill = row.debugFill
+            var nextHostFrame = hostFrames
+            for frame in 1...120 {
+                now = base.addingTimeInterval(Double(frame) / 30)
+                if Double(frame) >= nextHostFrame {
+                    input.elapsed = clock.elapsed(at: now)
+                    input.sampledAt = now
+                    row.apply(input)
+                    nextHostFrame += hostFrames
+                }
+                row.render(at: now)
+                XCTAssertGreaterThanOrEqual(row.debugFill + 0.00001, lastFill)
+                lastFill = row.debugFill
+            }
+            XCTAssertEqual(row.switchCount, 1)
+            XCTAssertGreaterThan(row.debugFill, 0)
+        }
+        let during = hold.start.addingTimeInterval(0.25)
+        let delay = clock.delay(until: clock.elapsed(at: during) + 0.1, from: during)
+        XCTAssertEqual(delay ?? 0, 0.850164, accuracy: 0.00001)
+    }
+
     private func wordLine(_ start: Double, _ text: String) -> LyricLine {
         LyricLine(start: start, text: text,
                   words: [LyricWord(text: text, start: start, duration: 1)])
@@ -204,6 +245,48 @@ final class NativeLyricsRowPrototypeTests: XCTestCase {
     private func spin(_ seconds: TimeInterval) {
         RunLoop.main.run(until: Date().addingTimeInterval(seconds))
     }
+
+    #if DEBUG
+    func testClockRegistersOnceAndHandsOffOnTheNextTick() {
+        let clock = NativeLyricsRowClock.shared
+        let anchor = Date(timeIntervalSince1970: 1_000_000)
+        var now = anchor
+        var input = snapshot(elapsed: 0, playing: true, width: 260, sampledAt: anchor)
+        input.timeline = LyricTimeline(lines: [wordLine(0, "甲"), wordLine(2, "乙")])
+        let outgoing = NativeLyricsRowView(frame: .zero)
+        let incoming = NativeLyricsRowView(frame: .zero)
+        defer { outgoing.stop(); incoming.stop() }
+        outgoing.debugNow = { now }
+        incoming.debugNow = { now }
+
+        let registrations = clock.debugRegistrationCount
+        outgoing.apply(input)
+        outgoing.setActive(true)
+        for frame in 1...4 {
+            now = anchor.addingTimeInterval(Double(frame) / 30)
+            clock.debugFire()
+        }
+        XCTAssertEqual(outgoing.clockTickCount, 4)
+        XCTAssertGreaterThan(outgoing.debugFill, 0)
+        XCTAssertEqual(clock.debugRegistrationCount, registrations + 1)
+
+        outgoing.onLineChangeWillApply = { [weak outgoing] _, _ in
+            outgoing?.retireForTransition()
+            incoming.apply(input)
+            incoming.setActive(true)
+            return true
+        }
+        now = anchor.addingTimeInterval(2)
+        clock.debugFire()
+        XCTAssertFalse(outgoing.debugIsClockRunning)
+        XCTAssertTrue(incoming.debugIsClockRunning)
+        XCTAssertEqual(incoming.clockTickCount, 0)
+        clock.debugFire()
+        XCTAssertEqual(outgoing.clockTickCount, 5)
+        XCTAssertEqual(incoming.clockTickCount, 1)
+        XCTAssertEqual(clock.debugRegistrationCount, registrations + 2)
+    }
+    #endif
 
     func testContinuousClockSwitchesFromScrollingLRIToShortLine() {
         let width: CGFloat = 60

@@ -11,17 +11,20 @@ import ReferenceCore
 final class LockMusicCoordinatorTests: XCTestCase {
     final class FakeWindow: LockPresentationWindow {
         let size: CGSize
+        var ignoresMouseEvents = false
         var frame: CGRect
         var isVisible = false
         var rootView: AnyView?
         var closed = false
         var sharingType: NSWindow.SharingType = .readOnly
         var originWrites = 0
-        init(size: CGSize) {
+        var windowNumber: Int
+        init(size: CGSize, ordinal: Int = 0) {
+            windowNumber = 100 + Int(size.width) + 1000 * ordinal
             self.size = size
             frame = CGRect(origin: .zero, size: size)
         }
-        var windowNumber: Int { 100 + Int(size.width) }
+
         func setRootView(_ view: AnyView) { rootView = view }
         func clearRootView() { rootView = nil }
         func setFrameOrigin(_ origin: CGPoint) { originWrites += 1; frame.origin = origin }
@@ -34,7 +37,8 @@ final class LockMusicCoordinatorTests: XCTestCase {
     final class FakeWindowFactory: LockPresentationWindowFactory {
         var windows: [FakeWindow] = []
         func makeWindow(size: CGSize, level: NSWindow.Level, ignoresMouseEvents: Bool) -> any LockPresentationWindow {
-            let window = FakeWindow(size: size)
+            let window = FakeWindow(size: size, ordinal: windows.filter { $0.size == size }.count)
+            window.ignoresMouseEvents = ignoresMouseEvents
             windows.append(window)
             return window
         }
@@ -42,6 +46,7 @@ final class LockMusicCoordinatorTests: XCTestCase {
 
     final class FakeSpace: LockPresentationSpace {
         var attachResult = true
+        var deniedWindows = Set<Int>()
         var migrateResult = true
         /// nil keeps the legacy add-only meaning used by the older regressions.
         var exclusiveResult: [String: Any]?
@@ -50,8 +55,9 @@ final class LockMusicCoordinatorTests: XCTestCase {
         var attached: [Int] = []
         var detached: [Int] = []
         func attachWindowNumber(_ number: Int) -> Bool {
-            if attachResult { attached.append(number) }
-            return attachResult
+            let accepted = attachResult && !deniedWindows.contains(number)
+            if accepted { attached.append(number) }
+            return accepted
         }
         func detachWindowNumber(_ number: Int) { detached.append(number) }
         var spaceID: UInt64 = 145
@@ -336,6 +342,137 @@ final class LockMusicCoordinatorTests: XCTestCase {
         XCTAssertEqual(model.lockNotchGeometry?.compact.height, 19.5,
                        "switch off keeps the capsule shape")
         coordinator.stop()
+    }
+
+    func testChangingLockDisplayMovesOverlayAndCardsAndRestoresChoiceOnReconnect() async throws {
+        let internalScreen = DisplayDescriptor(id: "internal", name: "Internal", frame: CGRect(x: 0, y: 0, width: 1728, height: 1117),
+            safeAreaTop: 32, auxiliaryLeftWidth: 771, auxiliaryRightWidth: 771, menuBarHeight: 32, isBuiltIn: true)
+        let external = DisplayDescriptor(id: "external", name: "External", frame: CGRect(x: -1920, y: 300, width: 1920, height: 1080),
+            safeAreaTop: 0, auxiliaryLeftWidth: nil, auxiliaryRightWidth: nil, menuBarHeight: 25)
+        var screens = [internalScreen, external]
+        let coordinator = makeCoordinator(displays: { screens })
+        coordinator.setEnabled(true)
+        defer { coordinator.stop() }
+        coordinator.setLocked(true)
+        completeLockStages()
+        let overlay = try XCTUnwrap(factory.windows.last)
+        func assertTarget(_ target: DisplayDescriptor, file: StaticString = #filePath, line: UInt = #line) {
+            XCTAssertEqual(overlay.frame.midX, target.frame.midX, file: file, line: line)
+            XCTAssertEqual(overlay.frame.maxY, target.frame.maxY, file: file, line: line)
+            XCTAssertEqual(coordinator.panel.frame.midX, target.frame.midX, file: file, line: line)
+            XCTAssertEqual(coordinator.informationPanel.frame.midX, target.frame.midX, file: file, line: line)
+            XCTAssertEqual(model.lockNotchGeometry?.hasPhysicalNotch, target.isBuiltIn, file: file, line: line)
+            XCTAssertEqual(factory.windows.count, 3, file: file, line: line)
+        }
+        assertTarget(internalScreen)
+        let draft = SettingsDraft(defaults: defaults)
+        let chosen = LockDisplayPolicy.selectionKey(for: external)
+        draft.binding(LockMusicPreferences.displayKey, LockMusicPreferences.automaticDisplay).wrappedValue = chosen
+        await drain()
+        assertTarget(external)
+        XCTAssertEqual(settings.selectedDisplay, "Main display")
+        screens = [internalScreen]
+        events.onScreensChanged?()
+        assertTarget(internalScreen)
+        XCTAssertEqual(RevivalSettings(defaults: defaults).lockPreferences.display, chosen)
+        screens = [external, internalScreen]
+        events.onScreensChanged?()
+        assertTarget(external)
+    }
+
+    func testAllDisplaysSharesPlaybackSessionAndCleansUpEveryWindow() throws {
+        func display(_ id: String, x: CGFloat, internalScreen: Bool = false) -> DisplayDescriptor {
+            DisplayDescriptor(id: id, name: id, frame: CGRect(x: x, y: 0, width: 1440, height: 900),
+                              safeAreaTop: internalScreen ? 32 : 0, auxiliaryLeftWidth: nil, auxiliaryRightWidth: nil,
+                              menuBarHeight: 25, isBuiltIn: internalScreen)
+        }
+        let a = display("internal", x: 0, internalScreen: true)
+        let b = display("left", x: -1440)
+        let c = display("right", x: 1440)
+        var screens = [a, b]
+        let draft = SettingsDraft(defaults: defaults)
+        draft.binding(LockMusicPreferences.displayKey, "").wrappedValue = "All displays"
+        let coordinator = makeCoordinator(displays: { screens })
+        coordinator.setEnabled(true)
+        defer { coordinator.stop() }
+        XCTAssertEqual(factory.windows.count, 2, "unlocked desktop keeps the existing primary pair only")
+        coordinator.setLocked(true)
+        completeLockStages()
+        func visible(_ width: CGFloat) -> [FakeWindow] {
+            factory.windows.filter { $0.size.width == width && $0.isVisible && !$0.closed }
+        }
+        func visibleCenters(_ width: CGFloat) -> Set<CGFloat> { Set(visible(width).map { $0.frame.midX }) }
+        XCTAssertEqual(visibleCenters(624), [a.frame.midX, b.frame.midX])
+        XCTAssertEqual(visibleCenters(385), [a.frame.midX, b.frame.midX])
+        XCTAssertTrue(visible(385).allSatisfy { !$0.ignoresMouseEvents && $0.rootView != nil && space.attached.contains($0.windowNumber) })
+        XCTAssertEqual(settings.selectedDisplay, "Main display")
+        XCTAssertEqual(sound.lockCount, 1)
+        let firstCard = try XCTUnwrap(visible(385).first { $0.frame.midX == a.frame.midX })
+        let removedCard = try XCTUnwrap(visible(385).first { $0.frame.midX == b.frame.midX })
+        let removedOverlay = try XCTUnwrap(visible(624).first { $0.frame.midX == b.frame.midX })
+        fireDelay(0.032)
+        XCTAssertTrue(coordinator.appeared)
+        screens = [a, c]
+        events.onScreensChanged?()
+        XCTAssertEqual(visibleCenters(385), [a.frame.midX, c.frame.midX])
+        XCTAssertEqual(visibleCenters(624), [a.frame.midX, c.frame.midX])
+        XCTAssertTrue(firstCard.isVisible && !firstCard.closed)
+        XCTAssertTrue(removedCard.closed && removedOverlay.closed)
+        XCTAssertNil(removedCard.rootView)
+        XCTAssertTrue(space.detached.contains(removedOverlay.windowNumber))
+        XCTAssertTrue(coordinator.appeared)
+        screens = [a, b, c]
+        events.onScreensChanged?()
+        XCTAssertEqual(visibleCenters(385), Set(screens.map { $0.frame.midX }))
+        XCTAssertEqual(visibleCenters(624), Set(screens.map { $0.frame.midX }))
+        coordinator.setLocked(false)
+        XCTAssertTrue(visible(385).isEmpty)
+        XCTAssertEqual(visible(624).count, 3, "retain the badges through the existing unlock animation")
+        fireDelay(0.8)
+        geometry.completeNext()
+        XCTAssertTrue(visible(624).isEmpty)
+        XCTAssertTrue(factory.windows.dropFirst(2).allSatisfy { $0.closed && $0.rootView == nil })
+        XCTAssertEqual(sound.unlockCount, 1)
+    }
+
+    func testAllDisplaysSurvivesPrimaryCardFailureAndDropsExtraWindowsOnSelectionChange() async throws {
+        let main = DisplayDescriptor(id: "main", name: "Main", frame: CGRect(x: 0, y: 0, width: 1440, height: 900),
+            safeAreaTop: 0, auxiliaryLeftWidth: nil, auxiliaryRightWidth: nil, menuBarHeight: 24)
+        let builtIn = DisplayDescriptor(id: "laptop", name: "Laptop", frame: CGRect(x: 1440, y: 200, width: 1728, height: 1117),
+            safeAreaTop: 32, auxiliaryLeftWidth: 770, auxiliaryRightWidth: 770, menuBarHeight: 32, isBuiltIn: true)
+        let draft = SettingsDraft(defaults: defaults)
+        let selection = draft.binding(LockMusicPreferences.displayKey, LockMusicPreferences.automaticDisplay)
+        selection.wrappedValue = "All displays"
+        let coordinator = makeCoordinator(displays: { [main, builtIn] })
+        coordinator.setEnabled(true)
+        defer { coordinator.stop() }
+        let primary = try XCTUnwrap(factory.windows.first)
+        space.deniedWindows = [primary.windowNumber]
+        coordinator.setLocked(true)
+        completeLockStages()
+        fireDelay(0.032)
+        XCTAssertFalse(primary.isVisible)
+        XCTAssertTrue(coordinator.appeared, "a working second screen can drive the shared card entrance")
+        let second = try XCTUnwrap(factory.windows.first { $0.size.width == 385 && $0.frame.midX == builtIn.frame.midX })
+        XCTAssertTrue(second.isVisible)
+        space.deniedWindows.removeAll()
+        coordinator.refresh()
+        XCTAssertTrue(primary.isVisible)
+        selection.wrappedValue = "Built-in display"
+        await drain()
+        XCTAssertTrue(second.closed)
+        XCTAssertTrue(primary.isVisible)
+        XCTAssertEqual(primary.frame.midX, builtIn.frame.midX)
+        XCTAssertEqual(factory.windows.filter { $0.size.width == 624 && $0.isVisible }.count, 1)
+        selection.wrappedValue = "All displays"
+        await drain()
+        events.onSleep?()
+        XCTAssertTrue(factory.windows.filter { $0.size.width == 624 }.allSatisfy { !$0.isVisible })
+        events.onWake?()
+        XCTAssertEqual(factory.windows.filter { $0.size.width == 624 && $0.isVisible }.count, 2)
+        XCTAssertEqual(factory.windows.filter { $0.size.width == 385 && $0.isVisible }.count, 2)
+        coordinator.stop()
+        XCTAssertTrue(factory.windows.allSatisfy { $0.closed && !$0.isVisible && $0.rootView == nil })
     }
 
     func testPanelBoundsUseInjectedWindowFactory() {

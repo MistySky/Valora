@@ -43,12 +43,13 @@ final class SeekProgressTests: XCTestCase {
     }
 
     private func snapshot(playing: Bool, elapsed: Double, identity: String = "track",
-                          duration: Double = 236) -> SystemMediaSnapshot {
+                          duration: Double = 236,
+                          timestamp: Double = Date().timeIntervalSince1970) -> SystemMediaSnapshot {
         SystemMediaSnapshot([
             "bundleIdentifier": "com.test.player", "title": "Track", "artist": "Artist",
             "album": "Album", "durationMicros": Int(duration * 1_000_000),
             "elapsedTimeMicros": Int(elapsed * 1_000_000),
-            "timestampEpochMicros": Date().timeIntervalSince1970 * 1_000_000,
+            "timestampEpochMicros": timestamp * 1_000_000,
             "playing": playing, "playbackRate": 1.0,
             "contentItemIdentifier": identity
         ])!
@@ -182,5 +183,47 @@ final class SeekProgressTests: XCTestCase {
         XCTAssertEqual(model.elapsed, 30, accuracy: 0.3,
                        "without confirmation the source position wins again")
         withExtendedLifetime(model) {}
+    }
+
+    func testSeekTimeoutAndNewTrackWhileDisplaysSleep() async throws {
+        let (model, controller, system, scheduler, suite) = make(confirmationWindow: 0.1)
+        defer { controller.stop(); UserDefaults().removePersistentDomain(forName: suite) }
+        controller.setAllDisplaysAsleep(true)
+        controller.start()
+        controller.seek(90)
+        XCTAssertEqual(model.elapsed, 90, accuracy: 0.001)
+        try await Task.sleep(for: .milliseconds(150))
+        scheduler.fire()
+        XCTAssertEqual(model.elapsed, 30, accuracy: 0.01)
+
+        system.push(snapshot(playing: true, elapsed: 12, identity: "next"))
+        XCTAssertTrue(model.playing)
+        let playing = model.progress.snapshot
+        XCTAssertEqual(playing.elapsed, 12, accuracy: 0.1)
+        scheduler.fire()
+        XCTAssertEqual(model.progress.snapshot, playing)
+        system.push(snapshot(playing: false, elapsed: 15, identity: "next"))
+        XCTAssertFalse(model.playing)
+        controller.setAllDisplaysAsleep(false)
+        XCTAssertEqual(model.elapsed, 15, accuracy: 0.001)
+    }
+
+    func testExplicitIntegerSecondSeekConfirmationBypassesClockCorrection() {
+        let (model, controller, system, _, suite) = make(playing: true)
+        defer { controller.stop(); UserDefaults().removePersistentDomain(forName: suite) }
+        let epoch = Date().timeIntervalSince1970 - 0.03
+        system.initial = snapshot(playing: true, elapsed: 70, timestamp: epoch - 55)
+        controller.start()
+        system.push(snapshot(playing: true, elapsed: 124, timestamp: epoch))
+        XCTAssertNotNil(model.progress.snapshot.correctionHold)
+        XCTAssertGreaterThanOrEqual(model.elapsed, 125)
+
+        controller.seek(124)
+        XCTAssertEqual(model.elapsed, 124)
+        XCTAssertNil(model.progress.snapshot.correctionHold)
+        let confirmation = snapshot(playing: true, elapsed: 124, timestamp: epoch)
+        system.push(confirmation)
+        XCTAssertEqual(model.elapsed, confirmation.position(at: model.elapsedSampleDate.timeIntervalSince1970), accuracy: 0.001)
+        XCTAssertNil(model.progress.snapshot.correctionHold)
     }
 }

@@ -574,7 +574,10 @@ final class WindowCoordinator {
         case "Built-in display": return all.filter(\.isBuiltIn)
         case "Main display": return Array(all.prefix(1))
         default:
-            let named = all.filter { $0.name == model.settings.selectedDisplay }
+            let selection = model.settings.selectedDisplay
+            let named = selection.hasPrefix("display:")
+                ? all.filter { LockDisplayPolicy.selectionKey(for: $0) == selection }
+                : all.filter { $0.name == selection }
             return named.isEmpty ? Array(all.prefix(1)) : named
         }
     }
@@ -702,12 +705,12 @@ final class WindowCoordinator {
         // avoid animating an ordered-out panel. Published only on change so it
         // never becomes a per-refresh invalidation source itself.
         if model.notchSurfaceOnScreen != visible { model.notchSurfaceOnScreen = visible }
+        let filterLockPanels = model.isSessionLocked && model.lockNotchMounted && model.lockIndicator.phase != .locking
+        let lockTarget = filterLockPanels ? lockTargetDisplay()?.id : nil
         for record in panels {
             let sharingType: NSWindow.SharingType = model.settings.hideFromScreenCapture ? .none : .readOnly
             if record.panel.sharingType != sharingType { record.panel.sharingType = sharingType }
-            if model.isSessionLocked, model.lockNotchMounted,
-               model.lockIndicator.phase != .locking,
-               record.id != LockDisplayPolicy.select(from: displayProvider())?.id {
+            if filterLockPanels, record.id != lockTarget {
                 record.panel.orderOut(nil)
                 record.panel.ignoresMouseEvents = true
                 record.lastIgnoresMouseEvents = true
@@ -1082,9 +1085,12 @@ final class WindowCoordinator {
     var verificationPanelCount: Int { panels.count }
     var verificationActiveScreenID: String? { active?.id }
     var currentNotchDisplayFrame: CGRect? { active?.display.frame }
+    private func lockTargetDisplay() -> DisplayDescriptor? {
+        LockDisplayPolicy.select(from: displayProvider(), preference: model.settings.lockPreferences.display)
+    }
     /// Never mount a music panel from an unrelated screen as lock fallback.
     var lockFallbackPanel: NotchPanel? {
-        guard let target = LockDisplayPolicy.select(from: displayProvider()) else { return nil }
+        guard let target = lockTargetDisplay() else { return nil }
         return panels.first(where: { $0.id == target.id })?.panel
     }
     var verificationScreenIDs: [String] { panels.map(\.id) }

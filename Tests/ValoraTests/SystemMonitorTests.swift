@@ -94,6 +94,23 @@ final class SystemMonitorTests: XCTestCase {
         XCTAssertEqual(reader.iconCacheCount, 0)
     }
 
+    func testCPUAndMemoryReadsReleaseHostSendRights() {
+        let host = mach_host_self()
+        defer { mach_port_deallocate(mach_task_self_, host) }
+
+        func sendRights() -> mach_port_urefs_t {
+            var count: mach_port_urefs_t = 0
+            XCTAssertEqual(mach_port_get_refs(mach_task_self_, host, mach_port_right_t(MACH_PORT_RIGHT_SEND), &count), KERN_SUCCESS)
+            return count
+        }
+
+        let before = sendRights()
+        _ = SystemMonitor.readCPUTicks()
+        XCTAssertEqual(sendRights(), before)
+        _ = SystemMonitor.readVMStatistics()
+        XCTAssertEqual(sendRights(), before)
+    }
+
     func testLiveReadsReturnPlausiblePublicValues() throws {
         let vm = try XCTUnwrap(SystemMonitor.readVMStatistics())
         XCTAssertGreaterThan(vm.physical, 0)

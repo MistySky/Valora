@@ -20,6 +20,7 @@ struct NativeLyricsRowSnapshot {
     var timeline: LyricTimeline?
     var elapsed: Double
     var sampledAt: Date
+    var correctionHold: DateInterval? = nil
     var rate: Double
     var playing: Bool
     var duration: Double
@@ -33,6 +34,11 @@ struct NativeLyricsRowSnapshot {
     /// When false the host owns the switch presentation (viewport moves) and
     /// the renderer only reports the outgoing static line.
     var switchAnimation: Bool = true
+
+    var playbackClock: LyricsPlaybackClock {
+        LyricsPlaybackClock(anchorElapsed: elapsed, anchorDate: sampledAt, rate: rate,
+                            playing: playing, correctionHold: correctionHold)
+    }
 }
 
 /// Frozen outgoing line (images + geometry) for the viewport transition.
@@ -215,7 +221,7 @@ final class NativeLyricsRowView: NSView {
     private var hasRenderedLine = false
     private var boundaryWake: Timer?
     private var boundaryDeadlineUptime: TimeInterval?
-    private var lastContinuous: Bool?
+    private var isRegisteredForFrames = false
     var onLineChange: ((LyricLine?) -> Void)?
     /// Desktop keyed presentation: called before this view rewrites the old
     /// line. Returning true means the owner has frozen this view and will
@@ -393,7 +399,7 @@ final class NativeLyricsRowView: NSView {
         boundaryWake?.invalidate()
         boundaryWake = nil
         boundaryDeadlineUptime = nil
-        NativeLyricsRowClock.shared.unregister(self)
+        unregisterFromFrameClock()
         onLineChange = nil
         onSwitchOutgoing = nil
         onContentWidthChange = nil
@@ -427,10 +433,7 @@ final class NativeLyricsRowView: NSView {
         lastRenderDate = date
         guard let snapshot else { return }
         frameTicks += 1
-        let elapsed = LyricsPlaybackClock(anchorElapsed: snapshot.elapsed,
-                                          anchorDate: snapshot.sampledAt,
-                                          rate: snapshot.rate,
-                                          playing: snapshot.playing).elapsed(at: date)
+        let elapsed = snapshot.playbackClock.elapsed(at: date)
         let nextLine = snapshot.timeline?.line(at: elapsed)
         if nextLine != line {
             if hasRenderedLine, let handoff = onLineChangeWillApply,
@@ -545,7 +548,8 @@ final class NativeLyricsRowView: NSView {
             ? text != preparedText
             : (text != preparedText || snapshot.textKern != preparedKern)
         let backendChanged = preparedBackend != backend
-        let scaleChanged = scale != preparedScale
+        // An empty SwiftUI row has no text images to recapture at a new scale.
+        let scaleChanged = scale != preparedScale && (backend != .swiftUI || !text.isEmpty)
         if backendChanged || textChanged {
             buildTextLayers(snapshot: snapshot)
         } else if accentChanged {
@@ -567,7 +571,7 @@ final class NativeLyricsRowView: NSView {
             }
         }
         if snapshot.width != laidOutWidth || snapshot.rowHeight != laidOutHeight
-            || snapshot.verticalOffset != laidOutOffset || backendChanged {
+            || snapshot.verticalOffset != laidOutOffset {
             layoutLine(snapshot)
         }
     }
@@ -799,17 +803,24 @@ final class NativeLyricsRowView: NSView {
         return rep.cgImage
     }
 
-    private func layoutLine(_ snapshot: NativeLyricsRowSnapshot) {
+    private func layoutLine(_ snapshot: NativeLyricsRowSnapshot, onlyIfNeeded: Bool = false) {
         let usesImages = snapshot.textBackend == .swiftUI
         let h = min(snapshot.rowHeight, max(textSize.height, 1))
         let y = usesImages ? 0 : (snapshot.rowHeight - h) / 2 + snapshot.verticalOffset
         contentOriginX = textSize.width > snapshot.width ? 0
             : max(0, (snapshot.width - textSize.width) / 2)
+        let position = CGPoint(x: contentOriginX - appliedOffset, y: 0)
+        let maskBounds = CGRect(x: 0, y: 0, width: max(0, appliedFill), height: max(1, h))
+        // Text rebuilds always lay out the new layers. Between rebuilds only
+        // drawing can move the container or change the mask's model bounds.
+        if onlyIfNeeded, snapshot.width == laidOutWidth, snapshot.rowHeight == laidOutHeight,
+           snapshot.verticalOffset == laidOutOffset, lineContainer.position == position,
+           maskLayer.bounds == maskBounds { return }
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         clipLayer.frame = CGRect(x: 0, y: 0, width: max(1, snapshot.width), height: snapshot.rowHeight)
         lineContainer.frame = CGRect(x: 0, y: 0, width: max(1, textSize.width), height: max(1, h))
-        lineContainer.position = CGPoint(x: contentOriginX - appliedOffset, y: 0)
+        lineContainer.position = position
         appliedOriginX = contentOriginX
         let frame = CGRect(x: 0, y: y, width: max(1, textSize.width), height: max(1, h))
         baseLayer.frame = frame
@@ -818,7 +829,7 @@ final class NativeLyricsRowView: NSView {
             layer.bounds = CGRect(origin: .zero, size: textSize)
             layer.position = CGPoint(x: 0, y: y)
         }
-        maskLayer.bounds = CGRect(x: 0, y: 0, width: max(0, appliedFill), height: max(1, h))
+        maskLayer.bounds = maskBounds
         CATransaction.commit()
         laidOutWidth = snapshot.width
         laidOutHeight = snapshot.rowHeight
@@ -829,7 +840,7 @@ final class NativeLyricsRowView: NSView {
     override func layout() {
         super.layout()
         guard let snapshot else { return }
-        layoutLine(snapshot)
+        layoutLine(snapshot, onlyIfNeeded: true)
         update(at: max(lastRenderDate, currentDisplayTime()))
     }
 
@@ -838,11 +849,8 @@ final class NativeLyricsRowView: NSView {
         guard window?.backingScaleFactor != preparedScale else { return }
         if let snapshot {
             synchronizeDrawing(snapshot)
-            layoutLine(snapshot)
-            draw(at: LyricsPlaybackClock(anchorElapsed: snapshot.elapsed,
-                                         anchorDate: snapshot.sampledAt,
-                                         rate: snapshot.rate,
-                                         playing: snapshot.playing).elapsed(at: currentDisplayTime()))
+            layoutLine(snapshot, onlyIfNeeded: true)
+            draw(at: snapshot.playbackClock.elapsed(at: currentDisplayTime()))
         }
     }
 
@@ -990,15 +998,15 @@ final class NativeLyricsRowView: NSView {
 
     private func synchronizeClock(force: Bool = false) {
         if active && needsContinuousFrames {
+            guard !isRegisteredForFrames else { return }
             boundaryWake?.invalidate()
             boundaryWake = nil
             boundaryDeadlineUptime = nil
-            lastContinuous = true
+            isRegisteredForFrames = true
             NativeLyricsRowClock.shared.register(self)
             return
         }
-        NativeLyricsRowClock.shared.unregister(self)
-        lastContinuous = false
+        unregisterFromFrameClock()
         guard active, let deadline = computedBoundaryDeadlineUptime() else {
             boundaryWake?.invalidate()
             boundaryWake = nil
@@ -1024,27 +1032,30 @@ final class NativeLyricsRowView: NSView {
         guard let snapshot, snapshot.playing, snapshot.rate > 0,
               let timeline = snapshot.timeline else { return nil }
         let now = currentDisplayTime()
-        let elapsedNow = LyricsPlaybackClock(anchorElapsed: snapshot.elapsed,
-                                              anchorDate: snapshot.sampledAt,
-                                              rate: snapshot.rate,
-                                              playing: true).elapsed(at: now)
+        let clock = snapshot.playbackClock
+        let elapsedNow = clock.elapsed(at: now)
         let boundary = line.map {
             LyricsLineFrameCache.nextStart(in: timeline.lines, after: $0.start)
         } ?? Self.nextStart(in: timeline.lines, atOrAfter: elapsedNow)
-        guard let boundary, boundary > elapsedNow else { return nil }
-        return ProcessInfo.processInfo.systemUptime + (boundary - elapsedNow) / snapshot.rate
+        guard let boundary, let delay = clock.delay(until: boundary, from: now) else { return nil }
+        return ProcessInfo.processInfo.systemUptime + delay
     }
 
     private func shutDownClocks() {
         boundaryWake?.invalidate()
         boundaryWake = nil
         boundaryDeadlineUptime = nil
-        lastContinuous = nil
-        NativeLyricsRowClock.shared.unregister(self)
+        unregisterFromFrameClock()
         switchGeneration &+= 1
         outgoingLayer?.removeFromSuperlayer()
         outgoingLayer = nil
         lineContainer.removeAllAnimations()
+    }
+
+    private func unregisterFromFrameClock() {
+        guard isRegisteredForFrames else { return }
+        isRegisteredForFrames = false
+        NativeLyricsRowClock.shared.unregister(self)
     }
 
     private func boundaryFired() {
@@ -1092,7 +1103,7 @@ final class NativeLyricsRowView: NSView {
 
     isolated deinit {
         boundaryWake?.invalidate()
-        NativeLyricsRowClock.shared.unregister(self)
+        unregisterFromFrameClock()
         textHostWindow?.contentView = nil
         textHostWindow?.close()
     }
@@ -1111,15 +1122,22 @@ final class NativeLyricsRowClock {
     static let interval: TimeInterval = 1.0 / 30.0
     private var entries: [ObjectIdentifier: WeakView] = [:]
     private var timer: Timer?
+    #if VALORA_DEVELOPMENT
+    private(set) var debugRegistrationCount = 0
+    func debugFire() { fire() }
+    #endif
 
     private struct WeakView { weak var view: NativeLyricsRowView? }
 
-    func register(_ view: NativeLyricsRowView) {
+    fileprivate func register(_ view: NativeLyricsRowView) {
         entries[ObjectIdentifier(view)] = WeakView(view: view)
+        #if VALORA_DEVELOPMENT
+        debugRegistrationCount += 1
+        #endif
         startIfNeeded()
     }
 
-    func unregister(_ view: NativeLyricsRowView) {
+    fileprivate func unregister(_ view: NativeLyricsRowView) {
         entries.removeValue(forKey: ObjectIdentifier(view))
         if entries.isEmpty { stop() }
     }
@@ -1144,8 +1162,11 @@ final class NativeLyricsRowClock {
     }
 
     private func fire() {
-        entries = entries.filter { $0.value.view != nil }
-        let views = entries.compactMap(\.value.view)
+        // A tick can retire a row and register its successor during dispatch.
+        let views = entries.values.compactMap(\.view)
+        if views.count != entries.count {
+            entries = entries.filter { $0.value.view != nil }
+        }
         guard !views.isEmpty else { stop(); return }
         for view in views { view.clockTick() }
     }

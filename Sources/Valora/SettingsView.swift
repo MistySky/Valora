@@ -4,8 +4,6 @@ import ReferenceCore
 
 /// Layout baseline: reference-ui/*.png at 2×; control order from settings-ax.json.
 /// This candidate keeps the user-approved native settings surface: flat pages.
-/// The lock screen page now exposes only the selected five live controls; fixed
-/// policies live in RevivalSettings and have no gray placeholder rows.
 struct SettingsView: View {
     @ObservedObject var model: AppModel
     @ObservedObject var settings: RevivalSettings
@@ -233,13 +231,7 @@ struct SettingsView: View {
     private var musicDisplaySettings: some View {
         SettingsCard {
             SettingsToggleRow(title: "Force simulated notch", value: $settings.forceSimulatedNotch); SettingsRule()
-            HStack {
-                Text(SettingsText.localized("Display on")); Spacer()
-                Image(systemName: SettingsDisplayCatalog.symbol(for: draft.value("showOnDisplay", "Main display")))
-                    .contentTransition(.symbolEffect(.replace))
-                    .padding(.trailing, 4)
-                SettingsNativeMenu(value: draft.binding("showOnDisplay", "Main display"), options: SettingsDisplayCatalog.options)
-            }.font(.system(size: 13.5)).padding(.horizontal, 12).frame(height: 41)
+            DisplaySetting(value: draft.binding("showOnDisplay", "Main display"), forLock: false)
             SettingsRule()
             SettingsToggleRow(title: "Expand on hover", value: $settings.hoverEnabled, info: "Expand the current activity when the pointer rests on the notch.")
             if settings.hoverEnabled {
@@ -249,11 +241,16 @@ struct SettingsView: View {
         }
     }
 
-    private var lockScreen: some View {
+    @ViewBuilder private var lockScreen: some View {
         SettingsCard {
             toggle("Enable Lock Screen", "enableLockScreen", true); SettingsRule()
+            DisplaySetting(value: draft.binding(LockMusicPreferences.displayKey, LockMusicPreferences.automaticDisplay), forLock: true)
+            SettingsRule()
             toggle("Play sound on lock", "playSoundOnLock", false); SettingsRule()
             toggle("Play sound on unlock", "playSoundOnUnlock", true)
+        }
+        SettingsCard {
+            LockGlassSetting(intensity: draft.lockGlassIntensity)
         }
     }
 
@@ -329,6 +326,38 @@ struct SettingsView: View {
                     .font(.system(size: 12.5))
                     .foregroundStyle(.secondary)
             }.padding(.horizontal, 12).padding(.vertical, 12)
+        }
+    }
+}
+
+private struct DisplaySetting: View {
+    @Binding var value: String
+    @StateObject private var menu: SettingsDisplayMenu
+
+    init(value: Binding<String>, forLock: Bool) {
+        _value = value
+        _menu = StateObject(wrappedValue: SettingsDisplayMenu(forLock: forLock, selection: value.wrappedValue,
+                                                             displays: LockDisplayPolicy.availableDisplays()))
+    }
+
+    private var selection: Binding<String> {
+        Binding(get: { menu.displayedSelection(value) }, set: { value = $0 })
+    }
+
+    var body: some View {
+        HStack {
+            Text(SettingsText.localized("Display on"))
+            Spacer()
+            Image(systemName: SettingsDisplayCatalog.symbol(for: selection.wrappedValue))
+                .contentTransition(.symbolEffect(.replace))
+                .padding(.trailing, 4)
+            SettingsNativeMenu(value: selection, options: menu.choices.map(\.key)) { key in
+                menu.choices.first { $0.key == key }?.title ?? (key.hasPrefix("display:") ? "所选显示器（离线）" : SettingsText.localized(key))
+            }
+        }
+        .font(.system(size: 13.5)).padding(.horizontal, 12).frame(height: 41)
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)) { _ in
+            menu.refresh(selection: value, displays: LockDisplayPolicy.availableDisplays())
         }
     }
 }

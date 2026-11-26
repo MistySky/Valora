@@ -45,6 +45,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var codexUsage: CodexUsageProvider?
     private var coordinator: WindowCoordinator!
     private var lockMusic: LockMusicCoordinator?
+    private var displayPower: DisplayPowerMonitor?
     #if VALORA_DEVELOPMENT
     private var lockCardPreview: LockCardPreviewController?
     #endif
@@ -494,6 +495,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         model.settings.$lockPreferences.map(\.enabled).removeDuplicates().dropFirst().sink { [weak self] enabled in
             DispatchQueue.main.async { self?.lockMusic?.setEnabled(enabled) }
         }.store(in: &subscriptions)
+        let power = DisplayPowerMonitor()
+        displayPower = power
+        power.onChange = { [weak media = model.media] asleep in
+            media?.setAllDisplaysAsleep(asleep)
+            CompactWaveformView.setDisplaysAsleep(asleep)
+        }
+        model.media.refreshDisplayPower = { [weak power] in power?.refresh() }
+        power.start()
         model.media.start()
         model.audio.start()
         model.bluetooth.start()
@@ -756,9 +765,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let displayItem = NSMenuItem(title: "显示器", action: nil, keyEquivalent: "")
         let displayMenu = NSMenu()
         let selected = settingsDraft.value("showOnDisplay", "Main display")
-        for option in SettingsDisplayCatalog.options {
-            if option == NSScreen.screens.first?.localizedName { displayMenu.addItem(.separator()) }
-            let item = NSMenuItem(title: SettingsText.localized(option), action: #selector(selectDisplay(_:)), keyEquivalent: "")
+        let options = SettingsDisplayCatalog.menuChoices(for: LockDisplayPolicy.availableDisplays(), forLock: false, selection: selected)
+        for (index, entry) in options.enumerated() {
+            let option = entry.key
+            if index > 0 && options[index - 1].key == "All displays" { displayMenu.addItem(.separator()) }
+            let item = NSMenuItem(title: entry.title, action: #selector(selectDisplay(_:)), keyEquivalent: "")
             item.target = self; item.representedObject = option; item.state = option == selected ? .on : .off
             item.image = NSImage(systemSymbolName: SettingsDisplayCatalog.symbol(for: option), accessibilityDescription: nil)
             displayMenu.addItem(item)
@@ -843,6 +854,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         // Do not touch the lazy model here when no controller was constructed;
         // termination must not create an AppModel/ConnectivityController and
         // accidentally start its lifecycle.
+        displayPower?.onChange = nil
+        displayPower?.stop()
+        displayPower = nil
         codexUsage?.stop()
         codexUsage = nil
         if modelWasLoaded {

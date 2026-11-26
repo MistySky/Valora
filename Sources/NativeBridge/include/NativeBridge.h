@@ -1,4 +1,4 @@
-#import <Foundation/Foundation.h>
+#import <AppKit/NSView.h>
 NS_ASSUME_NONNULL_BEGIN
 
 /// Narrow native surface kept for the music/device/lock vertical slice.
@@ -20,6 +20,11 @@ NSString *ARDefaultAudioOutputName(void);
 /// Writes are only issued from explicit user gestures in the expanded player.
 BOOL ARSetOutputVolume(NSString *expectedUID, double volume);
 BOOL ARSetOutputMuted(NSString *expectedUID, BOOL muted);
+
+/// Decorative lock-card glass. Returns nil when the compositor is unavailable.
+NSView * _Nullable ARCreateLockClearGlassView(NSRect frame, CGFloat radius) NS_SWIFT_UI_ACTOR;
+/// Neutral tint over the refracted wallpaper, from clear (0) to black (1).
+void ARSetLockClearGlassTintOpacity(NSView *view, CGFloat rawOpacity) NS_SWIFT_UI_ACTOR;
 
 /// Process-owned lock-screen presentation Space. Fails nil when the private
 /// SkyLight symbols are unavailable; callers must fail closed.

@@ -97,7 +97,7 @@ final class SettingsReductionTests: XCTestCase {
             XCTAssertFalse(settingsView.contains(removedRow), "removed setting row remains: \(removedRow)")
         }
         for keptRow in ["Launch at login", "Force simulated notch", "Display on",
-                        "Expand on hover", "Hover delay", "Now Playing", "Show lyrics"] {
+                        "Expand on hover", "Hover delay", "Now Playing", "toggle(\"Lyrics\", \"showLyrics\")"] {
             XCTAssertTrue(settingsView.contains(keptRow), "retained setting row missing: \(keptRow)")
         }
         XCTAssertFalse(settingsView.contains("Use live waveform"), "removed live-waveform row remains")
@@ -118,7 +118,11 @@ final class SettingsReductionTests: XCTestCase {
         XCTAssertFalse(settingsView.contains("lowConnectBatteryThreshold"))
         XCTAssertFalse(settingsView.contains("playSoundOnLowConnectBattery"))
         XCTAssertTrue(SettingsPage.allCases.contains(.connectivity))
-        XCTAssertTrue(coordinatorText.contains(".mouseMoved,.leftMouseDragged"))
+        let sensor = NotchHoverSensorView(frame: NSRect(x: 0, y: 0, width: 100, height: 30))
+        sensor.updateTrackingAreas()
+        XCTAssertTrue(sensor.trackingAreas.contains {
+            $0.options.contains([.mouseEnteredAndExited, .activeAlways])
+        })
 
     }
 
@@ -143,12 +147,12 @@ final class SettingsReductionTests: XCTestCase {
         XCTAssertTrue((12...16).contains(SettingsLayout.titleContentGap))
     }
 
-    func testHoverControlsAreInsideGeneralCardAfterDisplayRow() throws {
+    func testHoverControlsAreInsideMusicCardAfterDisplayRow() throws {
         let root = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
         let text = try String(contentsOf: root.appendingPathComponent("Sources/Valora/SettingsView.swift"), encoding: .utf8)
-        let display = try XCTUnwrap(text.range(of: "Display on"))
-        let hover = try XCTUnwrap(text.range(of: "Expand on hover"))
+        let display = try XCTUnwrap(text.range(of: "DisplaySetting(value: draft.binding(\"showOnDisplay\""))
+        let hover = try XCTUnwrap(text.range(of: "SettingsToggleRow(title: \"Expand on hover\""))
         XCTAssertLessThan(display.lowerBound, hover.lowerBound)
         XCTAssertFalse(text.contains("heading(\"Behaviour\")"))
         XCTAssertFalse(text.contains("sectionTitle(\"Notifications\")"))

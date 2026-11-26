@@ -87,23 +87,38 @@ final class ScreenStateMonitor {
     func refresh() {
         guard Date() >= suppressUntil else { return }
         let windows = (CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID) as? [[String: Any]]) ?? []
-        let screenList = screens().isEmpty ? Array(NSScreen.screens.prefix(1)) : screens()
+        let selected = screens()
+        let screenList = selected.isEmpty ? Array(NSScreen.screens.prefix(1)) : selected
         let displayBounds = screenList.compactMap { screen -> CGRect? in
             guard let number = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber else { return nil }
             return CGDisplayBounds(number.uint32Value)
         }
-        let ourPID = Int(ProcessInfo.processInfo.processIdentifier)
-        let dockPID = NSRunningApplication.runningApplications(withBundleIdentifier: "com.apple.dock").first.map { Int($0.processIdentifier) }
-        let windowManagerPID = NSRunningApplication.runningApplications(withBundleIdentifier: "com.apple.WindowManager").first.map { Int($0.processIdentifier) }
+        let state = Self.evaluate(windows: windows, displays: displayBounds,
+                                  ourPID: Int(ProcessInfo.processInfo.processIdentifier),
+                                  processIdentifier: { bundle in
+            NSRunningApplication.runningApplications(withBundleIdentifier: bundle).first.map { Int($0.processIdentifier) }
+        }, spaceTypes: Self.spaceTypes(for:))
+        if state.fullscreen != isFullscreen || state.missionControl != isMissionControl {
+            isFullscreen = state.fullscreen; isMissionControl = state.missionControl
+            onStateChange?()
+        }
+    }
+
+    static func evaluate(windows: [[String: Any]], displays: [CGRect], ourPID: Int,
+                         processIdentifier: (String) -> Int?, spaceTypes: (Int) -> [Int32])
+        -> (fullscreen: Bool, missionControl: Bool) {
+        // These lookups can synchronously contact Launch Services. Resolve each
+        // at most once in this snapshot, including a missing process after relaunch.
+        lazy var dockPID = processIdentifier("com.apple.dock")
+        lazy var windowManagerPID = processIdentifier("com.apple.WindowManager")
 
         func bounds(_ window: [String: Any]) -> CGRect? {
             guard let dictionary = window[kCGWindowBounds as String] as? [String: Any] else { return nil }
             return CGRect(dictionaryRepresentation: dictionary as CFDictionary)
         }
-        func coversDisplay(_ window: [String: Any], tolerance: CGFloat = 2) -> Bool {
-            guard let rect = bounds(window) else { return false }
-            return displayBounds.contains { display in
-                abs(rect.width - display.width) <= tolerance && abs(rect.height - display.height) <= tolerance
+        func matchesDisplaySize(_ rect: CGRect) -> Bool {
+            displays.contains { display in
+                abs(rect.width - display.width) <= 2 && abs(rect.height - display.height) <= 2
             }
         }
 
@@ -112,29 +127,26 @@ final class ScreenStateMonitor {
                   let pid = window[kCGWindowOwnerPID as String] as? Int,
                   let number = window[kCGWindowNumber as String] as? Int,
                   let rect = bounds(window) else { return false }
-            if pid == ourPID || pid == dockPID || pid == windowManagerPID { return false }
+            if pid == ourPID { return false }
             let owner = window[kCGWindowOwnerName as String] as? String ?? ""
             if owner == "Window Server" || owner == "WindowManager" { return false }
-            let intersects = displayBounds.contains { display in
+            let intersects = displays.contains { display in
                 let intersection = rect.intersection(display)
                 return !intersection.isNull && intersection.width >= display.width * 0.9 && intersection.height >= display.height * 0.8
             }
             guard intersects else { return false }
-            let types = Self.spaceTypes(for: number)
-            if types.contains(4) { return true }
+            let types = spaceTypes(number)
             // Fallback if SkyLight changes: an exactly display-sized window.
-            return types.isEmpty && displayBounds.contains { abs(rect.width - $0.width) <= 2 && abs(rect.height - $0.height) <= 2 }
+            guard types.contains(4) || (types.isEmpty && matchesDisplaySize(rect)) else { return false }
+            return pid != dockPID && pid != windowManagerPID
         }
         let missionControl = windows.contains { window in
-            guard let wm = windowManagerPID,
-                  (window[kCGWindowOwnerPID as String] as? Int) == wm,
-                  (window[kCGWindowLayer as String] as? Int ?? 0) >= 10 else { return false }
-            return coversDisplay(window)
+            guard (window[kCGWindowLayer as String] as? Int ?? 0) >= 10,
+                  let pid = window[kCGWindowOwnerPID as String] as? Int,
+                  let rect = bounds(window), matchesDisplaySize(rect) else { return false }
+            return pid == windowManagerPID
         }
-        if fullscreen != isFullscreen || missionControl != isMissionControl {
-            isFullscreen = fullscreen; isMissionControl = missionControl
-            onStateChange?()
-        }
+        return (fullscreen, missionControl)
     }
 
 }

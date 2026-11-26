@@ -61,9 +61,7 @@ final class LockCardPreviewController {
             origin = defaultOrigin
         }
         panel.setFrameOrigin(origin)
-        // Match the real lock card, which stays unfocused: the accepted dark
-        // material is the non-key rendering. The preview must not make itself
-        // key or it would show a different (darker) surface than the lock.
+        // Match the lock card by leaving keyboard focus with its current owner.
         panel.orderFrontRegardless()
         self.panel = panel
     }
@@ -76,8 +74,7 @@ final class LockCardPreviewController {
     }
 }
 
-/// Borderless panels cannot become key by default; the simulation needs to be
-/// key so the system renders the active glass material.
+/// Allow the clickable preview to receive focus like the real music panel.
 private final class LockCardPreviewPanel: NSPanel {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { true }

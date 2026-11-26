@@ -137,12 +137,7 @@ static NSString *normalAddress(NSString *s) {
 NSString *ARDefaultAudioOutputName(void) {
     return audioString(outputDevice(), kAudioObjectPropertyName);
 }
-NSArray<NSDictionary *> *ARConnectedAudioDevices(void) {
-    AudioDeviceID output = outputDevice();
-    NSString *uid = normalAddress(audioString(output, kAudioDevicePropertyDeviceUID));
-    NSString *modelUID = audioString(output, kAudioDevicePropertyModelUID);
-    NSString *outputName = audioString(output, kAudioObjectPropertyName);
-    NSMutableArray *result = [NSMutableArray array];
+static NSArray<NSDictionary *> *audioDeviceModels(void) {
     NSMutableArray<NSDictionary *> *audioModels = [NSMutableArray array];
     AudioObjectPropertyAddress listAddress = {kAudioHardwarePropertyDevices, kAudioObjectPropertyScopeGlobal, 0};
     UInt32 listSize = 0;
@@ -156,6 +151,15 @@ NSArray<NSDictionary *> *ARConnectedAudioDevices(void) {
         }
         free(ids);
     }
+    return audioModels;
+}
+NSArray<NSDictionary *> *ARConnectedAudioDevices(void) {
+    AudioDeviceID output = outputDevice();
+    NSString *uid = normalAddress(audioString(output, kAudioDevicePropertyDeviceUID));
+    NSString *modelUID = audioString(output, kAudioDevicePropertyModelUID);
+    NSString *outputName = audioString(output, kAudioObjectPropertyName);
+    NSMutableArray *result = [NSMutableArray array];
+    NSArray<NSDictionary *> *audioModels = nil;
     for (IOBluetoothDevice *device in [IOBluetoothDevice pairedDevices]) {
         if (!device.isConnected) continue;
         int left = connectivityScalar(device, @"batteryPercentLeft");
@@ -168,22 +172,24 @@ NSArray<NSDictionary *> *ARConnectedAudioDevices(void) {
         if (vendorID < 0) vendorID = connectivityUShort(device, @"PnPVendorID");
         NSString *name = device.name ?: @"Bluetooth device";
         NSString *address = device.addressString ?: @"";
-        BOOL active = address.length && [uid containsString:normalAddress(address)];
+        NSString *normalizedAddress = normalAddress(address);
+        BOOL active = address.length && [uid containsString:normalizedAddress];
+        BOOL namedAirPods = [name.lowercaseString containsString:@"airpods"];
+        BOOL hasBattery = (left >= 0 && left <= 100) || (right >= 0 && right <= 100)
+            || (single >= 0 && single <= 100);
+        if (!namedAirPods && !active && !hasBattery) continue;
         NSString *deviceModel = active ? modelUID : @"";
         if (!deviceModel.length && address.length) {
+            if (!audioModels) audioModels = audioDeviceModels();
             for (NSDictionary *entry in audioModels) {
-                if ([entry[@"uid"] containsString:normalAddress(address)]) {
+                if ([entry[@"uid"] containsString:normalizedAddress]) {
                     deviceModel = entry[@"model"];
                     break;
                 }
             }
         }
-        BOOL namedAirPods = [name.lowercaseString containsString:@"airpods"];
-        BOOL hasBattery = (left >= 0 && left <= 100) || (right >= 0 && right <= 100)
-            || (single >= 0 && single <= 100);
-        if (!namedAirPods && !active && !hasBattery) continue;
         [result addObject:@{
-            @"id": normalAddress(address), @"name": active && outputName.length ? outputName : name,
+            @"id": normalizedAddress, @"name": active && outputName.length ? outputName : name,
             @"left": @(left), @"right": @(right), @"single": @(single), @"case": @(caseBattery),
             @"productID": @(productID), @"vendorID": @(vendorID),
             @"active": @(active),

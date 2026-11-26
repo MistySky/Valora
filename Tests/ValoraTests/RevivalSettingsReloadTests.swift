@@ -1,3 +1,4 @@
+import Combine
 import SwiftUI
 import XCTest
 @testable import Valora
@@ -85,6 +86,35 @@ final class RevivalSettingsReloadTests: XCTestCase {
         draft.binding("hoverDelay", 0.0).wrappedValue = 4.0
         settings.reloadPreferences()
         XCTAssertEqual(settings.hoverDelay, 1.0, accuracy: 0.0001)
+    }
+
+    func testLockGlassIntensityPersistsWithoutChangingLockOrFeaturePolicy() {
+        defaults.set([LockMusicPreferences.displayKey: "All displays", "playSoundOnUnlock": false],
+                     forKey: "referenceSettingsUI")
+        let draft = SettingsDraft(defaults: defaults)
+        let settings = RevivalSettings(defaults: defaults)
+        XCTAssertEqual(draft.lockGlassIntensity.wrappedValue, 0.5)
+        XCTAssertEqual(settings.lockGlassIntensity, 0.5)
+        let lockPolicy = settings.lockPreferences
+        var lockChanges = 0
+        var featureChanges = 0
+        let lockSubscription = settings.$lockPreferences.dropFirst().sink { _ in lockChanges += 1 }
+        let featureSubscription = NotificationCenter.default.publisher(
+            for: Notification.Name("ValoraSettingsDraftChanged"), object: defaults
+        ).sink { _ in featureChanges += 1 }
+        defer { lockSubscription.cancel(); featureSubscription.cancel() }
+
+        for (input, expected) in [(-1.0, 0.0), (2.0, 1.0), (.nan, 0.5), (0.43, 0.43)] {
+            draft.lockGlassIntensity.wrappedValue = input
+            XCTAssertEqual(settings.lockGlassIntensity, expected)
+            XCTAssertEqual(draft.lockGlassIntensity.wrappedValue, expected)
+            XCTAssertEqual(defaults.dictionary(forKey: "referenceSettingsUI")?[LockGlassIntensity.key] as? Double, expected)
+        }
+        let reopened = RevivalSettings(defaults: defaults)
+        XCTAssertEqual(reopened.lockGlassIntensity, 0.43)
+        XCTAssertEqual(reopened.lockPreferences, lockPolicy)
+        XCTAssertEqual(lockChanges, 0)
+        XCTAssertEqual(featureChanges, 0)
     }
 
     func testConnectivityPolicyIsFixedAndSwitchDefaultsOff() {
