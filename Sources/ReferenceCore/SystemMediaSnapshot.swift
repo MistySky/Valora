@@ -52,11 +52,19 @@ public struct SystemMediaSnapshot: Sendable {
 /// QQ may publish playing=false without changing elapsed/timestamp. Preserve
 /// the interpolated position across such state-only events instead of rewinding.
 public struct SystemMediaTimeline: Sendable {
+    public enum Purpose: Sendable {
+        case playback, lyrics
+    }
+
+    private let purpose: Purpose
     private var last: SystemMediaSnapshot?
     private var anchorPosition = 0.0
     private var anchorEpoch = 0.0
+    private var awaitingLyricTimeReport = false
     public private(set) var correctionHold: DateInterval?
-    public init() {}
+    public init(for purpose: Purpose = .playback) {
+        self.purpose = purpose
+    }
 
     public enum SeekEvent: Sendable {
         case confirmed, restoreSource
@@ -69,25 +77,37 @@ public struct SystemMediaTimeline: Sendable {
         let source = snapshot.position(at: epoch)
         let date = Date(timeIntervalSince1970: epoch)
         last = snapshot
+        // Some players assign a fresh item identifier to each time report
+        // during a song. Only lyric timing may span such an identifier change.
+        let rotatedLyricItem = purpose == .lyrics && previous.map {
+            $0.contentItemIdentifier != snapshot.contentItemIdentifier
+                && $0.bundleIdentifier == snapshot.bundleIdentifier && $0.title == snapshot.title
+                && $0.artist == snapshot.artist && $0.album == snapshot.album
+                && $0.duration == snapshot.duration
+        } == true
+        let sameItem = previous?.identity == snapshot.identity || rotatedLyricItem
         // A failed seek can fall back to the very same timeless report. Its
         // existing interpolated (or state-only paused) anchor is still valid.
-        let reuseSameAnchor = seek == nil || (seek == .restoreSource && oldHold == nil)
-        if reuseSameAnchor, let previous, previous.identity == snapshot.identity,
+        let reuseSameAnchor = seek == nil || (seek == .restoreSource && oldHold == nil && !awaitingLyricTimeReport)
+        if reuseSameAnchor, let previous, sameItem,
            previous.elapsed == snapshot.elapsed, previous.timestamp == snapshot.timestamp {
             if previous.playing == snapshot.playing, previous.rate == snapshot.rate,
                previous.duration == snapshot.duration {
                 return // Metadata-only packet. It must never extend an existing correction.
             }
             // A state-only pause/resume retains the position reached by the old rate.
+            awaitingLyricTimeReport = false
             correctionHold = nil
             anchorPosition = presented
             anchorEpoch = epoch
             return
         }
+        let hadUnconfirmedReport = awaitingLyricTimeReport
+        awaitingLyricTimeReport = false
         anchorEpoch = epoch
         anchorPosition = source
         correctionHold = nil
-        guard seek == nil, let previous, previous.identity == snapshot.identity,
+        guard seek == nil, let previous, sameItem,
               previous.rate == 1, snapshot.rate == 1, previous.duration == snapshot.duration,
               previous.elapsed.rounded() == previous.elapsed, snapshot.elapsed.rounded() == snapshot.elapsed,
               snapshot.elapsed > previous.elapsed,
@@ -99,14 +119,32 @@ public struct SystemMediaTimeline: Sendable {
         // normally for that packet. If it never arrives, briefly hold the
         // displayed position until the authoritative clock catches up.
         let lag = presented - source
+        // Whole-second source counters lagged by up to 1.335 s across item
+        // identifiers in the loop replay. A larger change remains authoritative.
+        let maxLyricCorrection = 1.5
+        let oneSecondLate = abs(lag - 1) <= 0.02
         if let oldHold, date < oldHold.end, lag > 0 {
             let start = max(oldHold.start, date)
             let remaining = oldHold.end.timeIntervalSince(start)
-            guard lag <= remaining + 0.02 else { return }
-            let duration = min(lag, remaining)
+            let duration: TimeInterval
+            if purpose == .lyrics && lag <= maxLyricCorrection {
+                // A further advancing report can be late even after the hold
+                // starts. Preserve its start and repay the new lag in place.
+                duration = lag
+            } else if lag <= remaining + 0.02 {
+                duration = min(lag, remaining)
+            } else {
+                return
+            }
             correctionHold = DateInterval(start: start, duration: duration)
             anchorPosition = source + duration
-        } else if abs(lag - 1) <= 0.02 {
+        } else if rotatedLyricItem && oneSecondLate && !hadUnconfirmedReport {
+            // A replacement item can miss a whole counter tick. The next
+            // independent report may arrive minutes later, back on the original
+            // clock. A lone such reading is insufficient reason to stop a word.
+            awaitingLyricTimeReport = true
+            anchorPosition = presented
+        } else if oneSecondLate || ((rotatedLyricItem || hadUnconfirmedReport) && lag > 0 && lag <= maxLyricCorrection) {
             correctionHold = DateInterval(start: date.addingTimeInterval(1.25), duration: lag)
             anchorPosition = presented
         }

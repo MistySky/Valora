@@ -58,6 +58,7 @@ final class MediaController {
     private let system: any SystemMediaProviding
     private var systemSnapshot: SystemMediaSnapshot?
     private var timeline = SystemMediaTimeline()
+    private var lyricsTimeline = SystemMediaTimeline(for: .lyrics)
     private var systemStarted = false
     private var isActive = false
     private var retryNotBefore: TimeInterval = 0
@@ -191,7 +192,7 @@ final class MediaController {
         guard !allDisplaysAsleep, systemSnapshot != nil, !model.previewMode else { return }
         let now = Date()
         expirePendingSeekIfNeeded(at: now)
-        model.setElapsed(currentPosition(at: now), sampledAt: now, correctionHold: activeCorrection(at: now))
+        publishElapsed(currentPosition(at: now), at: now)
     }
 
     private func publishProgressIfChanged() {
@@ -200,7 +201,7 @@ final class MediaController {
         expirePendingSeekIfNeeded(at: now)
         let position = currentPosition(at: now)
         if position != model.elapsed {
-            model.setElapsed(position, sampledAt: now, correctionHold: activeCorrection(at: now))
+            publishElapsed(position, at: now)
         }
     }
 
@@ -215,9 +216,26 @@ final class MediaController {
         return timeline.position(at: date.timeIntervalSince1970)
     }
 
-    private func activeCorrection(at date: Date) -> DateInterval? {
-        guard pendingSeek == nil, let hold = timeline.correctionHold, date < hold.end else { return nil }
-        return hold
+    private func publishElapsed(_ position: Double, at date: Date) {
+        guard pendingSeek == nil else {
+            model.setElapsed(position, sampledAt: date)
+            return
+        }
+        func activeHold(_ hold: DateInterval?) -> DateInterval? {
+            guard let hold, date < hold.end else { return nil }
+            return hold
+        }
+        // Both displays sample the same instant and publish once. The scrubber
+        // follows the media clock while lyrics can ride out a delayed report.
+        let lyrics = PlaybackProgress.LyricsAnchor(elapsed: lyricsTimeline.position(at: date.timeIntervalSince1970),
+                                                  correctionHold: activeHold(lyricsTimeline.correctionHold))
+        model.setElapsed(position, sampledAt: date, correctionHold: activeHold(timeline.correctionHold), lyrics: lyrics)
+    }
+
+    private func updateTimelines(_ snapshot: SystemMediaSnapshot, at date: Date, seek: SystemMediaTimeline.SeekEvent? = nil) {
+        let epoch = date.timeIntervalSince1970
+        timeline.update(snapshot, at: epoch, seek: seek)
+        lyricsTimeline.update(snapshot, at: epoch, seek: seek)
     }
 
     private func expirePendingSeekIfNeeded(at date: Date) {
@@ -232,8 +250,8 @@ final class MediaController {
 
     private func republishAuthoritativePosition(at date: Date) {
         guard let snapshot = systemSnapshot else { return }
-        timeline.update(snapshot, at: date.timeIntervalSince1970, seek: .restoreSource)
-        model.setElapsed(timeline.position(at: date.timeIntervalSince1970), sampledAt: date)
+        updateTimelines(snapshot, at: date, seek: .restoreSource)
+        publishElapsed(timeline.position(at: date.timeIntervalSince1970), at: date)
     }
 
     private func stopTick() {
@@ -264,6 +282,7 @@ final class MediaController {
         systemStarted = false
         retryNotBefore = 0
         systemSnapshot = nil
+        lyricsTimeline = SystemMediaTimeline(for: .lyrics)
         previousSystemArtwork = nil
     }
 
@@ -284,6 +303,7 @@ final class MediaController {
         model.presenter.cancelPeek(reset: true)
         systemSnapshot = nil
         timeline = SystemMediaTimeline()
+        lyricsTimeline = SystemMediaTimeline(for: .lyrics)
         model.title = "暂无播放"; model.artist = ""; model.album = ""; model.artwork = nil
         model.duration = 0; model.setElapsed(0, sampledAt: Date()); model.playing = false; model.playbackRate = 1
         model.source = "系统"; model.mediaBundleIdentifier = ""
@@ -324,7 +344,7 @@ final class MediaController {
             }
         }
         if !stalePreSeekSnapshot {
-            timeline.update(snapshot, at: now.timeIntervalSince1970, seek: hadPendingSeek ? .confirmed : nil)
+            updateTimelines(snapshot, at: now, seek: hadPendingSeek ? .confirmed : nil)
         }
         systemSnapshot = snapshot
         if changed && snapshot.artwork == nil { model.artwork = nil }
@@ -343,7 +363,7 @@ final class MediaController {
         if model.playbackRate != snapshot.rate { model.playbackRate = snapshot.rate }
         if model.duration != snapshot.duration { model.duration = snapshot.duration }
         if !stalePreSeekSnapshot {
-            model.setElapsed(timeline.position(at: now.timeIntervalSince1970), sampledAt: now, correctionHold: activeCorrection(at: now))
+            publishElapsed(timeline.position(at: now.timeIntervalSince1970), at: now)
         }
         if model.source != "系统" { model.source = "系统" }
         if model.mediaBundleIdentifier != snapshot.bundleIdentifier { model.mediaBundleIdentifier = snapshot.bundleIdentifier }

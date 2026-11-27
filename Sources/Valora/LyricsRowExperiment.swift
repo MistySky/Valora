@@ -402,6 +402,17 @@ final class LyricsRowExperimentHost: ObservableObject {
     func retry() { failed = false }
 }
 
+extension AppModel {
+    /// Now Playing can rotate its item identifier while the same lyrics are
+    /// displayed. Derive the owner from the source and lyric lookup inputs
+    /// even while the asynchronous lookup is still loading.
+    var lyricsPresentationIdentity: String {
+        let track = LyricsTrackIdentity(title: title, artist: artist, album: album, duration: duration)
+        return [mediaBundleIdentifier, track.title, track.artist, track.album,
+                String(track.durationSeconds)].joined(separator: "\u{0}")
+    }
+}
+
 /// Experiment host: identical outer row chrome with the native renderer only
 /// replacing the text content. On failure the whole row is replaced by the
 /// shipped `CompactLyricsView` with exactly the production parameters.
@@ -443,15 +454,11 @@ struct ExperimentalDesktopLyricsView: View {
         let resolvedHost = host ?? LyricsRowExperimentHost()
         resolvedHost.transitionStrategy = transitionStrategy
         resolvedHost.prepareInitial(identity: resolvedHost.identity.isEmpty
-            ? model.mediaRevisionIdentity + "\u{0}" + model.title + "\u{0}" + model.artist
-            : resolvedHost.identity)
+            ? model.lyricsPresentationIdentity : resolvedHost.identity)
         _host = StateObject(wrappedValue: resolvedHost)
     }
 
     private var availableWidth: CGFloat { max(1, width - (showsNote ? 22 : 0)) }
-    private var identityKey: String {
-        model.mediaRevisionIdentity + "\u{0}" + model.title + "\u{0}" + model.artist
-    }
     /// Content width for the renderer/viewport. Derive it synchronously from
     /// the line the host is displaying, using the same metrics as the
     /// production row. Using the asynchronous native `contentWidth` callback
@@ -477,9 +484,9 @@ struct ExperimentalDesktopLyricsView: View {
         NativeLyricsRowSnapshot(identity: model.lyrics.identity,
                                 contentRevision: model.lyricsRevision,
                                 timeline: model.lyrics.timeline,
-                                elapsed: playback.snapshot.elapsed,
+                                elapsed: playback.snapshot.lyrics.elapsed,
                                 sampledAt: playback.snapshot.sampledAt,
-                                correctionHold: playback.snapshot.correctionHold,
+                                correctionHold: playback.snapshot.lyrics.correctionHold,
                                 rate: model.playbackRate,
                                 playing: model.playing,
                                 duration: model.duration,
@@ -508,10 +515,10 @@ struct ExperimentalDesktopLyricsView: View {
             }
         }
         .onAppear {
-            host.begin(identity: identityKey)
+            host.begin(identity: model.lyricsPresentationIdentity)
         }
-        .onChange(of: identityKey) { _, _ in
-            host.begin(identity: identityKey)
+        .onChange(of: model.lyricsPresentationIdentity) { _, identity in
+            host.begin(identity: identity)
         }
         .onChange(of: isActive) { _, visible in
             if !visible { host.endPresentation() }
@@ -586,7 +593,6 @@ struct ExperimentalDesktopLyricsView: View {
                             active: isActive,
                             diagnosticRole: auditRole,
                             host: host,
-                            identity: identityKey,
                             failRender: LyricsRowExperimentDebug.failHostRender,
                             onLineChange: { line, outgoing, generation, identity in
                                 DispatchQueue.main.async {
@@ -826,7 +832,6 @@ private struct NativeLyricsRowHost: NSViewRepresentable {
     let active: Bool
     let diagnosticRole: String
     let host: LyricsRowExperimentHost
-    let identity: String
     let failRender: Bool
     let onLineChange: (LyricLine?, NativeLyricsStaticLine?, UInt64, String) -> Void
     let onContentWidth: (CGFloat, UInt64, String) -> Void

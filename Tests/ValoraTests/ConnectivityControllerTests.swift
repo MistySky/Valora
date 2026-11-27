@@ -95,6 +95,31 @@ final class ConnectivityControllerTests: XCTestCase {
         controller.stop()
     }
 
+    func testLateEarbudPercentagesFillInTheArrivalWithoutFalseLowBatteryOrReplay() throws {
+        let model = model()
+        let sound = TestSound()
+        let controller = ConnectivityController(model, source: EmptyConnectivitySource(), sound: sound)
+        controller.start(polling: false)
+        defer { controller.stop() }
+        controller.verificationApply(ConnectedAudioSnapshot(devices: [], output: "speaker"))
+        var buds = device("buds", battery: nil)
+        buds.modelUID = ""
+        buds.single = 0
+        controller.verificationApply(ConnectedAudioSnapshot(devices: [buds], output: "headphones"))
+        let first = try XCTUnwrap(model.connectionToast)
+        XCTAssertNil(first.battery)
+        let generation = model.connectionArrivalGeneration
+
+        buds.productID = 0x2013
+        buds.left = 87
+        buds.right = 85
+        controller.verificationApply(ConnectedAudioSnapshot(devices: [buds], output: "headphones"))
+        XCTAssertEqual(model.connectionToast?.battery, 85)
+        XCTAssertEqual(model.connectionArrivalGeneration, generation)
+        XCTAssertFalse(model.connectionLowBattery)
+        XCTAssertEqual(sound.plays, 0)
+    }
+
     func testLowBatteryEdgeAndZeroVersusNil() {
         let model = model()
         let sound = TestSound()

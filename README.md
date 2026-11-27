@@ -9,8 +9,9 @@ lyrics feature.
   migration and lock/device plumbing), `Valora` (AppKit/SwiftUI app)
 - Media source: the system Now Playing session only, read through the bundled
   adapter. No per-player branches.
-- [Valora 1.0.9](https://github.com/MistySky/Valora/releases/tag/v1.0.9) ships build 81 from `codex/performance-preserve-motion`. The arm64 DMG uses the `Valora Self-Signed` identity and is distributed without Apple notarization.
-
+- [Valora 1.1.0](https://github.com/MistySky/Valora/releases/tag/v1.1.0) ships build 86 from `codex/performance-preserve-motion`. The arm64 DMG uses the `Valora Self-Signed` identity and is distributed without Apple notarization.
+- Lyrics now keep their place when the system assigns a new item identifier during the same song. Word highlighting continues at playback speed through an isolated, one-second-late progress report.
+- The AirPods connection indicator uses earbud readings when they arrive. AirPods Max uses its whole-device battery level.
 - Includes the accepted notch input ownership fix and restoration of calendar/menu-bar item visibility after relaunch.
 
 ## Scope
@@ -33,7 +34,7 @@ Codex Usage, About. See `AGENTS.md` for the current per-page contract.
 ## Build
 
 ```sh
-VALORA_LYRICS_EXPERIMENT=1 ./scripts/build.sh --version 1.0.9 --output-dir /private/tmp/valora-candidate
+VALORA_LYRICS_EXPERIMENT=1 ./scripts/build.sh --version 1.1.0 --output-dir /private/tmp/valora-candidate
 ```
 
 This builds the pinned MediaRemote adapter, the SwiftPM release binary and a
@@ -41,7 +42,7 @@ signed `.app` in the given output directory. The build number is allocated
 automatically (`scripts/build_number.py`) and is monotonic; `--build` overrides
 are rejected. No network access, no install, no publishing.
 
-The explicit lyrics flag selects the native renderer shipped in 1.0.9.
+The explicit lyrics flag selects the native renderer shipped in 1.1.0.
 
 ## Run
 

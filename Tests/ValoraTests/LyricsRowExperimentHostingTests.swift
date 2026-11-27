@@ -30,6 +30,50 @@ final class LyricsRowExperimentHostTests: XCTestCase {
         XCTAssertTrue(host.failed)
     }
 
+    func testRotatingItemIdentifierKeepsTheDisplayedLineAndKeyedChild() {
+        let suite = "valora.tests.lyric-owner.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let model = AppModel(settings: RevivalSettings(defaults: defaults))
+        model.mediaBundleIdentifier = "example.player"
+        model.mediaRevisionIdentity = "item-A"
+        model.title = "Song"
+        model.artist = "Artist"
+        model.album = "Album"
+        model.duration = 175
+        let host = LyricsRowExperimentHost()
+        _ = ExperimentalDesktopLyricsView(model: model, width: 150, host: host)
+        defer { host.invalidate() }
+
+        let key = host.identity
+        XCTAssertEqual(key, model.lyricsPresentationIdentity)
+        host.begin(identity: key)
+        host.reportLine(lineA, outgoing: nil, generation: host.generation, identity: key)
+        let generation = host.generation
+        let child = host.presentationID
+        model.mediaRevisionIdentity = "item-B"
+        model.playing = true
+        model.duration = 175.2
+        model.lyrics = LyricsDisplayState(status: .ready, timeline: LyricTimeline(lines: [lineA]),
+                                          identity: LyricsTrackIdentity(title: model.title, artist: model.artist,
+                                                                        album: model.album, duration: model.duration))
+        host.begin(identity: model.lyricsPresentationIdentity)
+        XCTAssertEqual(host.generation, generation)
+        XCTAssertEqual(host.presentationID, child)
+        XCTAssertEqual(host.displayedLine, lineA)
+
+        model.album = "Another Recording"
+        host.begin(identity: model.lyricsPresentationIdentity)
+        XCTAssertNotEqual(host.generation, generation)
+        XCTAssertNil(host.displayedLine)
+        let newTrackKey = host.identity
+        model.mediaBundleIdentifier = "example.other"
+        XCTAssertNotEqual(model.lyricsPresentationIdentity, newTrackKey)
+        let newSourceKey = model.lyricsPresentationIdentity
+        model.duration = 185
+        XCTAssertNotEqual(model.lyricsPresentationIdentity, newSourceKey)
+    }
+
     func testProductionStrategiesAreTypedAndIsolated() {
         let desktop = LyricsRowExperimentHost()
         desktop.transitionStrategy = .build26SwiftUI
@@ -1130,6 +1174,32 @@ final class LyricsRowExperimentHostingTests: XCTestCase {
         RunLoop.main.run(until: Date().addingTimeInterval(0.1))
         XCTAssertGreaterThan(row.applyCount, applied,
                              "a real progress anchor must be applied immediately")
+    }
+
+    func testDesktopKeyedRowKeepsCorrectedLyricOnItemRotation() throws {
+        let lines = [LyricLine(start: 80.509, text: "上一句"),
+                     LyricLine(start: 81.884, text: "当前句")]
+        let (model, suite) = model(elapsed: 82.05, lines: lines)
+        defer { UserDefaults().removePersistentDomain(forName: suite) }
+        model.mediaRevisionIdentity = "item A"
+        let host = LyricsRowExperimentHost()
+        let (view, window) = makeHostedExperiment(model: model, host: host, rowHeight: 32,
+            showsNote: true, inset: 18, width: width, transitionStrategy: .build26SwiftUI)
+        defer { stopNativeRows(view); window.close() }
+        waitUntil { host.displayedLine == lines[1] }
+        let row = try XCTUnwrap(nativeRow(view))
+        let generation = host.generation
+        let applied = row.applyCount
+
+        model.mediaRevisionIdentity = "item B"
+        model.setElapsed(81.06, sampledAt: Date(),
+                         lyrics: PlaybackProgress.LyricsAnchor(elapsed: 82.06, correctionHold: nil))
+        waitUntil { row.applyCount > applied }
+        XCTAssertGreaterThan(row.applyCount, applied)
+        XCTAssertTrue(nativeRow(view) === row)
+        XCTAssertEqual(host.generation, generation)
+        XCTAssertEqual(host.displayedLine, lines[1])
+        XCTAssertEqual(row.debugLine, lines[1])
     }
 
     func testSameIdentityLyricsReplacementStillApplies() {

@@ -226,4 +226,50 @@ final class SeekProgressTests: XCTestCase {
         XCTAssertEqual(model.elapsed, confirmation.position(at: model.elapsedSampleDate.timeIntervalSince1970), accuracy: 0.001)
         XCTAssertNil(model.progress.snapshot.correctionHold)
     }
+
+    func testLyricCorrectionSurvivesPeriodicSamplesButNotAnExplicitSeek() throws {
+        let (model, controller, system, scheduler, suite) = make()
+        defer { controller.stop(); UserDefaults().removePersistentDomain(forName: suite) }
+        let stamp = Date().timeIntervalSince1970 - 0.05
+        system.initial = snapshot(playing: true, elapsed: 19, identity: "a", timestamp: stamp - 63.335)
+        controller.start()
+        let late = snapshot(playing: true, elapsed: 81, identity: "b", timestamp: stamp)
+        system.push(late)
+        let hold = try XCTUnwrap(model.progress.snapshot.lyrics.correctionHold)
+        for _ in 0..<4 { scheduler.fire() }
+        let sample = model.progress.snapshot
+        XCTAssertNil(sample.correctionHold)
+        XCTAssertEqual(sample.lyrics.correctionHold, hold)
+        XCTAssertEqual(sample.elapsed, late.position(at: sample.sampledAt.timeIntervalSince1970), accuracy: 0.00001)
+        XCTAssertEqual(model.lyricsElapsed(at: sample.sampledAt), sample.elapsed + 1.335, accuracy: 0.00001)
+
+        controller.seek(80.5)
+        XCTAssertEqual(model.progress.snapshot.lyrics.elapsed, 80.5)
+        XCTAssertNil(model.progress.snapshot.lyrics.correctionHold)
+        system.push(snapshot(playing: true, elapsed: 80.5, identity: "b"))
+        XCTAssertEqual(model.progress.snapshot.lyrics.elapsed, model.elapsed)
+        XCTAssertNil(model.progress.snapshot.lyrics.correctionHold)
+    }
+
+    func testFailedSeekAndLostMediaClearTheLyricCorrection() throws {
+        let (model, controller, system, _, suite) = make()
+        defer { controller.stop(); UserDefaults().removePersistentDomain(forName: suite) }
+        let stamp = Date().timeIntervalSince1970 - 0.05
+        system.initial = snapshot(playing: true, elapsed: 0, identity: "a", timestamp: stamp - 5.335)
+        controller.start()
+        system.push(snapshot(playing: true, elapsed: 4, identity: "b", timestamp: stamp))
+        _ = try XCTUnwrap(model.progress.snapshot.lyrics.correctionHold)
+
+        system.deferCompletion = true
+        controller.seek(40)
+        XCTAssertEqual(model.progress.snapshot.lyrics.elapsed, 40)
+        system.finishPending(false)
+        XCTAssertEqual(model.progress.snapshot.lyrics.elapsed, model.elapsed)
+        XCTAssertNil(model.progress.snapshot.lyrics.correctionHold)
+        system.push(nil)
+        XCTAssertEqual(model.progress.snapshot.lyrics.elapsed, 0)
+        system.push(snapshot(playing: true, elapsed: 4, identity: "c", timestamp: stamp))
+        XCTAssertNil(model.progress.snapshot.lyrics.correctionHold)
+        XCTAssertEqual(model.progress.snapshot.lyrics.elapsed, model.elapsed)
+    }
 }

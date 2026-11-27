@@ -23,11 +23,13 @@ struct AudioDevice: Identifiable, Equatable, Sendable {
 
     /// 0 is a real measured battery value; nil means unavailable/invalid.
     var battery: Int? {
-        // AirPods earbuds provide left/right; the single field is for models
-        // such as Max and may be an inapplicable placeholder on earbuds. Never
-        // let that placeholder mask a valid earbud reading.
-        let earbuds = [left, right].compactMap { $0 }
-        if !earbuds.isEmpty { return earbuds.min() }
+        let model = airPodsModel
+        if model == .max || model == .max2 { return single }
+        if let left, let right { return min(left, right) }
+        if let ear = left ?? right { return ear }
+        // Before either ear reports, the unused whole-device channel can
+        // already read zero. A zero on a real ear remains a valid reading.
+        if single == 0 && (isAirPods || model != nil) { return nil }
         return single
     }
     var airPodsModel: AirPodsModel? {
@@ -204,13 +206,15 @@ final class AppModel: ObservableObject {
 
     /// MediaController records the same wall-clock instant used to derive the
     /// elapsed sample, so a lyric view mounted later can account for its age.
-    func setElapsed(_ value: Double, sampledAt date: Date, correctionHold: DateInterval? = nil) {
-        progress.set(value, sampledAt: date, correctionHold: correctionHold)
+    func setElapsed(_ value: Double, sampledAt date: Date, correctionHold: DateInterval? = nil,
+                    lyrics: PlaybackProgress.LyricsAnchor? = nil) {
+        progress.set(value, sampledAt: date, correctionHold: correctionHold, lyrics: lyrics)
     }
 
     func lyricsElapsed(at date: Date) -> TimeInterval {
-        LyricsPlaybackClock(anchorElapsed: progress.elapsed, anchorDate: progress.sampledAt,
-                            rate: playbackRate, playing: playing, correctionHold: progress.snapshot.correctionHold).elapsed(at: date)
+        let sample = progress.snapshot
+        return LyricsPlaybackClock(anchorElapsed: sample.lyrics.elapsed, anchorDate: sample.sampledAt,
+                                  rate: playbackRate, playing: playing, correctionHold: sample.lyrics.correctionHold).elapsed(at: date)
     }
     @Published var source = "系统"
     @Published var mediaError: String?
@@ -383,7 +387,7 @@ final class AppModel: ObservableObject {
     var showsLyricsInExpanded: Bool { lyricsAvailable && settings.showNotch && !screenHidden }
     var currentLyricLine: LyricLine? {
         guard lyricsAvailable, let timeline = lyrics.timeline else { return nil }
-        return timeline.line(at: elapsed)
+        return timeline.line(at: progress.snapshot.lyrics.elapsed)
     }
     var lyricsAccentColor: NSColor {
         guard let color = artworkColors.first else { return NSColor.gray.withAlphaComponent(0.9) }
